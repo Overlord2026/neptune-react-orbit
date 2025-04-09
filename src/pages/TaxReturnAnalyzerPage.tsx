@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -6,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Upload, FileText } from "lucide-react";
+
+// TODO: Implement OCR in Phase 2 once the service is ready.
+// import { OCRService } from "../services/OCRService";
 
 const TaxReturnAnalyzerPage = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -31,6 +33,29 @@ const TaxReturnAnalyzerPage = () => {
       }
     }
   };
+
+  // TODO: Implement OCR in Phase 2 once the service is ready.
+  // const handleOCR = async () => {
+  //   if (!file) return;
+  //   
+  //   try {
+  //     setIsProcessing(true);
+  //     const ocrResult = await OCRService.processDocument(file);
+  //     
+  //     // Parse OCR results to identify potential tax deductions
+  //     const deductions = ocrResult.extractDeductions();
+  //     setResults(`Potential deductions identified: ${deductions.length}. ${deductions.map(d => d.name).join(', ')}`);
+  //   } catch (error) {
+  //     console.error("OCR processing failed:", error);
+  //     toast({
+  //       title: "OCR Processing Failed",
+  //       description: "Unable to process the document. Please try again later.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
 
   const processFile = () => {
     if (!file) {
