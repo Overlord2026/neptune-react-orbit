@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, ArrowUp, ArrowDown, ArrowRight } from "lucide-react";
+import { BarChart3, ArrowUp, ArrowDown, ArrowRight, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
@@ -127,6 +127,40 @@ const FinancialDashboard = () => {
                 <BarChart3 className="h-4 w-4 neptune-gold" />
               </div>
               <span className="font-medium">Full System Diagnostics</span>
+            </div>
+            <ArrowRight className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-primary/20 bg-card p-6 financial-reports">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 rounded-md bg-primary/10">
+            <FileText className="h-6 w-6 neptune-gold" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold neptune-gold">Financial Reports</h2>
+            <p className="text-sm text-muted-foreground">Generate comprehensive reports of your family's financial assets...</p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          <button className="flex items-center justify-between w-full p-4 rounded-md border border-primary/20 hover:bg-primary/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <FileText className="h-4 w-4 neptune-gold" />
+              </div>
+              <span className="font-medium">Generate Reports</span>
+            </div>
+            <ArrowRight className="h-5 w-5" />
+          </button>
+          
+          <button className="flex items-center justify-between w-full p-4 rounded-md border border-primary/20 hover:bg-primary/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <FileText className="h-4 w-4 neptune-gold" />
+              </div>
+              <span className="font-medium">Report History</span>
             </div>
             <ArrowRight className="h-5 w-5" />
           </button>
