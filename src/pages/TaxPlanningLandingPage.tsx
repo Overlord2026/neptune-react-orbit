@@ -61,12 +61,12 @@ const TaxPlanningLandingPage = () => {
 
   return (
     <div className="space-y-6 pb-8">
-      <div className="flex items-center justify-between pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight neptune-gold">Tax Planning</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight neptune-gold">Tax Planning</h1>
           <p className="text-muted-foreground">Optimize your tax situation with our specialized tools and strategies.</p>
         </div>
-        <Link to="/" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors">
+        <Link to="/" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left">
           Back to Home
         </Link>
       </div>
@@ -74,14 +74,14 @@ const TaxPlanningLandingPage = () => {
       {/* Financial Dashboard */}
       <FinancialDashboard />
       
-      <h2 className="text-2xl font-bold tracking-tight neptune-gold mt-8">Available Tools</h2>
+      <h2 className="text-xl sm:text-2xl font-bold tracking-tight neptune-gold mt-8">Available Tools</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {features.map((feature, index) => (
           <Card key={index} className="bg-card border-primary/20 hover:border-primary/40 transition-colors overflow-hidden">
             <CardHeader className="pb-2">
               <div className="mb-2">{feature.icon}</div>
-              <CardTitle className="text-xl neptune-gold">{feature.title}</CardTitle>
+              <CardTitle className="text-lg sm:text-xl neptune-gold">{feature.title}</CardTitle>
               {feature.comingSoon && (
                 <span className="inline-block bg-primary/20 text-primary text-xs px-2 py-1 rounded-md mt-1">
                   Coming Soon
@@ -101,7 +101,7 @@ const TaxPlanningLandingPage = () => {
               ) : (
                 <Link to={feature.path} className="w-full">
                   <Button className="w-full justify-between">
-                    Open Tool
+                    <span>Open Tool</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>

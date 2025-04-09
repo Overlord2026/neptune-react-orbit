@@ -15,9 +15,13 @@ import {
   BarChart3, 
   Briefcase,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Menu,
+  X
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -54,13 +58,13 @@ const NavItem = ({
         } : undefined}
         className={cn(
           "flex items-center px-3 py-2 rounded-md text-white hover:bg-[#222222] group transition-colors duration-200",
-          isActive && !hasSubMenu && "bg-custom-background-tertiary border-l-2 border-l-custom-accent pl-[10px]"
+          isActive && !hasSubMenu && "bg-custom-background-tertiary border-l-2 border-l-[#FFD700] pl-[10px]"
         )}
       >
         <span className="flex items-center w-full">
           <span className={cn(
             "mr-3 text-gray-400 group-hover:text-[#FFD700] transition-colors duration-200",
-            isActive && "text-custom-accent"
+            isActive && "text-[#FFD700]"
           )}>
             {icon}
           </span>
@@ -82,7 +86,7 @@ const NavSubItem = ({ label, href, isActive }: NavSubItemProps) => {
       to={href}
       className={cn(
         "flex items-center pl-9 py-2 text-sm rounded-md text-white hover:bg-[#222222] hover:text-[#FFD700] transition-colors duration-200",
-        isActive && "bg-custom-background-tertiary border-l-2 border-l-custom-accent pl-[34px]"
+        isActive && "bg-custom-background-tertiary border-l-2 border-l-[#FFD700] pl-[34px]"
       )}
     >
       {label}
@@ -92,10 +96,12 @@ const NavSubItem = ({ label, href, isActive }: NavSubItemProps) => {
 
 const DashboardLayout = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     'education': false,
     'family': false
   });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Automatically open submenus based on current route
   useEffect(() => {
@@ -126,110 +132,149 @@ const DashboardLayout = () => {
     }));
   };
 
+  // Sidebar component for reuse
+  const SidebarContent = () => (
+    <nav className="px-4 py-6 space-y-6">
+      {/* Main Nav */}
+      <div>
+        <NavItem 
+          icon={<Home size={18} />} 
+          label="Home" 
+          href="/" 
+          isActive={location.pathname === '/'} 
+        />
+        
+        {/* Education & Solutions */}
+        <NavItem 
+          icon={<BookOpen size={18} />} 
+          label="Education & Solutions" 
+          href="#" 
+          isActive={false} 
+          hasSubMenu={true} 
+          isOpen={openMenus.education}
+          toggleSubmenu={() => toggleSubmenu('education')}
+        />
+        
+        {openMenus.education && (
+          <div className="ml-2 mt-1 space-y-1">
+            <NavSubItem 
+              label="Investments" 
+              href="/investments" 
+              isActive={location.pathname.includes('/investments')} 
+            />
+            <NavSubItem 
+              label="Tax Planning" 
+              href="/tax-planning" 
+              isActive={location.pathname.includes('/tax-planning')} 
+            />
+            <NavSubItem 
+              label="Insurance" 
+              href="/insurance" 
+              isActive={location.pathname.includes('/insurance')} 
+            />
+            <NavSubItem 
+              label="Lending" 
+              href="/lending" 
+              isActive={location.pathname.includes('/lending')} 
+            />
+            <NavSubItem 
+              label="Estate Planning" 
+              href="/estate-planning" 
+              isActive={location.pathname.includes('/estate-planning')} 
+            />
+          </div>
+        )}
+        
+        {/* Family Wealth */}
+        <NavItem 
+          icon={<Users size={18} />} 
+          label="Family Wealth" 
+          href="#" 
+          isActive={false} 
+          hasSubMenu={true}
+          isOpen={openMenus.family}
+          toggleSubmenu={() => toggleSubmenu('family')}
+        />
+        
+        {openMenus.family && (
+          <div className="ml-2 mt-1 space-y-1">
+            <NavSubItem 
+              label="Financial Plans" 
+              href="/financial-plans" 
+              isActive={location.pathname.includes('/financial-plans')} 
+            />
+            <NavSubItem 
+              label="Accounts Overview" 
+              href="/accounts" 
+              isActive={location.pathname.includes('/accounts')} 
+            />
+            <NavSubItem 
+              label="All Assets" 
+              href="/assets" 
+              isActive={location.pathname.includes('/assets')} 
+            />
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+
   return (
     <div className="flex min-h-screen">
-      {/* Side Navigation */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-[#111111] border-r border-gray-800 shadow-xl z-20">
-        {/* Logo Area */}
-        <div className="flex items-center justify-center h-16 border-b border-gray-800 px-4">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-full bg-neptune-600 flex items-center justify-center">
-              <span className="font-bold text-white text-lg">B</span>
-            </div>
-            <span className="font-bold text-xl text-white">Family Office</span>
-          </Link>
-        </div>
-        
-        {/* Nav Items */}
-        <nav className="px-4 py-6 space-y-6">
-          {/* Main Nav */}
-          <div>
-            <NavItem 
-              icon={<Home size={18} />} 
-              label="Home" 
-              href="/" 
-              isActive={location.pathname === '/'} 
-            />
-            
-            {/* Education & Solutions */}
-            <NavItem 
-              icon={<BookOpen size={18} />} 
-              label="Education & Solutions" 
-              href="#" 
-              isActive={false} 
-              hasSubMenu={true} 
-              isOpen={openMenus.education}
-              toggleSubmenu={() => toggleSubmenu('education')}
-            />
-            
-            {openMenus.education && (
-              <div className="ml-2 mt-1 space-y-1">
-                <NavSubItem 
-                  label="Investments" 
-                  href="/investments" 
-                  isActive={location.pathname.includes('/investments')} 
-                />
-                <NavSubItem 
-                  label="Tax Planning" 
-                  href="/tax-planning" 
-                  isActive={location.pathname.includes('/tax-planning')} 
-                />
-                <NavSubItem 
-                  label="Insurance" 
-                  href="/insurance" 
-                  isActive={location.pathname.includes('/insurance')} 
-                />
-                <NavSubItem 
-                  label="Lending" 
-                  href="/lending" 
-                  isActive={location.pathname.includes('/lending')} 
-                />
-                <NavSubItem 
-                  label="Estate Planning" 
-                  href="/estate-planning" 
-                  isActive={location.pathname.includes('/estate-planning')} 
-                />
+      {/* Side Navigation - Desktop */}
+      {!isMobile && (
+        <aside className="fixed left-0 top-0 h-full w-64 bg-[#111111] border-r border-gray-800 shadow-xl z-20">
+          {/* Logo Area */}
+          <div className="flex items-center justify-center h-16 border-b border-gray-800 px-4">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-full bg-neptune-600 flex items-center justify-center">
+                <span className="font-bold text-white text-lg">B</span>
               </div>
-            )}
-            
-            {/* Family Wealth */}
-            <NavItem 
-              icon={<Users size={18} />} 
-              label="Family Wealth" 
-              href="#" 
-              isActive={false} 
-              hasSubMenu={true}
-              isOpen={openMenus.family}
-              toggleSubmenu={() => toggleSubmenu('family')}
-            />
-            
-            {openMenus.family && (
-              <div className="ml-2 mt-1 space-y-1">
-                <NavSubItem 
-                  label="Financial Plans" 
-                  href="/financial-plans" 
-                  isActive={location.pathname.includes('/financial-plans')} 
-                />
-                <NavSubItem 
-                  label="Accounts Overview" 
-                  href="/accounts" 
-                  isActive={location.pathname.includes('/accounts')} 
-                />
-                <NavSubItem 
-                  label="All Assets" 
-                  href="/assets" 
-                  isActive={location.pathname.includes('/assets')} 
-                />
-              </div>
-            )}
+              <span className="font-bold text-xl text-white">Family Office</span>
+            </Link>
           </div>
-        </nav>
-      </aside>
+          
+          <SidebarContent />
+        </aside>
+      )}
+      
+      {/* Side Navigation - Mobile */}
+      {isMobile && (
+        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-[#111111]">
+            <div className="flex items-center justify-center h-16 border-b border-gray-800 px-4">
+              <Link to="/" className="flex items-center space-x-2" onClick={() => setSidebarOpen(false)}>
+                <div className="h-8 w-8 rounded-full bg-neptune-600 flex items-center justify-center">
+                  <span className="font-bold text-white text-lg">B</span>
+                </div>
+                <span className="font-bold text-xl text-white">Family Office</span>
+              </Link>
+              <button 
+                className="ml-auto text-white hover:text-[#FFD700] transition-colors duration-200"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <SidebarContent />
+          </SheetContent>
+        </Sheet>
+      )}
       
       {/* Main Content Area */}
-      <div className="flex-1 ml-64">
+      <div className={`flex-1 ${!isMobile ? 'ml-64' : 'ml-0'}`}>
         {/* Header */}
         <header className="sticky top-0 z-10 h-16 border-b border-gray-800 bg-[#111111] px-6 flex items-center justify-between">
+          {isMobile && (
+            <button 
+              className="mr-4 p-1 text-white hover:text-[#FFD700] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+            </button>
+          )}
+          
           <h1 className="text-xl font-semibold">
             {location.pathname === '/' 
               ? 'Dashboard' 
@@ -242,16 +287,16 @@ const DashboardLayout = () => {
           </h1>
           
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-400">John Doe</span>
+            <span className="text-sm text-gray-400 hidden sm:block">John Doe</span>
             <Avatar className="h-8 w-8">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-custom-accent text-black">JD</AvatarFallback>
+              <AvatarFallback className="bg-[#FFD700] text-black">JD</AvatarFallback>
             </Avatar>
           </div>
         </header>
         
         {/* Page Content */}
-        <main className="p-6 bg-[#111111] min-h-[calc(100vh-64px)]">
+        <main className="p-4 sm:p-6 bg-[#111111] min-h-[calc(100vh-64px)]">
           <Outlet />
         </main>
       </div>
