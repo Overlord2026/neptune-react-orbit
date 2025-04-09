@@ -20,10 +20,7 @@ interface TaxTrapCheckerProps {
   };
 }
 
-// Export as a named function for named imports
+// Only use named export to be consistent with the imports
 export function TaxTrapChecker({ scenarioId, scenarioData }: TaxTrapCheckerProps) {
   return <div>Tax Trap Checker</div>;
 }
-
-// Also export as default for existing imports in the codebase
-export default TaxTrapChecker;
