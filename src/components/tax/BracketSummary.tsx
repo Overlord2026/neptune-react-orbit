@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { getDistanceToNextBracket } from '@/utils/taxUtils';
 import { TaxResult } from '@/utils/taxCalculator';

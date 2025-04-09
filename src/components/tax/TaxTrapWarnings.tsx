@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { TaxTrapWarning } from '@/utils/taxTrapChecker';
+import { TaxTrapWarning } from '@/utils/taxTraps/types';
 import InfoTooltip from './InfoTooltip';
 import { AlertCircle, AlertTriangle, Info } from 'lucide-react';
 
