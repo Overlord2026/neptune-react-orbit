@@ -298,6 +298,21 @@ export const calculateTax = (
 };
 
 /**
+ * Calculate effective tax rate
+ * 
+ * This function calculates the effective tax rate based on taxable income and total tax
+ */
+export const calculateEffectiveRate = (
+  taxableIncome: number,
+  totalTax: number
+): number => {
+  // Avoid division by zero
+  if (taxableIncome <= 0) return 0;
+  
+  return totalTax / taxableIncome;
+};
+
+/**
  * Format currency for display
  */
 export const formatCurrency = (amount: number): string => {
