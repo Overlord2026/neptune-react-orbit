@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { FileText, FolderSearch, Banknote, HeartHandshake, BarChart2, Lock, Lightbulb, LineChart, BookOpen, ExternalLink, BookText } from "lucide-react";
+import { FileText, FolderSearch, Banknote, HeartHandshake, BarChart2, Lock, Lightbulb, LineChart, BookOpen, ExternalLink, BookText, Library } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -56,6 +56,12 @@ const TaxPlanningLandingPage = () => {
                     Advanced Tax Education (Paid Course)
                   </Link>
                 </Button>
+                <Button variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#1A1F2C]/50" asChild>
+                  <Link to="/tax-planning/recommended-reading">
+                    <Library className="mr-2 h-4 w-4" />
+                    Recommended Reading & Guides
+                  </Link>
+                </Button>
                 <Button variant="outline" className="border-[#FFD700] text-[#FFD700] hover:bg-[#1A1F2C]/50" asChild>
                   <Link to="/tax-planning/glossary">
                     <BookText className="mr-2 h-4 w-4" />
@@ -67,6 +73,10 @@ const TaxPlanningLandingPage = () => {
               <div>
                 <h3 className="text-lg font-medium text-[#E5DEFF] mb-2">Recommended Reading</h3>
                 <ul className="space-y-2 text-[#F1F0FB]">
+                  <li className="flex items-center">
+                    <FileText className="mr-2 h-4 w-4 text-[#9b87f5]" />
+                    <Link to="/tax-planning/recommended-reading" className="hover:underline">Browse All Guides & Books</Link>
+                  </li>
                   <li className="flex items-center">
                     <FileText className="mr-2 h-4 w-4 text-[#9b87f5]" />
                     <Link to="/tax-planning/guides/understanding-tax-brackets" className="hover:underline">Guide 1: Understanding Tax Brackets</Link>

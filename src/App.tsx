@@ -32,6 +32,7 @@ import AvoidingTaxTrapsPage from "./pages/AvoidingTaxTrapsPage";
 import BasicTaxEducationPage from "./pages/BasicTaxEducationPage";
 import AdvancedTaxEducationPage from "./pages/AdvancedTaxEducationPage";
 import TaxGlossaryPage from "./pages/TaxGlossaryPage";
+import RecommendedReadingPage from "./pages/RecommendedReadingPage";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="tax-planning" element={<TaxPlanningLandingPage />} />
             <Route path="tax-planning/basic-education" element={<BasicTaxEducationPage />} />
             <Route path="tax-planning/advanced-tax-education" element={<AdvancedTaxEducationPage />} />
+            <Route path="tax-planning/recommended-reading" element={<RecommendedReadingPage />} />
             <Route path="tax-planning/analyzer" element={<TaxReturnAnalyzerPage />} />
             <Route path="tax-planning/aggregator" element={<TaxDocumentAggregatorPage />} />
             <Route path="tax-planning/roth-conversion" element={<RothConversionAnalyzerPage />} />
