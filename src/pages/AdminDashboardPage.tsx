@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const AdminDashboardPage = () => {
   return (
@@ -21,22 +20,6 @@ const AdminDashboardPage = () => {
             Full System Diagnostics
           </Button>
         </div>
-      </div>
-      
-      <div>
-        <Card className="bg-[#1E1E1E] border-[#333333]">
-          <CardHeader>
-            <CardTitle className="text-[#FFD700] text-xl">Financial Reports</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[#A0A0A0] mb-4">
-              Generate comprehensive financial reports for various time periods and metrics.
-            </p>
-            <Button className="bg-[#FFD700] text-black hover:bg-[#E5C100]">
-              Generate Reports
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

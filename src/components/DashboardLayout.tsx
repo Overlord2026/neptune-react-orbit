@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { cn } from '../lib/utils';
@@ -103,7 +102,6 @@ const DashboardLayout = () => {
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  // Automatically open submenus based on current route
   useEffect(() => {
     const path = location.pathname;
     const newOpenMenus = { ...openMenus };
@@ -132,10 +130,8 @@ const DashboardLayout = () => {
     }));
   };
 
-  // Sidebar component for reuse
   const SidebarContent = () => (
     <nav className="px-4 py-6 space-y-6">
-      {/* Main Nav */}
       <div>
         <NavItem 
           icon={<Home size={18} />} 
@@ -144,7 +140,6 @@ const DashboardLayout = () => {
           isActive={location.pathname === '/'} 
         />
         
-        {/* Education & Solutions */}
         <NavItem 
           icon={<BookOpen size={18} />} 
           label="Education & Solutions" 
@@ -185,7 +180,6 @@ const DashboardLayout = () => {
           </div>
         )}
         
-        {/* Family Wealth */}
         <NavItem 
           icon={<Users size={18} />} 
           label="Family Wealth" 
@@ -221,10 +215,8 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex min-h-screen">
-      {/* Side Navigation - Desktop */}
       {!isMobile && (
         <aside className="fixed left-0 top-0 h-full w-64 bg-[#111111] border-r border-gray-800 shadow-xl z-20">
-          {/* Logo Area */}
           <div className="flex items-center justify-center h-16 border-b border-gray-800 px-4">
             <Link to="/" className="flex items-center space-x-2">
               <div className="h-8 w-8 rounded-full bg-neptune-600 flex items-center justify-center">
@@ -238,7 +230,6 @@ const DashboardLayout = () => {
         </aside>
       )}
       
-      {/* Side Navigation - Mobile */}
       {isMobile && (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-[#111111]">
@@ -262,9 +253,7 @@ const DashboardLayout = () => {
         </Sheet>
       )}
       
-      {/* Main Content Area */}
       <div className={`flex-1 ${!isMobile ? 'ml-64' : 'ml-0'}`}>
-        {/* Header */}
         <header className="sticky top-0 z-10 h-16 border-b border-gray-800 bg-[#111111] px-6 flex items-center justify-between">
           {isMobile && (
             <button 
@@ -295,7 +284,6 @@ const DashboardLayout = () => {
           </div>
         </header>
         
-        {/* Page Content */}
         <main className="p-4 sm:p-6 bg-[#111111] min-h-[calc(100vh-64px)]">
           <Outlet />
         </main>
