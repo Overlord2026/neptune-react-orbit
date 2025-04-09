@@ -50,9 +50,11 @@ const TaxPlanningLandingPage = () => {
                     Basic Tax Education
                   </Link>
                 </Button>
-                <Button variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#1A1F2C]/50">
-                  <BookText className="mr-2 h-4 w-4" />
-                  Advanced Tax Education (Paid Course)
+                <Button variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#1A1F2C]/50" asChild>
+                  <Link to="/tax-planning/advanced-tax-education">
+                    <BookText className="mr-2 h-4 w-4" />
+                    Advanced Tax Education (Paid Course)
+                  </Link>
                 </Button>
               </div>
 
