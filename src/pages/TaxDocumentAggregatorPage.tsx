@@ -4,11 +4,18 @@ import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { 
+  Dialog, 
+  DialogContent,
+  DialogDescription,
+  DialogHeader, 
+  DialogTitle
+} from "@/components/ui/dialog";
 import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle } from "lucide-react";
+import DocumentUploader from "@/components/tax/DocumentUploader";
 
 // Sample document data
 const documentsByYear = {
@@ -37,6 +44,9 @@ const missingDocuments = [
 const TaxDocumentAggregatorPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedYear, setSelectedYear] = useState<string>("2023");
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [showScanSheet, setShowScanSheet] = useState(false);
+  
   const years = Object.keys(documentsByYear).sort().reverse();
   
   // Filter documents based on search query
@@ -80,11 +90,17 @@ const TaxDocumentAggregatorPage = () => {
               <CardTitle className="text-lg text-primary">Actions</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
-              <Button className="w-full justify-start">
+              <Button 
+                className="w-full justify-start"
+                onClick={() => setShowUploadDialog(true)}
+              >
                 <Upload className="mr-2 h-4 w-4" />
                 Upload Documents
               </Button>
-              <Button className="w-full justify-start">
+              <Button 
+                className="w-full justify-start"
+                onClick={() => setShowScanSheet(true)}
+              >
                 <Scan className="mr-2 h-4 w-4" />
                 Scan Documents
               </Button>
@@ -232,6 +248,57 @@ const TaxDocumentAggregatorPage = () => {
           </Card>
         </div>
       </div>
+
+      {/* Upload Dialog */}
+      <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Upload Tax Documents</DialogTitle>
+            <DialogDescription>
+              Upload and classify your tax documents for secure storage and easy access
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[calc(80vh-200px)] overflow-y-auto pr-1">
+            <DocumentUploader />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Scan Documents Sheet */}
+      <Sheet open={showScanSheet} onOpenChange={setShowScanSheet}>
+        <SheetContent className="w-full md:w-[600px]">
+          <SheetHeader>
+            <SheetTitle>Scan Documents</SheetTitle>
+            <SheetDescription>
+              Use your device camera or connected scanner to digitize tax documents
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-6 space-y-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-md">
+                  <Scan className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2 text-center">Connect a Scanner or Use Camera</h3>
+                  <p className="text-sm text-muted-foreground text-center mb-4">
+                    Position your document in the scanner or in view of your camera
+                  </p>
+                  <Button>Start Scanning</Button>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col items-start border-t pt-4">
+                <div className="flex items-start gap-3 text-sm">
+                  <AlertTriangle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-muted-foreground">
+                      Once scanned, your document will be processed through the same classification system as uploaded files.
+                    </p>
+                  </div>
+                </div>
+              </CardFooter>
+            </Card>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
