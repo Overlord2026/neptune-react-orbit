@@ -20,9 +20,9 @@ interface TaxTrapCheckerProps {
   };
 }
 
-export const TaxTrapChecker: React.FC<TaxTrapCheckerProps> = () => {
+const TaxTrapChecker: React.FC<TaxTrapCheckerProps> = () => {
   return <div>Tax Trap Checker</div>;
 };
 
-// Also export as default for backward compatibility
+// Export as default since that's the correct pattern being used
 export default TaxTrapChecker;
