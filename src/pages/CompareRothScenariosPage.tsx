@@ -16,6 +16,14 @@ import ScenarioComparisonTable from '@/components/tax/ScenarioComparisonTable';
 import ScenarioComparisonChart from '@/components/tax/ScenarioComparisonChart';
 import ScenarioObservations from '@/components/tax/ScenarioObservations';
 import ScenarioActionButtons from '@/components/tax/ScenarioActionButtons';
+import TaxTrapChecker from '@/components/tax/TaxTrapChecker';
+import { 
+  Collapsible, 
+  CollapsibleContent, 
+  CollapsibleTrigger 
+} from "@/components/ui/collapsible";
+import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
 
 // Mock data for initial render (will be replaced with actual data)
 const initialScenarios: TaxResult[] = [
@@ -57,6 +65,9 @@ const initialScenarios: TaxResult[] = [
 const CompareRothScenariosPage: React.FC = () => {
   const [scenarios, setScenarios] = useState<TaxResult[]>(initialScenarios);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedScenario, setSelectedScenario] = useState<TaxResult | null>(null);
+  const [isCheckingTaxTraps, setIsCheckingTaxTraps] = useState(false);
+  const [isTrapCollapsibleOpen, setIsTrapCollapsibleOpen] = useState(false);
 
   useEffect(() => {
     // In a real implementation, this would fetch data from an API or database
@@ -66,6 +77,11 @@ const CompareRothScenariosPage: React.FC = () => {
         // Simulating API call
         setTimeout(() => {
           setScenarios(initialScenarios);
+          // Set the most recent scenario as selected by default
+          const mostRecent = [...initialScenarios].sort((a, b) => 
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+          )[0];
+          setSelectedScenario(mostRecent);
           setIsLoading(false);
         }, 500);
       } catch (error) {
@@ -76,6 +92,13 @@ const CompareRothScenariosPage: React.FC = () => {
 
     fetchScenarios();
   }, []);
+
+  const handleCheckTaxTraps = () => {
+    setIsCheckingTaxTraps(true);
+    setIsTrapCollapsibleOpen(true);
+    // After checking tax traps (would be async in real implementation)
+    setTimeout(() => setIsCheckingTaxTraps(false), 1000);
+  };
 
   // Prepare chart data
   const chartData = scenarios.map(scenario => ({
@@ -133,6 +156,50 @@ const CompareRothScenariosPage: React.FC = () => {
             </CardContent>
           </Card>
 
+          {selectedScenario && (
+            <Collapsible
+              open={isTrapCollapsibleOpen}
+              onOpenChange={setIsTrapCollapsibleOpen}
+              className="w-full"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-2">
+                  Potential Tax Traps and Surcharges
+                </h3>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="p-0 w-9 h-9">
+                    <ChevronDown className={`h-4 w-4 transition-transform ${isTrapCollapsibleOpen ? "transform rotate-180" : ""}`} />
+                    <span className="sr-only">Toggle tax trap details</span>
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+              
+              <CollapsibleContent className="mt-2">
+                <Card className="bg-amber-50/30 dark:bg-amber-900/10 border-amber-200 dark:border-amber-900/40">
+                  <CardContent className="pt-4">
+                    <TaxTrapChecker
+                      scenarioId={selectedScenario.scenario_name}
+                      scenarioData={{
+                        year: selectedScenario.year,
+                        filing_status: 'single', // This would come from actual data in real implementation
+                        agi: selectedScenario.agi,
+                        magi: selectedScenario.agi, // Simplified for now
+                        total_income: selectedScenario.total_income,
+                        taxable_income: selectedScenario.taxable_income,
+                        capital_gains_long: 2500, // Mock data
+                        capital_gains_short: 0, // Mock data
+                        social_security_amount: 0, // Mock data
+                        household_size: 1, // Mock data
+                        medicare_enrollment: true, // Mock data
+                        aca_enrollment: false, // Mock data
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="md:col-span-2 bg-card border-primary/20">
               <CardHeader>
@@ -159,7 +226,10 @@ const CompareRothScenariosPage: React.FC = () => {
             </Card>
           </div>
 
-          <ScenarioActionButtons />
+          <ScenarioActionButtons 
+            onCheckTaxTraps={handleCheckTaxTraps}
+            isTrapCheckLoading={isCheckingTaxTraps}
+          />
         </>
       )}
     </div>
