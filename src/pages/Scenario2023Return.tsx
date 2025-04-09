@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from '@/hooks/use-toast';
-import { TaxTrapChecker } from '@/components/tax/TaxTrapChecker';
+import TaxTrapChecker from '@/components/tax/TaxTrapChecker';
 import { TaxTrapWarning, checkTaxTraps, TaxTrapInput } from '@/utils/taxTrapChecker';
 import RothConversionSlider from '@/components/tax/RothConversionSlider';
 import { TaxInput, calculateTaxScenario, TaxResult } from '@/utils/taxCalculator';
+import { Shield } from 'lucide-react';
 
 const INITIAL_TAX_INPUT: TaxInput = {
   year: 2023,
