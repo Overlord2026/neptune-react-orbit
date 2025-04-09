@@ -41,14 +41,14 @@ const TaxPlanningLandingPage = () => {
       description: "Visualize and plan around tax brackets to minimize overall tax burden.",
       icon: <SquareAsterisk className="h-8 w-8 mb-4 neptune-gold" />,
       comingSoon: false,
-      path: "/tax-planning"
+      path: "/tax-planning/bracket-manager"
     },
     {
       title: "Tax Vault",
       description: "Securely store tax documents with encryption and organization features.",
       icon: <Shield className="h-8 w-8 mb-4 neptune-gold" />,
       comingSoon: false,
-      path: "/tax-planning"
+      path: "/tax-planning/tax-vault"
     },
     {
       title: "Advanced Tax Strategies",

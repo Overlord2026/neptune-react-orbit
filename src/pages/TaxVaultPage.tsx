@@ -1,0 +1,206 @@
+
+import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft, Upload, FileText, Shield, AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+interface Document {
+  id: string;
+  name: string;
+  uploadDate: Date;
+  type: string;
+  size: string;
+}
+
+const TaxVaultPage = () => {
+  const [documents, setDocuments] = useState<Document[]>([
+    // Placeholder documents
+    { 
+      id: '1', 
+      name: 'W-2_2024.pdf', 
+      uploadDate: new Date('2024-02-15'), 
+      type: 'PDF', 
+      size: '1.2 MB' 
+    },
+    { 
+      id: '2', 
+      name: 'Schedule_C_2023.pdf', 
+      uploadDate: new Date('2023-04-10'), 
+      type: 'PDF', 
+      size: '890 KB' 
+    },
+    { 
+      id: '3', 
+      name: '1099-MISC.jpg', 
+      uploadDate: new Date('2024-01-25'), 
+      type: 'Image', 
+      size: '750 KB' 
+    }
+  ]);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // Create new document entries from uploaded files
+    const newDocs: Document[] = Array.from(files).map(file => ({
+      id: Math.random().toString(36).substring(2, 9),
+      name: file.name,
+      uploadDate: new Date(),
+      type: file.type.split('/')[1].toUpperCase(),
+      size: formatFileSize(file.size)
+    }));
+
+    setDocuments([...newDocs, ...documents]);
+    
+    // Reset file input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    
+    toast({
+      title: "Files uploaded successfully",
+      description: `${files.length} document${files.length > 1 ? 's' : ''} added to your vault`,
+    });
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    else return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  };
+
+  const formatDate = (date: Date): string => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }).format(date);
+  };
+
+  const handleDeleteDocument = (id: string) => {
+    setDocuments(documents.filter(doc => doc.id !== id));
+    toast({
+      title: "Document removed",
+      description: "The document has been removed from your vault",
+    });
+  };
+
+  return (
+    <div className="space-y-6 pb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight neptune-gold">Tax Vault</h1>
+          <p className="text-muted-foreground">Securely store and organize your tax documents</p>
+        </div>
+        <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Tax Planning
+        </Link>
+      </div>
+
+      {/* Upload Area */}
+      <Card className="bg-card border-primary/20 hover:border-primary/40 transition-colors">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 neptune-gold">
+            <Upload className="h-5 w-5" />
+            Upload Documents
+          </CardTitle>
+          <CardDescription>
+            Add tax forms, receipts, or other important documents to your vault.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="border-2 border-dashed border-input rounded-lg p-6 flex flex-col items-center justify-center gap-4">
+            <Upload className="h-10 w-10 text-muted-foreground" />
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-2">
+                Drag and drop your files here, or click to browse
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Supports PDFs, images, and common document formats
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="file-upload" className="sr-only">Upload documents</Label>
+              <Input 
+                ref={fileInputRef}
+                id="file-upload" 
+                type="file" 
+                className="cursor-pointer" 
+                multiple 
+                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" 
+                onChange={handleFileUpload}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Security Notice */}
+      <div className="bg-card/50 border border-primary/10 rounded-lg p-4 flex items-start gap-3">
+        <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+        <div className="text-sm">
+          <p className="font-medium mb-1 text-primary">Security & Privacy</p>
+          <p className="text-muted-foreground">
+            Your documents are stored securely. Phase 2 will add robust encryption and permission logs.
+            We recommend not uploading sensitive personal information until enhanced security features are released.
+          </p>
+        </div>
+      </div>
+
+      {/* Document List */}
+      <div>
+        <h2 className="text-xl font-bold mb-4 neptune-gold">Your Documents ({documents.length})</h2>
+        
+        {documents.length > 0 ? (
+          <div className="grid gap-4">
+            {documents.map(doc => (
+              <Card key={doc.id} className="bg-card border-primary/10 transition-colors">
+                <div className="p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-8 w-8 text-primary" />
+                    <div>
+                      <p className="font-medium">{doc.name}</p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span>Uploaded: {formatDate(doc.uploadDate)}</span>
+                        <span>Type: {doc.type}</span>
+                        <span>Size: {doc.size}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm">
+                      <ArrowLeft className="h-4 w-4 rotate-180" />
+                      <span className="sr-only">Download</span>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => handleDeleteDocument(doc.id)}
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="sr-only">Delete</span>
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card className="bg-card border-primary/10 p-8 text-center">
+            <p className="text-muted-foreground">No documents uploaded yet.</p>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default TaxVaultPage;
