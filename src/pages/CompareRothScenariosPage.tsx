@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
 import { TaxResult } from '@/utils/taxCalculator';
+import InfoTooltip from '@/components/tax/InfoTooltip';
 
 // Mock data for initial render (will be replaced with actual data)
 const initialScenarios: TaxResult[] = [
@@ -198,13 +199,19 @@ const CompareRothScenariosPage = () => {
                       <TableCell className="text-center">{formatCurrency(scenarios[2].taxable_income)}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-medium">Marginal Rate</TableCell>
+                      <TableCell className="font-medium flex items-center">
+                        Marginal Rate
+                        <InfoTooltip text="The highest tax bracket your last dollar of income falls into." />
+                      </TableCell>
                       <TableCell className="text-center">{formatPercent(scenarios[0].marginal_rate)}</TableCell>
                       <TableCell className="text-center">{formatPercent(scenarios[1].marginal_rate)}</TableCell>
                       <TableCell className="text-center">{formatPercent(scenarios[2].marginal_rate)}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-medium">Effective Tax Rate</TableCell>
+                      <TableCell className="font-medium flex items-center">
+                        Effective Tax Rate
+                        <InfoTooltip text="Your overall average tax rate, calculated as Total Tax ÷ Total Income." />
+                      </TableCell>
                       <TableCell className="text-center">{formatPercent(scenarios[0].effective_rate)}</TableCell>
                       <TableCell className="text-center">{formatPercent(scenarios[1].effective_rate)}</TableCell>
                       <TableCell className="text-center">{formatPercent(scenarios[2].effective_rate)}</TableCell>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calculator, RefreshCw, Loader2 } from "lucide-react";
+import { ArrowLeft, Calculator, RefreshCw, Loader2, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import InfoTooltip from '@/components/tax/InfoTooltip';
 
 type FormValues = {
   iraBalance: number;
@@ -308,6 +309,17 @@ const RothConversionAnalyzerPage = () => {
                     but your future withdrawals will be tax-free and your investments will grow tax-free.
                     Consider consulting with a tax professional to determine if this conversion aligns with 
                     your long-term financial goals.
+                  </p>
+                </div>
+                <div className="p-4 rounded-md bg-yellow-900/20 border border-yellow-600/30 mt-4">
+                  <h3 className="font-semibold text-yellow-500 flex items-center mb-2">
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    IRMAA Consideration
+                    <InfoTooltip text="High income in a given year could increase your Medicare premiums two years later." />
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    Be aware that a large Roth conversion could potentially trigger Income-Related Monthly Adjustment Amount 
+                    (IRMAA) surcharges on your Medicare premiums if you're enrolled in Medicare.
                   </p>
                 </div>
               </div>

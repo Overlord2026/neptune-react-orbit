@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,6 +16,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FilingStatus, STANDARD_DEDUCTION } from '@/utils/taxCalculator';
+import InfoTooltip from '@/components/tax/InfoTooltip';
 
 // Define the form schema with zod
 const formSchema = z.object({
@@ -237,7 +237,10 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
                 name="rothConversion"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Roth Conversion ($)</FormLabel>
+                    <FormLabel className="flex items-center">
+                      Roth Conversion ($)
+                      <InfoTooltip text="A Roth conversion adds to your taxable income in the conversion year, but future growth can be tax-free." />
+                    </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Enter amount" 
@@ -255,7 +258,10 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
                 name="socialSecurity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Social Security Received ($)</FormLabel>
+                    <FormLabel className="flex items-center">
+                      Social Security Received ($)
+                      <InfoTooltip text="Depending on your total provisional income, up to 85% of Social Security can be taxable." />
+                    </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Enter amount" 

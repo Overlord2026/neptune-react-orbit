@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
+import InfoTooltip from '@/components/tax/InfoTooltip';
 
 type FormValues = {
   annualIncome: number;
@@ -111,7 +112,10 @@ const SocialSecurityCalculatorPage = () => {
                   name="ssiBenefits"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Annual Social Security Benefits</FormLabel>
+                      <FormLabel className="flex items-center">
+                        Annual Social Security Benefits
+                        <InfoTooltip text="Depending on your total provisional income, up to 85% of Social Security can be taxable." />
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-3">$</span>
