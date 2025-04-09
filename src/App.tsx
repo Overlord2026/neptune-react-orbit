@@ -12,6 +12,7 @@ import Team from "./pages/Team";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import neptuneLogo from './assets/images/logo.png';
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,17 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <div className="neptune-app min-h-screen w-full neptune-bg">
+        <header className="p-4 border-b border-gold flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img src={neptuneLogo} alt="Project Neptune Logo" className="h-10 w-10" />
+            <h1 className="text-2xl font-bold neptune-gold">Project Neptune</h1>
+          </div>
+        </header>
+        <main className="p-6 flex justify-center items-center">
+          <h2 className="text-3xl neptune-gold font-bold">Hello, Project Neptune!</h2>
+        </main>
+      </div>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
