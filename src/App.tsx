@@ -19,6 +19,7 @@ import RothConversionAnalyzerPage from "./pages/RothConversionAnalyzerPage";
 import SocialSecurityCalculatorPage from "./pages/SocialSecurityCalculatorPage";
 import DynamicBracketManagerPage from "./pages/DynamicBracketManagerPage";
 import TaxVaultPage from "./pages/TaxVaultPage";
+import AdvancedTaxStrategiesPage from "./pages/AdvancedTaxStrategiesPage";
 import StatCardDemo from "./pages/StatCardDemo";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import SystemHealthDashboardPage from "./pages/SystemHealthDashboardPage";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="tax-planning/social-security" element={<SocialSecurityCalculatorPage />} />
             <Route path="tax-planning/bracket-manager" element={<DynamicBracketManagerPage />} />
             <Route path="tax-planning/tax-vault" element={<TaxVaultPage />} />
+            <Route path="tax-planning/advanced-strategies" element={<AdvancedTaxStrategiesPage />} />
             <Route path="system-health" element={<SystemHealthDashboardPage />} />
             <Route path="system-diagnostics" element={<SystemDiagnosticsPage />} />
             <Route path="stat-card-demo" element={<StatCardDemo />} />

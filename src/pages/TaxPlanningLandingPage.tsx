@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calculator, FileText, CircleDollarSign, Shield, Book, SquareAsterisk } from "lucide-react";
+import { ArrowRight, Calculator, FileText, CircleDollarSign, Shield, Book, SquareAsterisk, Lightbulb } from "lucide-react";
 import FinancialDashboard from "@/components/tax/FinancialDashboard";
 
 const TaxPlanningLandingPage = () => {
@@ -53,9 +53,9 @@ const TaxPlanningLandingPage = () => {
     {
       title: "Advanced Tax Strategies",
       description: "Access sophisticated tax planning strategies tailored to your financial situation.",
-      icon: <FileText className="h-8 w-8 mb-4 neptune-gold" />,
+      icon: <Lightbulb className="h-8 w-8 mb-4 neptune-gold" />,
       comingSoon: false,
-      path: "/tax-planning"
+      path: "/tax-planning/advanced-strategies"
     }
   ];
 

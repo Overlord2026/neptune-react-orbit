@@ -1,140 +1,105 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Slider } from "@/components/ui/slider";
+import { ArrowLeft, DollarSign } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
-// Define tax brackets - these would typically come from a data source
+// Define tax brackets (simple U.S. federal brackets for 2023, single filer)
+// These are simplified for demonstration purposes
 interface TaxBracket {
   rate: number;
-  single: {
-    min: number;
-    max: number | null;
-  };
-  married: {
-    min: number;
-    max: number | null;
-  };
+  min: number;
+  max: number | null;
   label: string;
 }
 
-const taxBrackets: TaxBracket[] = [
-  {
-    rate: 10,
-    single: { min: 0, max: 11000 },
-    married: { min: 0, max: 22000 },
-    label: '10%',
-  },
-  {
-    rate: 12,
-    single: { min: 11001, max: 44725 },
-    married: { min: 22001, max: 89450 },
-    label: '12%',
-  },
-  {
-    rate: 22,
-    single: { min: 44726, max: 95375 },
-    married: { min: 89451, max: 190750 },
-    label: '22%',
-  },
-  {
-    rate: 24,
-    single: { min: 95376, max: 182100 },
-    married: { min: 190751, max: 364200 },
-    label: '24%',
-  },
-  {
-    rate: 32,
-    single: { min: 182101, max: 231250 },
-    married: { min: 364201, max: 462500 },
-    label: '32%',
-  },
-  {
-    rate: 35,
-    single: { min: 231251, max: 578125 },
-    married: { min: 462501, max: 693750 },
-    label: '35%',
-  },
-  {
-    rate: 37,
-    single: { min: 578126, max: null },
-    married: { min: 693751, max: null },
-    label: '37%',
-  },
+const TAX_BRACKETS: TaxBracket[] = [
+  { rate: 10, min: 0, max: 11000, label: '10%' },
+  { rate: 12, min: 11000, max: 44725, label: '12%' },
+  { rate: 22, min: 44725, max: 95375, label: '22%' },
+  { rate: 24, min: 95375, max: 182100, label: '24%' },
+  { rate: 32, min: 182100, max: 231250, label: '32%' },
+  { rate: 35, min: 231250, max: 578125, label: '35%' },
+  { rate: 37, min: 578125, max: null, label: '37%' },
 ];
+
+const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0
+  }).format(value);
+};
 
 const DynamicBracketManagerPage = () => {
   const [income, setIncome] = useState<number>(75000);
-  const [filingStatus, setFilingStatus] = useState<'single' | 'married'>('single');
-  const [currentBracket, setCurrentBracket] = useState<TaxBracket | null>(null);
-  const [nextBracket, setNextBracket] = useState<TaxBracket | null>(null);
   
-  // Prepare data for the chart
-  const chartData = taxBrackets.map(bracket => {
-    const bracketRange = filingStatus === 'single' ? bracket.single : bracket.married;
-    const max = bracketRange.max || (filingStatus === 'single' ? 600000 : 750000); // Cap for visualization
-    
-    return {
-      name: bracket.label,
-      range: max - bracketRange.min,
-      min: bracketRange.min,
-      max: max,
-      rate: bracket.rate
-    };
-  });
+  // Determine which tax bracket the income falls into
+  const currentBracket = useMemo(() => {
+    return TAX_BRACKETS.find(bracket => 
+      income >= bracket.min && (bracket.max === null || income < bracket.max)
+    ) || TAX_BRACKETS[0];
+  }, [income]);
   
-  // Update brackets when income or filing status changes
-  useEffect(() => {
-    const getCurrentBracket = () => {
-      return taxBrackets.find(bracket => {
-        const range = filingStatus === 'single' ? bracket.single : bracket.married;
-        return income >= range.min && (range.max === null || income <= range.max);
-      }) || null;
-    };
-    
-    const getNextBracket = (current: TaxBracket | null) => {
-      if (!current) return null;
+  // Find the next bracket (if there is one)
+  const nextBracket = useMemo(() => {
+    const currentIndex = TAX_BRACKETS.indexOf(currentBracket);
+    return currentIndex < TAX_BRACKETS.length - 1 ? TAX_BRACKETS[currentIndex + 1] : null;
+  }, [currentBracket]);
+  
+  // Calculate amount to next bracket
+  const amountToNextBracket = useMemo(() => {
+    if (nextBracket) {
+      return nextBracket.min - income;
+    }
+    return 0;
+  }, [income, nextBracket]);
+  
+  // Generate data for chart visualization
+  const chartData = useMemo(() => {
+    return TAX_BRACKETS.map(bracket => {
+      const width = bracket.max ? bracket.max - bracket.min : 250000;
+      const isCurrentBracket = bracket === currentBracket;
       
-      const currentIndex = taxBrackets.findIndex(bracket => bracket.rate === current.rate);
-      return currentIndex < taxBrackets.length - 1 ? taxBrackets[currentIndex + 1] : null;
-    };
-    
-    const current = getCurrentBracket();
-    setCurrentBracket(current);
-    setNextBracket(getNextBracket(current));
-  }, [income, filingStatus]);
-
-  // Format currency for display
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(value);
+      return {
+        name: bracket.label,
+        value: width,
+        rate: bracket.rate,
+        isCurrentBracket,
+        min: bracket.min,
+        max: bracket.max
+      };
+    });
+  }, [currentBracket]);
+  
+  // Generate advice based on income and bracket
+  const getTaxAdvice = () => {
+    if (nextBracket) {
+      const distanceToNext = nextBracket.min - income;
+      const percentToNext = ((income - currentBracket.min) / (nextBracket.min - currentBracket.min)) * 100;
+      
+      if (percentToNext > 80) {
+        return `You're very close to moving into the next bracket (${nextBracket.label}). Consider deferring ${formatCurrency(distanceToNext)} of income to next year or increasing retirement contributions.`;
+      } else if (percentToNext > 40) {
+        return `You're in the middle of your current bracket. You have ${formatCurrency(distanceToNext)} before reaching the ${nextBracket.label} bracket.`;
+      } else {
+        return `You're still in the lower portion of your current bracket with ${formatCurrency(distanceToNext)} before reaching the ${nextBracket.label} bracket.`;
+      }
+    } else {
+      return "You're in the highest tax bracket. Consider tax-loss harvesting or increased charitable giving.";
+    }
   };
   
-  // Handle income slider change
   const handleIncomeChange = (value: number[]) => {
     setIncome(value[0]);
   };
-  
-  // Get recommendation based on current bracket and income
-  const getRecommendation = () => {
-    if (!currentBracket || !nextBracket) {
-      return "Consider consulting with a tax professional for personalized advice.";
-    }
-    
-    const nextBracketMin = filingStatus === 'single' ? nextBracket.single.min : nextBracket.married.min;
-    const distanceToNextBracket = nextBracketMin - income;
-    
-    if (distanceToNextBracket <= 10000) {
-      return `You're ${formatCurrency(distanceToNextBracket)} away from entering the ${nextBracket.label} bracket. Consider strategic tax planning to stay within your current bracket.`;
-    } else {
-      return `You have room for ${formatCurrency(distanceToNextBracket)} more income before entering the next tax bracket.`;
-    }
+
+  // Custom styles for the chart
+  const getBarFill = (data: any) => {
+    return data.isCurrentBracket ? "#FFD700" : "#0ea5e9";
   };
 
   return (
@@ -142,128 +107,107 @@ const DynamicBracketManagerPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight neptune-gold">Dynamic Bracket Manager</h1>
-          <p className="text-muted-foreground">
-            Visualize tax brackets and plan your income strategy
-          </p>
+          <p className="text-muted-foreground">Visualize your tax situation and optimize around bracket thresholds.</p>
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
           <ArrowLeft className="h-4 w-4" />
-          Back to Tax Planning
+          Back to Tax Planning Hub
         </Link>
       </div>
-
-      {/* Income Input Card */}
-      <Card className="bg-card border-primary/20">
-        <CardHeader>
-          <CardTitle className="neptune-gold">Set Your Income</CardTitle>
-          <CardDescription>Adjust the slider to see how income affects your tax bracket</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <span className="text-2xl font-bold text-primary">{formatCurrency(income)}</span>
-            <div className="h-12">
-              <Slider
-                defaultValue={[income]}
-                max={500000}
-                step={1000}
-                className="mt-6"
-                onValueChange={handleIncomeChange}
-              />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="bg-card border-primary/20 lg:col-span-3">
+          <CardHeader>
+            <CardTitle className="text-xl neptune-gold flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              Income Simulator
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-8">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Adjust your income:</span>
+                <span className="text-xl font-medium neptune-gold">{formatCurrency(income)}</span>
+              </div>
+              <div className="px-1">
+                <Slider 
+                  value={[income]} 
+                  min={0} 
+                  max={600000} 
+                  step={1000}
+                  onValueChange={handleIncomeChange}
+                  className="[&>.bg-primary]:bg-[#FFD700]"
+                />
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>$0</span>
+                <span>$600,000</span>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex gap-4 pt-4">
-            <Button 
-              variant={filingStatus === 'single' ? 'default' : 'outline'}
-              className="flex-1"
-              onClick={() => setFilingStatus('single')}
-            >
-              Single
-            </Button>
-            <Button 
-              variant={filingStatus === 'married' ? 'default' : 'outline'}
-              className="flex-1"
-              onClick={() => setFilingStatus('married')}
-            >
-              Married Filing Jointly
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Tax Bracket Info */}
-      <Card className="bg-card border-primary/20">
-        <CardHeader>
-          <CardTitle className="neptune-gold">Your Tax Bracket</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {currentBracket ? (
-            <>
-              <div className="p-4 bg-primary/5 rounded-md border border-primary/20">
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  {currentBracket.rate}% Tax Bracket
-                </h3>
-                <p className="text-muted-foreground">
-                  Income Range: {formatCurrency(filingStatus === 'single' ? currentBracket.single.min : currentBracket.married.min)} 
-                  {' - '} 
-                  {(filingStatus === 'single' ? currentBracket.single.max : currentBracket.married.max) 
-                    ? formatCurrency(filingStatus === 'single' ? currentBracket.single.max! : currentBracket.married.max!)
-                    : 'and above'}
-                </p>
+            
+            <div className="bg-primary/10 p-4 rounded-md border border-primary/20">
+              <h3 className="text-lg font-medium neptune-gold mb-2">Tax Bracket Analysis</h3>
+              <p className="text-white mb-4">
+                At {formatCurrency(income)} of income, you're in the <span className="text-primary font-medium">{currentBracket.label}</span> tax bracket.
+              </p>
+              <p className="text-muted-foreground text-sm">{getTaxAdvice()}</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-card border-primary/20 lg:col-span-3">
+          <CardHeader>
+            <CardTitle className="text-xl neptune-gold">Tax Bracket Visualization</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 50, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                  <XAxis type="number" tickFormatter={formatCurrency} />
+                  <YAxis 
+                    dataKey="name" 
+                    type="category" 
+                    tick={{ fill: '#A0A0A0' }} 
+                    width={40} 
+                  />
+                  <Tooltip 
+                    formatter={(value, name, props) => [
+                      `Range: ${formatCurrency(props.payload.min)} - ${props.payload.max ? formatCurrency(props.payload.max) : 'No limit'}`,
+                      `Tax Rate: ${props.payload.rate}%`
+                    ]}
+                    contentStyle={{ backgroundColor: '#222', border: '1px solid #444' }}
+                    itemStyle={{ color: '#FFD700' }}
+                    labelStyle={{ fontWeight: 'bold', color: '#FFF' }}
+                  />
+                  <Bar 
+                    dataKey="value" 
+                    fill={getBarFill}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.isCurrentBracket ? "#FFD700" : "#0ea5e9"} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-4 flex items-center gap-4 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-[#FFD700] rounded-sm"></div>
+                <span className="text-muted-foreground">Current Bracket</span>
               </div>
-              
-              <div className="mt-4">
-                <h4 className="font-semibold text-lg mb-2">Recommendation</h4>
-                <p>{getRecommendation()}</p>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-[#0ea5e9] rounded-sm"></div>
+                <span className="text-muted-foreground">Other Brackets</span>
               </div>
-            </>
-          ) : (
-            <p>Please select an income level to see your tax bracket.</p>
-          )}
-        </CardContent>
-      </Card>
-      
-      {/* Tax Bracket Visualization */}
-      <Card className="bg-card border-primary/20">
-        <CardHeader>
-          <CardTitle className="neptune-gold">Tax Bracket Visualization</CardTitle>
-          <CardDescription>See where your income falls within federal tax brackets</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={chartData}
-                layout="vertical"
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" tickFormatter={(value) => formatCurrency(value)} />
-                <YAxis dataKey="name" type="category" />
-                <Tooltip
-                  formatter={(value: any, name: string) => [
-                    name === 'range' ? formatCurrency(value) : value,
-                    name === 'range' ? 'Bracket Range' : name
-                  ]}
-                  labelFormatter={(label) => `${label} Tax Bracket`}
-                />
-                <Legend />
-                <Bar 
-                  dataKey="range" 
-                  name="Income Range" 
-                  fill={(data: any) => {
-                    // Use gold color for the current bracket
-                    const isCurrentBracket = 
-                      currentBracket && 
-                      data.rate === currentBracket.rate;
-                    return isCurrentBracket ? "#FFD700" : "#0ea5e9";
-                  }}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
