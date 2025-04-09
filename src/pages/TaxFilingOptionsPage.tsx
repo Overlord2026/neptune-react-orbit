@@ -82,8 +82,8 @@ const TaxFilingOptionsPage = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full border-[#FFD700] text-[#FFD700] hover:bg-[#222]">
-                Find a Tax Professional
+              <Button variant="outline" className="w-full border-[#FFD700] text-[#FFD700] hover:bg-[#222]" asChild>
+                <Link to="/tax-planning/professional-assistance">Find a Tax Professional</Link>
               </Button>
             </CardFooter>
           </Card>
