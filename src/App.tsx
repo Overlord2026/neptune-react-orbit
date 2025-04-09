@@ -20,6 +20,7 @@ import SocialSecurityCalculatorPage from "./pages/SocialSecurityCalculatorPage";
 import StatCardDemo from "./pages/StatCardDemo";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import SystemHealthDashboardPage from "./pages/SystemHealthDashboardPage";
+import SystemDiagnosticsPage from "./pages/SystemDiagnosticsPage";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="tax-planning/roth-conversion" element={<RothConversionAnalyzerPage />} />
             <Route path="tax-planning/social-security" element={<SocialSecurityCalculatorPage />} />
             <Route path="system-health" element={<SystemHealthDashboardPage />} />
+            <Route path="system-diagnostics" element={<SystemDiagnosticsPage />} />
             <Route path="stat-card-demo" element={<StatCardDemo />} />
             <Route path="*" element={<NotFound />} />
           </Route>
