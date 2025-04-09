@@ -20,9 +20,10 @@ interface TaxTrapCheckerProps {
   };
 }
 
-const TaxTrapChecker: React.FC<TaxTrapCheckerProps> = () => {
+// Export as a named function for named imports
+export function TaxTrapChecker({ scenarioId, scenarioData }: TaxTrapCheckerProps) {
   return <div>Tax Trap Checker</div>;
-};
+}
 
-// Export as default since that's the correct pattern being used
+// Also export as default for existing imports in the codebase
 export default TaxTrapChecker;
