@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, LineChart, TrendingUp } from "lucide-react";
+import { ArrowLeft, FileText, LineChart, TrendingUp, BarChart } from "lucide-react";
 import { calculateTaxScenario, TaxInput } from '@/utils/taxCalculator';
 
 const RothConversionAnalysisPage = () => {
@@ -124,6 +124,15 @@ const RothConversionAnalysisPage = () => {
             </Button>
           </CardFooter>
         </Card>
+      </div>
+
+      <div className="mt-4 flex justify-center">
+        <Link to="/tax-planning/roth-analysis/compare">
+          <Button className="bg-primary hover:bg-primary/90 flex gap-2 items-center">
+            <BarChart className="h-4 w-4" />
+            Compare All Scenarios
+          </Button>
+        </Link>
       </div>
 
       <div className="mt-8 p-4 bg-primary/5 border border-primary/20 rounded-md">
