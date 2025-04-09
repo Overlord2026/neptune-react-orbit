@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, BookOpen, ExternalLink } from 'lucide-react';
 import { 
@@ -9,7 +9,9 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GlossaryTerm from '@/components/GlossaryTerm';
+import DynamicContentText from '@/components/DynamicContentText';
 import { 
   Table,
   TableBody,
@@ -25,12 +27,24 @@ import {
 } from '@/utils/taxBracketData';
 
 const BasicTaxEducationPage = () => {
-  const currentYear = 2023; // Hardcoded for now, could be dynamic in the future
+  const [selectedYear, setSelectedYear] = useState<number>(2023); // Default year
+  const [selectedFilingStatus, setSelectedFilingStatus] = useState<'single' | 'married' | 'head_of_household'>('single');
   
   // Get example brackets for comparison
-  const singleBrackets = getBrackets(currentYear, "single", "ordinary");
-  const marriedBrackets = getBrackets(currentYear, "married", "ordinary");
-  const hohBrackets = getBrackets(currentYear, "head_of_household", "ordinary");
+  const singleBrackets = getBrackets(selectedYear, "single", "ordinary");
+  const marriedBrackets = getBrackets(selectedYear, "married", "ordinary");
+  const hohBrackets = getBrackets(selectedYear, "head_of_household", "ordinary");
+  
+  // Get available years from tax data
+  const availableYears = Object.keys(STANDARD_DEDUCTION_BY_YEAR)
+    .map(Number)
+    .sort((a, b) => b - a); // Sort in descending order
+
+  const contentOptions = {
+    year: selectedYear,
+    filingStatus: selectedFilingStatus,
+    format: 'currency'
+  };
   
   return (
     <div className="container content-padding section-margin">
@@ -45,6 +59,49 @@ const BasicTaxEducationPage = () => {
           </p>
         </div>
       </div>
+      
+      {/* Year and Filing Status Selectors */}
+      <div className="flex flex-col md:flex-row gap-4 my-6 p-4 border border-gray-200 dark:border-gray-800 rounded-lg bg-card">
+        <div className="space-y-2">
+          <label htmlFor="year-select" className="text-sm font-medium">Tax Year</label>
+          <Select 
+            value={selectedYear.toString()} 
+            onValueChange={(value) => setSelectedYear(Number(value))}
+          >
+            <SelectTrigger id="year-select" className="w-[180px]">
+              <SelectValue placeholder="Select year" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableYears.map(year => (
+                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="space-y-2">
+          <label htmlFor="filing-status-select" className="text-sm font-medium">Filing Status</label>
+          <Select 
+            value={selectedFilingStatus} 
+            onValueChange={(value) => setSelectedFilingStatus(value as 'single' | 'married' | 'head_of_household')}
+          >
+            <SelectTrigger id="filing-status-select" className="w-[180px]">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="single">Single</SelectItem>
+              <SelectItem value="married">Married Filing Jointly</SelectItem>
+              <SelectItem value="head_of_household">Head of Household</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="flex items-end ml-auto">
+          <p className="text-xs text-muted-foreground">
+            Data last updated: <DynamicContentText as="span">{{tax_data_last_update}}</DynamicContentText>
+          </p>
+        </div>
+      </div>
 
       <div className="grid gap-6 py-6">
         {/* Tax Brackets Section */}
@@ -54,12 +111,13 @@ const BasicTaxEducationPage = () => {
           </CardHeader>
           <CardContent className="pt-6">
             <div className="space-y-4">
-              <p>
+              <DynamicContentText options={contentOptions}>
                 The U.S. uses a <strong>progressive tax system</strong> where different portions of your income are taxed at increasing rates. This system is organized into <GlossaryTerm termId="tax_bracket">tax brackets</GlossaryTerm>, which are income ranges that are taxed at specific rates.
-              </p>
-              <p>
-                For example, in 2023, a single filer might pay 10% on the first $11,000 of income, 12% on income from $11,001 to $44,725, and so on. This means not all of your income is taxed at your highest bracket rate.
-              </p>
+              </DynamicContentText>
+              
+              <DynamicContentText options={contentOptions}>
+                For example, in {{selectedYear}}, a single filer might pay 10% on the first $11,000 of income, 12% on income from $11,001 to $44,725, and so on. This means not all of your income is taxed at your highest bracket rate.
+              </DynamicContentText>
 
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="bracket-example">
@@ -68,7 +126,9 @@ const BasicTaxEducationPage = () => {
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="p-4 bg-[#1A1F2C] rounded-md">
-                      <p className="mb-2">For a single filer with $60,000 taxable income in 2023:</p>
+                      <DynamicContentText options={contentOptions}>
+                        For a {{selectedFilingStatus}} filer with $60,000 taxable income in {{selectedYear}}:
+                      </DynamicContentText>
                       <ul className="list-disc list-inside space-y-1">
                         <li>Pay 10% on first $11,000 = $1,100</li>
                         <li>Pay 12% on next $33,725 (from $11,001 to $44,725) = $4,047</li>
@@ -102,7 +162,13 @@ const BasicTaxEducationPage = () => {
                     <li>Unmarried individuals</li>
                     <li>Legally separated under state law</li>
                     <li>Divorced as of December 31</li>
-                    <li>Standard Deduction: {formatCurrency(STANDARD_DEDUCTION_BY_YEAR[currentYear].single)}</li>
+                    <li>
+                      Standard Deduction: <DynamicContentText 
+                        options={{...contentOptions, filingStatus: 'single'}}
+                      >
+                        {{current_standard_deduction}}
+                      </DynamicContentText>
+                    </li>
                   </ul>
                 </div>
                 
@@ -112,7 +178,13 @@ const BasicTaxEducationPage = () => {
                     <li>Married couples combining income</li>
                     <li>Widows/widowers in certain cases</li>
                     <li>Generally most tax-advantageous</li>
-                    <li>Standard Deduction: {formatCurrency(STANDARD_DEDUCTION_BY_YEAR[currentYear].married)}</li>
+                    <li>
+                      Standard Deduction: <DynamicContentText 
+                        options={{...contentOptions, filingStatus: 'married'}}
+                      >
+                        {{current_standard_deduction}}
+                      </DynamicContentText>
+                    </li>
                   </ul>
                 </div>
                 
@@ -122,12 +194,18 @@ const BasicTaxEducationPage = () => {
                     <li>Unmarried with qualifying dependents</li>
                     <li>Pays more than half of household costs</li>
                     <li>Better rates than Single status</li>
-                    <li>Standard Deduction: {formatCurrency(STANDARD_DEDUCTION_BY_YEAR[currentYear].head_of_household)}</li>
+                    <li>
+                      Standard Deduction: <DynamicContentText 
+                        options={{...contentOptions, filingStatus: 'head_of_household'}}
+                      >
+                        {{current_standard_deduction}}
+                      </DynamicContentText>
+                    </li>
                   </ul>
                 </div>
               </div>
               
-              <h4 className="font-medium mt-6">Bracket Threshold Comparison ({currentYear})</h4>
+              <h4 className="font-medium mt-6">Bracket Threshold Comparison ({selectedYear})</h4>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -346,12 +424,17 @@ const BasicTaxEducationPage = () => {
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="capital-gains-rates">
                   <AccordionTrigger className="text-[#9b87f5]">
-                    Long-Term Capital Gains Rates (2023)
+                    Long-Term Capital Gains Rates ({selectedYear})
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="p-4 bg-[#1A1F2C] rounded-md">
                       <ul className="list-disc list-inside">
-                        <li><strong>0% rate:</strong> Income up to $44,625 (single) or $89,250 (married filing jointly)</li>
+                        <li><strong>0% rate:</strong> Income up to <DynamicContentText 
+                            options={{...contentOptions, filingStatus: 'single'}}
+                          >{{capital_gains_0_rate_max}}</DynamicContentText> (single) or <DynamicContentText 
+                            options={{...contentOptions, filingStatus: 'married'}}
+                          >{{capital_gains_0_rate_max}}</DynamicContentText> (married filing jointly)
+                        </li>
                         <li><strong>15% rate:</strong> Income from $44,626 to $492,300 (single) or $89,251 to $553,850 (married filing jointly)</li>
                         <li><strong>20% rate:</strong> Income above $492,300 (single) or $553,850 (married filing jointly)</li>
                       </ul>
@@ -402,6 +485,17 @@ const BasicTaxEducationPage = () => {
                           <li>You want to leave tax-free assets to heirs</li>
                         </ul>
                       </div>
+                    </div>
+                    <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-md">
+                      <h4 className="font-semibold mb-2">Current Contribution Limits ({selectedYear}):</h4>
+                      <ul className="list-disc list-inside">
+                        <li>
+                          IRA Contribution Limit: <DynamicContentText options={contentOptions}>{{IRA_limit}}</DynamicContentText>
+                        </li>
+                        <li>
+                          401(k) Contribution Limit: <DynamicContentText options={contentOptions}>{{401k_limit}}</DynamicContentText>
+                        </li>
+                      </ul>
                     </div>
                   </AccordionContent>
                 </AccordionItem>

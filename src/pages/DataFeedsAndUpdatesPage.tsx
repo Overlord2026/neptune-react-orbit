@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -17,6 +16,7 @@ import {
 } from '@/utils/dataFeedUtils';
 import { fetchTaxCodeUpdates, scheduleUpdateChecks } from '@/utils/fetchTaxCodeUpdates';
 import TaxDisclaimerWithCheckbox from '@/components/tax/TaxDisclaimerWithCheckbox';
+import PlaceholdersReferenceSection from '@/components/admin/PlaceholdersReferenceSection';
 
 const DataFeedsAndUpdatesPage = () => {
   const [dataFeeds, setDataFeeds] = useState<DataFeed[]>([]);
@@ -25,11 +25,9 @@ const DataFeedsAndUpdatesPage = () => {
   const [isRefreshing, setIsRefreshing] = useState<{[key: string]: boolean}>({});
   const { toast } = useToast();
 
-  // Load data feeds on component mount
   useEffect(() => {
     setDataFeeds(getAllDataFeeds());
     
-    // Initialize scheduled update checks
     scheduleUpdateChecks();
     
     // This effect should run only once
@@ -37,11 +35,9 @@ const DataFeedsAndUpdatesPage = () => {
   }, []);
   
   const handleRefresh = async (id: string) => {
-    // Set the refreshing state for this feed
     setIsRefreshing(prev => ({ ...prev, [id]: true }));
     
     try {
-      // Call the fetchTaxCodeUpdates function
       const success = await fetchTaxCodeUpdates(id, true);
       
       if (success) {
@@ -58,7 +54,6 @@ const DataFeedsAndUpdatesPage = () => {
         });
       }
       
-      // Refresh the data feeds list
       setDataFeeds(getAllDataFeeds());
     } catch (error) {
       console.error("Error refreshing data feed:", error);
@@ -68,7 +63,6 @@ const DataFeedsAndUpdatesPage = () => {
         variant: "destructive",
       });
     } finally {
-      // Clear the refreshing state for this feed
       setIsRefreshing(prev => ({ ...prev, [id]: false }));
     }
   };
@@ -81,7 +75,6 @@ const DataFeedsAndUpdatesPage = () => {
           : feed
       );
       
-      // Update the shared data feeds store
       setAllDataFeeds(updatedFeeds);
       
       return updatedFeeds;
@@ -96,7 +89,6 @@ const DataFeedsAndUpdatesPage = () => {
           : feed
       );
       
-      // Update the shared data feeds store
       setAllDataFeeds(updatedFeeds);
       
       return updatedFeeds;
@@ -107,7 +99,6 @@ const DataFeedsAndUpdatesPage = () => {
     ? dataFeeds 
     : dataFeeds.filter(feed => feed.status === activeTab);
 
-  // Format date to be more readable
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -119,7 +110,6 @@ const DataFeedsAndUpdatesPage = () => {
     }).format(date);
   };
 
-  // Get status badge color and icon
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -139,7 +129,6 @@ const DataFeedsAndUpdatesPage = () => {
       description: "This may take a few moments...",
     });
     
-    // Create a copy of the refreshing state with all feeds set to true
     const refreshingState = dataFeeds.reduce((acc, feed) => {
       acc[feed.id] = true;
       return acc;
@@ -148,7 +137,6 @@ const DataFeedsAndUpdatesPage = () => {
     setIsRefreshing(refreshingState);
     
     try {
-      // Verify each feed one by one
       const results = await Promise.all(
         dataFeeds.map(feed => fetchTaxCodeUpdates(feed.id, true))
       );
@@ -169,7 +157,6 @@ const DataFeedsAndUpdatesPage = () => {
         });
       }
       
-      // Refresh the data feeds list
       setDataFeeds(getAllDataFeeds());
     } catch (error) {
       console.error("Error verifying connections:", error);
@@ -179,7 +166,6 @@ const DataFeedsAndUpdatesPage = () => {
         variant: "destructive",
       });
     } finally {
-      // Clear all refreshing states
       setIsRefreshing({});
     }
   };
@@ -194,7 +180,6 @@ const DataFeedsAndUpdatesPage = () => {
       return;
     }
     
-    // In a real app, this would save the settings to a database
     toast({
       title: "Settings saved",
       description: "All data feed settings have been saved successfully.",
@@ -368,6 +353,8 @@ const DataFeedsAndUpdatesPage = () => {
         }
         checkboxLabel="I understand my responsibility to verify imported tax data before using it for calculations or recommendations."
       />
+
+      <PlaceholdersReferenceSection />
 
       <div className="flex justify-end mt-6">
         <Button 

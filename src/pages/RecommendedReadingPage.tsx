@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { readingResources, getAllCategories, ReadingResource } from '@/data/recommendedReading';
 import { ExternalLink, BookOpen, FileText, Star, ArrowLeft } from 'lucide-react';
 import GlossaryTerm from '@/components/GlossaryTerm';
+import DynamicContentText from '@/components/DynamicContentText';
 
 const categoryTitles: Record<ReadingResource['category'], string> = {
   'retirement': 'Retirement Planning',
@@ -77,7 +78,11 @@ const ResourceCard = ({ resource }: { resource: ReadingResource }) => {
           </div>
           {renderRating()}
         </div>
-        <CardTitle className="text-xl text-white">{resource.title}</CardTitle>
+        <CardTitle className="text-xl text-white">
+          <DynamicContentText>
+            {resource.title}
+          </DynamicContentText>
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow">
         <div className="flex flex-col md:flex-row gap-4">
@@ -95,7 +100,9 @@ const ResourceCard = ({ resource }: { resource: ReadingResource }) => {
             </div>
           </div>
           <div className="w-full md:w-2/3">
-            <p className="text-[#E5DEFF] mb-4">{resource.description}</p>
+            <DynamicContentText className="text-[#E5DEFF] mb-4">
+              {resource.description}
+            </DynamicContentText>
             {renderTestimonials()}
           </div>
         </div>
@@ -124,6 +131,7 @@ const ResourceCard = ({ resource }: { resource: ReadingResource }) => {
 
 const RecommendedReadingPage = () => {
   const categories = getAllCategories();
+  const currentYear = new Date().getFullYear();
 
   return (
     <div className="container content-padding section-margin">
@@ -132,6 +140,11 @@ const RecommendedReadingPage = () => {
           <h2 className="text-3xl font-bold tracking-tight neptune-gold">Recommended Reading & Guides</h2>
           <p className="text-muted-foreground">
             Explore our curated collection of tax and financial planning resources
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-right text-muted-foreground">
+            Data last updated: <DynamicContentText>{{tax_data_last_update}}</DynamicContentText>
           </p>
         </div>
       </div>
@@ -151,6 +164,38 @@ const RecommendedReadingPage = () => {
           </section>
         ))}
       </div>
+      
+      <Card className="mt-8 bg-[#1A1F2C] border border-[#8E9196]">
+        <CardHeader>
+          <CardTitle>Current Retirement Account Limits ({currentYear})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-md">
+              <h4 className="font-semibold mb-2">Contribution Limits</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>
+                  Traditional/Roth IRA: <DynamicContentText options={{ year: currentYear }}>{{IRA_limit}}</DynamicContentText>
+                </li>
+                <li>
+                  401(k)/403(b): <DynamicContentText options={{ year: currentYear }}>{{401k_limit}}</DynamicContentText>
+                </li>
+              </ul>
+            </div>
+            <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-md">
+              <h4 className="font-semibold mb-2">Standard Deduction</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>
+                  Single: <DynamicContentText options={{ year: currentYear, filingStatus: 'single' }}>{{current_standard_deduction}}</DynamicContentText>
+                </li>
+                <li>
+                  Married: <DynamicContentText options={{ year: currentYear, filingStatus: 'married' }}>{{current_standard_deduction}}</DynamicContentText>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       
       <div className="mt-12 border-t border-[#333] pt-6">
         <div className="flex flex-col md:flex-row justify-between items-center">

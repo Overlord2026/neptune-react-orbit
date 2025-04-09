@@ -1,15 +1,27 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BookText, ArrowRight, CheckCircle, ExternalLink } from 'lucide-react';
 import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GlossaryTerm from '@/components/GlossaryTerm';
+import DynamicContentText from '@/components/DynamicContentText';
 
 const AdvancedTaxEducationPage = () => {
   // This would normally be determined by checking if user has purchased the course
   const isEnrolled = false;
+  
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  
+  // For demonstration purposes
+  const availableYears = [2023, 2024, 2025];
+  
+  const contentOptions = {
+    year: selectedYear,
+    format: 'currency'
+  };
 
   const moduleData = [
     {
@@ -68,6 +80,32 @@ const AdvancedTaxEducationPage = () => {
           <p className="text-muted-foreground max-w-3xl">
             Dive deeper into comprehensive tax optimization techniques, including multi-year <GlossaryTerm termId="roth_conversion">Roth planning</GlossaryTerm>, 
             advanced estate strategies, and intricate business tax concepts.
+          </p>
+        </div>
+      </div>
+      
+      {/* Year Selector */}
+      <div className="flex flex-col md:flex-row gap-4 my-6 p-4 border border-gray-200 dark:border-gray-800 rounded-lg bg-card">
+        <div className="space-y-2">
+          <label htmlFor="year-select" className="text-sm font-medium">Reference Tax Year</label>
+          <Select 
+            value={selectedYear.toString()} 
+            onValueChange={(value) => setSelectedYear(Number(value))}
+          >
+            <SelectTrigger id="year-select" className="w-[180px]">
+              <SelectValue placeholder="Select year" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableYears.map(year => (
+                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="flex items-end ml-auto">
+          <p className="text-xs text-muted-foreground">
+            Data last updated: <DynamicContentText as="span">{{tax_data_last_update}}</DynamicContentText>
           </p>
         </div>
       </div>
@@ -144,6 +182,66 @@ const AdvancedTaxEducationPage = () => {
             </Card>
           ))}
         </div>
+
+        {/* Current Tax Limits Section */}
+        <Card className="bg-[#1A1F2C] border border-[#8E9196] overflow-hidden mt-6">
+          <CardHeader>
+            <CardTitle className="text-xl text-[#FFD700]">Current Tax Limits ({selectedYear})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-lg font-semibold mb-3">Retirement Accounts</h4>
+                <ul className="space-y-2">
+                  <li className="flex justify-between">
+                    <span>IRA Contribution Limit:</span>
+                    <DynamicContentText options={contentOptions} className="font-semibold">
+                      {{IRA_limit}}
+                    </DynamicContentText>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>401(k) Contribution Limit:</span>
+                    <DynamicContentText options={contentOptions} className="font-semibold">
+                      {{401k_limit}}
+                    </DynamicContentText>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold mb-3">Standard Deductions</h4>
+                <ul className="space-y-2">
+                  <li className="flex justify-between">
+                    <span>Single:</span>
+                    <DynamicContentText 
+                      options={{...contentOptions, filingStatus: 'single'}} 
+                      className="font-semibold"
+                    >
+                      {{current_standard_deduction}}
+                    </DynamicContentText>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Married Filing Jointly:</span>
+                    <DynamicContentText 
+                      options={{...contentOptions, filingStatus: 'married'}} 
+                      className="font-semibold"
+                    >
+                      {{current_standard_deduction}}
+                    </DynamicContentText>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Head of Household:</span>
+                    <DynamicContentText 
+                      options={{...contentOptions, filingStatus: 'head_of_household'}} 
+                      className="font-semibold"
+                    >
+                      {{current_standard_deduction}}
+                    </DynamicContentText>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Additional Resources */}
         <h3 className="text-2xl font-bold mt-6">Additional Resources (Included)</h3>
