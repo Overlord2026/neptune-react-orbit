@@ -1,4 +1,3 @@
-
 import { getTaxBracketLastUpdateTime, getFormattedUpdateDate } from '@/utils/dataFeedUtils';
 import { formatCurrency, STANDARD_DEDUCTION_BY_YEAR } from '@/utils/taxBracketData';
 
@@ -147,8 +146,16 @@ export const replacePlaceholders = (
 ): string => {
   if (!text) return '';
   
+  // Handle both {{placeholder}} format and direct placeholder strings
   const placeholderRegex = /{{([^}]+)}}/g;
   
+  // First check if the text itself is a placeholder (without brackets)
+  const directPlaceholder = getPlaceholderById(text.trim());
+  if (directPlaceholder) {
+    return directPlaceholder.getValue(options);
+  }
+  
+  // Otherwise process the text for embedded placeholders
   return text.replace(placeholderRegex, (match, placeholderId) => {
     const placeholder = getPlaceholderById(placeholderId.trim());
     if (placeholder) {
@@ -158,7 +165,7 @@ export const replacePlaceholders = (
   });
 };
 
-// Component for rendering text with dynamic content
+// Process dynamic content
 export const processDynamicContent = (content: string, options?: DynamicContentOptions): string => {
   return replacePlaceholders(content, options);
 };

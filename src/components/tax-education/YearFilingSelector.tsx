@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import DynamicContentText from '@/components/DynamicContentText';
+import TaxDataLastUpdate from '@/components/tax/TaxDataLastUpdate';
 
 interface YearFilingSelectorProps {
   selectedYear: number;
@@ -56,7 +56,7 @@ const YearFilingSelector: React.FC<YearFilingSelectorProps> = ({
       
       <div className="flex items-end ml-auto">
         <p className="text-xs text-muted-foreground">
-          Data last updated: <DynamicContentText as="span">tax_data_last_update</DynamicContentText>
+          Data last updated: <TaxDataLastUpdate />
         </p>
       </div>
     </div>

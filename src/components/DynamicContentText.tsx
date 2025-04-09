@@ -19,9 +19,7 @@ const DynamicContentText: React.FC<DynamicContentTextProps> = ({
 
   useEffect(() => {
     // Process the content with the placeholders
-    // Remove double curly braces if present
-    const cleanedContent = children.replace(/{{|}}/g, '');
-    setProcessedContent(processDynamicContent(cleanedContent, options));
+    setProcessedContent(processDynamicContent(children, options));
   }, [children, options]);
 
   return (
