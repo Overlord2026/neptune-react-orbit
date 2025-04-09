@@ -12,43 +12,50 @@ const TaxPlanningLandingPage = () => {
       title: "Tax Return Analyzer",
       description: "Analyze your tax returns for missed deductions and optimization opportunities.",
       icon: <FileText className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: true
+      comingSoon: true,
+      path: "/tax-planning/analyzer"
     },
     {
       title: "Tax Document Aggregator",
       description: "Centralize and organize all your tax documents in one secure location.",
       icon: <Book className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: true
+      comingSoon: true,
+      path: "/tax-planning"
     },
     {
       title: "Roth Conversion Analyzer",
       description: "Evaluate the benefits and tax implications of Roth IRA conversions over time.",
       icon: <Calculator className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false
+      comingSoon: false,
+      path: "/tax-planning"
     },
     {
       title: "Social Security Tax Calculator",
       description: "Determine how Social Security benefits impact your overall tax situation.",
       icon: <CircleDollarSign className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false
+      comingSoon: false,
+      path: "/tax-planning"
     },
     {
       title: "Dynamic Bracket Manager",
       description: "Visualize and plan around tax brackets to minimize overall tax burden.",
       icon: <SquareAsterisk className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false
+      comingSoon: false,
+      path: "/tax-planning"
     },
     {
       title: "Tax Vault",
       description: "Securely store tax documents with encryption and organization features.",
       icon: <Shield className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false
+      comingSoon: false,
+      path: "/tax-planning"
     },
     {
       title: "Advanced Tax Strategies",
       description: "Access sophisticated tax planning strategies tailored to your financial situation.",
       icon: <FileText className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false
+      comingSoon: false,
+      path: "/tax-planning"
     }
   ];
 
@@ -88,9 +95,11 @@ const TaxPlanningLandingPage = () => {
             </CardContent>
             <CardFooter>
               {feature.comingSoon ? (
-                <Button variant="outline" disabled className="w-full">
-                  Coming Soon
-                </Button>
+                <Link to={feature.path} className="w-full">
+                  <Button variant="outline" className="w-full">
+                    View Preview
+                  </Button>
+                </Link>
               ) : (
                 <Button className="w-full justify-between">
                   Open Tool

@@ -13,6 +13,7 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import TaxPlanningLandingPage from "./pages/TaxPlanningLandingPage";
+import TaxReturnAnalyzerPage from "./pages/TaxReturnAnalyzerPage";
 import neptuneLogo from './assets/images/logo.png';
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
             <Route path="tax-planning" element={<TaxPlanningLandingPage />} />
+            <Route path="tax-planning/analyzer" element={<TaxReturnAnalyzerPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
