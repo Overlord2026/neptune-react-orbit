@@ -1,38 +1,53 @@
 
 import React from 'react';
-import { HelpCircle, Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Info, AlertCircle, HelpCircle, AlertTriangle } from 'lucide-react';
+
+type IconType = 'info' | 'help' | 'alertCircle' | 'alertTriangle';
 
 interface InfoTooltipProps {
   text: string;
-  icon?: "help" | "info";
+  icon?: IconType;
   className?: string;
 }
 
 const InfoTooltip: React.FC<InfoTooltipProps> = ({ 
   text, 
-  icon = "help",
+  icon = 'info',
   className = "" 
 }) => {
+  const getIcon = () => {
+    switch (icon) {
+      case 'help':
+        return <HelpCircle className={`h-4 w-4 text-muted-foreground hover:text-primary ${className}`} />;
+      case 'alertCircle':
+        return <AlertCircle className={`h-4 w-4 text-amber-500 hover:text-amber-400 ${className}`} />;
+      case 'alertTriangle':
+        return <AlertTriangle className={`h-4 w-4 text-amber-500 hover:text-amber-400 ${className}`} />;
+      case 'info':
+      default:
+        return <Info className={`h-4 w-4 text-muted-foreground hover:text-primary ${className}`} />;
+    }
+  };
+
   return (
-    <Tooltip delayDuration={300}>
-      <TooltipTrigger asChild>
-        <span className={`inline-flex ml-1.5 cursor-help text-muted-foreground/70 hover:text-muted-foreground ${className}`}>
-          {icon === "help" ? (
-            <HelpCircle className="h-4 w-4" />
-          ) : (
-            <Info className="h-4 w-4" />
-          )}
-        </span>
-      </TooltipTrigger>
-      <TooltipContent side="top" className="max-w-xs text-sm p-3 bg-slate-900/95 border-slate-800">
-        {text}
-      </TooltipContent>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex items-center ml-1 cursor-help">
+            {getIcon()}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs">
+          <p>{text}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 

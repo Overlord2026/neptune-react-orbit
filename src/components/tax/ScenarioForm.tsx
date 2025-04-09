@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -13,10 +14,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FilingStatus, STANDARD_DEDUCTION } from '@/utils/taxCalculator';
 import InfoTooltip from '@/components/tax/InfoTooltip';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Define the form schema with zod
 const formSchema = z.object({
@@ -41,16 +50,29 @@ const formSchema = z.object({
   rothConversion: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
     message: "Roth conversion must be a non-negative number",
   }),
+  socialSecurityReceived: z.boolean().default(false),
   socialSecurity: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
     message: "Social security must be a non-negative number",
   }),
-  capitalGains: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-    message: "Capital gains must be a non-negative number",
+  shortTermCapitalGains: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+    message: "Short-term capital gains must be a non-negative number",
   }),
-  filingStatus: z.enum(['single', 'married', 'head_of_household']),
+  longTermCapitalGains: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+    message: "Long-term capital gains must be a non-negative number",
+  }),
+  filingStatus: z.enum(['single', 'married_joint', 'married_separate', 'head_of_household']),
   deductionType: z.enum(["standard", "itemized"]),
   itemizedDeduction: z.string().optional().refine((val) => !val || !isNaN(Number(val)) && Number(val) >= 0, {
     message: "Itemized deduction must be a non-negative number",
+  }),
+  medicareEnrolled: z.boolean().default(false),
+  acaEnrolled: z.boolean().default(false),
+  householdSize: z.string().optional().refine((val) => !val || !isNaN(Number(val)) && Number(val) >= 0 && Number.isInteger(Number(val)), {
+    message: "Household size must be a non-negative integer",
+  }),
+  stateOfResidence: z.string().optional(),
+  dependents: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0 && Number.isInteger(Number(val)), {
+    message: "Number of dependents must be a non-negative integer",
   }),
 });
 
@@ -61,6 +83,60 @@ interface ScenarioFormProps {
   onSubmit: (data: ScenarioFormValues) => void;
   isLoading?: boolean;
 }
+
+const STATES = [
+  { value: "AL", label: "Alabama" },
+  { value: "AK", label: "Alaska" },
+  { value: "AZ", label: "Arizona" },
+  { value: "AR", label: "Arkansas" },
+  { value: "CA", label: "California" },
+  { value: "CO", label: "Colorado" },
+  { value: "CT", label: "Connecticut" },
+  { value: "DE", label: "Delaware" },
+  { value: "FL", label: "Florida" },
+  { value: "GA", label: "Georgia" },
+  { value: "HI", label: "Hawaii" },
+  { value: "ID", label: "Idaho" },
+  { value: "IL", label: "Illinois" },
+  { value: "IN", label: "Indiana" },
+  { value: "IA", label: "Iowa" },
+  { value: "KS", label: "Kansas" },
+  { value: "KY", label: "Kentucky" },
+  { value: "LA", label: "Louisiana" },
+  { value: "ME", label: "Maine" },
+  { value: "MD", label: "Maryland" },
+  { value: "MA", label: "Massachusetts" },
+  { value: "MI", label: "Michigan" },
+  { value: "MN", label: "Minnesota" },
+  { value: "MS", label: "Mississippi" },
+  { value: "MO", label: "Missouri" },
+  { value: "MT", label: "Montana" },
+  { value: "NE", label: "Nebraska" },
+  { value: "NV", label: "Nevada" },
+  { value: "NH", label: "New Hampshire" },
+  { value: "NJ", label: "New Jersey" },
+  { value: "NM", label: "New Mexico" },
+  { value: "NY", label: "New York" },
+  { value: "NC", label: "North Carolina" },
+  { value: "ND", label: "North Dakota" },
+  { value: "OH", label: "Ohio" },
+  { value: "OK", label: "Oklahoma" },
+  { value: "OR", label: "Oregon" },
+  { value: "PA", label: "Pennsylvania" },
+  { value: "RI", label: "Rhode Island" },
+  { value: "SC", label: "South Carolina" },
+  { value: "SD", label: "South Dakota" },
+  { value: "TN", label: "Tennessee" },
+  { value: "TX", label: "Texas" },
+  { value: "UT", label: "Utah" },
+  { value: "VT", label: "Vermont" },
+  { value: "VA", label: "Virginia" },
+  { value: "WA", label: "Washington" },
+  { value: "WV", label: "West Virginia" },
+  { value: "WI", label: "Wisconsin" },
+  { value: "WY", label: "Wyoming" },
+  { value: "DC", label: "District of Columbia" }
+];
 
 const ScenarioForm: React.FC<ScenarioFormProps> = ({ 
   defaultValues, 
@@ -77,11 +153,18 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
       qualifiedDividends: "500",
       iraDistributions: "0",
       rothConversion: "0",
+      socialSecurityReceived: false,
       socialSecurity: "0",
-      capitalGains: "2500",
+      shortTermCapitalGains: "0",
+      longTermCapitalGains: "2500",
       filingStatus: "single",
       deductionType: "standard",
       itemizedDeduction: "",
+      medicareEnrolled: false,
+      acaEnrolled: false,
+      householdSize: "1",
+      stateOfResidence: "",
+      dependents: "0",
       ...defaultValues,
     },
   });
@@ -89,6 +172,9 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
   const watchDeductionType = form.watch("deductionType");
   const watchFilingStatus = form.watch("filingStatus");
   const watchYear = form.watch("year");
+  const watchSocialSecurityReceived = form.watch("socialSecurityReceived");
+  const watchAcaEnrolled = form.watch("acaEnrolled");
+  const watchMedicareEnrolled = form.watch("medicareEnrolled");
   
   const year = Number(watchYear);
   const filingStatus = watchFilingStatus as FilingStatus;
@@ -159,6 +245,56 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
                   </FormItem>
                 )}
               />
+              
+              <FormField
+                control={form.control}
+                name="filingStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Filing Status</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-primary/40">
+                          <SelectValue placeholder="Select filing status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="single">Single</SelectItem>
+                        <SelectItem value="married_joint">Married Filing Jointly</SelectItem>
+                        <SelectItem value="married_separate">Married Filing Separately</SelectItem>
+                        <SelectItem value="head_of_household">Head of Household</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="dependents"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number of Dependents</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="Enter number of dependents" 
+                        {...field} 
+                        className="border-primary/40" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <h3 className="text-lg font-medium text-primary col-span-2 mt-4 mb-1">Income Sources</h3>
               
               <FormField
                 control={form.control}
@@ -255,13 +391,60 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
 
               <FormField
                 control={form.control}
-                name="socialSecurity"
+                name="socialSecurityReceived"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base flex items-center space-x-2">
+                        <span>Receiving Social Security?</span>
+                        <InfoTooltip text="Depending on your total provisional income, up to 85% of Social Security can be taxable." />
+                      </FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {watchSocialSecurityReceived && (
+                <FormField
+                  control={form.control}
+                  name="socialSecurity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center">
+                        Social Security Amount ($)
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter annual social security amount" 
+                          {...field} 
+                          className={field.value === "0" ? "" : "border-primary/40"} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <div className="col-span-2">
+                <h3 className="text-lg font-medium text-primary mb-1">Investment Income</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Different tax rates apply to short-term vs long-term capital gains
+                </p>
+              </div>
+
+              <FormField
+                control={form.control}
+                name="shortTermCapitalGains"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center">
-                      Social Security Received ($)
-                      <InfoTooltip text="Depending on your total provisional income, up to 85% of Social Security can be taxable." />
-                    </FormLabel>
+                    <FormLabel>Short-Term Capital Gains ($)</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Enter amount" 
@@ -276,10 +459,10 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
 
               <FormField
                 control={form.control}
-                name="capitalGains"
+                name="longTermCapitalGains"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Capital Gains ($)</FormLabel>
+                    <FormLabel>Long-Term Capital Gains ($)</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Enter amount" 
@@ -292,36 +475,107 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
                 )}
               />
 
+              <div className="col-span-2">
+                <h3 className="text-lg font-medium text-primary mt-4 mb-1">Health Coverage & Medicare</h3>
+              </div>
+
               <FormField
                 control={form.control}
-                name="filingStatus"
+                name="medicareEnrolled"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Filing Status</FormLabel>
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base flex items-center space-x-2">
+                        <span>Enrolled in Medicare Part B/D?</span>
+                        <InfoTooltip text="High income in a given year could increase your Medicare premiums two years later." icon="alertCircle" />
+                      </FormLabel>
+                    </div>
                     <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="single" id="single" />
-                          <Label htmlFor="single">Single</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="married" id="married" />
-                          <Label htmlFor="married">Married Filing Jointly</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="head_of_household" id="head_of_household" />
-                          <Label htmlFor="head_of_household">Head of Household</Label>
-                        </div>
-                      </RadioGroup>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {watchMedicareEnrolled && (
+                <div className="bg-amber-950/30 p-3 rounded-md text-sm">
+                  Income in this scenario will affect IRMAA surcharges two years from now.
+                </div>
+              )}
+
+              <FormField
+                control={form.control}
+                name="acaEnrolled"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">
+                        Enrolled in marketplace/ACA health insurance?
+                      </FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {watchAcaEnrolled && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="householdSize"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Household Size</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            min="1"
+                            step="1"
+                            placeholder="Enter household size" 
+                            {...field} 
+                            className="border-primary/40" 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="stateOfResidence"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>State of Residence</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-primary/40">
+                              <SelectValue placeholder="Select a state" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="max-h-[200px]">
+                            {STATES.map(state => (
+                              <SelectItem key={state.value} value={state.value}>{state.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
             </div>
 
             <div className="space-y-4 border-t pt-4">
@@ -378,7 +632,7 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({
               className="bg-[#FFD700] hover:bg-[#E5C100] text-black w-full sm:w-auto"
               disabled={isLoading}
             >
-              {isLoading ? "Calculating..." : "Calculate Tax Scenario"}
+              {isLoading ? "Calculating..." : "Calculate Tax Scenario with Potential Tax Traps"}
             </Button>
           </form>
         </Form>

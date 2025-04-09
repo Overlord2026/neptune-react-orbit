@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Edit } from 'lucide-react';
+import { Edit, PlusCircle } from 'lucide-react';
 
 const ScenarioActionButtons: React.FC = () => {
   return (
@@ -21,6 +21,12 @@ const ScenarioActionButtons: React.FC = () => {
         <Edit className="h-4 w-4 mr-2" />
         Edit 2023 Scenario
       </Button>
+      <Link to="/tax-planning/roth-analysis/new">
+        <Button className="bg-primary hover:bg-primary/90" size="lg">
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Create New Scenario
+        </Button>
+      </Link>
     </div>
   );
 };
