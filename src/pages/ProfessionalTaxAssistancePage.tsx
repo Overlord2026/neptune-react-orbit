@@ -8,13 +8,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, UserPlus, ExternalLink, ArrowLeft } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { CheckCircle2, UserPlus, ExternalLink, ArrowLeft, FileUp, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 const ProfessionalTaxAssistancePage = () => {
   const { toast } = useToast();
   const [isAssessmentComplete, setIsAssessmentComplete] = useState(false);
+  const [isIrsSupport, setIsIrsSupport] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
   const [contactPreference, setContactPreference] = useState("email");
@@ -22,6 +28,9 @@ const ProfessionalTaxAssistancePage = () => {
   const [preferredTime, setPreferredTime] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [unfiledYears, setUnfiledYears] = useState<string[]>([]);
+  const [hasIrsNotice, setHasIrsNotice] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const complexScenarios = [
     { id: "business", label: "Business or self-employment income" },
@@ -33,6 +42,28 @@ const ProfessionalTaxAssistancePage = () => {
     { id: "estate", label: "Estate or trust tax matters" },
     { id: "other", label: "Other complex tax situation" },
   ];
+
+  const yearOptions = [
+    { value: "2023", label: "2023" },
+    { value: "2022", label: "2022" },
+    { value: "2021", label: "2021" },
+    { value: "2020", label: "2020" },
+    { value: "2019", label: "2019" },
+    { value: "older", label: "Older than 2019" },
+  ];
+
+  const irsFormSchema = z.object({
+    years: z.array(z.string()).min(1, "Please select at least one year"),
+    hasNotice: z.boolean().optional(),
+  });
+
+  const irsForm = useForm({
+    resolver: zodResolver(irsFormSchema),
+    defaultValues: {
+      years: [],
+      hasNotice: false,
+    }
+  });
 
   const handleScenarioChange = (id: string, checked: boolean) => {
     if (checked) {
@@ -51,6 +82,42 @@ const ProfessionalTaxAssistancePage = () => {
       });
       return;
     }
+    
+    if (selectedScenarios.includes("irs-notices")) {
+      setIsIrsSupport(true);
+    } else {
+      setIsAssessmentComplete(true);
+    }
+  };
+
+  const handleYearChange = (year: string, checked: boolean) => {
+    if (checked) {
+      setUnfiledYears([...unfiledYears, year]);
+    } else {
+      setUnfiledYears(unfiledYears.filter(y => y !== year));
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setUploadedFiles([...uploadedFiles, ...files]);
+      toast({
+        title: `${files.length} file(s) uploaded`,
+        description: "Your documents have been attached to your request.",
+      });
+    }
+  };
+
+  const handleIrsFormSubmit = (data: z.infer<typeof irsFormSchema>) => {
+    // Here you would store the data in your database
+    console.log("IRS form submitted:", {
+      unfiledYears: data.years,
+      hasIrsNotice: data.hasNotice,
+      uploadedFiles
+    });
+    
+    // Continue to the next step
     setIsAssessmentComplete(true);
   };
 
@@ -63,7 +130,10 @@ const ProfessionalTaxAssistancePage = () => {
       contactPreference,
       additionalInfo,
       preferredTime,
-      contactInfo: contactPreference === "email" ? email : phone
+      contactInfo: contactPreference === "email" ? email : phone,
+      unfiledYears,
+      hasIrsNotice,
+      uploadedFiles
     });
     
     // Show success message and open the confirmation sheet
@@ -73,6 +143,12 @@ const ProfessionalTaxAssistancePage = () => {
     });
     
     setIsSheetOpen(true);
+  };
+
+  const removeFile = (index: number) => {
+    const newFiles = [...uploadedFiles];
+    newFiles.splice(index, 1);
+    setUploadedFiles(newFiles);
   };
 
   return (
@@ -94,7 +170,7 @@ const ProfessionalTaxAssistancePage = () => {
           </p>
         </div>
 
-        {!isAssessmentComplete ? (
+        {!isAssessmentComplete && !isIrsSupport ? (
           <Card className="neptune-card">
             <CardHeader>
               <CardTitle>Self-Assessment</CardTitle>
@@ -124,6 +200,146 @@ const ProfessionalTaxAssistancePage = () => {
               >
                 Continue
               </Button>
+            </CardContent>
+          </Card>
+        ) : isIrsSupport ? (
+          <Card className="neptune-card">
+            <CardHeader>
+              <CardTitle>Past Returns & IRS Support</CardTitle>
+              <CardDescription>
+                If you have unfiled returns from prior years or received notices from the IRS, let us help you fix it.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...irsForm}>
+                <form onSubmit={irsForm.handleSubmit(handleIrsFormSubmit)} className="space-y-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-base font-medium mb-3 block">Which years are unfiled?</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+                        {yearOptions.map(year => (
+                          <div key={year.value} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`year-${year.value}`} 
+                              checked={unfiledYears.includes(year.value)}
+                              onCheckedChange={(checked) => handleYearChange(year.value, checked === true)}
+                            />
+                            <Label 
+                              htmlFor={`year-${year.value}`} 
+                              className="text-[#E5DEFF] cursor-pointer"
+                            >
+                              {year.label}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                      {unfiledYears.length > 0 && (
+                        <div className="mt-4 p-3 bg-[#1A1F2C] rounded-md">
+                          <p className="text-sm font-medium text-[#FFD700] mb-2">Progress Checklist:</p>
+                          <div className="space-y-1">
+                            {unfiledYears.map(year => (
+                              <div key={year} className="flex items-center text-sm text-[#E5DEFF]">
+                                <span className="inline-block w-4 h-4 rounded-full border border-[#555] mr-2"></span>
+                                <span>{year === 'older' ? 'Pre-2019' : year} Return Not Filed</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-6">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="has-notice" 
+                          checked={hasIrsNotice}
+                          onCheckedChange={(checked) => setHasIrsNotice(checked === true)}
+                        />
+                        <Label htmlFor="has-notice" className="text-base font-medium cursor-pointer">
+                          I've received a notice from the IRS
+                        </Label>
+                      </div>
+                    </div>
+
+                    {hasIrsNotice && (
+                      <div className="mt-4 space-y-4">
+                        <div>
+                          <Label htmlFor="document-upload" className="text-base font-medium">
+                            Upload IRS notices or relevant documents
+                          </Label>
+                          <div className="mt-2 flex flex-col space-y-2">
+                            <div className="border-2 border-dashed border-[#444] rounded-md p-4 text-center cursor-pointer hover:border-[#9b87f5]">
+                              <Label htmlFor="document-upload" className="cursor-pointer">
+                                <FileUp className="mx-auto h-10 w-10 text-[#9b87f5] mb-2" />
+                                <span className="text-[#9b87f5] font-medium">Click to upload</span>
+                                <p className="text-xs text-[#8E9196] mt-1">PDF, JPG, or PNG (max 10MB)</p>
+                              </Label>
+                              <Input 
+                                id="document-upload" 
+                                type="file" 
+                                className="hidden" 
+                                multiple
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                onChange={handleFileUpload}
+                              />
+                            </div>
+
+                            {uploadedFiles.length > 0 && (
+                              <div className="mt-4">
+                                <Label className="text-sm font-medium mb-2 block">Uploaded Files:</Label>
+                                <div className="space-y-2">
+                                  {uploadedFiles.map((file, index) => (
+                                    <div key={index} className="flex justify-between items-center p-2 bg-[#1A1F2C] rounded-md">
+                                      <span className="text-sm text-[#E5DEFF] truncate">{file.name}</span>
+                                      <Button 
+                                        type="button" 
+                                        variant="ghost" 
+                                        size="sm"
+                                        onClick={() => removeFile(index)}
+                                      >
+                                        Remove
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="p-3 border border-[#444] rounded-md bg-[#222] mt-4">
+                          <div className="flex">
+                            <AlertTriangle className="h-5 w-5 text-[#FFD700] mr-2 flex-shrink-0" />
+                            <p className="text-sm text-[#E5DEFF]">
+                              All documents will be tagged with 'IRS_issue' or 'unfiled_return' and securely stored in your document aggregator.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-4 space-y-2">
+                    <p className="text-sm text-[#C8C8C9] mb-2">
+                      A specialist will review your situation and help you resolve the issue. Final resolution depends on the IRS's timelines, which may take several weeks or months.
+                    </p>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-[#FFD700] hover:bg-[#E6C200] text-black"
+                    >
+                      Continue to Contact Details
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full border-[#9b87f5] text-[#9b87f5]"
+                      onClick={() => setIsIrsSupport(false)}
+                    >
+                      Go Back
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         ) : (
@@ -205,6 +421,19 @@ const ProfessionalTaxAssistancePage = () => {
                     />
                   </div>
                 </div>
+
+                {isIrsSupport && unfiledYears.length > 0 && (
+                  <div className="p-3 bg-[#1A1F2C] border border-[#333] rounded-md">
+                    <h4 className="font-medium text-[#FFD700] mb-2">IRS & Past Return Support</h4>
+                    <p className="text-sm text-[#E5DEFF] mb-2">
+                      You will be connected with a specialist who has experience with:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-[#E5DEFF]">
+                      {unfiledYears.length > 0 && <li>Past unfiled returns ({unfiledYears.join(", ")})</li>}
+                      {hasIrsNotice && <li>IRS notice resolution</li>}
+                    </ul>
+                  </div>
+                )}
 
                 <div className="pt-2">
                   <p className="text-sm text-[#C8C8C9] mb-4">
