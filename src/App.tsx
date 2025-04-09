@@ -31,6 +31,7 @@ import CompareRothScenariosPage from "./pages/CompareRothScenariosPage";
 import AvoidingTaxTrapsPage from "./pages/AvoidingTaxTrapsPage";
 import BasicTaxEducationPage from "./pages/BasicTaxEducationPage";
 import AdvancedTaxEducationPage from "./pages/AdvancedTaxEducationPage";
+import TaxGlossaryPage from "./pages/TaxGlossaryPage";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
             <Route path="tax-planning/tax-vault" element={<TaxVaultPage />} />
             <Route path="tax-planning/advanced-strategies" element={<AdvancedTaxStrategiesPage />} />
             <Route path="tax-planning/avoiding-tax-traps" element={<AvoidingTaxTrapsPage />} />
+            <Route path="tax-planning/glossary" element={<TaxGlossaryPage />} />
             <Route path="system-health" element={<SystemHealthDashboardPage />} />
             <Route path="system-diagnostics" element={<SystemDiagnosticsPage />} />
             <Route path="stat-card-demo" element={<StatCardDemo />} />

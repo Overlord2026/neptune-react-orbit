@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, LineChart, TrendingUp, BarChart } from "lucide-react";
 import { calculateTaxScenario, TaxInput } from '@/utils/taxCalculator';
+import GlossaryTerm from '@/components/GlossaryTerm';
 
 const RothConversionAnalysisPage = () => {
   return (
@@ -15,8 +16,8 @@ const RothConversionAnalysisPage = () => {
             Roth Conversion Analysis: Compare Different Scenarios
           </h1>
           <p className="text-muted-foreground">
-            Use this section to see how converting portions of your IRA to a Roth might affect your overall
-            tax situation across different years.
+            Use this section to see how converting portions of your <GlossaryTerm termId="traditional_ira">Traditional IRA</GlossaryTerm> to a <GlossaryTerm termId="roth_ira">Roth IRA</GlossaryTerm> might 
+            affect your overall tax situation across different years.
           </p>
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
@@ -35,7 +36,7 @@ const RothConversionAnalysisPage = () => {
           </CardHeader>
           <CardContent className="p-6 space-y-4">
             <p className="text-sm text-muted-foreground">
-              View your 2021 tax information and baseline scenario without any Roth conversions.
+              View your 2021 tax information and baseline scenario without any <GlossaryTerm termId="roth_conversion">Roth conversions</GlossaryTerm>.
             </p>
             <div className="flex items-center gap-4">
               <div className="text-sm">
@@ -44,7 +45,7 @@ const RothConversionAnalysisPage = () => {
                   <span className="font-medium text-white">24%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Effective Rate:</span>
+                  <span><GlossaryTerm termId="effective_tax_rate">Effective Rate</GlossaryTerm>:</span>
                   <span className="font-medium text-white">18.2%</span>
                 </div>
               </div>
@@ -68,12 +69,12 @@ const RothConversionAnalysisPage = () => {
           </CardHeader>
           <CardContent className="p-6 space-y-4">
             <p className="text-sm text-muted-foreground">
-              View your 2022 tax information with preliminary Roth conversion planning.
+              View your 2022 tax information with preliminary <GlossaryTerm termId="roth_conversion">Roth conversion</GlossaryTerm> planning.
             </p>
             <div className="flex items-center gap-4">
               <div className="text-sm">
                 <div className="flex justify-between">
-                  <span>Tax Bracket:</span>
+                  <span><GlossaryTerm termId="marginal_tax_rate">Tax Bracket</GlossaryTerm>:</span>
                   <span className="font-medium text-white">24%</span>
                 </div>
                 <div className="flex justify-between">
@@ -99,7 +100,7 @@ const RothConversionAnalysisPage = () => {
           </CardHeader>
           <CardContent className="p-6 space-y-4">
             <p className="text-sm text-muted-foreground">
-              View your 2023 projection with recommended Roth conversion strategy.
+              View your 2023 projection with recommended <GlossaryTerm termId="roth_conversion">Roth conversion</GlossaryTerm> strategy.
             </p>
             <div className="flex items-center gap-4">
               <div className="text-sm">
@@ -138,7 +139,7 @@ const RothConversionAnalysisPage = () => {
       <div className="mt-8 p-4 bg-primary/5 border border-primary/20 rounded-md">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            You can add or modify scenarios to customize your Roth conversion plans.
+            You can add or modify scenarios to customize your <GlossaryTerm termId="roth_conversion">Roth conversion</GlossaryTerm> plans.
           </p>
           <Button variant="outline" className="border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700]/10">
             Create New Scenario

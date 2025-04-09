@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { FileText, FolderSearch, Banknote, HeartHandshake, BarChart2, Lock, Lightbulb, LineChart, BookOpen, ExternalLink, BookText } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
@@ -54,6 +54,12 @@ const TaxPlanningLandingPage = () => {
                   <Link to="/tax-planning/advanced-tax-education">
                     <BookText className="mr-2 h-4 w-4" />
                     Advanced Tax Education (Paid Course)
+                  </Link>
+                </Button>
+                <Button variant="outline" className="border-[#FFD700] text-[#FFD700] hover:bg-[#1A1F2C]/50" asChild>
+                  <Link to="/tax-planning/glossary">
+                    <BookText className="mr-2 h-4 w-4" />
+                    View Full Glossary
                   </Link>
                 </Button>
               </div>

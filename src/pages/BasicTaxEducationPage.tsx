@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import GlossaryTerm from '@/components/GlossaryTerm';
 
 const BasicTaxEducationPage = () => {
   return (
@@ -30,12 +30,12 @@ const BasicTaxEducationPage = () => {
         {/* Tax Brackets Section */}
         <Card className="overflow-hidden">
           <CardHeader className="bg-[#1A1F2C]">
-            <CardTitle>How Tax Brackets Work</CardTitle>
+            <CardTitle id="tax-brackets">How Tax Brackets Work</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="space-y-4">
               <p>
-                The U.S. uses a <strong>progressive tax system</strong> where different portions of your income are taxed at increasing rates. This system is organized into tax brackets, which are income ranges that are taxed at specific rates.
+                The U.S. uses a <strong>progressive tax system</strong> where different portions of your income are taxed at increasing rates. This system is organized into <GlossaryTerm termId="tax_bracket">tax brackets</GlossaryTerm>, which are income ranges that are taxed at specific rates.
               </p>
               <p>
                 For example, in 2023, a single filer might pay 10% on the first $11,000 of income, 12% on income from $11,001 to $44,725, and so on. This means not all of your income is taxed at your highest bracket rate.
@@ -54,7 +54,7 @@ const BasicTaxEducationPage = () => {
                         <li>Pay 12% on next $33,725 (from $11,001 to $44,725) = $4,047</li>
                         <li>Pay 22% on remaining $15,275 (from $44,726 to $60,000) = $3,361</li>
                         <li>Total tax = $8,508</li>
-                        <li>Effective tax rate = 14.2% ($8,508 ÷ $60,000)</li>
+                        <li><GlossaryTerm termId="effective_tax_rate">Effective tax rate</GlossaryTerm> = 14.2% ($8,508 ÷ $60,000)</li>
                       </ul>
                     </div>
                   </AccordionContent>
@@ -128,10 +128,10 @@ const BasicTaxEducationPage = () => {
           <CardContent className="pt-6">
             <div className="space-y-4">
               <p>
-                <strong>Tax deductions</strong> reduce your taxable income before the tax rate is applied. For example, a $1,000 deduction for someone in the 22% tax bracket saves $220 in taxes.
+                <strong><GlossaryTerm termId="tax_deduction">Tax deductions</GlossaryTerm></strong> reduce your taxable income before the tax rate is applied. For example, a $1,000 deduction for someone in the 22% tax bracket saves $220 in taxes.
               </p>
               <p>
-                <strong>Tax credits</strong> reduce your tax bill dollar-for-dollar after taxes are calculated. A $1,000 tax credit saves you exactly $1,000 in taxes, regardless of your tax bracket. This generally makes credits more valuable than deductions of the same amount.
+                <strong><GlossaryTerm termId="tax_credit">Tax credits</GlossaryTerm></strong> reduce your tax bill dollar-for-dollar after taxes are calculated. A $1,000 tax credit saves you exactly $1,000 in taxes, regardless of your tax bracket. This generally makes credits more valuable than deductions of the same amount.
               </p>
 
               <Accordion type="single" collapsible className="w-full">
@@ -177,10 +177,10 @@ const BasicTaxEducationPage = () => {
           <CardContent className="pt-6">
             <div className="space-y-4">
               <p>
-                Your <strong>marginal tax rate</strong> is the rate you pay on the last dollar of income earned (your highest tax bracket). This is often what people refer to when they say "I'm in the 24% bracket."
+                Your <strong><GlossaryTerm termId="marginal_tax_rate">marginal tax rate</GlossaryTerm></strong> is the rate you pay on the last dollar of income earned (your highest tax bracket). This is often what people refer to when they say "I'm in the 24% bracket."
               </p>
               <p>
-                Your <strong>effective tax rate</strong> is the actual percentage of your income that you pay in taxes, calculated as total tax divided by total taxable income. Because of the progressive bracket system, your effective rate is always lower than your marginal rate.
+                Your <strong><GlossaryTerm termId="effective_tax_rate">effective tax rate</GlossaryTerm></strong> is the actual percentage of your income that you pay in taxes, calculated as total tax divided by total taxable income. Because of the progressive bracket system, your effective rate is always lower than your marginal rate.
               </p>
             </div>
           </CardContent>
@@ -194,10 +194,10 @@ const BasicTaxEducationPage = () => {
           <CardContent className="pt-6">
             <div className="space-y-4">
               <p>
-                <strong>Capital gains</strong> are profits from selling assets that have increased in value, such as stocks, real estate, or collectibles. These are generally taxed at lower rates than ordinary income.
+                <strong><GlossaryTerm termId="capital_gain">Capital gains</GlossaryTerm></strong> are profits from selling assets that have increased in value, such as stocks, real estate, or collectibles. These are generally taxed at lower rates than ordinary income.
               </p>
               <p>
-                <strong>Short-term capital gains</strong> (assets held for one year or less) are taxed at your ordinary income tax rates, while <strong>long-term capital gains</strong> (assets held longer than one year) are taxed at 0%, 15%, or 20% depending on your income level.
+                <strong><GlossaryTerm termId="short_term_capital_gain">Short-term capital gains</GlossaryTerm></strong> (assets held for one year or less) are taxed at your ordinary income tax rates, while <strong><GlossaryTerm termId="long_term_capital_gain">long-term capital gains</GlossaryTerm></strong> (assets held longer than one year) are taxed at 0%, 15%, or 20% depending on your income level.
               </p>
 
               <Accordion type="single" collapsible className="w-full">
@@ -229,10 +229,10 @@ const BasicTaxEducationPage = () => {
           <CardContent className="pt-6">
             <div className="space-y-4">
               <p>
-                <strong>Traditional accounts</strong> (like Traditional IRAs and 401(k)s) offer tax-deferred growth. Contributions may be tax-deductible now, but withdrawals in retirement are taxed as ordinary income.
+                <strong><GlossaryTerm termId="traditional_ira">Traditional accounts</GlossaryTerm></strong> (like Traditional IRAs and 401(k)s) offer tax-deferred growth. Contributions may be tax-deductible now, but withdrawals in retirement are taxed as ordinary income.
               </p>
               <p>
-                <strong>Roth accounts</strong> (like Roth IRAs and Roth 401(k)s) are funded with after-tax dollars, offering no immediate tax benefit. However, qualified withdrawals in retirement are completely tax-free, including all growth and earnings.
+                <strong><GlossaryTerm termId="roth_ira">Roth accounts</GlossaryTerm></strong> (like Roth IRAs and Roth 401(k)s) are funded with after-tax dollars, offering no immediate tax benefit. However, qualified withdrawals in retirement are completely tax-free, including all growth and earnings.
               </p>
 
               <Accordion type="single" collapsible className="w-full">
@@ -327,6 +327,11 @@ const BasicTaxEducationPage = () => {
           <Button className="bg-[#9b87f5] hover:bg-[#8a76e4]" asChild>
             <Link to="/tax-planning/advanced-tax-education">
               Proceed to Advanced Tax Education
+            </Link>
+          </Button>
+          <Button variant="outline" className="border-[#FFD700] text-[#FFD700] hover:bg-[#1A1F2C]/50" asChild>
+            <Link to="/tax-planning/glossary">
+              View Tax Glossary
             </Link>
           </Button>
         </div>

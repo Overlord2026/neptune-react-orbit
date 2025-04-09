@@ -5,6 +5,7 @@ import { BookText, ArrowRight, CheckCircle, ExternalLink } from 'lucide-react';
 import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import GlossaryTerm from '@/components/GlossaryTerm';
 
 const AdvancedTaxEducationPage = () => {
   // This would normally be determined by checking if user has purchased the course
@@ -65,7 +66,7 @@ const AdvancedTaxEducationPage = () => {
             Advanced Tax Strategies & Planning Course
           </h2>
           <p className="text-muted-foreground max-w-3xl">
-            Dive deeper into comprehensive tax optimization techniques, including multi-year Roth planning, 
+            Dive deeper into comprehensive tax optimization techniques, including multi-year <GlossaryTerm termId="roth_conversion">Roth planning</GlossaryTerm>, 
             advanced estate strategies, and intricate business tax concepts.
           </p>
         </div>
@@ -120,7 +121,15 @@ const AdvancedTaxEducationPage = () => {
                 <div className="text-sm text-muted-foreground">Duration: {module.duration}</div>
               </CardHeader>
               <CardContent>
-                <p className="mb-4">{module.description}</p>
+                <p className="mb-4">
+                  {module.id === 1 ? (
+                    <>
+                      Master the timing and execution of <GlossaryTerm termId="roth_conversion">Roth conversions</GlossaryTerm> over multiple tax years to minimize tax impact. 
+                      Learn how to create a comprehensive conversion strategy that accounts for changing <GlossaryTerm termId="tax_bracket">tax brackets</GlossaryTerm>, 
+                      retirement plans, and estate considerations.
+                    </>
+                  ) : module.description}
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {module.topics.map((topic, i) => (
                     <span 
@@ -171,6 +180,11 @@ const AdvancedTaxEducationPage = () => {
           <Button asChild variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#1A1F2C]/50">
             <Link to="/tax-planning/basic-education">
               Review Basic Tax Education
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="border-[#FFD700] text-[#FFD700] hover:bg-[#1A1F2C]/50">
+            <Link to="/tax-planning/glossary">
+              View Tax Glossary
             </Link>
           </Button>
         </div>
