@@ -1,11 +1,92 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { FileText, FolderSearch, Banknote, HeartHandshake, BarChart2, Lock, Lightbulb, LineChart } from "lucide-react";
+import { FileText, FolderSearch, Banknote, HeartHandshake, BarChart2, Lock, Lightbulb, LineChart, BookOpen, ExternalLink, BookText } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const TaxPlanningLandingPage = () => {
   const [tooltipMessage, setTooltipMessage] = useState<string | null>(null);
+  const [isEducationOpen, setIsEducationOpen] = useState<boolean>(true);
+
+  const renderEducationResources = () => {
+    return (
+      <Collapsible 
+        open={isEducationOpen} 
+        onOpenChange={setIsEducationOpen}
+        className="w-full mb-8"
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold tracking-tight neptune-gold">Tax Education & Resources</h2>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-9 p-0">
+              <span className="sr-only">{isEducationOpen ? "Close" : "Open"}</span>
+              {isEducationOpen ? (
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4">
+                  <path d="M4 9.5L7.5 6L11 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4">
+                  <path d="M4 6L7.5 9.5L11 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </Button>
+          </CollapsibleTrigger>
+        </div>
+
+        <CollapsibleContent className="pt-2">
+          <Card className="bg-[#1A1F2C] border border-[#8E9196]">
+            <CardContent className="pt-6">
+              <p className="text-[#E5DEFF] mb-4">
+                Explore guides, books, and courses to deepen your understanding of key tax concepts.
+              </p>
+
+              <div className="flex flex-wrap gap-4 mb-6">
+                <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] text-white">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Basic Tax Education
+                </Button>
+                <Button variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#1A1F2C]/50">
+                  <BookText className="mr-2 h-4 w-4" />
+                  Advanced Tax Education (Paid Course)
+                </Button>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-[#E5DEFF] mb-2">Recommended Reading</h3>
+                <ul className="space-y-2 text-[#F1F0FB]">
+                  <li className="flex items-center">
+                    <FileText className="mr-2 h-4 w-4 text-[#9b87f5]" />
+                    <Link to="/tax-planning/guides/understanding-tax-brackets" className="hover:underline">Guide 1: Understanding Tax Brackets</Link>
+                  </li>
+                  <li className="flex items-center">
+                    <FileText className="mr-2 h-4 w-4 text-[#9b87f5]" />
+                    <Link to="/tax-planning/guides/retirement-tax-strategies" className="hover:underline">Guide 2: Retirement Tax Strategies</Link>
+                  </li>
+                  <li className="flex items-center">
+                    <BookText className="mr-2 h-4 w-4 text-[#9b87f5]" />
+                    <a href="https://example.com/books/tax-optimization" target="_blank" rel="noopener noreferrer" className="flex items-center hover:underline">
+                      My Book on Tax Optimization
+                      <ExternalLink className="ml-1 h-3 w-3" />
+                    </a>
+                  </li>
+                  <li className="flex items-center">
+                    <ExternalLink className="mr-2 h-4 w-4 text-[#9b87f5]" />
+                    <a href="https://www.irs.gov/forms-instructions" target="_blank" rel="noopener noreferrer" className="flex items-center hover:underline">
+                      IRS Forms & Publications
+                      <ExternalLink className="ml-1 h-3 w-3" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </CollapsibleContent>
+      </Collapsible>
+    );
+  };
 
   const renderTaxTools = () => {
     const tools = [
@@ -118,7 +199,10 @@ const TaxPlanningLandingPage = () => {
           </p>
         </div>
       </div>
-      <div className="py-4">{renderTaxTools()}</div>
+      <div className="py-4">
+        {renderEducationResources()}
+        {renderTaxTools()}
+      </div>
     </div>
   );
 };
