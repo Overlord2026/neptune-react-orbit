@@ -1,125 +1,124 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Calculator, FileText, CircleDollarSign, Shield, Book, SquareAsterisk, Lightbulb } from "lucide-react";
-import FinancialDashboard from "@/components/tax/FinancialDashboard";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { FileText, FolderSearch, Banknote, HeartHandshake, BarChart2, Lock, Lightbulb, LineChart } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const TaxPlanningLandingPage = () => {
-  const features = [
-    {
-      title: "Tax Return Analyzer",
-      description: "Analyze your tax returns for missed deductions and optimization opportunities.",
-      icon: <FileText className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false,
-      path: "/tax-planning/analyzer"
-    },
-    {
-      title: "Tax Document Aggregator",
-      description: "Centralize and organize all your tax documents in one secure location.",
-      icon: <Book className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: true,
-      path: "/tax-planning/aggregator"
-    },
-    {
-      title: "Roth Conversion Analyzer",
-      description: "Evaluate the benefits and tax implications of Roth IRA conversions over time.",
-      icon: <Calculator className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false,
-      path: "/tax-planning/roth-conversion"
-    },
-    {
-      title: "Social Security Tax Calculator",
-      description: "Determine how Social Security benefits impact your overall tax situation.",
-      icon: <CircleDollarSign className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false,
-      path: "/tax-planning/social-security"
-    },
-    {
-      title: "Dynamic Bracket Manager",
-      description: "Visualize and plan around tax brackets to minimize overall tax burden.",
-      icon: <SquareAsterisk className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false,
-      path: "/tax-planning/bracket-manager"
-    },
-    {
-      title: "Tax Vault",
-      description: "Securely store tax documents with encryption and organization features.",
-      icon: <Shield className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false,
-      path: "/tax-planning/tax-vault"
-    },
-    {
-      title: "Advanced Tax Strategies",
-      description: "Access sophisticated tax planning strategies tailored to your financial situation.",
-      icon: <Lightbulb className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: false,
-      path: "/tax-planning/advanced-strategies"
-    }
-  ];
+  const [tooltipMessage, setTooltipMessage] = useState<string | null>(null);
 
-  return (
-    <div className="space-y-6 pb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight neptune-gold">Tax Planning</h1>
-          <p className="text-muted-foreground">Optimize your tax situation with our specialized tools and strategies.</p>
-        </div>
-        <Link to="/" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left">
-          Back to Home
-        </Link>
-      </div>
-      
-      {/* Financial Dashboard */}
-      <FinancialDashboard />
-      
-      <h2 className="text-xl sm:text-2xl font-bold tracking-tight neptune-gold mt-8">Available Tools</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {features.map((feature, index) => (
-          <Card key={index} className="bg-card border-primary/20 hover:border-primary/40 transition-colors overflow-hidden">
-            <CardHeader className="pb-2">
-              <div className="mb-2">{feature.icon}</div>
-              <CardTitle className="text-lg sm:text-xl neptune-gold">{feature.title}</CardTitle>
-              {feature.comingSoon && (
-                <span className="inline-block bg-primary/20 text-primary text-xs px-2 py-1 rounded-md mt-1">
-                  Coming Soon
-                </span>
-              )}
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-sm text-muted-foreground">
-                {feature.description}
-              </CardDescription>
-            </CardContent>
-            <CardFooter>
-              {feature.comingSoon ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" className="w-full cursor-not-allowed" disabled>
-                        Coming Soon
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>This feature will be available soon</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                <Link to={feature.path} className="w-full">
-                  <Button className="w-full justify-between">
-                    <span>Open Tool</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
+  const renderTaxTools = () => {
+    const tools = [
+      {
+        id: "tax-analyzer",
+        title: "Tax Return Analyzer",
+        icon: <FileText className="w-10 h-10 text-[#FFD700]" />,
+        description: "Upload and analyze your tax returns to identify potential savings and optimization opportunities.",
+        comingSoon: false,
+        link: "/tax-planning/analyzer"
+      },
+      {
+        id: "document-aggregator",
+        title: "Tax Document Aggregator",
+        icon: <FolderSearch className="w-10 h-10 text-[#FFD700]" />,
+        description: "Organize all your tax documents in one place. Auto-categorize receipts, W2s, 1099s and more.",
+        comingSoon: true,
+        link: "/tax-planning/aggregator"
+      },
+      {
+        id: "roth-conversion",
+        title: "Roth Conversion Analyzer",
+        icon: <Banknote className="w-10 h-10 text-[#FFD700]" />,
+        description: "Calculate tax implications of converting traditional IRA assets to Roth accounts over time.",
+        comingSoon: false,
+        link: "/tax-planning/roth-conversion"
+      },
+      {
+        id: "roth-analysis",
+        title: "Roth Conversion Analysis",
+        icon: <LineChart className="w-10 h-10 text-[#FFD700]" />,
+        description: "Compare different Roth conversion scenarios across multiple tax years.",
+        comingSoon: false,
+        link: "/tax-planning/roth-analysis"
+      },
+      {
+        id: "social-security",
+        title: "Social Security Calculator",
+        icon: <HeartHandshake className="w-10 h-10 text-[#FFD700]" />,
+        description: "Optimize when to take Social Security benefits based on your unique tax situation.",
+        comingSoon: true,
+        link: "/tax-planning/social-security"
+      },
+      {
+        id: "bracket-manager",
+        title: "Dynamic Bracket Manager",
+        icon: <BarChart2 className="w-10 h-10 text-[#FFD700]" />,
+        description: "Visualize your current tax bracket position and model changes to optimize your tax strategies.",
+        comingSoon: false,
+        link: "/tax-planning/bracket-manager"
+      },
+      {
+        id: "tax-vault",
+        title: "Tax Vault",
+        icon: <Lock className="w-10 h-10 text-[#FFD700]" />,
+        description: "Securely store all your tax documents with bank-level encryption and easy retrieval.",
+        comingSoon: true,
+        link: "/tax-planning/tax-vault"
+      },
+      {
+        id: "advanced-strategies",
+        title: "Advanced Tax Strategies",
+        icon: <Lightbulb className="w-10 h-10 text-[#FFD700]" />,
+        description: "Learn advanced tax optimization strategies including estate planning, charitable giving and more.",
+        comingSoon: false,
+        link: "/tax-planning/advanced-strategies"
+      },
+    ];
+    
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {tools.map((tool) => (
+          <TooltipProvider key={tool.id}>
+            <Tooltip delayDuration={200}>
+              <TooltipTrigger asChild>
+                <Link to={tool.link} className="neptune-card interactive">
+                  <Card>
+                    <CardHeader className="space-y-1">
+                      <CardTitle className="text-2xl font-bold tracking-tight flex items-center gap-3">
+                        {tool.icon}
+                        {tool.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <p className="text-sm text-muted-foreground">
+                        {tool.description}
+                        {tool.comingSoon && <span className="ml-1 text-xs text-yellow-500">(Coming Soon)</span>}
+                      </p>
+                    </CardContent>
+                  </Card>
                 </Link>
-              )}
-            </CardFooter>
-          </Card>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" align="center">
+                {tool.comingSoon ? `Feature "${tool.title}" is coming soon!` : `Go to ${tool.title}`}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ))}
       </div>
+    );
+  };
+
+  return (
+    <div className="container content-padding section-margin">
+      <div className="flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
+        <div className="space-y-0.5">
+          <h2 className="text-3xl font-bold tracking-tight neptune-gold">Tax Planning Hub</h2>
+          <p className="text-muted-foreground">
+            Optimize your tax strategy with our suite of advanced tools.
+          </p>
+        </div>
+      </div>
+      <div className="py-4">{renderTaxTools()}</div>
     </div>
   );
 };

@@ -16,6 +16,7 @@ import TaxPlanningLandingPage from "./pages/TaxPlanningLandingPage";
 import TaxReturnAnalyzerPage from "./pages/TaxReturnAnalyzerPage";
 import TaxDocumentAggregatorPage from "./pages/TaxDocumentAggregatorPage";
 import RothConversionAnalyzerPage from "./pages/RothConversionAnalyzerPage";
+import RothConversionAnalysisPage from "./pages/RothConversionAnalysisPage";
 import SocialSecurityCalculatorPage from "./pages/SocialSecurityCalculatorPage";
 import DynamicBracketManagerPage from "./pages/DynamicBracketManagerPage";
 import TaxVaultPage from "./pages/TaxVaultPage";
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="tax-planning/analyzer" element={<TaxReturnAnalyzerPage />} />
             <Route path="tax-planning/aggregator" element={<TaxDocumentAggregatorPage />} />
             <Route path="tax-planning/roth-conversion" element={<RothConversionAnalyzerPage />} />
+            <Route path="tax-planning/roth-analysis" element={<RothConversionAnalysisPage />} />
             <Route path="tax-planning/social-security" element={<SocialSecurityCalculatorPage />} />
             <Route path="tax-planning/bracket-manager" element={<DynamicBracketManagerPage />} />
             <Route path="tax-planning/tax-vault" element={<TaxVaultPage />} />
