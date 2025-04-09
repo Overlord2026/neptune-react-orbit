@@ -211,4 +211,111 @@ const generateLTCGBrackets = (): TaxBracket[] => {
   brackets.push(
     { id: generateBracketId(2021, "head_of_household", 0, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 0, bracket_max: 54100, rate: 0.00, bracket_type: "ltcg" },
     { id: generateBracketId(2021, "head_of_household", 54100, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 54100, bracket_max: 473750, rate: 0.15, bracket_type: "ltcg" },
-    { id
+    { id: generateBracketId(2021, "head_of_household", 473750, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 473750, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
+  );
+  
+  return brackets;
+};
+
+// Generate all brackets
+export const TAX_BRACKETS_DATA: TaxBracket[] = [
+  ...generateOrdinaryIncomeBrackets(),
+  ...generateLTCGBrackets()
+];
+
+// Standard Deduction Data for 2021-2023
+export const STANDARD_DEDUCTION = {
+  2023: {
+    single: 13850,
+    married: 27700,
+    head_of_household: 20800
+  },
+  2022: {
+    single: 12950,
+    married: 25900,
+    head_of_household: 19400
+  },
+  2021: {
+    single: 12550,
+    married: 25100,
+    head_of_household: 18800
+  }
+};
+
+/**
+ * Get tax brackets for a specific year, filing status, and type
+ */
+export const getBrackets = (
+  year: number,
+  filingStatus: FilingStatusType,
+  type: BracketType
+): TaxBracket[] => {
+  return TAX_BRACKETS_DATA.filter(
+    bracket => 
+      bracket.tax_year === year && 
+      bracket.filing_status === filingStatus &&
+      bracket.bracket_type === type
+  ).sort((a, b) => a.bracket_min - b.bracket_min);
+};
+
+/**
+ * Calculate tax on a given income using the appropriate brackets
+ */
+export const calculateTax = (
+  income: number,
+  year: number,
+  filingStatus: FilingStatusType,
+  type: BracketType = "ordinary"
+): number => {
+  let tax = 0;
+  let remainingIncome = income;
+  
+  // Get applicable brackets
+  const brackets = getBrackets(year, filingStatus, type);
+  
+  // Calculate tax bracket by bracket
+  for (let i = 0; i < brackets.length; i++) {
+    const bracket = brackets[i];
+    const nextBracketMin = i < brackets.length - 1 ? brackets[i + 1].bracket_min : Infinity;
+    
+    // Calculate taxable amount in this bracket
+    const taxableInBracket = Math.min(
+      remainingIncome,
+      nextBracketMin - bracket.bracket_min
+    );
+    
+    // If no more income to tax, exit loop
+    if (taxableInBracket <= 0) break;
+    
+    // Add tax for this bracket
+    tax += taxableInBracket * bracket.rate;
+    
+    // Reduce remaining income
+    remainingIncome -= taxableInBracket;
+  }
+  
+  return tax;
+};
+
+/**
+ * Format currency for display
+ */
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', { 
+    style: 'currency', 
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
+};
+
+/**
+ * Format percentage for display
+ */
+export const formatPercent = (decimal: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  }).format(decimal);
+};
