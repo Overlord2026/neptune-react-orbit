@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TaxReturnData } from '../SimpleReturnFilingFlow';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import * as z from 'zod';
 import { PlusCircle, Trash2 } from 'lucide-react';
 
@@ -59,12 +58,23 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
     },
   });
 
-  const { fields, append, remove } = form.useFieldArray({
+  // Use useFieldArray hook separately, not from form object
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
     name: "dependents",
   });
 
   function onSubmit(values: FormValues) {
-    onComplete(values);
+    // Convert form values to TaxReturnData structure
+    const formattedData: Partial<TaxReturnData> = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      ssn: values.ssn,
+      filingStatus: values.filingStatus,
+      address: values.address,
+      dependents: values.dependents,
+    };
+    onComplete(formattedData);
   }
 
   return (
