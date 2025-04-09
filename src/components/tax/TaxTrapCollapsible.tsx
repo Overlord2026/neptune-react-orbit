@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from 'lucide-react';
-import { TaxTrapChecker } from './TaxTrapChecker';
+import TaxTrapChecker from './TaxTrapChecker';
 import { TaxResult } from '@/utils/taxCalculator';
 
 interface TaxTrapCollapsibleProps {
