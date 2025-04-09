@@ -41,6 +41,21 @@ const AdminDashboardPage = () => {
           </div>
         </Link>
         
+        <Link to="/admin/data-feed-logs" className="block">
+          <div className="group relative rounded-lg border p-6 hover:border-[#FFD700] hover:shadow-md transition-all">
+            <h3 className="text-lg font-semibold">Data Feed Logs</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              View detailed logs of data feed updates, including changes, errors, and version information.
+            </p>
+            <div className="mt-4 flex items-center text-sm text-[#FFD700] group-hover:underline">
+              View logs
+              <svg xmlns="http://www.w3.org/2000/svg" className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </Link>
+        
         {/* Placeholder for other admin sections */}
         <div className="rounded-lg border p-6">
           <h3 className="text-lg font-semibold">User Management</h3>

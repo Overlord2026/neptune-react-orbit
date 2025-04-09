@@ -38,6 +38,7 @@ import TaxFilingOptionsPage from "./pages/TaxFilingOptionsPage";
 import SimpleReturnFilingPage from "./pages/SimpleReturnFilingPage";
 import ProfessionalTaxAssistancePage from "./pages/ProfessionalTaxAssistancePage";
 import DataFeedsAndUpdatesPage from "./pages/DataFeedsAndUpdatesPage";
+import DataFeedLogsPage from "./pages/DataFeedLogsPage";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="settings" element={<Settings />} />
             <Route path="admin" element={<AdminDashboardPage />} />
             <Route path="admin/data-feeds" element={<DataFeedsAndUpdatesPage />} />
+            <Route path="admin/data-feed-logs" element={<DataFeedLogsPage />} />
             <Route path="tax-planning" element={<TaxPlanningLandingPage />} />
             <Route path="tax-planning/basic-education" element={<BasicTaxEducationPage />} />
             <Route path="tax-planning/advanced-tax-education" element={<AdvancedTaxEducationPage />} />
