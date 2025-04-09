@@ -98,7 +98,7 @@ const BasicTaxEducationPage = () => {
         
         <div className="flex items-end ml-auto">
           <p className="text-xs text-muted-foreground">
-            Data last updated: <DynamicContentText as="span">{{tax_data_last_update}}</DynamicContentText>
+            Data last updated: <DynamicContentText as="span">{`{{tax_data_last_update}}`}</DynamicContentText>
           </p>
         </div>
       </div>
