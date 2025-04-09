@@ -5,61 +5,73 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { ArrowLeft, PieChart } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, ResponsiveContainer } from 'recharts';
+import { ArrowLeft, PieChart, BarChart3, Layers, LayoutGrid } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-
-// Income tax brackets for 2023 (simplified)
-const TAX_BRACKETS = [
-  { min: 0, max: 11000, rate: 0.10, label: '10%' },
-  { min: 11000, max: 44725, rate: 0.12, label: '12%' },
-  { min: 44725, max: 95375, rate: 0.22, label: '22%' },
-  { min: 95375, max: 182100, rate: 0.24, label: '24%' },
-  { min: 182100, max: 231250, rate: 0.32, label: '32%' },
-  { min: 231250, max: 578125, rate: 0.35, label: '35%' },
-  { min: 578125, max: Infinity, rate: 0.37, label: '37%' }
-];
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, ResponsiveContainer } from 'recharts';
+import { 
+  getBrackets, 
+  calculateTax,
+  calculateEffectiveRate,
+  STANDARD_DEDUCTION 
+} from '@/utils/taxBracketData';
+import {
+  calculateTaxableIncome,
+  getDistanceToNextBracket,
+  formatCurrency,
+  formatPercent
+} from '@/utils/taxUtils';
+import InfoTooltip from '@/components/tax/InfoTooltip';
 
 const DynamicBracketManagerPage = () => {
   const [income, setIncome] = useState<number>(100000);
   const [deductions, setDeductions] = useState<number>(13850); // Standard deduction 2023
+  const [selectedYear, setSelectedYear] = useState<number>(2023);
+  const [filingStatus, setFilingStatus] = useState<"single" | "married" | "head_of_household">("single");
+  const [bracketType, setBracketType] = useState<"ordinary" | "ltcg">("ordinary");
   
   // Calculate taxable income
-  const taxableIncome = Math.max(0, income - deductions);
+  const taxableIncome = calculateTaxableIncome(
+    income,
+    selectedYear,
+    filingStatus,
+    false, // Using standard deduction
+    deductions
+  );
   
-  // Calculate tax owed
-  const calculateTax = (income: number): number => {
-    let tax = 0;
-    let remainingIncome = income;
-    
-    for (const bracket of TAX_BRACKETS) {
-      if (remainingIncome <= 0) break;
-      
-      const taxableAmountInBracket = Math.min(
-        remainingIncome,
-        bracket.max - bracket.min
-      );
-      
-      tax += taxableAmountInBracket * bracket.rate;
-      remainingIncome -= taxableAmountInBracket;
-    }
-    
-    return tax;
-  };
+  // Get tax brackets for the selected criteria
+  const taxBrackets = getBrackets(selectedYear, filingStatus, bracketType);
   
-  const totalTax = calculateTax(taxableIncome);
-  const effectiveRate = taxableIncome > 0 ? (totalTax / taxableIncome) * 100 : 0;
+  // Calculate total tax
+  const totalTax = calculateTax(taxableIncome, selectedYear, filingStatus, bracketType);
+  
+  // Calculate effective tax rate
+  const effectiveRate = calculateEffectiveRate(taxableIncome, totalTax);
   
   // Find current marginal bracket
-  const currentBracket = TAX_BRACKETS.find(
-    bracket => taxableIncome > bracket.min && taxableIncome <= bracket.max
-  ) || TAX_BRACKETS[0];
+  const currentBracket = taxBrackets.find(
+    bracket => taxableIncome > bracket.bracket_min && taxableIncome <= bracket.bracket_max
+  ) || taxBrackets[0];
+  
+  // Get distance to next bracket
+  const { nextBracketRate, distance: distanceToNextBracket } = getDistanceToNextBracket(
+    taxableIncome,
+    selectedYear,
+    filingStatus,
+    bracketType
+  );
+  
+  // Calculate progress to next bracket
+  const currentBracketRange = currentBracket ? 
+    (currentBracket.bracket_max === Infinity ? 1000000 : currentBracket.bracket_max) - currentBracket.bracket_min : 0;
+    
+  const progressToNextBracket = currentBracketRange > 0 ?
+    ((taxableIncome - currentBracket.bracket_min) / currentBracketRange) * 100 : 0;
   
   // Prepare data for chart
   const prepareBracketData = () => {
-    return TAX_BRACKETS.map(bracket => {
-      const min = bracket.min;
-      const max = bracket.max === Infinity ? 1000000 : bracket.max;
+    return taxBrackets.map(bracket => {
+      const min = bracket.bracket_min;
+      const max = bracket.bracket_max === Infinity ? 1000000 : bracket.bracket_max;
       const isInBracket = taxableIncome > min && taxableIncome <= max;
       
       // Calculate amount in each bracket
@@ -69,8 +81,8 @@ const DynamicBracketManagerPage = () => {
       }
       
       return {
-        name: bracket.label,
-        range: `$${min.toLocaleString()} - $${max === 1000000 ? '∞' : max.toLocaleString()}`,
+        name: `${(bracket.rate * 100).toFixed(0)}%`,
+        range: `${formatCurrency(min)} - ${max === 1000000 ? '∞' : formatCurrency(max)}`,
         rate: bracket.rate * 100,
         amountInBracket,
         isActive: isInBracket
@@ -80,22 +92,6 @@ const DynamicBracketManagerPage = () => {
   
   const bracketData = prepareBracketData();
   
-  // Calculate next bracket threshold
-  const nextBracketIndex = TAX_BRACKETS.findIndex(
-    bracket => bracket.min <= taxableIncome && bracket.max >= taxableIncome
-  );
-  const nextBracketThreshold = nextBracketIndex < TAX_BRACKETS.length - 1 
-    ? TAX_BRACKETS[nextBracketIndex + 1].min 
-    : null;
-  const distanceToNextBracket = nextBracketThreshold 
-    ? nextBracketThreshold - taxableIncome 
-    : 0;
-
-  // Custom fill function for the bar chart that returns a string
-  const getBarFill = (data: any): string => {
-    return data.isActive ? "#FFD700" : "#0ea5e9";
-  };
-  
   return (
     <div className="space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4">
@@ -103,6 +99,11 @@ const DynamicBracketManagerPage = () => {
           <h1 className="text-3xl font-bold tracking-tight neptune-gold">Dynamic Bracket Manager</h1>
           <p className="text-muted-foreground">
             Visualize how your income relates to tax brackets and plan strategies to optimize your tax situation.
+            <InfoTooltip 
+              text="Use this tool to see how different levels of income impact your tax brackets and overall tax liability." 
+              link="/tax-planning/basic-education#tax-brackets" 
+              linkText="Learn about tax brackets"
+            />
           </p>
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2 whitespace-nowrap">
@@ -122,7 +123,7 @@ const DynamicBracketManagerPage = () => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between">
-                <Label htmlFor="income">Gross Income: ${income.toLocaleString()}</Label>
+                <Label htmlFor="income">Gross Income: {formatCurrency(income)}</Label>
               </div>
               <Slider 
                 id="income"
@@ -136,7 +137,7 @@ const DynamicBracketManagerPage = () => {
             
             <div className="space-y-2">
               <div className="flex justify-between">
-                <Label htmlFor="deductions">Deductions: ${deductions.toLocaleString()}</Label>
+                <Label htmlFor="deductions">Deductions: {formatCurrency(deductions)}</Label>
               </div>
               <Slider 
                 id="deductions"
@@ -148,37 +149,81 @@ const DynamicBracketManagerPage = () => {
               />
             </div>
             
+            <div className="flex flex-wrap gap-2">
+              <div className="bg-muted/30 px-3 py-1 rounded-full text-sm">
+                <label className="mr-2">Year:</label>
+                <select 
+                  value={selectedYear} 
+                  onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  className="bg-transparent"
+                >
+                  <option value={2023}>2023</option>
+                  <option value={2022}>2022</option>
+                  <option value={2021}>2021</option>
+                </select>
+              </div>
+              
+              <div className="bg-muted/30 px-3 py-1 rounded-full text-sm">
+                <label className="mr-2">Filing:</label>
+                <select 
+                  value={filingStatus} 
+                  onChange={(e) => setFilingStatus(e.target.value as "single" | "married" | "head_of_household")}
+                  className="bg-transparent"
+                >
+                  <option value="single">Single</option>
+                  <option value="married">Married</option>
+                  <option value="head_of_household">Head of Household</option>
+                </select>
+              </div>
+              
+              <div className="bg-muted/30 px-3 py-1 rounded-full text-sm">
+                <label className="mr-2">Type:</label>
+                <select 
+                  value={bracketType} 
+                  onChange={(e) => setBracketType(e.target.value as "ordinary" | "ltcg")}
+                  className="bg-transparent"
+                >
+                  <option value="ordinary">Ordinary Income</option>
+                  <option value="ltcg">Long-Term Capital Gains</option>
+                </select>
+              </div>
+            </div>
+            
             <div className="mt-6 space-y-4">
               <div className="p-4 bg-primary/10 rounded-md">
                 <h3 className="font-semibold mb-2 neptune-gold">Your Tax Summary</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <span className="text-muted-foreground">Gross Income:</span>
-                  <span className="text-right">${income.toLocaleString()}</span>
+                  <span className="text-right">{formatCurrency(income)}</span>
                   
                   <span className="text-muted-foreground">Deductions:</span>
-                  <span className="text-right">${deductions.toLocaleString()}</span>
+                  <span className="text-right">{formatCurrency(deductions)}</span>
                   
                   <span className="text-muted-foreground">Taxable Income:</span>
-                  <span className="text-right">${taxableIncome.toLocaleString()}</span>
+                  <span className="text-right">{formatCurrency(taxableIncome)}</span>
                   
                   <span className="text-muted-foreground">Total Tax:</span>
-                  <span className="text-right">${Math.round(totalTax).toLocaleString()}</span>
+                  <span className="text-right">{formatCurrency(Math.round(totalTax))}</span>
                   
                   <span className="text-muted-foreground">Effective Tax Rate:</span>
-                  <span className="text-right">{effectiveRate.toFixed(2)}%</span>
+                  <span className="text-right">{formatPercent(effectiveRate)}</span>
                   
                   <span className="text-muted-foreground">Current Bracket:</span>
-                  <span className="text-right">{currentBracket.rate * 100}%</span>
+                  <span className="text-right">{formatPercent(currentBracket?.rate || 0)}</span>
                 </div>
               </div>
               
-              {nextBracketThreshold && (
+              {nextBracketRate !== null && (
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Distance to next bracket:</span>
-                    <span>${distanceToNextBracket.toLocaleString()}</span>
+                    <span className="text-muted-foreground">Progress in current bracket:</span>
+                    <span>{Math.min(100, progressToNextBracket).toFixed(0)}%</span>
                   </div>
-                  <Progress value={100 - (distanceToNextBracket / (nextBracketThreshold - TAX_BRACKETS[nextBracketIndex].min) * 100)} className="h-2" />
+                  <Progress value={Math.min(100, progressToNextBracket)} className="h-2" />
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">To next bracket ({formatPercent(nextBracketRate)}):</span>
+                    <span>{formatCurrency(distanceToNextBracket)}</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -186,18 +231,52 @@ const DynamicBracketManagerPage = () => {
         </Card>
         
         <Card className="lg:col-span-2 bg-card border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-xl neptune-gold">Tax Bracket Visualization</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-xl neptune-gold">
+              {bracketType === "ordinary" ? "Ordinary Income" : "Capital Gains"} Tax Brackets
+              <InfoTooltip 
+                text={bracketType === "ordinary" 
+                  ? "Ordinary income includes wages, interest, short-term gains, and most taxable distributions." 
+                  : "Long-term capital gains are taxed at preferential rates for assets held more than one year."
+                }
+                icon="help"
+                link={bracketType === "ordinary" 
+                  ? "/tax-planning/basic-education#ordinary-income" 
+                  : "/tax-planning/basic-education#capital-gains"
+                }
+              />
+            </CardTitle>
+            <div className="flex gap-2">
+              <Button 
+                variant={bracketType === "ordinary" ? "default" : "outline"} 
+                size="sm" 
+                onClick={() => setBracketType("ordinary")}
+              >
+                <Layers className="h-4 w-4 mr-1" />
+                Ordinary
+              </Button>
+              <Button 
+                variant={bracketType === "ltcg" ? "default" : "outline"} 
+                size="sm" 
+                onClick={() => setBracketType("ltcg")}
+              >
+                <LayoutGrid className="h-4 w-4 mr-1" />
+                Capital Gains
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={400}>
               <BarChart data={bracketData} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
-                <YAxis label={{ value: 'Amount ($)', angle: -90, position: 'insideLeft' }} />
+                <YAxis 
+                  label={{ value: 'Amount ($)', angle: -90, position: 'insideLeft' }} 
+                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                />
                 <Tooltip 
-                  formatter={(value: any, name: any, props: any) => [
-                    `$${Number(value).toLocaleString()}`,
+                  formatter={(value: any, name: any) => [
+                    formatCurrency(Number(value)),
                     name === 'amountInBracket' ? 'Amount In Bracket' : name
                   ]}
                   labelFormatter={(label) => `Tax Rate: ${label}`}
@@ -214,6 +293,34 @@ const DynamicBracketManagerPage = () => {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            
+            <div className="mt-4">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr>
+                      <th className="text-left px-2 py-1">Rate</th>
+                      <th className="text-left px-2 py-1">Income Range</th>
+                      <th className="text-right px-2 py-1">Tax in Bracket</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bracketData.map((bracket, index) => {
+                      // Calculate tax paid in each bracket
+                      const bracketTax = bracket.amountInBracket * (bracket.rate / 100);
+                      
+                      return (
+                        <tr key={index} className={bracket.isActive ? "bg-primary/10" : ""}>
+                          <td className="px-2 py-1">{bracket.name}</td>
+                          <td className="px-2 py-1">{bracket.range}</td>
+                          <td className="text-right px-2 py-1">{formatCurrency(bracketTax)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
