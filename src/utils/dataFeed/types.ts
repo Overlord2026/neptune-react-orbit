@@ -41,6 +41,11 @@ export interface TaxBracketUpdate {
   status: string;
   filingStatus: string;
   data: any;
+  // For compatibility with existing code
+  filing_status?: string;
+  bracket_min?: number;
+  bracket_type?: string;
+  rate?: number;
 }
 
 export interface RetirementLimitUpdate {
@@ -59,4 +64,6 @@ export interface StandardDeductionUpdate {
   type: 'standard_deduction';
   year: number;
   data: any;
+  filing_status?: string; // For compatibility with existing code
+  amount?: number; // For compatibility with existing code
 }

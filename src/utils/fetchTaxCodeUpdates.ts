@@ -83,6 +83,8 @@ export const fetchTaxCodeUpdates = async (
     createDataFeedLog({
       feed_id: feedId,
       timestamp: new Date().toISOString(),
+      status: 'success',
+      message: `Tax code updates successfully fetched and processed.`,
       success: true,
       changes_count: result.changesCount,
       version_info: result.versionInfo
@@ -113,6 +115,8 @@ export const fetchTaxCodeUpdates = async (
     createDataFeedLog({
       feed_id: feedId,
       timestamp: new Date().toISOString(),
+      status: 'error',
+      message: `Failed to fetch tax code updates: ${error instanceof Error ? error.message : "Unknown error"}`,
       success: false,
       changes_count: 0,
       error_message: error instanceof Error ? error.message : "Unknown error"
@@ -185,15 +189,25 @@ const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<number>
   
   // Compare incoming brackets with existing ones
   brackets.forEach(newBracket => {
+    const filingStatus = newBracket.filingStatus || newBracket.filing_status;
+    const bracketMin = newBracket.bracket_min;
+    const bracketType = newBracket.bracket_type;
+    const rate = newBracket.rate;
+    
+    if (!filingStatus || bracketMin === undefined || !bracketType) {
+      console.warn("Incomplete tax bracket data:", newBracket);
+      return;
+    }
+    
     const existingBracket = TAX_BRACKETS_DATA.find(
       b => b.tax_year === newBracket.year && 
-           b.filing_status === newBracket.filing_status &&
-           b.bracket_min === newBracket.bracket_min &&
-           b.bracket_type === newBracket.bracket_type
+           b.filing_status === filingStatus &&
+           b.bracket_min === bracketMin &&
+           b.bracket_type === bracketType
     );
     
-    if (!existingBracket || existingBracket.rate !== newBracket.rate) {
-      console.log(`Change detected in tax bracket: ${newBracket.year}, ${newBracket.filing_status} at ${newBracket.bracket_min}`);
+    if (!existingBracket || existingBracket.rate !== rate) {
+      console.log(`Change detected in tax bracket: ${newBracket.year}, ${filingStatus} at ${bracketMin}`);
       changesCount++;
       
       // In a real app, update or insert the bracket in the database
@@ -214,14 +228,21 @@ const processStandardDeductions = async (deductions: StandardDeductionUpdate[]):
   
   deductions.forEach(newDeduction => {
     const year = newDeduction.year.toString();
-    const filingStatus = newDeduction.filing_status;
+    const filingStatus = newDeduction.filing_status || '';
+    const amount = newDeduction.amount;
+    
+    // Skip if we don't have the required data
+    if (!filingStatus || amount === undefined) {
+      console.warn("Incomplete standard deduction data:", newDeduction);
+      return;
+    }
     
     // Check if the year exists in our data
     if (STANDARD_DEDUCTION_BY_YEAR[year]) {
       // Check if the filing status exists for this year
       if (STANDARD_DEDUCTION_BY_YEAR[year][filingStatus]) {
         // Compare the amounts
-        if (STANDARD_DEDUCTION_BY_YEAR[year][filingStatus] !== newDeduction.amount) {
+        if (STANDARD_DEDUCTION_BY_YEAR[year][filingStatus] !== amount) {
           console.log(`Change detected in standard deduction: ${year}, ${filingStatus}`);
           changesCount++;
           
@@ -331,4 +352,9 @@ const shouldUpdate = (feed: DataFeed): boolean => {
     default:
       return false;
   }
+};
+
+// Added to match the import in the TaxDataUpdatePrompt component
+export const refreshTaxData = (sessionId: string): void => {
+  markTaxDataAsCurrent(sessionId);
 };

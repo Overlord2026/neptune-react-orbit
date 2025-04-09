@@ -1,69 +1,104 @@
 
-import { DataFeed, DataFeedLog } from './types';
+import { DataFeed, DataFeedLog, TaxDataCacheInfo } from './types';
 
-// Mock data storage (in a real app, this would be a database)
-const initialDataFeeds: DataFeed[] = [
+// Sample data feeds for demo purposes
+export const dataFeeds: DataFeed[] = [
   {
     id: "irs-updates",
     name: "IRS Tax Code Updates",
-    api_endpoint: "https://api.irs.gov/tax-code/v1/updates",
-    refresh_frequency: "weekly",
-    last_update: "2025-04-05T10:30:00Z",
+    description: "Updates to federal tax brackets, deductions, credits, and forms",
+    update_frequency: "yearly",
+    last_update: "2024-02-15T09:30:00Z",
     status: "active",
-    description: "Official updates to tax brackets, rates, and new form releases"
+    source: "irs.gov",
+    data_type: "tax_rates",
+    api_endpoint: "https://api.example.com/irs-tax-updates",
+    refresh_frequency: "daily"
   },
   {
     id: "state-tax-rates",
-    name: "State-Specific Tax Rates",
-    api_endpoint: "https://api.taxdata.org/states/v2/rates",
-    refresh_frequency: "monthly",
-    last_update: "2025-03-15T14:22:00Z",
+    name: "State Tax Rate Updates",
+    description: "Updates to state income tax rates and brackets",
+    update_frequency: "yearly",
+    last_update: "2024-01-30T14:45:00Z",
     status: "active",
-    description: "State income tax rates, sales tax, and local tax information"
+    source: "various-state-websites",
+    data_type: "tax_rates",
+    api_endpoint: "https://api.example.com/state-tax-rates",
+    refresh_frequency: "weekly"
   },
   {
     id: "retirement-limits",
-    name: "Retirement Account Limits",
-    api_endpoint: "https://api.irs.gov/retirement/v1/limits",
-    refresh_frequency: "monthly",
-    last_update: "2025-02-28T09:15:00Z",
+    name: "Retirement Contribution Limits",
+    description: "Updates to IRA, 401k, and other retirement account contribution limits",
+    update_frequency: "yearly",
+    last_update: "2024-03-01T11:15:00Z",
     status: "active",
-    description: "IRA, 401(k), and other retirement account contribution limits"
+    source: "irs.gov",
+    data_type: "financial",
+    api_endpoint: "https://api.example.com/retirement-limits",
+    refresh_frequency: "monthly"
   },
   {
-    id: "inflation-data",
-    name: "Inflation Updates",
-    api_endpoint: "https://api.treasury.gov/inflation/v1/current",
-    refresh_frequency: "daily",
-    last_update: "2025-04-08T23:00:00Z",
-    status: "warning",
-    description: "Current inflation rates affecting tax brackets and deductions"
-  },
-  {
-    id: "aca-subsidies",
-    name: "ACA Subsidy Changes",
-    api_endpoint: "https://api.healthcare.gov/subsidies/v2",
-    refresh_frequency: "monthly",
-    last_update: "2025-03-01T12:00:00Z",
+    id: "inflation-adjustments",
+    name: "Inflation Adjusted Amounts",
+    description: "Updates to inflation adjusted tax provisions",
+    update_frequency: "yearly",
+    last_update: "2024-02-28T10:00:00Z",
     status: "error",
-    description: "Updates to Affordable Care Act premium tax credit calculations"
+    source: "treasury.gov",
+    data_type: "economic",
+    api_endpoint: "https://api.example.com/inflation-adjustments",
+    error_message: "API returned 500 error code",
+    refresh_frequency: "monthly"
   },
   {
-    id: "social-security",
-    name: "Social Security Thresholds",
-    api_endpoint: "https://api.ssa.gov/thresholds/v1",
-    refresh_frequency: "monthly",
-    last_update: "2025-03-10T16:45:00Z",
+    id: "tax-form-updates",
+    name: "Tax Form Updates",
+    description: "Updates to tax form formats and requirements",
+    update_frequency: "quarterly",
+    last_update: "2024-03-15T16:20:00Z",
     status: "active",
-    description: "Social Security wage base limits and benefit threshold updates"
+    source: "irs.gov",
+    data_type: "regulatory",
+    api_endpoint: "https://api.example.com/tax-form-updates",
+    refresh_frequency: "weekly"
   }
 ];
 
-// Initialize with mock data
-let dataFeeds = [...initialDataFeeds];
-let dataFeedLogs: DataFeedLog[] = [];
+// Sample logs for data feeds
+export const dataFeedLogs: DataFeedLog[] = [
+  {
+    id: "log-001",
+    feed_id: "irs-updates",
+    timestamp: "2024-02-15T09:30:00Z",
+    status: "success",
+    message: "Successfully fetched tax code updates",
+    details: "Updated 15 tax brackets and 5 deduction amounts"
+  },
+  {
+    id: "log-002",
+    feed_id: "state-tax-rates",
+    timestamp: "2024-01-30T14:45:00Z",
+    status: "success",
+    message: "Successfully fetched state tax rate updates",
+    details: "Updated tax rates for 12 states"
+  },
+  {
+    id: "log-003",
+    feed_id: "inflation-adjustments",
+    timestamp: "2024-02-28T10:00:00Z",
+    status: "error",
+    message: "Failed to fetch inflation adjusted amounts",
+    error_message: "API returned 500 error code"
+  }
+];
 
-// Session cache for tax data - stores when the user last checked for updates
-let taxDataCache: Record<string, TaxDataCacheInfo> = {}; 
-
-export { dataFeeds, dataFeedLogs, taxDataCache };
+// Cache info for user sessions
+export const taxDataCache: Record<string, TaxDataCacheInfo> = {
+  "default": {
+    lastChecked: "2024-03-20T08:00:00Z",
+    dataUpdatedAt: "2024-02-15T09:30:00Z",
+    isCurrent: true
+  }
+};

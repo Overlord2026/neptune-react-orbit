@@ -2,7 +2,7 @@
 import React from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { getFormattedUpdateDate } from '@/utils/dataFeedUtils';
-import { refreshTaxData } from '@/utils/taxCalculator';
+import { markTaxDataAsCurrent } from '@/utils/dataFeed';
 
 interface TaxDataUpdatePromptProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ const TaxDataUpdatePrompt: React.FC<TaxDataUpdatePromptProps> = ({
 }) => {
   const handleRefresh = () => {
     // Mark the tax data as current for this session
-    refreshTaxData(sessionId);
+    markTaxDataAsCurrent(sessionId);
     
     // Trigger the parent component's refresh handler
     onRefresh();

@@ -143,7 +143,7 @@ const RecommendedReadingPage = () => {
         </div>
         <div>
           <p className="text-xs text-right text-muted-foreground">
-            Data last updated: <DynamicContentText>{`{{tax_data_last_update}}`}</DynamicContentText>
+            Data last updated: <DynamicContentText>tax_data_last_update</DynamicContentText>
           </p>
         </div>
       </div>
