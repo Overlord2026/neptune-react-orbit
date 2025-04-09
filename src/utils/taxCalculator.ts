@@ -7,11 +7,11 @@
 
 import { 
   FilingStatusType,
-  calculateTax as calculateBaseTax,
-  STANDARD_DEDUCTION
+  getBrackets
 } from './taxBracketData';
 import {
-  calculateTaxableIncome
+  calculateTaxableIncome,
+  calculateTotalTaxLiability
 } from './taxUtils';
 
 // Types
@@ -38,8 +38,15 @@ export interface TaxResult {
   agi: number;
   taxable_income: number;
   total_tax: number;
+  ordinary_tax: number;
+  capital_gains_tax: number;
   marginal_rate: number;
+  marginal_capital_gains_rate: number;
   effective_rate: number;
+  brackets_breakdown?: {
+    ordinary: { bracket: number; amount: number; tax: number }[];
+    capitalGains: { bracket: number; amount: number; tax: number }[];
+  };
   updated_at: Date;
   safe_harbor?: SafeHarborResult;
 }
@@ -78,15 +85,6 @@ export function calculateTaxScenario(input: TaxInput, scenario_name: string): Ta
   // In real life, there would be above-the-line deductions
   const agi = total_income;
   
-  // Calculate taxable income using the new utility function
-  const taxable_income = calculateTaxableIncome(
-    agi,
-    input.year,
-    input.filing_status,
-    input.isItemizedDeduction,
-    input.itemizedDeductionAmount
-  );
-  
   // Split income into ordinary income and capital gains
   const ordinary_income = 
     input.wages + 
@@ -99,45 +97,40 @@ export function calculateTaxScenario(input: TaxInput, scenario_name: string): Ta
   // For simplicity, assuming capital gains are all long-term
   const capital_gains = input.capital_gains;
   
-  // Prioritize ordinary income for tax calculation
-  const ordinaryTaxableIncome = Math.min(ordinary_income, taxable_income);
-  const ordinaryTax = calculateBaseTax(ordinaryTaxableIncome, input.year, input.filing_status, "ordinary");
+  // Calculate tax using our utility function that properly handles ordinary income and capital gains
+  const taxResults = calculateTotalTaxLiability(
+    ordinary_income,
+    capital_gains,
+    input.year,
+    input.filing_status,
+    input.isItemizedDeduction,
+    input.itemizedDeductionAmount
+  );
   
-  // If there's room left for capital gains after using ordinary income
-  const capitalGainsTaxableIncome = Math.max(0, taxable_income - ordinaryTaxableIncome);
-  const capitalGainsTax = calculateBaseTax(capitalGainsTaxableIncome, input.year, input.filing_status, "ltcg");
+  // Calculate taxable income using the utility function
+  const taxable_income = calculateTaxableIncome(
+    agi,
+    input.year,
+    input.filing_status,
+    input.isItemizedDeduction,
+    input.itemizedDeductionAmount
+  );
   
-  // Total tax is the sum of ordinary income tax and capital gains tax
-  const total_tax = ordinaryTax + capitalGainsTax;
-  
-  // Calculate marginal rate (simplified for this scenario)
-  let marginal_rate = 0;
-  
-  if (ordinaryTaxableIncome > 0) {
-    // For simplicity, using the ordinary income brackets
-    const brackets = getBracketsLegacy(input.year, input.filing_status);
-    for (let i = brackets.length - 1; i >= 0; i--) {
-      if (ordinaryTaxableIncome > brackets[i].min) {
-        marginal_rate = brackets[i].rate;
-        break;
-      }
-    }
-  }
-  
-  // Calculate effective tax rate (as percentage)
-  const effective_rate = taxable_income > 0 ? (total_tax / taxable_income) : 0;
-  
-  // Return result
+  // Return result with enhanced data
   return {
     scenario_name,
     year: input.year,
     total_income,
     agi,
     taxable_income,
-    total_tax,
-    marginal_rate,
-    effective_rate,
-    updated_at: new Date(),
+    total_tax: taxResults.totalTax,
+    ordinary_tax: taxResults.ordinaryTax,
+    capital_gains_tax: taxResults.capitalGainsTax,
+    marginal_rate: taxResults.marginalOrdinaryRate,
+    marginal_capital_gains_rate: taxResults.marginalCapitalGainsRate,
+    effective_rate: taxResults.effectiveRate,
+    brackets_breakdown: taxResults.bracketsBreakdown,
+    updated_at: new Date()
   };
 }
 

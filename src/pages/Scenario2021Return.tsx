@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { calculateTaxScenario, saveScenario, FilingStatus } from '@/utils/taxCalculator';
+import { calculateTaxScenario, saveScenario, FilingStatusType } from '@/utils/taxCalculator';
 
 // Define the form schema with zod
 const formSchema = z.object({
@@ -110,7 +110,7 @@ const Scenario2021Return = () => {
         social_security,
         isItemizedDeduction: data.deductionType === "itemized",
         itemizedDeductionAmount: data.deductionType === "itemized" ? itemizedDeductionAmount : undefined,
-        filing_status: data.filingStatus as FilingStatus,
+        filing_status: data.filingStatus as FilingStatusType,
       }, "2021 Base Scenario");
       
       // Save the result
