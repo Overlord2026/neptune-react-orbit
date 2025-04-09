@@ -75,6 +75,24 @@ export default {
                     800: '#075985',
                     900: '#0c4a6e',
                     950: '#082f49',
+                },
+                // Custom Neptune theme colors
+                custom: {
+                  background: {
+                    primary: '#111111',
+                    secondary: '#1E1E1E',
+                    tertiary: '#222222',
+                  },
+                  accent: '#FFD700',
+                  text: {
+                    primary: '#FFFFFF',
+                    secondary: '#A0A0A0',
+                  },
+                  status: {
+                    success: '#4CAF50',
+                    warning: '#FFA500',
+                    error: '#FF4D4D',
+                  },
                 }
 			},
 			borderRadius: {
@@ -102,13 +120,26 @@ export default {
                 'float': {
                     '0%, 100%': { transform: 'translateY(0)' },
                     '50%': { transform: 'translateY(-5px)' }
-                }
+                },
+                'fade-in': {
+                  from: { opacity: '0' },
+                  to: { opacity: '1' }
+                },
+                'slide-up': {
+                  from: { transform: 'translateY(20px)', opacity: '0' },
+                  to: { transform: 'translateY(0)', opacity: '1' }
+                },
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-                'float': 'float 3s ease-in-out infinite'
-			}
+                'float': 'float 3s ease-in-out infinite',
+                'fade-in': 'fade-in 0.3s ease-in',
+                'slide-up': 'slide-up 0.3s ease-out'
+			},
+            fontFamily: {
+              sans: ['Inter', 'Arial', 'sans-serif'],
+            },
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
