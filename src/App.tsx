@@ -18,6 +18,7 @@ import TaxDocumentAggregatorPage from "./pages/TaxDocumentAggregatorPage";
 import RothConversionAnalyzerPage from "./pages/RothConversionAnalyzerPage";
 import SocialSecurityCalculatorPage from "./pages/SocialSecurityCalculatorPage";
 import StatCardDemo from "./pages/StatCardDemo";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="team" element={<Team />} />
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="admin" element={<AdminDashboardPage />} />
             <Route path="tax-planning" element={<TaxPlanningLandingPage />} />
             <Route path="tax-planning/analyzer" element={<TaxReturnAnalyzerPage />} />
             <Route path="tax-planning/aggregator" element={<TaxDocumentAggregatorPage />} />
