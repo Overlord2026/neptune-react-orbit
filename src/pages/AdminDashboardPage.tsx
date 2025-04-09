@@ -23,7 +23,7 @@ const AdminDashboardPage = () => {
         </div>
       </div>
       
-      <div className="mt-8">
+      <div>
         <Card className="bg-[#1E1E1E] border-[#333333]">
           <CardHeader>
             <CardTitle className="text-[#FFD700] text-xl">Financial Reports</CardTitle>
