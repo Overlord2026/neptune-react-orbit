@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calculator, FileText, CircleDollarSign, Shield, Book, SquareAsterisk, Lightbulb } from "lucide-react";
 import FinancialDashboard from "@/components/tax/FinancialDashboard";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const TaxPlanningLandingPage = () => {
   const features = [
@@ -95,9 +96,18 @@ const TaxPlanningLandingPage = () => {
             </CardContent>
             <CardFooter>
               {feature.comingSoon ? (
-                <Button variant="outline" className="w-full" disabled>
-                  Coming Soon
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" className="w-full cursor-not-allowed" disabled>
+                        Coming Soon
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>This feature will be available soon</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
                 <Link to={feature.path} className="w-full">
                   <Button className="w-full justify-between">
