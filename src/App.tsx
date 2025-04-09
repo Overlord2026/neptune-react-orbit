@@ -26,6 +26,7 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import SystemHealthDashboardPage from "./pages/SystemHealthDashboardPage";
 import SystemDiagnosticsPage from "./pages/SystemDiagnosticsPage";
 import Scenario2021Return from "./pages/Scenario2021Return";
+import Scenario2023Return from "./pages/Scenario2023Return";
 import CompareRothScenariosPage from "./pages/CompareRothScenariosPage";
 import AvoidingTaxTrapsPage from "./pages/AvoidingTaxTrapsPage";
 
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="tax-planning/roth-conversion" element={<RothConversionAnalyzerPage />} />
             <Route path="tax-planning/roth-analysis" element={<RothConversionAnalysisPage />} />
             <Route path="tax-planning/roth-analysis/2021" element={<Scenario2021Return />} />
+            <Route path="tax-planning/roth-analysis/2023" element={<Scenario2023Return />} />
             <Route path="tax-planning/roth-analysis/compare" element={<CompareRothScenariosPage />} />
             <Route path="tax-planning/social-security" element={<SocialSecurityCalculatorPage />} />
             <Route path="tax-planning/bracket-manager" element={<DynamicBracketManagerPage />} />
