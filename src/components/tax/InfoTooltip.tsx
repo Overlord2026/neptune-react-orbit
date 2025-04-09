@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -22,7 +22,11 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({
     <Tooltip delayDuration={300}>
       <TooltipTrigger asChild>
         <span className={`inline-flex ml-1.5 cursor-help text-muted-foreground/70 hover:text-muted-foreground ${className}`}>
-          <HelpCircle className="h-4 w-4" />
+          {icon === "help" ? (
+            <HelpCircle className="h-4 w-4" />
+          ) : (
+            <Info className="h-4 w-4" />
+          )}
         </span>
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-xs text-sm p-3 bg-slate-900/95 border-slate-800">
