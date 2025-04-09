@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TaxReturnData } from '../SimpleReturnFilingFlow';
 import { Button } from '@/components/ui/button';
@@ -65,14 +66,23 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
   });
 
   function onSubmit(values: FormValues) {
-    // Convert form values to TaxReturnData structure
+    // Convert form values to TaxReturnData structure, ensuring the types match exactly
     const formattedData: Partial<TaxReturnData> = {
       firstName: values.firstName,
       lastName: values.lastName,
       ssn: values.ssn,
       filingStatus: values.filingStatus,
-      address: values.address,
-      dependents: values.dependents,
+      address: {
+        street: values.address.street,
+        city: values.address.city,
+        state: values.address.state,
+        zipCode: values.address.zipCode,
+      },
+      dependents: values.dependents.map(dependent => ({
+        name: dependent.name,
+        ssn: dependent.ssn,
+        relationship: dependent.relationship,
+      })),
     };
     onComplete(formattedData);
   }
