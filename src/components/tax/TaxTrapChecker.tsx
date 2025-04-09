@@ -26,7 +26,7 @@ interface TaxTrapCheckerProps {
   };
 }
 
-const TaxTrapChecker: React.FC<TaxTrapCheckerProps> = ({ scenarioId, scenarioData }) => {
+export const TaxTrapChecker: React.FC<TaxTrapCheckerProps> = ({ scenarioId, scenarioData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<TaxTrapResult | null>(null);
   const [showResults, setShowResults] = useState(false);
@@ -105,4 +105,5 @@ const TaxTrapChecker: React.FC<TaxTrapCheckerProps> = ({ scenarioId, scenarioDat
   );
 };
 
+// Also export as default for backward compatibility
 export default TaxTrapChecker;
