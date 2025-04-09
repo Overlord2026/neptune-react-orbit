@@ -18,6 +18,7 @@ const DynamicContentText: React.FC<DynamicContentTextProps> = ({
   const [processedContent, setProcessedContent] = useState<string>(children);
 
   useEffect(() => {
+    // Process the content with the placeholders
     setProcessedContent(processDynamicContent(children, options));
   }, [children, options]);
 

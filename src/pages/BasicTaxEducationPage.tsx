@@ -166,7 +166,7 @@ const BasicTaxEducationPage = () => {
                       Standard Deduction: <DynamicContentText 
                         options={{...contentOptions, filingStatus: 'single'}}
                       >
-                        {`\{\{current_standard_deduction\}\}`}
+                        {`current_standard_deduction`}
                       </DynamicContentText>
                     </li>
                   </ul>
@@ -182,7 +182,7 @@ const BasicTaxEducationPage = () => {
                       Standard Deduction: <DynamicContentText 
                         options={{...contentOptions, filingStatus: 'married'}}
                       >
-                        {`\{\{current_standard_deduction\}\}`}
+                        {`current_standard_deduction`}
                       </DynamicContentText>
                     </li>
                   </ul>
@@ -198,7 +198,7 @@ const BasicTaxEducationPage = () => {
                       Standard Deduction: <DynamicContentText 
                         options={{...contentOptions, filingStatus: 'head_of_household'}}
                       >
-                        {`\{\{current_standard_deduction\}\}`}
+                        {`current_standard_deduction`}
                       </DynamicContentText>
                     </li>
                   </ul>
@@ -431,9 +431,9 @@ const BasicTaxEducationPage = () => {
                       <ul className="list-disc list-inside">
                         <li><strong>0% rate:</strong> Income up to <DynamicContentText 
                             options={{...contentOptions, filingStatus: 'single'}}
-                          >{`\{\{capital_gains_0_rate_max\}\}`}</DynamicContentText> (single) or <DynamicContentText 
+                          >{`capital_gains_0_rate_max`}</DynamicContentText> (single) or <DynamicContentText 
                             options={{...contentOptions, filingStatus: 'married'}}
-                          >{`\{\{capital_gains_0_rate_max\}\}`}</DynamicContentText> (married filing jointly)
+                          >{`capital_gains_0_rate_max`}</DynamicContentText> (married filing jointly)
                         </li>
                         <li><strong>15% rate:</strong> Income from $44,626 to $492,300 (single) or $89,251 to $553,850 (married filing jointly)</li>
                         <li><strong>20% rate:</strong> Income above $492,300 (single) or $553,850 (married filing jointly)</li>
@@ -490,10 +490,10 @@ const BasicTaxEducationPage = () => {
                       <h4 className="font-semibold mb-2">Current Contribution Limits ({selectedYear}):</h4>
                       <ul className="list-disc list-inside">
                         <li>
-                          IRA Contribution Limit: <DynamicContentText options={contentOptions}>{`\{\{IRA_limit\}\}`}</DynamicContentText>
+                          IRA Contribution Limit: <DynamicContentText options={contentOptions}>{`IRA_limit`}</DynamicContentText>
                         </li>
                         <li>
-                          401(k) Contribution Limit: <DynamicContentText options={contentOptions}>{`\{\{401k_limit\}\}`}</DynamicContentText>
+                          401(k) Contribution Limit: <DynamicContentText options={contentOptions}>{`401k_limit`}</DynamicContentText>
                         </li>
                       </ul>
                     </div>
