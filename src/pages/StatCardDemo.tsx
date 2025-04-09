@@ -17,7 +17,8 @@ const StatCardDemo = () => {
           value="$9,650" 
           change="+4.5%" 
           timeframe="vs last month" 
-          budget="$12,500 monthly goal" 
+          budgetLabel="Monthly Goal"
+          budgetAmount="$12,500" 
           icon={<Wallet className="h-4 w-4 text-[#FFD700]" />} 
         />
         
@@ -26,7 +27,8 @@ const StatCardDemo = () => {
           value="$7,230" 
           change="+2.3%" 
           timeframe="vs last month" 
-          budget="$8,000 monthly budget" 
+          budgetLabel="Monthly Budget"
+          budgetAmount="$8,000" 
           icon={<CreditCard className="h-4 w-4 text-[#FFD700]" />} 
         />
         
@@ -35,7 +37,8 @@ const StatCardDemo = () => {
           value="$2,420" 
           change="+12.5%" 
           timeframe="vs last month" 
-          budget="$3,000 monthly goal" 
+          budgetLabel="Monthly Goal"
+          budgetAmount="$3,000" 
           icon={<PiggyBank className="h-4 w-4 text-[#FFD700]" />} 
         />
         
@@ -44,7 +47,8 @@ const StatCardDemo = () => {
           value="$1,856" 
           change="-2.1%" 
           timeframe="vs last quarter" 
-          budget="7% annual target" 
+          budgetLabel="Annual Target"
+          budgetAmount="7%" 
           icon={<TrendingDown className="h-4 w-4 text-[#FFD700]" />} 
         />
       </div>
