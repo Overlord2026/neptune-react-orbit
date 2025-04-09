@@ -94,6 +94,11 @@
   h4 {
     @apply text-base font-semibold text-[#FFD700];
   }
+
+  /* Add focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-[#FFD700] ring-opacity-60;
+  }
 }
 
 /* Project Neptune specific classes */
@@ -109,23 +114,23 @@
   border-color: #FFD700;
 }
 
-/* Button variations */
+/* Button variations with hover transitions */
 .neptune-btn-primary {
-  @apply bg-[#FFD700] text-black hover:bg-[#E5C100] transition-colors;
+  @apply bg-[#FFD700] text-black transition-colors duration-200 hover:bg-[#E5C100];
 }
 
 .neptune-btn-secondary {
-  @apply bg-transparent text-[#FFD700] border border-[#FFD700] hover:bg-[#333333] transition-colors;
+  @apply bg-transparent text-[#FFD700] border border-[#FFD700] transition-colors duration-200 hover:bg-[#222222];
 }
 
 /* Card styling */
 .neptune-card {
-  @apply bg-[#1E1E1E] border border-[#333333] rounded-md p-4 hover:border-[#FFD700] transition-all;
+  @apply bg-[#1E1E1E] border border-[#333333] rounded-md p-4 hover:border-[#FFD700] transition-all duration-200;
 }
 
 /* Form elements */
 .neptune-input {
-  @apply bg-[#2A2A2A] border border-[#444444] text-white rounded-md p-2 focus:border-[#FFD700] outline-none transition-colors;
+  @apply bg-[#2A2A2A] border border-[#444444] text-white rounded-md p-2 focus:border-[#FFD700] outline-none transition-colors duration-200;
 }
 
 /* Status colors */

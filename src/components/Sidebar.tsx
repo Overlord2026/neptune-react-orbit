@@ -33,8 +33,10 @@ const SidebarItem = ({ icon, label, href, isActive }: SidebarItemProps) => {
       <Button 
         variant={isActive ? "secondary" : "ghost"} 
         className={cn(
-          "w-full justify-start gap-2",
-          isActive && "bg-neptune-100 text-neptune-800 hover:bg-neptune-200 hover:text-neptune-800"
+          "w-full justify-start gap-2 transition-all duration-200",
+          isActive 
+            ? "bg-neptune-100 text-neptune-800 hover:bg-neptune-200 hover:text-neptune-800" 
+            : "hover:bg-[#222222] hover:text-[#FFD700]"
         )}
       >
         {icon}
@@ -67,7 +69,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
           <span className="font-bold text-xl">ProjectNeptune</span>
         </Link>
         {isMobile && (
-          <Button variant="ghost" size="icon" onClick={toggleSidebar} className="ml-auto">
+          <Button variant="ghost" size="icon" onClick={toggleSidebar} className="ml-auto hover:bg-[#222222] hover:text-[#FFD700]">
             <X className="h-5 w-5" />
             <span className="sr-only">Close sidebar</span>
           </Button>
@@ -114,7 +116,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
         </div>
       </div>
       <div className="border-t p-4">
-        <Button className="w-full justify-start gap-2">
+        <Button className="w-full justify-start gap-2 bg-[#FFD700] text-black hover:bg-[#E5C100] transition-all duration-200 focus:ring-2 focus:ring-[#FFD700] focus:ring-offset-2">
           <PlusCircle className="h-5 w-5" />
           <span>New Project</span>
         </Button>

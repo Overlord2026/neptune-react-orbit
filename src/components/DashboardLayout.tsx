@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { 
   Home, 
@@ -53,20 +53,20 @@ const NavItem = ({
           toggleSubmenu?.();
         } : undefined}
         className={cn(
-          "flex items-center px-3 py-2 rounded-md text-white hover:bg-custom-background-tertiary group transition-colors",
+          "flex items-center px-3 py-2 rounded-md text-white hover:bg-[#222222] group transition-colors duration-200",
           isActive && !hasSubMenu && "bg-custom-background-tertiary border-l-2 border-l-custom-accent pl-[10px]"
         )}
       >
         <span className="flex items-center w-full">
           <span className={cn(
-            "mr-3 text-gray-400 group-hover:text-custom-accent transition-colors",
+            "mr-3 text-gray-400 group-hover:text-[#FFD700] transition-colors duration-200",
             isActive && "text-custom-accent"
           )}>
             {icon}
           </span>
-          <span className="flex-1">{label}</span>
+          <span className="flex-1 group-hover:text-[#FFD700] transition-colors duration-200">{label}</span>
           {hasSubMenu && (
-            <span className="ml-auto">
+            <span className="ml-auto group-hover:text-[#FFD700] transition-colors duration-200">
               {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
             </span>
           )}
@@ -81,7 +81,7 @@ const NavSubItem = ({ label, href, isActive }: NavSubItemProps) => {
     <Link
       to={href}
       className={cn(
-        "flex items-center pl-9 py-2 text-sm rounded-md text-white hover:bg-custom-background-tertiary transition-colors",
+        "flex items-center pl-9 py-2 text-sm rounded-md text-white hover:bg-[#222222] hover:text-[#FFD700] transition-colors duration-200",
         isActive && "bg-custom-background-tertiary border-l-2 border-l-custom-accent pl-[34px]"
       )}
     >
@@ -90,7 +90,7 @@ const NavSubItem = ({ label, href, isActive }: NavSubItemProps) => {
   );
 };
 
-const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const DashboardLayout = () => {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     'education': false,
@@ -252,7 +252,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
         
         {/* Page Content */}
         <main className="p-6 bg-[#111111] min-h-[calc(100vh-64px)]">
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>
