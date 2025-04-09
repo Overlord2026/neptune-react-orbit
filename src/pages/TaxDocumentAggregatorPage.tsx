@@ -5,6 +5,12 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Link2, FileText, Database } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 const TaxDocumentAggregatorPage = () => {
   return (
@@ -55,10 +61,21 @@ const TaxDocumentAggregatorPage = () => {
                 Securely link your accounts to automatically import documents
               </p>
             </div>
-            <Button disabled className="gap-2">
-              <FileText className="h-4 w-4" />
-              Connect Institutions
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>
+                    <Button disabled className="gap-2">
+                      <FileText className="h-4 w-4" />
+                      Connect Institutions
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>This feature is in development</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col bg-muted/50 rounded-b-lg">
