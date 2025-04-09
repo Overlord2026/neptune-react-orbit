@@ -5,6 +5,8 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { 
@@ -14,7 +16,7 @@ import {
   DialogHeader, 
   DialogTitle
 } from "@/components/ui/dialog";
-import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle } from "lucide-react";
+import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle, Sparkles } from "lucide-react";
 import DocumentUploader from "@/components/tax/DocumentUploader";
 
 // Sample document data
@@ -46,6 +48,7 @@ const TaxDocumentAggregatorPage = () => {
   const [selectedYear, setSelectedYear] = useState<string>("2023");
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showScanSheet, setShowScanSheet] = useState(false);
+  const [enableAIClassification, setEnableAIClassification] = useState(true);
   
   const years = Object.keys(documentsByYear).sort().reverse();
   
@@ -80,6 +83,24 @@ const TaxDocumentAggregatorPage = () => {
             Easily store, categorize, and share your tax documents in one place.
             Upload statements from employers, banks, and other institutions to keep them organized for tax preparation.
           </p>
+          
+          {/* AI Classification Toggle */}
+          <div className="flex items-center justify-between mt-4 p-4 bg-secondary/20 rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <div>
+                <Label htmlFor="ai-classification" className="font-medium">AI Document Classification</Label>
+                <p className="text-sm text-muted-foreground">
+                  Automatically identify document types and tax years
+                </p>
+              </div>
+            </div>
+            <Switch 
+              id="ai-classification" 
+              checked={enableAIClassification} 
+              onCheckedChange={setEnableAIClassification} 
+            />
+          </div>
         </CardContent>
       </Card>
       
@@ -256,6 +277,12 @@ const TaxDocumentAggregatorPage = () => {
             <DialogTitle>Upload Tax Documents</DialogTitle>
             <DialogDescription>
               Upload and classify your tax documents for secure storage and easy access
+              {enableAIClassification && (
+                <span className="flex items-center mt-2 text-primary">
+                  <Sparkles className="h-4 w-4 mr-1" /> 
+                  AI classification is enabled
+                </span>
+              )}
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-[calc(80vh-200px)] overflow-y-auto pr-1">
@@ -271,6 +298,12 @@ const TaxDocumentAggregatorPage = () => {
             <SheetTitle>Scan Documents</SheetTitle>
             <SheetDescription>
               Use your device camera or connected scanner to digitize tax documents
+              {enableAIClassification && (
+                <span className="flex items-center mt-2 text-primary">
+                  <Sparkles className="h-4 w-4 mr-1" /> 
+                  AI classification is enabled - scanned documents will be automatically analyzed
+                </span>
+              )}
             </SheetDescription>
           </SheetHeader>
           <div className="mt-6 space-y-6">

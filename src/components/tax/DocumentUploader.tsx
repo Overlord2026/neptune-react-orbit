@@ -33,10 +33,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Upload, FileText, AlertTriangle, X, Image, CheckCircle } from "lucide-react";
+import { Upload, FileText, AlertTriangle, X, Image, CheckCircle, Sparkles, Loader2 } from "lucide-react";
+import { useDocumentClassifier, DocumentToClassify, ClassificationResult } from "@/utils/taxDocumentClassifier";
 
 // Document types and years for dropdowns
-const DOCUMENT_TYPES = ["W-2", "1099", "K-1", "Tax Return", "Other"];
+const DOCUMENT_TYPES = ["W-2", "1099-MISC", "1099-INT", "1099-DIV", "1099-R", "1099", "K-1", "Tax Return", "1098", "Other"];
 const TAX_YEARS = ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018"];
 
 // Form validation schema
@@ -54,13 +55,17 @@ interface UploadFile extends File {
   preview?: string;
   progress: number;
   uploadStatus: 'uploading' | 'complete' | 'error';
+  classificationStatus?: 'pending' | 'classifying' | 'classified' | 'manual_review' | 'error';
+  classificationResult?: ClassificationResult;
 }
 
 const DocumentUploader = () => {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [isClassifying, setIsClassifying] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { processDocument } = useDocumentClassifier();
   
   // Setup form
   const form = useForm<FormValues>({
@@ -131,6 +136,7 @@ const DocumentUploader = () => {
         preview,
         progress: 0,
         uploadStatus: 'uploading' as const,
+        classificationStatus: 'pending' as const,
       };
     });
     
@@ -189,8 +195,82 @@ const DocumentUploader = () => {
               : f
           )
         );
+        
+        // After upload is complete, trigger classification
+        setTimeout(() => classifyDocument(file), 500);
       }
     }, 300);
+  };
+
+  // Classify a document using AI/OCR
+  const classifyDocument = async (file: UploadFile) => {
+    // Update file status to classifying
+    setFiles(currentFiles => 
+      currentFiles.map(f => 
+        f.id === file.id 
+          ? { ...f, classificationStatus: 'classifying' } 
+          : f
+      )
+    );
+    
+    setIsClassifying(true);
+    
+    try {
+      // Create document object for classification
+      const documentToClassify: DocumentToClassify = {
+        id: file.id,
+        fileName: file.name,
+        filePath: file.preview || `simulated-path/${file.name}`, // In real app, would be actual file path
+        fileType: file.type,
+        userId: 'current-user-id' // In real app, would be actual user ID
+      };
+      
+      // Process document classification
+      const result = await processDocument(documentToClassify);
+      
+      // Update file with classification results
+      setFiles(currentFiles => 
+        currentFiles.map(f => 
+          f.id === file.id 
+            ? { 
+                ...f, 
+                classificationStatus: result.status === 'classified' ? 'classified' : 'manual_review',
+                classificationResult: result 
+              } 
+            : f
+        )
+      );
+      
+      // Update form values if classification was successful
+      if (result.status === 'classified' && result.confidence.overall > 0.7) {
+        if (DOCUMENT_TYPES.includes(result.documentType)) {
+          form.setValue('documentType', result.documentType);
+        }
+        
+        if (TAX_YEARS.includes(result.taxYear)) {
+          form.setValue('taxYear', result.taxYear);
+        }
+      }
+    } catch (error) {
+      console.error("Error classifying document:", error);
+      
+      // Update file status to error
+      setFiles(currentFiles => 
+        currentFiles.map(f => 
+          f.id === file.id 
+            ? { ...f, classificationStatus: 'error' } 
+            : f
+        )
+      );
+      
+      toast({
+        title: "Classification failed",
+        description: "Unable to analyze document content",
+        variant: "destructive",
+      });
+    } finally {
+      setIsClassifying(false);
+    }
   };
 
   // Remove a file
@@ -240,6 +320,55 @@ const DocumentUploader = () => {
       return <Image className="h-8 w-8 text-primary" />;
     }
     return <FileText className="h-8 w-8 text-primary" />;
+  };
+
+  // Render classification badge
+  const renderClassificationBadge = (file: UploadFile) => {
+    if (!file.classificationStatus || file.classificationStatus === 'pending') {
+      return null;
+    }
+    
+    if (file.classificationStatus === 'classifying') {
+      return (
+        <Badge variant="outline" className="flex items-center gap-1">
+          <Loader2 className="h-3 w-3 animate-spin" />
+          <span>Analyzing</span>
+        </Badge>
+      );
+    }
+    
+    if (file.classificationStatus === 'classified' && file.classificationResult) {
+      const confidence = Math.round(file.classificationResult.confidence.overall * 100);
+      return (
+        <Badge 
+          variant={confidence > 80 ? "default" : "outline"} 
+          className={`flex items-center gap-1 ${confidence > 80 ? 'bg-green-500' : ''}`}
+        >
+          <Sparkles className="h-3 w-3" />
+          <span>AI Classified ({confidence}%)</span>
+        </Badge>
+      );
+    }
+    
+    if (file.classificationStatus === 'manual_review') {
+      return (
+        <Badge variant="outline" className="flex items-center gap-1 bg-amber-500/20 text-amber-700">
+          <AlertTriangle className="h-3 w-3" />
+          <span>Review Needed</span>
+        </Badge>
+      );
+    }
+    
+    if (file.classificationStatus === 'error') {
+      return (
+        <Badge variant="destructive" className="flex items-center gap-1">
+          <AlertTriangle className="h-3 w-3" />
+          <span>Classification Error</span>
+        </Badge>
+      );
+    }
+    
+    return null;
   };
 
   return (
@@ -327,10 +456,39 @@ const DocumentUploader = () => {
                             <span>Uploading: {file.progress}%</span>
                           )}
                         </span>
-                        <Badge variant="outline" className="text-xs">
-                          {file.type.split('/')[1]?.toUpperCase() || 'DOCUMENT'}
-                        </Badge>
+                        <div className="flex gap-2 items-center">
+                          {renderClassificationBadge(file)}
+                          <Badge variant="outline" className="text-xs">
+                            {file.type.split('/')[1]?.toUpperCase() || 'DOCUMENT'}
+                          </Badge>
+                        </div>
                       </div>
+                      
+                      {/* Show classification results if available */}
+                      {file.classificationResult && file.uploadStatus === 'complete' && (
+                        <div className="mt-2 text-xs border-t pt-2">
+                          <div className="flex justify-between text-muted-foreground">
+                            <span>
+                              Document Type: <span className="font-medium text-foreground">{file.classificationResult.documentType}</span>
+                              <span className="text-muted-foreground ml-1">
+                                ({Math.round(file.classificationResult.confidence.documentType * 100)}% confident)
+                              </span>
+                            </span>
+                            <span>
+                              Tax Year: <span className="font-medium text-foreground">{file.classificationResult.taxYear}</span>
+                              <span className="text-muted-foreground ml-1">
+                                ({Math.round(file.classificationResult.confidence.taxYear * 100)}% confident)
+                              </span>
+                            </span>
+                          </div>
+                          {file.classificationResult.status === 'manual_review' && (
+                            <p className="text-amber-600 mt-1 text-xs">
+                              <AlertTriangle className="h-3 w-3 inline mr-1" /> 
+                              Please verify the document details below before saving
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -345,7 +503,19 @@ const DocumentUploader = () => {
         <CardHeader>
           <CardTitle>Document Classification</CardTitle>
           <CardDescription>
-            Provide additional details about your tax documents
+            {isClassifying ? (
+              <span className="flex items-center">
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                AI is analyzing your documents...
+              </span>
+            ) : files.some(f => f.classificationStatus === 'classified') ? (
+              <span className="flex items-center">
+                <Sparkles className="h-4 w-4 mr-2 text-primary" />
+                AI has classified your documents - please verify below
+              </span>  
+            ) : (
+              "Provide additional details about your tax documents"
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -360,6 +530,7 @@ const DocumentUploader = () => {
                     <Select 
                       onValueChange={field.onChange} 
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -386,6 +557,7 @@ const DocumentUploader = () => {
                     <Select 
                       onValueChange={field.onChange} 
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -424,8 +596,19 @@ const DocumentUploader = () => {
               />
 
               <div className="pt-4">
-                <Button type="submit" className="w-full">
-                  Save and Process Documents
+                <Button 
+                  type="submit" 
+                  className="w-full"
+                  disabled={isClassifying}
+                >
+                  {isClassifying ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Save and Process Documents'
+                  )}
                 </Button>
               </div>
             </form>
@@ -435,10 +618,23 @@ const DocumentUploader = () => {
           <div className="flex items-start gap-3 text-sm">
             <AlertTriangle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
             <div>
+              <p className="font-medium mb-1">AI Document Classification</p>
+              <p className="text-muted-foreground">
+                The system uses OCR technology to automatically detect document types and tax years.
+                For best results, ensure documents are clearly scanned and text is readable.
+                You can always manually adjust the classification if needed.
+              </p>
+            </div>
+          </div>
+          <div className="w-full border-t my-4"></div>
+          <div className="flex items-start gap-3 text-sm">
+            <AlertTriangle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+            <div>
               <p className="font-medium mb-1">Security & Privacy</p>
               <p className="text-muted-foreground">
                 All uploads are encrypted and stored securely. Your tax documents are only 
                 accessible to you and those you explicitly grant permission to view.
+                Document analysis happens in a secure environment.
               </p>
             </div>
           </div>
