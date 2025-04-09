@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -15,11 +16,12 @@ import {
   DialogHeader, 
   DialogTitle
 } from "@/components/ui/dialog";
-import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle, Sparkles, File } from "lucide-react";
+import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle, Sparkles, File, Share2, Download } from "lucide-react";
 import DocumentUploader from "@/components/tax/DocumentUploader";
 import MissingDocumentsReport from "@/components/tax/MissingDocumentsReport";
 import FloatingAssistantButton from "@/components/tax/FloatingAssistantButton";
 import AIDocumentAssistant from "@/components/tax/AIDocumentAssistant";
+import ShareDocumentModal from "@/components/tax/ShareDocumentModal";
 
 // Sample document data
 const documentsByYear = {
@@ -53,6 +55,9 @@ const TaxDocumentAggregatorPage = () => {
   const [showMissingDocsDialog, setShowMissingDocsDialog] = useState(false);
   const [enableAIClassification, setEnableAIClassification] = useState(true);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [documentToShare, setDocumentToShare] = useState<any>(null);
+  const [sharingAllForYear, setSharingAllForYear] = useState<string | null>(null);
   
   const years = Object.keys(documentsByYear).sort().reverse();
   
@@ -68,6 +73,18 @@ const TaxDocumentAggregatorPage = () => {
   const handleRequestUpload = (docType: string) => {
     setShowMissingDocsDialog(false);
     setShowUploadDialog(true);
+  };
+
+  const handleShareDocument = (doc: any) => {
+    setDocumentToShare(doc);
+    setSharingAllForYear(null);
+    setShowShareModal(true);
+  };
+
+  const handleShareAllForYear = (year: string) => {
+    setDocumentToShare(null);
+    setSharingAllForYear(year);
+    setShowShareModal(true);
   };
 
   return (
@@ -194,17 +211,27 @@ const TaxDocumentAggregatorPage = () => {
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               {years.map(year => (
-                <Button 
-                  key={year} 
-                  variant={year === selectedYear ? "default" : "ghost"} 
-                  className="justify-start"
-                  onClick={() => setSelectedYear(year)}
-                >
-                  {year}
-                  <Badge variant="outline" className="ml-2">
-                    {documentsByYear[year].length}
-                  </Badge>
-                </Button>
+                <div key={year} className="flex items-center justify-between">
+                  <Button 
+                    variant={year === selectedYear ? "default" : "ghost"} 
+                    className="justify-start flex-grow"
+                    onClick={() => setSelectedYear(year)}
+                  >
+                    {year}
+                    <Badge variant="outline" className="ml-2">
+                      {documentsByYear[year].length}
+                    </Badge>
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="ml-2"
+                    onClick={() => handleShareAllForYear(year)}
+                    title={`Share all ${year} documents`}
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </div>
               ))}
             </CardContent>
           </Card>
@@ -257,7 +284,16 @@ const TaxDocumentAggregatorPage = () => {
                         <TableCell>
                           <div className="flex gap-2">
                             <Button variant="ghost" size="sm">View</Button>
-                            <Button variant="ghost" size="sm">Download</Button>
+                            <Button variant="ghost" size="sm">
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleShareDocument(doc)}
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -366,6 +402,14 @@ const TaxDocumentAggregatorPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Share Document Modal */}
+      <ShareDocumentModal 
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        document={documentToShare}
+        allDocumentsForYear={sharingAllForYear || undefined}
+      />
 
       {/* Floating AI Assistant Button */}
       <FloatingAssistantButton onClick={() => setShowAIAssistant(true)} />
