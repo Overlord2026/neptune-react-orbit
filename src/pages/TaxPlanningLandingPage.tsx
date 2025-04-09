@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -33,7 +34,7 @@ const TaxPlanningLandingPage = () => {
       description: "Determine how Social Security benefits impact your overall tax situation.",
       icon: <CircleDollarSign className="h-8 w-8 mb-4 neptune-gold" />,
       comingSoon: false,
-      path: "/tax-planning"
+      path: "/tax-planning/social-security"
     },
     {
       title: "Dynamic Bracket Manager",
