@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { FileText, FolderSearch, Banknote, HeartHandshake, BarChart2, Lock, Lightbulb, LineChart, BookOpen, ExternalLink, BookText, Library, FileTax } from "lucide-react";
+import { FileText, FolderSearch, Banknote, HeartHandshake, BarChart2, Lock, Lightbulb, LineChart, BookOpen, ExternalLink, BookText, Library, FileCheck } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -177,7 +176,7 @@ const TaxPlanningLandingPage = () => {
       {
         id: "filing-options",
         title: "File My Taxes",
-        icon: <FileTax className="w-10 h-10 text-[#FFD700]" />,
+        icon: <FileCheck className="w-10 h-10 text-[#FFD700]" />,
         description: "Choose a simple do-it-yourself filing tool for basic returns, or connect with a tax professional.",
         comingSoon: false,
         link: "/tax-planning/filing-options"
