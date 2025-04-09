@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { calculateTaxScenario, saveScenario, FilingStatus } from '@/utils/taxCalculator';
 
 // Define the form schema with zod
 const formSchema = z.object({
@@ -43,6 +44,7 @@ const formSchema = z.object({
   capitalGains: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
     message: "Capital gains must be a non-negative number",
   }),
+  filingStatus: z.enum(['single', 'married', 'head_of_household']),
   deductionType: z.enum(["standard", "itemized"]),
   itemizedDeduction: z.string().optional().refine((val) => !val || !isNaN(Number(val)) && Number(val) >= 0, {
     message: "Itemized deduction must be a non-negative number",
@@ -51,28 +53,14 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-// 2021 tax brackets for single filer
-const TAX_BRACKETS_2021 = [
-  { min: 0, max: 9950, rate: 0.10 },
-  { min: 9950, max: 40525, rate: 0.12 },
-  { min: 40525, max: 86375, rate: 0.22 },
-  { min: 86375, max: 164925, rate: 0.24 },
-  { min: 164925, max: 209425, rate: 0.32 },
-  { min: 209425, max: 523600, rate: 0.35 },
-  { min: 523600, max: Infinity, rate: 0.37 },
-];
-
-// Standard deduction for 2021
-const STANDARD_DEDUCTION_2021 = 12550;
-
 const Scenario2021Return = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<{
     agi: number;
-    taxableIncome: number;
-    totalTax: number;
-    marginalRate: number;
-    effectiveRate: number;
+    taxable_income: number;
+    total_tax: number;
+    marginal_rate: number;
+    effective_rate: number;
     refundOrOwed: number;
   } | null>(null);
   
@@ -88,6 +76,7 @@ const Scenario2021Return = () => {
       rothConversion: "0",
       socialSecurity: "0",
       capitalGains: "2500",
+      filingStatus: "single",
       deductionType: "standard",
       itemizedDeduction: "",
     },
@@ -95,84 +84,66 @@ const Scenario2021Return = () => {
 
   const watchDeductionType = form.watch("deductionType");
 
-  const calculateTaxScenario2021 = (data: FormValues) => {
+  async function onSubmit(data: FormValues) {
     setIsLoading(true);
     
-    // Convert string inputs to numbers
-    const wages = Number(data.wages);
-    const interest = Number(data.interest);
-    const qualifiedDividends = Number(data.qualifiedDividends);
-    const iraDistributions = Number(data.iraDistributions);
-    const rothConversion = Number(data.rothConversion);
-    const socialSecurity = Number(data.socialSecurity);
-    const capitalGains = Number(data.capitalGains);
-    
-    // Calculate AGI
-    const agi = wages + interest + qualifiedDividends + iraDistributions + 
-                rothConversion + (socialSecurity * 0.85) + capitalGains;
-    
-    // Apply deductions
-    const deduction = data.deductionType === "standard" 
-      ? STANDARD_DEDUCTION_2021 
-      : Number(data.itemizedDeduction || 0);
-    
-    const taxableIncome = Math.max(0, agi - deduction);
-    
-    // Calculate tax using 2021 tax brackets
-    let totalTax = 0;
-    let lastBracketLimit = 0;
-    
-    for (const bracket of TAX_BRACKETS_2021) {
-      if (taxableIncome > bracket.min) {
-        const taxableInThisBracket = Math.min(taxableIncome, bracket.max) - lastBracketLimit;
-        totalTax += taxableInThisBracket * bracket.rate;
-        lastBracketLimit = bracket.max;
-      }
-    }
-    
-    // Find marginal rate
-    let marginalRate = 0;
-    for (let i = TAX_BRACKETS_2021.length - 1; i >= 0; i--) {
-      if (taxableIncome > TAX_BRACKETS_2021[i].min) {
-        marginalRate = TAX_BRACKETS_2021[i].rate;
-        break;
-      }
-    }
-    
-    // Calculate effective rate
-    const effectiveRate = taxableIncome > 0 ? totalTax / taxableIncome : 0;
-    
-    // Assuming withholding based on a simple calculation (40% of total income tax for demo purposes)
-    const assumedWithholding = totalTax * 0.4;
-    const refundOrOwed = assumedWithholding - totalTax;
-    
-    // Store results
-    const calculationResults = {
-      agi,
-      taxableIncome,
-      totalTax,
-      marginalRate,
-      effectiveRate,
-      refundOrOwed
-    };
-
-    setResults(calculationResults);
-    
-    // In a real app, we would store this to a database
-    console.log("Storing scenario results:", calculationResults);
-
-    // Simulate API call completion
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // Convert string inputs to numbers
+      const wages = Number(data.wages);
+      const interest = Number(data.interest);
+      const dividends = Number(data.qualifiedDividends);
+      const ira_distributions = Number(data.iraDistributions);
+      const roth_conversion = Number(data.rothConversion);
+      const social_security = Number(data.socialSecurity);
+      const capital_gains = Number(data.capitalGains);
+      const itemizedDeductionAmount = data.itemizedDeduction ? Number(data.itemizedDeduction) : 0;
+      
+      // Use the tax calculator utility
+      const result = calculateTaxScenario({
+        year: 2021,
+        wages,
+        interest,
+        dividends,
+        capital_gains,
+        ira_distributions,
+        roth_conversion,
+        social_security,
+        isItemizedDeduction: data.deductionType === "itemized",
+        itemizedDeductionAmount: data.deductionType === "itemized" ? itemizedDeductionAmount : undefined,
+        filing_status: data.filingStatus as FilingStatus,
+      }, "2021 Base Scenario");
+      
+      // Save the result
+      await saveScenario(result);
+      
+      // Assuming withholding based on a simple calculation (40% of total income tax for demo purposes)
+      const assumedWithholding = result.total_tax * 0.4;
+      const refundOrOwed = assumedWithholding - result.total_tax;
+      
+      // Update the UI with results
+      setResults({
+        agi: result.agi,
+        taxable_income: result.taxable_income,
+        total_tax: result.total_tax,
+        marginal_rate: result.marginal_rate,
+        effective_rate: result.effective_rate,
+        refundOrOwed
+      });
+      
       toast({
         title: "Calculation Complete",
         description: "Your 2021 tax scenario has been calculated.",
       });
-    }, 1000);
-  };
-
-  function onSubmit(data: FormValues) {
-    calculateTaxScenario2021(data);
+    } catch (error) {
+      console.error("Error calculating tax scenario:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "There was an error calculating your tax scenario.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -328,6 +299,37 @@ const Scenario2021Return = () => {
                         </FormItem>
                       )}
                     />
+
+                    <FormField
+                      control={form.control}
+                      name="filingStatus"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Filing Status</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex flex-col space-y-1"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="single" id="single" />
+                                <Label htmlFor="single">Single</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="married" id="married" />
+                                <Label htmlFor="married">Married Filing Jointly</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="head_of_household" id="head_of_household" />
+                                <Label htmlFor="head_of_household">Head of Household</Label>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   <div className="space-y-4 border-t pt-4">
@@ -345,7 +347,7 @@ const Scenario2021Return = () => {
                             >
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="standard" id="standard" />
-                                <Label htmlFor="standard">Standard Deduction (${STANDARD_DEDUCTION_2021.toLocaleString()})</Label>
+                                <Label htmlFor="standard">Standard Deduction</Label>
                               </div>
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="itemized" id="itemized" />
@@ -405,20 +407,20 @@ const Scenario2021Return = () => {
                     <div className="text-sm text-right">${results.agi.toLocaleString(undefined, {maximumFractionDigits: 2})}</div>
                     
                     <div className="text-sm font-medium">Taxable Income:</div>
-                    <div className="text-sm text-right">${results.taxableIncome.toLocaleString(undefined, {maximumFractionDigits: 2})}</div>
+                    <div className="text-sm text-right">${results.taxable_income.toLocaleString(undefined, {maximumFractionDigits: 2})}</div>
                     
                     <div className="text-sm font-medium">Total Tax:</div>
-                    <div className="text-sm text-right">${results.totalTax.toLocaleString(undefined, {maximumFractionDigits: 2})}</div>
+                    <div className="text-sm text-right">${results.total_tax.toLocaleString(undefined, {maximumFractionDigits: 2})}</div>
                     
                     <div className="text-sm font-medium">Marginal Rate:</div>
-                    <div className="text-sm text-right">{(results.marginalRate * 100).toFixed(1)}%</div>
+                    <div className="text-sm text-right">{(results.marginal_rate * 100).toFixed(1)}%</div>
                     
                     <div className="text-sm font-medium">Effective Rate:</div>
-                    <div className="text-sm text-right">{(results.effectiveRate * 100).toFixed(1)}%</div>
+                    <div className="text-sm text-right">{(results.effective_rate * 100).toFixed(1)}%</div>
                     
                     <div className="text-sm font-medium">Tax Due/Refund:</div>
                     <div className={`text-sm text-right ${results.refundOrOwed >= 0 ? "text-green-400" : "text-red-400"}`}>
-                      {results.refundOrOwed >= 0 ? "+" : ""}{results.refundOrOwed.toLocaleString(undefined, {maximumFractionDigits: 2})}
+                      {results.refundOrOwed >= 0 ? "+" : ""}${Math.abs(results.refundOrOwed).toLocaleString(undefined, {maximumFractionDigits: 2})}
                     </div>
                   </div>
                   

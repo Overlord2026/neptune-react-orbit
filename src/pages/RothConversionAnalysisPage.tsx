@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, LineChart, TrendingUp } from "lucide-react";
+import { calculateTaxScenario, TaxInput } from '@/utils/taxCalculator';
 
 const RothConversionAnalysisPage = () => {
   return (
