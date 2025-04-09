@@ -1,4 +1,3 @@
-
 /**
  * Tax Bracket Data Utility
  * 
@@ -6,6 +5,7 @@
  * It's designed to mimic a database structure for easy conversion to a real database in the future.
  */
 
+// Using 'export type' to properly export types when isolatedModules is enabled
 export type FilingStatusType = "single" | "married" | "head_of_household";
 export type BracketType = "ordinary" | "ltcg"; // ordinary income vs long-term capital gains
 
@@ -211,133 +211,3 @@ const generateLTCGBrackets = (): TaxBracket[] => {
   brackets.push(
     { id: generateBracketId(2021, "head_of_household", 0, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 0, bracket_max: 54100, rate: 0.00, bracket_type: "ltcg" },
     { id: generateBracketId(2021, "head_of_household", 54100, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 54100, bracket_max: 473750, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "head_of_household", 473750, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 473750, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  return brackets;
-};
-
-// Combine all bracket data
-export const TAX_BRACKETS_DATA: TaxBracket[] = [
-  ...generateOrdinaryIncomeBrackets(),
-  ...generateLTCGBrackets()
-];
-
-/**
- * Standard deduction amounts by year and filing status
- */
-export const STANDARD_DEDUCTION = {
-  2021: {
-    'single': 12550,
-    'married': 25100,
-    'head_of_household': 18800,
-  },
-  2022: {
-    'single': 12950,
-    'married': 25900,
-    'head_of_household': 19400,
-  },
-  2023: {
-    'single': 13850,
-    'married': 27700,
-    'head_of_household': 20800,
-  },
-};
-
-/**
- * Utility functions for working with tax bracket data
- */
-
-/**
- * Get tax brackets for a specific year, filing status, and bracket type
- */
-export const getBrackets = (
-  year: number, 
-  filingStatus: FilingStatusType, 
-  bracketType: BracketType = "ordinary"
-): TaxBracket[] => {
-  return TAX_BRACKETS_DATA.filter(
-    bracket => 
-      bracket.tax_year === year && 
-      bracket.filing_status === filingStatus &&
-      bracket.bracket_type === bracketType
-  ).sort((a, b) => a.bracket_min - b.bracket_min);
-};
-
-/**
- * Find the marginal tax bracket for a given income
- */
-export const getMarginalBracket = (
-  income: number,
-  year: number,
-  filingStatus: FilingStatusType,
-  bracketType: BracketType = "ordinary"
-): TaxBracket | undefined => {
-  const brackets = getBrackets(year, filingStatus, bracketType);
-  
-  // Find the applicable bracket
-  return brackets.find(
-    bracket => income >= bracket.bracket_min && income <= bracket.bracket_max
-  );
-};
-
-/**
- * Calculate tax owed based on income, year, filing status, and bracket type
- */
-export const calculateTax = (
-  income: number,
-  year: number,
-  filingStatus: FilingStatusType,
-  bracketType: BracketType = "ordinary"
-): number => {
-  const brackets = getBrackets(year, filingStatus, bracketType);
-  let tax = 0;
-  let remainingIncome = income;
-  
-  for (const bracket of brackets) {
-    if (remainingIncome <= 0) break;
-    
-    const taxableAmountInBracket = Math.min(
-      remainingIncome,
-      bracket.bracket_max - bracket.bracket_min
-    );
-    
-    tax += taxableAmountInBracket * bracket.rate;
-    remainingIncome -= taxableAmountInBracket;
-  }
-  
-  return tax;
-};
-
-/**
- * Calculate effective tax rate
- */
-export const calculateEffectiveRate = (
-  income: number,
-  tax: number
-): number => {
-  return income > 0 ? tax / income : 0;
-};
-
-/**
- * Format currency values for display
- */
-export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
-
-/**
- * Format percentage values for display
- */
-export const formatPercent = (rate: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'percent',
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(rate);
-};

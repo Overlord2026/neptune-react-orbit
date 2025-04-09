@@ -5,6 +5,7 @@ import ScenarioComparisonHeader from "@/components/tax/ScenarioComparisonHeader"
 import ScenarioComparisonCards from "@/components/tax/ScenarioComparisonCards";
 import ScenarioComparisonChart from "@/components/tax/ScenarioComparisonChart";
 import ScenarioComparisonTable from "@/components/tax/ScenarioComparisonTable";
+import { formatCurrency, formatPercent } from "@/utils/taxBracketData";
 
 const CompareRothScenariosPage: React.FC = () => {
   // Sample data - would come from API or state in real app
@@ -78,15 +79,30 @@ const CompareRothScenariosPage: React.FC = () => {
   };
 
   const scenarios = [scenario1, scenario2, scenario3];
+  
+  // Prepare chart data for the comparison chart
+  const chartData = scenarios.map(scenario => ({
+    name: scenario.scenario_name,
+    totalTax: scenario.total_tax,
+    effectiveRate: scenario.effective_rate * 100, // Convert to percentage for chart display
+    scenario: scenario.scenario_name
+  }));
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <ScenarioComparisonHeader scenarios={scenarios} />
+      <ScenarioComparisonHeader 
+        title="Roth Conversion Scenario Comparison"
+        description="Compare different Roth conversion strategies and their tax implications" 
+      />
       
       <div className="space-y-8 mt-8">
-        <ScenarioComparisonCards scenarios={scenarios} />
-        <ScenarioComparisonChart scenarios={scenarios} />
-        <ScenarioComparisonTable scenarios={scenarios} />
+        <ScenarioComparisonCards scenarios={scenarios} chartData={chartData} />
+        <ScenarioComparisonChart chartData={chartData} />
+        <ScenarioComparisonTable 
+          scenarios={scenarios} 
+          formatCurrency={formatCurrency} 
+          formatPercent={formatPercent} 
+        />
       </div>
     </div>
   );

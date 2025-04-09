@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { InfoCircle } from 'lucide-react';
+import { Info } from 'lucide-react'; // Changed from InfoCircle to Info
 import { 
   Table, 
   TableBody, 
