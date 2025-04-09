@@ -10,6 +10,7 @@ import { TaxInput, calculateTaxScenario, TaxResult } from '@/utils/taxCalculator
 import { Shield } from 'lucide-react';
 import BracketSummary from '@/components/tax/BracketSummary';
 import { Link } from 'react-router-dom';
+import RealTimeBracketPreview from '@/components/tax/RealTimeBracketPreview';
 
 const INITIAL_TAX_INPUT: TaxInput = {
   year: 2023,
@@ -79,11 +80,13 @@ const Scenario2023Return: React.FC = () => {
       <h1 className="text-3xl font-bold mb-6">2023 Tax Return Scenario</h1>
       
       <div className="mb-8">
-        <RothConversionSlider
-          initialValue={taxInput.roth_conversion}
-          maxValue={300000}
-          onValueChange={handleRothConversionChange}
-          thresholdWarnings={thresholdWarnings}
+        <RealTimeBracketPreview
+          baseIncome={taxInput.wages + taxInput.interest + taxInput.dividends + taxInput.ira_distributions + 0.85 * taxInput.social_security} 
+          year={taxInput.year} 
+          filingStatus={taxInput.filing_status}
+          capitalGains={taxInput.capital_gains}
+          maxConversion={300000}
+          onChange={handleRothConversionChange}
         />
       </div>
       

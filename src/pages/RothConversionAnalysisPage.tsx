@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,8 +7,17 @@ import { ArrowLeft, FileText, LineChart, TrendingUp, BarChart, BookOpen } from "
 import { calculateTaxScenario, TaxInput } from '@/utils/taxCalculator';
 import GlossaryTerm from '@/components/GlossaryTerm';
 import InfoTooltip from '@/components/tax/InfoTooltip';
+import RealTimeBracketPreview from '@/components/tax/RealTimeBracketPreview';
 
 const RothConversionAnalysisPage = () => {
+  // State for the bracket preview
+  const [conversionAmount, setConversionAmount] = useState(0);
+
+  // Handle conversion amount change
+  const handleConversionChange = (amount: number) => {
+    setConversionAmount(amount);
+  };
+  
   return (
     <div className="space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row items-center justify-between pb-4 gap-4">
@@ -25,6 +34,18 @@ const RothConversionAnalysisPage = () => {
           <ArrowLeft className="h-4 w-4" />
           Back to Tax Planning Hub
         </Link>
+      </div>
+
+      {/* New Real-Time Bracket Preview Section */}
+      <div className="mb-6">
+        <RealTimeBracketPreview 
+          baseIncome={120000} 
+          year={2023} 
+          filingStatus="married"
+          capitalGains={15000}
+          maxConversion={500000}
+          onChange={handleConversionChange}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
