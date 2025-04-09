@@ -11,6 +11,9 @@ export interface DataFeed {
   status: 'active' | 'inactive' | 'error';
   source: string;
   data_type: 'tax_rates' | 'financial' | 'economic' | 'regulatory' | 'other';
+  api_endpoint?: string;
+  error_message?: string;
+  refresh_frequency?: string;
 }
 
 export interface DataFeedLog {
@@ -20,10 +23,40 @@ export interface DataFeedLog {
   status: 'success' | 'warning' | 'error';
   message: string;
   details?: string;
+  success?: boolean;
+  changes_count?: number;
+  version_info?: string;
+  error_message?: string;
 }
 
 export interface TaxDataCacheInfo {
   lastChecked: string;
   dataUpdatedAt: string;
   isCurrent: boolean;
+}
+
+export interface TaxBracketUpdate {
+  type: 'tax_bracket';
+  year: number;
+  status: string;
+  filingStatus: string;
+  data: any;
+}
+
+export interface RetirementLimitUpdate {
+  type: 'retirement_limits';
+  year: number;
+  data: any;
+}
+
+export interface TaxFormUpdate {
+  type: 'tax_forms';
+  year: number;
+  data: any;
+}
+
+export interface StandardDeductionUpdate {
+  type: 'standard_deduction';
+  year: number;
+  data: any;
 }
