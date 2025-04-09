@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -144,7 +143,7 @@ const RecommendedReadingPage = () => {
         </div>
         <div>
           <p className="text-xs text-right text-muted-foreground">
-            Data last updated: <DynamicContentText>{{tax_data_last_update}}</DynamicContentText>
+            Data last updated: <DynamicContentText>{`{{tax_data_last_update}}`}</DynamicContentText>
           </p>
         </div>
       </div>
@@ -175,10 +174,10 @@ const RecommendedReadingPage = () => {
               <h4 className="font-semibold mb-2">Contribution Limits</h4>
               <ul className="list-disc list-inside text-sm space-y-1">
                 <li>
-                  Traditional/Roth IRA: <DynamicContentText options={{ year: currentYear }}>{{IRA_limit}}</DynamicContentText>
+                  Traditional/Roth IRA: <DynamicContentText options={{ year: currentYear }}>{`{{IRA_limit}}`}</DynamicContentText>
                 </li>
                 <li>
-                  401(k)/403(b): <DynamicContentText options={{ year: currentYear }}>{{401k_limit}}</DynamicContentText>
+                  401(k)/403(b): <DynamicContentText options={{ year: currentYear }}>{`{{401k_limit}}`}</DynamicContentText>
                 </li>
               </ul>
             </div>
@@ -186,10 +185,10 @@ const RecommendedReadingPage = () => {
               <h4 className="font-semibold mb-2">Standard Deduction</h4>
               <ul className="list-disc list-inside text-sm space-y-1">
                 <li>
-                  Single: <DynamicContentText options={{ year: currentYear, filingStatus: 'single' }}>{{current_standard_deduction}}</DynamicContentText>
+                  Single: <DynamicContentText options={{ year: currentYear, filingStatus: 'single' }}>{`{{current_standard_deduction}}`}</DynamicContentText>
                 </li>
                 <li>
-                  Married: <DynamicContentText options={{ year: currentYear, filingStatus: 'married' }}>{{current_standard_deduction}}</DynamicContentText>
+                  Married: <DynamicContentText options={{ year: currentYear, filingStatus: 'married' }}>{`{{current_standard_deduction}}`}</DynamicContentText>
                 </li>
               </ul>
             </div>

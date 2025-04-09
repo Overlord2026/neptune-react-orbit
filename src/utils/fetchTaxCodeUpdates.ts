@@ -8,7 +8,7 @@ import {
   RetirementLimitUpdate,
   TaxFormUpdate,
   StandardDeductionUpdate
-} from './dataFeedUtils';
+} from './dataFeed';
 import { TAX_BRACKETS_DATA, STANDARD_DEDUCTION_BY_YEAR } from './taxBracketData';
 import { toast } from "sonner";
 
