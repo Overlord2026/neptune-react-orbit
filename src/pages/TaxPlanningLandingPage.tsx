@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -27,7 +26,7 @@ const TaxPlanningLandingPage = () => {
       description: "Evaluate the benefits and tax implications of Roth IRA conversions over time.",
       icon: <Calculator className="h-8 w-8 mb-4 neptune-gold" />,
       comingSoon: false,
-      path: "/tax-planning"
+      path: "/tax-planning/roth-conversion"
     },
     {
       title: "Social Security Tax Calculator",
@@ -101,10 +100,12 @@ const TaxPlanningLandingPage = () => {
                   </Button>
                 </Link>
               ) : (
-                <Button className="w-full justify-between">
-                  Open Tool
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+                <Link to={feature.path} className="w-full">
+                  <Button className="w-full justify-between">
+                    Open Tool
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
               )}
             </CardFooter>
           </Card>

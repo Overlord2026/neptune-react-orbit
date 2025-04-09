@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import TaxPlanningLandingPage from "./pages/TaxPlanningLandingPage";
 import TaxReturnAnalyzerPage from "./pages/TaxReturnAnalyzerPage";
 import TaxDocumentAggregatorPage from "./pages/TaxDocumentAggregatorPage";
+import RothConversionAnalyzerPage from "./pages/RothConversionAnalyzerPage";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="tax-planning" element={<TaxPlanningLandingPage />} />
             <Route path="tax-planning/analyzer" element={<TaxReturnAnalyzerPage />} />
             <Route path="tax-planning/aggregator" element={<TaxDocumentAggregatorPage />} />
+            <Route path="tax-planning/roth-conversion" element={<RothConversionAnalyzerPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
