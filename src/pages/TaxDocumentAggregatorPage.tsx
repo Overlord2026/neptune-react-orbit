@@ -16,8 +16,9 @@ import {
   DialogHeader, 
   DialogTitle
 } from "@/components/ui/dialog";
-import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle, Sparkles } from "lucide-react";
+import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle, Sparkles, File } from "lucide-react";
 import DocumentUploader from "@/components/tax/DocumentUploader";
+import MissingDocumentsReport from "@/components/tax/MissingDocumentsReport";
 
 // Sample document data
 const documentsByYear = {
@@ -48,6 +49,7 @@ const TaxDocumentAggregatorPage = () => {
   const [selectedYear, setSelectedYear] = useState<string>("2023");
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showScanSheet, setShowScanSheet] = useState(false);
+  const [showMissingDocsDialog, setShowMissingDocsDialog] = useState(false);
   const [enableAIClassification, setEnableAIClassification] = useState(true);
   
   const years = Object.keys(documentsByYear).sort().reverse();
@@ -60,6 +62,11 @@ const TaxDocumentAggregatorPage = () => {
         doc.source.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
+
+  const handleRequestUpload = (docType: string) => {
+    setShowMissingDocsDialog(false);
+    setShowUploadDialog(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -128,6 +135,13 @@ const TaxDocumentAggregatorPage = () => {
               <Button className="w-full justify-start" variant="outline">
                 <Calendar className="mr-2 h-4 w-4" />
                 View Documents by Year
+              </Button>
+              <Button 
+                className="w-full justify-start bg-green-600 hover:bg-green-700"
+                onClick={() => setShowMissingDocsDialog(true)}
+              >
+                <File className="mr-2 h-4 w-4" />
+                Generate Missing Document Report
               </Button>
               <Sheet>
                 <SheetTrigger asChild>
@@ -332,6 +346,24 @@ const TaxDocumentAggregatorPage = () => {
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Missing Documents Dialog */}
+      <Dialog open={showMissingDocsDialog} onOpenChange={setShowMissingDocsDialog}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Missing Documents Report</DialogTitle>
+            <DialogDescription>
+              Check for potential missing tax documents based on your financial profile
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[calc(80vh-200px)] overflow-y-auto pr-1">
+            <MissingDocumentsReport 
+              taxYear={selectedYear}
+              onRequestUpload={handleRequestUpload}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
