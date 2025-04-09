@@ -1,3 +1,4 @@
+
 /**
  * Tax Utilities
  * 
@@ -10,7 +11,8 @@ import {
   TAX_BRACKETS_DATA, 
   getBrackets, 
   calculateTax,
-  STANDARD_DEDUCTION
+  STANDARD_DEDUCTION,
+  STANDARD_DEDUCTION_BY_YEAR
 } from './taxBracketData';
 
 /**
@@ -23,8 +25,21 @@ export const calculateTaxableIncome = (
   isItemizedDeduction: boolean = false,
   itemizedDeductionAmount: number = 0
 ): number => {
-  // Get standard deduction for the year and filing status
-  const standardDeduction = STANDARD_DEDUCTION[year as keyof typeof STANDARD_DEDUCTION]?.[filingStatus] || 0;
+  // Get standard deduction based on filing status
+  let standardDeduction;
+  
+  // Use the year-specific deduction if available, otherwise fall back to current values
+  if (STANDARD_DEDUCTION_BY_YEAR[year as keyof typeof STANDARD_DEDUCTION_BY_YEAR]) {
+    standardDeduction = STANDARD_DEDUCTION_BY_YEAR[year as keyof typeof STANDARD_DEDUCTION_BY_YEAR][filingStatus];
+  } else {
+    // Map the filing status to the new structure
+    const filingStatusMap: Record<FilingStatusType, keyof typeof STANDARD_DEDUCTION> = {
+      "single": "single",
+      "married": "marriedFilingJointly",
+      "head_of_household": "headOfHousehold"
+    };
+    standardDeduction = STANDARD_DEDUCTION[filingStatusMap[filingStatus]];
+  }
   
   // Use itemized deduction if selected and greater than standard deduction
   const deduction = isItemizedDeduction ? itemizedDeductionAmount : standardDeduction;

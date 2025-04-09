@@ -1,3 +1,4 @@
+
 /**
  * Tax Bracket Data Utility
  * 
@@ -223,8 +224,15 @@ export const TAX_BRACKETS_DATA: TaxBracket[] = [
   ...generateLTCGBrackets()
 ];
 
-// Standard Deduction Data for 2021-2023
+// Standard Deduction Data - 2023 values
 export const STANDARD_DEDUCTION = {
+  single: 13850,
+  marriedFilingJointly: 27700,
+  headOfHousehold: 20800
+};
+
+// Legacy standard deduction data structure (for backwards compatibility)
+export const STANDARD_DEDUCTION_BY_YEAR = {
   2023: {
     single: 13850,
     married: 27700,

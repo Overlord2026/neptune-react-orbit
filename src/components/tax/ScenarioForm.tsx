@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { TaxInput, FilingStatusType, STANDARD_DEDUCTION } from '@/utils/taxCalculator';
+import { TaxInput, FilingStatusType } from '@/utils/taxCalculator';
+import { STANDARD_DEDUCTION } from '@/utils/taxBracketData';
 
 interface ScenarioFormProps {
   onSubmit: (data: TaxInput) => void;
