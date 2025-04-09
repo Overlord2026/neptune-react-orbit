@@ -318,3 +318,26 @@ export const calculateEffectiveRate = (
 ): number => {
   return income > 0 ? tax / income : 0;
 };
+
+/**
+ * Format currency values for display
+ */
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+/**
+ * Format percentage values for display
+ */
+export const formatPercent = (rate: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(rate);
+};

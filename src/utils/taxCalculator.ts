@@ -1,3 +1,4 @@
+
 /**
  * Tax Calculation Utilities
  * 
@@ -7,7 +8,8 @@
 
 import { 
   FilingStatusType,
-  getBrackets
+  getBrackets,
+  STANDARD_DEDUCTION
 } from './taxBracketData';
 import {
   calculateTaxableIncome,
@@ -15,7 +17,10 @@ import {
 } from './taxUtils';
 
 // Types
-export type { FilingStatusType } from './taxBracketData';
+export { 
+  FilingStatusType, 
+  STANDARD_DEDUCTION 
+} from './taxBracketData';
 
 export interface TaxInput {
   year: number;
