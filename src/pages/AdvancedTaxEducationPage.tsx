@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BookText, ArrowRight, CheckCircle, ExternalLink } from 'lucide-react';
@@ -105,7 +104,7 @@ const AdvancedTaxEducationPage = () => {
         
         <div className="flex items-end ml-auto">
           <p className="text-xs text-muted-foreground">
-            Data last updated: <DynamicContentText as="span">{`{{tax_data_last_update}}`}</DynamicContentText>
+            Data last updated: <DynamicContentText as="span">{`\{\{tax_data_last_update\}\}`}</DynamicContentText>
           </p>
         </div>
       </div>
@@ -216,7 +215,7 @@ const AdvancedTaxEducationPage = () => {
                       options={{...contentOptions, filingStatus: 'single'}} 
                       className="font-semibold"
                     >
-                      {{current_standard_deduction}}
+                      {`\{\{current_standard_deduction\}\}`}
                     </DynamicContentText>
                   </li>
                   <li className="flex justify-between">
@@ -225,7 +224,7 @@ const AdvancedTaxEducationPage = () => {
                       options={{...contentOptions, filingStatus: 'married'}} 
                       className="font-semibold"
                     >
-                      {{current_standard_deduction}}
+                      {`\{\{current_standard_deduction\}\}`}
                     </DynamicContentText>
                   </li>
                   <li className="flex justify-between">
@@ -234,7 +233,7 @@ const AdvancedTaxEducationPage = () => {
                       options={{...contentOptions, filingStatus: 'head_of_household'}} 
                       className="font-semibold"
                     >
-                      {{current_standard_deduction}}
+                      {`\{\{current_standard_deduction\}\}`}
                     </DynamicContentText>
                   </li>
                 </ul>
