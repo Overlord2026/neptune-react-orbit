@@ -211,3 +211,8 @@ const generateLTCGBrackets = (): TaxBracket[] => {
   brackets.push(
     { id: generateBracketId(2021, "head_of_household", 0, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 0, bracket_max: 54100, rate: 0.00, bracket_type: "ltcg" },
     { id: generateBracketId(2021, "head_of_household", 54100, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 54100, bracket_max: 473750, rate: 0.15, bracket_type: "ltcg" },
+    { id: generateBracketId(2021, "head_of_household", 473750, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 473750, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
+  );
+  
+  return brackets;
+};

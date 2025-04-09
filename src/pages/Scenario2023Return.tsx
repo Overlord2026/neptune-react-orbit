@@ -8,6 +8,8 @@ import { TaxTrapWarning, checkTaxTraps, TaxTrapInput } from '@/utils/taxTrapChec
 import RothConversionSlider from '@/components/tax/RothConversionSlider';
 import { TaxInput, calculateTaxScenario, TaxResult } from '@/utils/taxCalculator';
 import { Shield } from 'lucide-react';
+import BracketSummary from '@/components/tax/BracketSummary';
+import { Link } from 'react-router-dom';
 
 const INITIAL_TAX_INPUT: TaxInput = {
   year: 2023,
@@ -165,6 +167,13 @@ const Scenario2023Return: React.FC = () => {
           </Card>
         )}
       </div>
+
+      {/* New Bracket Summary Section */}
+      {taxResult && (
+        <div className="mt-6">
+          <BracketSummary scenario={taxResult} />
+        </div>
+      )}
 
       {/* Tax Trap Checker */}
       <div className="mt-8">

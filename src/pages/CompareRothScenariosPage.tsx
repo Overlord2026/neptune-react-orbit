@@ -5,6 +5,7 @@ import ScenarioComparisonHeader from "@/components/tax/ScenarioComparisonHeader"
 import ScenarioComparisonCards from "@/components/tax/ScenarioComparisonCards";
 import ScenarioComparisonChart from "@/components/tax/ScenarioComparisonChart";
 import ScenarioComparisonTable from "@/components/tax/ScenarioComparisonTable";
+import BracketSummary from "@/components/tax/BracketSummary";
 import { formatCurrency, formatPercent } from "@/utils/taxBracketData";
 
 const CompareRothScenariosPage: React.FC = () => {
@@ -21,6 +22,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.114,
+    filing_status: "married", // Add filing_status to match TaxResult interface
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [
@@ -44,6 +46,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.126,
+    filing_status: "married", // Add filing_status
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [
@@ -67,6 +70,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.135,
+    filing_status: "married", // Add filing_status
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [
@@ -98,6 +102,17 @@ const CompareRothScenariosPage: React.FC = () => {
       <div className="space-y-8 mt-8">
         <ScenarioComparisonCards scenarios={scenarios} chartData={chartData} />
         <ScenarioComparisonChart chartData={chartData} />
+        
+        {/* New Bracket Summary Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {scenarios.map((scenario, index) => (
+            <BracketSummary 
+              key={`bracket-summary-${index}`}
+              scenario={scenario}
+            />
+          ))}
+        </div>
+
         <ScenarioComparisonTable 
           scenarios={scenarios} 
           formatCurrency={formatCurrency} 
