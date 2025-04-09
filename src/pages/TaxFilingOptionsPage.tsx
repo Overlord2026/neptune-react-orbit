@@ -46,8 +46,8 @@ const TaxFilingOptionsPage = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-[#9b87f5] hover:bg-[#8a76e4] text-white">
-                Start Simple Filing
+              <Button className="w-full bg-[#9b87f5] hover:bg-[#8a76e4] text-white" asChild>
+                <Link to="/tax-planning/simple-filing">Start Simple Filing</Link>
               </Button>
             </CardFooter>
           </Card>
