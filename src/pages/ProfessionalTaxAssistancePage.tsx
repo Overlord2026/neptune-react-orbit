@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +15,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import TaxDisclaimerWithCheckbox from '@/components/tax/TaxDisclaimerWithCheckbox';
 
 const ProfessionalTaxAssistancePage = () => {
   const { toast } = useToast();
@@ -31,6 +31,7 @@ const ProfessionalTaxAssistancePage = () => {
   const [unfiledYears, setUnfiledYears] = useState<string[]>([]);
   const [hasIrsNotice, setHasIrsNotice] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [disclaimerAcknowledged, setDisclaimerAcknowledged] = useState(false);
 
   const complexScenarios = [
     { id: "business", label: "Business or self-employment income" },
@@ -110,21 +111,27 @@ const ProfessionalTaxAssistancePage = () => {
   };
 
   const handleIrsFormSubmit = (data: z.infer<typeof irsFormSchema>) => {
-    // Here you would store the data in your database
     console.log("IRS form submitted:", {
       unfiledYears: data.years,
       hasIrsNotice: data.hasNotice,
       uploadedFiles
     });
     
-    // Continue to the next step
     setIsAssessmentComplete(true);
   };
 
   const handleSubmitRequest = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // In a real application, this would store the data in a database
+    if (!disclaimerAcknowledged) {
+      toast({
+        title: "Please acknowledge the disclaimer",
+        description: "You must acknowledge the disclaimer before continuing.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     console.log("Professional assistance request:", {
       scenarios: selectedScenarios,
       contactPreference,
@@ -133,10 +140,10 @@ const ProfessionalTaxAssistancePage = () => {
       contactInfo: contactPreference === "email" ? email : phone,
       unfiledYears,
       hasIrsNotice,
-      uploadedFiles
+      uploadedFiles,
+      disclaimerAcknowledged
     });
     
-    // Show success message and open the confirmation sheet
     toast({
       title: "Request submitted successfully",
       description: "We'll match you with a professional shortly.",
@@ -435,6 +442,12 @@ const ProfessionalTaxAssistancePage = () => {
                   </div>
                 )}
 
+                <TaxDisclaimerWithCheckbox 
+                  acknowledged={disclaimerAcknowledged}
+                  onAcknowledgeChange={setDisclaimerAcknowledged}
+                  className="mt-6"
+                />
+
                 <div className="pt-2">
                   <p className="text-sm text-[#C8C8C9] mb-4">
                     By submitting this form, you agree to be contacted by a tax professional. You'll arrange payment or engagement directly with the professional after your initial consultation.
@@ -442,6 +455,7 @@ const ProfessionalTaxAssistancePage = () => {
                   <Button 
                     type="submit" 
                     className="w-full bg-[#FFD700] hover:bg-[#E6C200] text-black"
+                    disabled={!disclaimerAcknowledged}
                   >
                     Submit Request
                   </Button>
@@ -451,7 +465,6 @@ const ProfessionalTaxAssistancePage = () => {
           </Card>
         )}
 
-        {/* Family Office Marketplace Card */}
         <Card className="bg-[#1A1F2C] border border-[#333] mt-6">
           <CardContent className="pt-6">
             <div className="flex items-start space-x-4">
@@ -471,7 +484,6 @@ const ProfessionalTaxAssistancePage = () => {
           </CardContent>
         </Card>
         
-        {/* Success Sheet */}
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetContent>
             <SheetHeader>

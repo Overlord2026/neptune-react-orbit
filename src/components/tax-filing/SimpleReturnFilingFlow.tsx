@@ -12,6 +12,7 @@ import FilingStep from './steps/FilingStep';
 import ConfirmationStep from './steps/ConfirmationStep';
 import { useToast } from '@/hooks/use-toast';
 import { Check } from 'lucide-react';
+import TaxDisclaimerWithCheckbox from '@/components/tax/TaxDisclaimerWithCheckbox';
 
 // Define the steps of our filing flow
 const steps = [
@@ -80,12 +81,16 @@ export interface TaxReturnData {
   
   // Confirmation
   referenceNumber: string;
+  
+  // Disclaimer
+  disclaimerAcknowledged?: boolean;
 }
 
 const SimpleReturnFilingFlow: React.FC = () => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState('eligibility');
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [disclaimerAcknowledged, setDisclaimerAcknowledged] = useState(false);
   const [taxData, setTaxData] = useState<TaxReturnData>({
     // Initialize with default values
     hasOnlyW2Income: null,
@@ -130,6 +135,7 @@ const SimpleReturnFilingFlow: React.FC = () => {
     },
     
     referenceNumber: '',
+    disclaimerAcknowledged: false,
   });
   
   const handleStepComplete = (stepId: string, data: Partial<TaxReturnData>) => {
@@ -139,6 +145,15 @@ const SimpleReturnFilingFlow: React.FC = () => {
     // Mark step as completed
     if (!completedSteps.includes(stepId)) {
       setCompletedSteps(prev => [...prev, stepId]);
+    }
+    
+    // If this is the review step, ensure disclaimer is acknowledged
+    if (stepId === 'review' && !disclaimerAcknowledged) {
+      toast({
+        title: "Please acknowledge the disclaimer",
+        description: "You must acknowledge the disclaimer before proceeding to e-file.",
+      });
+      return;
     }
     
     // Find next step
@@ -193,10 +208,29 @@ const SimpleReturnFilingFlow: React.FC = () => {
         );
       case 'review':
         return (
-          <ReviewStep 
-            data={taxData} 
-            onComplete={(data) => handleStepComplete('review', data)} 
-          />
+          <>
+            <ReviewStep 
+              data={taxData} 
+              onComplete={(data) => {
+                if (disclaimerAcknowledged) {
+                  handleStepComplete('review', { ...data, disclaimerAcknowledged });
+                } else {
+                  toast({
+                    title: "Please acknowledge the disclaimer",
+                    description: "You must acknowledge the disclaimer before proceeding to e-file.",
+                    variant: "destructive"
+                  });
+                }
+              }} 
+            />
+            
+            <div className="mt-6">
+              <TaxDisclaimerWithCheckbox
+                acknowledged={disclaimerAcknowledged}
+                onAcknowledgeChange={setDisclaimerAcknowledged}
+              />
+            </div>
+          </>
         );
       case 'file':
         return (

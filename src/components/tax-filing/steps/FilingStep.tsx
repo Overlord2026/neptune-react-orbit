@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle2, CreditCard } from 'lucide-react';
+import TaxDisclaimerWithCheckbox from '@/components/tax/TaxDisclaimerWithCheckbox';
 
 interface FilingStepProps {
   data: TaxReturnData;
@@ -20,6 +21,7 @@ const FilingStep: React.FC<FilingStepProps> = ({ data, onComplete }) => {
   const [confirmAccuracy, setConfirmAccuracy] = React.useState(false);
   const [confirmPenalty, setConfirmPenalty] = React.useState(false);
   const [processingEfile, setProcessingEfile] = React.useState(false);
+  const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
   
   const handleBankInfoChange = (field: keyof typeof bankInfo, value: string) => {
     setBankInfo({
@@ -122,7 +124,7 @@ const FilingStep: React.FC<FilingStepProps> = ({ data, onComplete }) => {
                 <Label htmlFor="account-type">Account Type</Label>
                 <Select
                   value={bankInfo.accountType}
-                  onValueChange={(value) => handleBankInfoChange('accountType', value)}
+                  onValueChange={(value) => handleBankInfoChange('accountType', value as 'checking' | 'savings')}
                 >
                   <SelectTrigger id="account-type">
                     <SelectValue placeholder="Select account type" />
@@ -194,7 +196,7 @@ const FilingStep: React.FC<FilingStepProps> = ({ data, onComplete }) => {
                 <Label htmlFor="account-type">Account Type</Label>
                 <Select
                   value={bankInfo.accountType}
-                  onValueChange={(value) => handleBankInfoChange('accountType', value)}
+                  onValueChange={(value) => handleBankInfoChange('accountType', value as 'checking' | 'savings')}
                 >
                   <SelectTrigger id="account-type">
                     <SelectValue placeholder="Select account type" />
@@ -209,6 +211,13 @@ const FilingStep: React.FC<FilingStepProps> = ({ data, onComplete }) => {
           </div>
         </div>
       )}
+      
+      {/* Tax Disclaimer */}
+      <TaxDisclaimerWithCheckbox 
+        acknowledged={disclaimerAcknowledged} 
+        onAcknowledgeChange={setDisclaimerAcknowledged}
+        className="mt-6"
+      />
       
       {/* Confirmation checkboxes */}
       <div className="space-y-4 border-t pt-4">
@@ -247,6 +256,7 @@ const FilingStep: React.FC<FilingStepProps> = ({ data, onComplete }) => {
         <Button 
           onClick={handleSubmit}
           disabled={
+            !disclaimerAcknowledged ||
             !confirmAccuracy || 
             !confirmPenalty || 
             !bankInfo.routingNumber || 
