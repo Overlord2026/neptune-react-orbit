@@ -34,6 +34,7 @@ import AdvancedTaxEducationPage from "./pages/AdvancedTaxEducationPage";
 import TaxGlossaryPage from "./pages/TaxGlossaryPage";
 import RecommendedReadingPage from "./pages/RecommendedReadingPage";
 import WhichBracketAmIInPage from "./pages/WhichBracketAmIInPage";
+import TaxFilingOptionsPage from "./pages/TaxFilingOptionsPage";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
             <Route path="tax-planning/avoiding-tax-traps" element={<AvoidingTaxTrapsPage />} />
             <Route path="tax-planning/glossary" element={<TaxGlossaryPage />} />
             <Route path="tax-planning/which-bracket" element={<WhichBracketAmIInPage />} />
+            <Route path="tax-planning/filing-options" element={<TaxFilingOptionsPage />} />
             <Route path="system-health" element={<SystemHealthDashboardPage />} />
             <Route path="system-diagnostics" element={<SystemDiagnosticsPage />} />
             <Route path="stat-card-demo" element={<StatCardDemo />} />
