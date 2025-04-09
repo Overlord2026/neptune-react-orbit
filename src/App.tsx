@@ -37,6 +37,7 @@ import WhichBracketAmIInPage from "./pages/WhichBracketAmIInPage";
 import TaxFilingOptionsPage from "./pages/TaxFilingOptionsPage";
 import SimpleReturnFilingPage from "./pages/SimpleReturnFilingPage";
 import ProfessionalTaxAssistancePage from "./pages/ProfessionalTaxAssistancePage";
+import DataFeedsAndUpdatesPage from "./pages/DataFeedsAndUpdatesPage";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
             <Route path="admin" element={<AdminDashboardPage />} />
+            <Route path="admin/data-feeds" element={<DataFeedsAndUpdatesPage />} />
             <Route path="tax-planning" element={<TaxPlanningLandingPage />} />
             <Route path="tax-planning/basic-education" element={<BasicTaxEducationPage />} />
             <Route path="tax-planning/advanced-tax-education" element={<AdvancedTaxEducationPage />} />
