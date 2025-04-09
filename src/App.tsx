@@ -25,6 +25,7 @@ import StatCardDemo from "./pages/StatCardDemo";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import SystemHealthDashboardPage from "./pages/SystemHealthDashboardPage";
 import SystemDiagnosticsPage from "./pages/SystemDiagnosticsPage";
+import Scenario2021Return from "./pages/Scenario2021Return";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="tax-planning/aggregator" element={<TaxDocumentAggregatorPage />} />
             <Route path="tax-planning/roth-conversion" element={<RothConversionAnalyzerPage />} />
             <Route path="tax-planning/roth-analysis" element={<RothConversionAnalysisPage />} />
+            <Route path="tax-planning/roth-analysis/2021" element={<Scenario2021Return />} />
             <Route path="tax-planning/social-security" element={<SocialSecurityCalculatorPage />} />
             <Route path="tax-planning/bracket-manager" element={<DynamicBracketManagerPage />} />
             <Route path="tax-planning/tax-vault" element={<TaxVaultPage />} />

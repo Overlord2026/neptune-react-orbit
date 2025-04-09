@@ -50,9 +50,11 @@ const RothConversionAnalysisPage = () => {
             </div>
           </CardContent>
           <CardFooter className="bg-muted/20 rounded-b-lg border-t border-primary/10 flex justify-end p-4">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              View 2021 Scenario
-            </Button>
+            <Link to="/tax-planning/roth-analysis/2021">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                View 2021 Scenario
+              </Button>
+            </Link>
           </CardFooter>
         </Card>
 
