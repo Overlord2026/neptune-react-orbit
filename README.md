@@ -1,73 +1,84 @@
-# Welcome to your Lovable project
 
-## Project info
+# Project Neptune: Advanced Tax Planning Suite
 
-**URL**: https://lovable.dev/projects/824ab698-b76c-4745-ae63-67479651e785
+**CONFIDENTIAL: Internal Development Only**
 
-## How can I edit this code?
+## Overview
 
-There are several ways of editing your application.
+Project Neptune is a confidential tax planning feature suite designed to enhance financial decision-making capabilities. This prototype demonstrates various tax planning tools that will eventually be integrated into the primary application.
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/824ab698-b76c-4745-ae63-67479651e785) and start prompting.
+The prototype currently includes the following modules:
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🟢 Available for Testing
 
-**Use your preferred IDE**
+- **Tax Return Analyzer**: Analyzes previous tax returns to identify missed deductions and optimization opportunities through OCR technology.
+- **Roth Conversion Analyzer**: Interactive calculator to evaluate tax implications of converting traditional IRAs to Roth IRAs.
+- **Dynamic Bracket Manager**: Visual tax bracket analysis tool to help optimize income timing and deductions.
+- **Social Security Tax Calculator**: Tool to determine optimal social security withdrawal strategies based on tax implications.
+- **Tax Vault**: Secure document storage system for sensitive tax information.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 🟡 Coming Soon
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Tax Document Aggregator**: Automated collection and organization of tax documents from financial institutions.
+- **Advanced Tax Strategies**: Sophisticated tax planning approaches tailored to high-net-worth individuals.
 
-Follow these steps:
+## Setup Instructions
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
+- Node.js (v16+)
+- npm (v8+)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+```bash
+# Clone the repository
+git clone [repository-url]
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Navigate to project directory
+cd project-neptune
+
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:5173/`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Integration Guidelines
 
-**Use GitHub Codespaces**
+This prototype is designed for eventual integration into the primary platform. When ready for production implementation:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. **Authentication**: Connect to the main application's authentication system.
+2. **Data Persistence**: Integrate with the existing data storage infrastructure.
+3. **User Profile Connection**: Link tax planning tools to user financial profiles.
+4. **Design System**: Ensure UI components match the parent application's design system.
+5. **API Integration**: Connect to the core platform API for real-time data access.
 
-## What technologies are used for this project?
+## Development Notes
 
-This project is built with:
+- The Tax Return Analyzer will require OCR service integration.
+- Roth Conversion calculations need to be synced with current tax bracket data.
+- Document storage requires secure encryption implementation before production.
+- All calculations are currently using placeholder data and should not be used for actual financial decisions.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Security Considerations
 
-## How can I deploy this project?
+- All tax information must be handled with strict confidentiality.
+- Document encryption should use industry-standard protocols.
+- User data should never leave the secure environment.
+- Integration must maintain compliance with data protection regulations.
 
-Simply open [Lovable](https://lovable.dev/projects/824ab698-b76c-4745-ae63-67479651e785) and click on Share -> Publish.
+## Technical Architecture
 
-## Can I connect a custom domain to my Lovable project?
+- Built with React, TypeScript, and Tailwind CSS
+- Uses shadcn/ui component library
+- State management via React Query
+- Routing with React Router
 
-Yes it is!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+*This document is confidential and proprietary. Do not distribute outside the development team.*
