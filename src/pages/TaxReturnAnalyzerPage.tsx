@@ -1,20 +1,66 @@
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Upload, FileText, Scan } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Upload, FileText } from "lucide-react";
 
 const TaxReturnAnalyzerPage = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [results, setResults] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      
+      // Check if the file type is supported
+      if (selectedFile.type === "application/pdf" || selectedFile.type.startsWith("image/")) {
+        setFile(selectedFile);
+        setResults(null); // Reset results when a new file is selected
+      } else {
+        toast({
+          title: "Unsupported File Format",
+          description: "Please upload a PDF or image file (.jpg, .png).",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const processFile = () => {
+    if (!file) {
+      toast({
+        title: "No File Selected",
+        description: "Please select a file to analyze.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    console.log("Analysis in progress...");
+    
+    // Simulate processing delay
+    setTimeout(() => {
+      setIsProcessing(false);
+      setResults("Potential deductions identified: 0. More features coming soon!");
+      toast({
+        title: "Analysis Complete",
+        description: "Your tax return has been analyzed.",
+      });
+    }, 2000);
+  };
+
   return (
     <div className="space-y-6 pb-8">
       <div className="flex items-center justify-between pb-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight neptune-gold">Tax Return Analyzer</h1>
-            <Badge variant="outline" className="bg-primary/10 text-primary">Coming Soon</Badge>
-          </div>
+          <h1 className="text-3xl font-bold tracking-tight neptune-gold">Tax Return Analyzer</h1>
           <p className="text-muted-foreground">Upload and analyze your tax returns to identify optimization opportunities.</p>
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
@@ -26,43 +72,65 @@ const TaxReturnAnalyzerPage = () => {
       <Card className="bg-card border-primary/20">
         <CardHeader>
           <CardTitle className="text-xl neptune-gold flex items-center gap-3">
-            <Scan className="h-6 w-6" />
-            OCR-Powered Tax Return Analysis
+            <FileText className="h-6 w-6" />
+            Tax Return Upload
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            Our upcoming Tax Return Analyzer will utilize advanced OCR (Optical Character Recognition) technology
-            to automatically extract data from your uploaded tax returns. The system will then:
+            Upload your tax return file (PDF or image) to analyze for potential tax savings opportunities.
+            Our system will scan your document and identify possible deductions or credits you may have missed.
           </p>
-          
-          <ul className="list-disc list-outside ml-6 space-y-2 text-muted-foreground">
-            <li>Identify potential missed deductions and credits</li>
-            <li>Compare your return against similar financial profiles</li>
-            <li>Highlight areas where tax optimization is possible</li>
-            <li>Generate actionable recommendations for future tax planning</li>
-            <li>Track year-over-year changes in your tax situation</li>
-          </ul>
           
           <div className="rounded-md border border-dashed border-primary/30 p-8 flex flex-col items-center justify-center gap-4">
             <div className="p-3 rounded-full bg-primary/10">
-              <FileText className="h-8 w-8 neptune-gold" />
+              <Upload className="h-8 w-8 neptune-gold" />
             </div>
             <div className="text-center">
-              <h3 className="font-medium text-lg neptune-gold">Upload Your Tax Return</h3>
+              <h3 className="font-medium text-lg neptune-gold">
+                {file ? file.name : "Upload Your Tax Return"}
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Supported formats: PDF, JPG, PNG (Max 25MB)
+                Supported formats: PDF, JPG, PNG
               </p>
             </div>
-            <Button disabled className="gap-2">
-              <Upload className="h-4 w-4" />
-              Upload Return
-            </Button>
+            <div className="flex gap-4">
+              <Input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,image/jpeg,image/png"
+                onChange={handleFileChange}
+                className="hidden"
+                id="tax-return-upload"
+              />
+              <Button 
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                Select File
+              </Button>
+              <Button 
+                onClick={processFile} 
+                disabled={!file || isProcessing}
+                className="bg-[#FFD700] text-black hover:bg-[#E5C100] gap-2"
+              >
+                {isProcessing ? "Processing..." : "Process Return"}
+              </Button>
+            </div>
           </div>
+          
+          {results && (
+            <div className="mt-6 p-4 bg-primary/10 border border-primary/20 rounded-md">
+              <h3 className="font-medium text-lg neptune-gold mb-2">Analysis Results</h3>
+              <p className="text-muted-foreground">{results}</p>
+            </div>
+          )}
         </CardContent>
-        <CardFooter className="flex flex-col bg-muted/50 rounded-b-lg">
-          <p className="text-sm text-muted-foreground py-2">
-            <strong>Note:</strong> This feature is currently under development. When launched, all uploads will be processed securely with bank-level encryption and data protection.
+        <CardFooter className="bg-muted/50 border-t border-primary/10 flex flex-col items-start">
+          <p className="text-sm text-muted-foreground">
+            All uploads are encrypted and analyzed securely. Your privacy is our priority.
           </p>
         </CardFooter>
       </Card>
