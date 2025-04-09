@@ -104,7 +104,7 @@ const AdvancedTaxEducationPage = () => {
         
         <div className="flex items-end ml-auto">
           <p className="text-xs text-muted-foreground">
-            Data last updated: <DynamicContentText as="span">{`\{\{tax_data_last_update\}\}`}</DynamicContentText>
+            Data last updated: <DynamicContentText as="span">{`tax_data_last_update`}</DynamicContentText>
           </p>
         </div>
       </div>
@@ -195,13 +195,13 @@ const AdvancedTaxEducationPage = () => {
                   <li className="flex justify-between">
                     <span>IRA Contribution Limit:</span>
                     <DynamicContentText options={contentOptions} className="font-semibold">
-                      {{IRA_limit}}
+                      {`IRA_limit`}
                     </DynamicContentText>
                   </li>
                   <li className="flex justify-between">
                     <span>401(k) Contribution Limit:</span>
                     <DynamicContentText options={contentOptions} className="font-semibold">
-                      {{401k_limit}}
+                      {`401k_limit`}
                     </DynamicContentText>
                   </li>
                 </ul>
@@ -215,7 +215,7 @@ const AdvancedTaxEducationPage = () => {
                       options={{...contentOptions, filingStatus: 'single'}} 
                       className="font-semibold"
                     >
-                      {`\{\{current_standard_deduction\}\}`}
+                      {`current_standard_deduction`}
                     </DynamicContentText>
                   </li>
                   <li className="flex justify-between">
@@ -224,7 +224,7 @@ const AdvancedTaxEducationPage = () => {
                       options={{...contentOptions, filingStatus: 'married'}} 
                       className="font-semibold"
                     >
-                      {`\{\{current_standard_deduction\}\}`}
+                      {`current_standard_deduction`}
                     </DynamicContentText>
                   </li>
                   <li className="flex justify-between">
@@ -233,7 +233,7 @@ const AdvancedTaxEducationPage = () => {
                       options={{...contentOptions, filingStatus: 'head_of_household'}} 
                       className="font-semibold"
                     >
-                      {`\{\{current_standard_deduction\}\}`}
+                      {`current_standard_deduction`}
                     </DynamicContentText>
                   </li>
                 </ul>
