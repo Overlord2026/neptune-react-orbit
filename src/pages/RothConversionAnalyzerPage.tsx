@@ -3,11 +3,18 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calculator } from "lucide-react";
+import { ArrowLeft, Calculator, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type FormValues = {
   iraBalance: number;
@@ -18,6 +25,7 @@ type FormValues = {
 
 const RothConversionAnalyzerPage = () => {
   const [results, setResults] = useState<string | null>(null);
+  const [taxLiability, setTaxLiability] = useState<number | null>(null);
   
   const form = useForm<FormValues>({
     defaultValues: {
@@ -30,8 +38,20 @@ const RothConversionAnalyzerPage = () => {
   
   const onSubmit = (data: FormValues) => {
     console.log("Form submitted with data:", data);
-    // This would normally calculate tax implications
-    setResults(`Converting $${data.conversionAmount.toLocaleString()} from Traditional IRA would result in approximately $${Math.round(data.conversionAmount * 0.24).toLocaleString()} in taxes at a 24% marginal rate.`);
+    
+    // Placeholder calculation (simplified tax estimation)
+    // In reality, this would be more complex based on tax brackets, etc.
+    const estimatedTaxRate = data.filingStatus === 'married' ? 0.22 : 0.24;
+    const estimatedTax = Math.round(data.conversionAmount * estimatedTaxRate);
+    setTaxLiability(estimatedTax);
+    
+    setResults(`Converting $${data.conversionAmount.toLocaleString()} from Traditional IRA would result in approximately $${estimatedTax.toLocaleString()} in taxes at a ${estimatedTaxRate * 100}% marginal rate.`);
+  };
+  
+  const handleReset = () => {
+    form.reset();
+    setResults(null);
+    setTaxLiability(null);
   };
 
   return (
@@ -110,16 +130,21 @@ const RothConversionAnalyzerPage = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Filing Status</FormLabel>
-                      <FormControl>
-                        <select 
-                          {...field} 
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                        >
-                          <option value="single">Single</option>
-                          <option value="married">Married Filing Jointly</option>
-                          <option value="head">Head of Household</option>
-                        </select>
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select filing status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="single">Single</SelectItem>
+                          <SelectItem value="married">Married Filing Jointly</SelectItem>
+                          <SelectItem value="head">Head of Household</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormDescription>
                         Your tax filing status
                       </FormDescription>
@@ -151,9 +176,20 @@ const RothConversionAnalyzerPage = () => {
                   )}
                 />
                 
-                <Button type="submit" className="w-full mt-4">
-                  Calculate Tax Impact
-                </Button>
+                <div className="flex gap-2">
+                  <Button type="submit" className="flex-1">
+                    Calculate Tax Impact
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleReset}
+                    className="flex items-center gap-2"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Reset
+                  </Button>
+                </div>
               </form>
             </Form>
           </CardContent>
@@ -172,8 +208,10 @@ const RothConversionAnalyzerPage = () => {
                 <div className="p-4 rounded-md bg-primary/10 border border-primary/20">
                   <h3 className="font-semibold neptune-gold mb-2">Recommendation</h3>
                   <p className="text-muted-foreground">
-                    This is a placeholder recommendation. In a complete implementation,
-                    we would analyze your specific tax situation and provide personalized guidance.
+                    Based on your input, you might owe ${taxLiability?.toLocaleString()} in taxes now, 
+                    but your future withdrawals will be tax-free and your investments will grow tax-free.
+                    Consider consulting with a tax professional to determine if this conversion aligns with 
+                    your long-term financial goals.
                   </p>
                 </div>
               </div>
