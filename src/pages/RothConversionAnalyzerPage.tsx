@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calculator, RefreshCw } from "lucide-react";
+import { ArrowLeft, Calculator, RefreshCw, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -26,6 +27,8 @@ type FormValues = {
 const RothConversionAnalyzerPage = () => {
   const [results, setResults] = useState<string | null>(null);
   const [taxLiability, setTaxLiability] = useState<number | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const { toast } = useToast();
   
   const form = useForm<FormValues>({
     defaultValues: {
@@ -37,28 +40,81 @@ const RothConversionAnalyzerPage = () => {
   });
   
   const onSubmit = (data: FormValues) => {
+    // Validate inputs
+    if (data.iraBalance < 0) {
+      toast({
+        title: "Invalid IRA Balance",
+        description: "IRA Balance cannot be negative.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (data.conversionAmount < 0) {
+      toast({
+        title: "Invalid Conversion Amount",
+        description: "Conversion amount cannot be negative.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (data.conversionAmount > data.iraBalance) {
+      toast({
+        title: "Invalid Conversion Amount",
+        description: "Conversion amount cannot exceed IRA balance.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (data.age < 0 || data.age > 120) {
+      toast({
+        title: "Invalid Age",
+        description: "Please enter a valid age between 0 and 120.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     console.log("Form submitted with data:", data);
     
-    // Placeholder calculation (simplified tax estimation)
-    // In reality, this would be more complex based on tax brackets, etc.
-    const estimatedTaxRate = data.filingStatus === 'married' ? 0.22 : 0.24;
-    const estimatedTax = Math.round(data.conversionAmount * estimatedTaxRate);
-    setTaxLiability(estimatedTax);
+    setIsCalculating(true);
     
-    setResults(`Converting $${data.conversionAmount.toLocaleString()} from Traditional IRA would result in approximately $${estimatedTax.toLocaleString()} in taxes at a ${estimatedTaxRate * 100}% marginal rate.`);
+    // Simulate calculation delay
+    setTimeout(() => {
+      // Placeholder calculation (simplified tax estimation)
+      // In reality, this would be more complex based on tax brackets, etc.
+      const estimatedTaxRate = data.filingStatus === 'married' ? 0.22 : 0.24;
+      const estimatedTax = Math.round(data.conversionAmount * estimatedTaxRate);
+      setTaxLiability(estimatedTax);
+      
+      setResults(`Converting $${data.conversionAmount.toLocaleString()} from Traditional IRA would result in approximately $${estimatedTax.toLocaleString()} in taxes at a ${estimatedTaxRate * 100}% marginal rate.`);
+      
+      toast({
+        title: "Calculation Complete",
+        description: "Your Roth conversion tax impact has been calculated.",
+      });
+      
+      setIsCalculating(false);
+    }, 1500);
   };
   
   const handleReset = () => {
     form.reset();
     setResults(null);
     setTaxLiability(null);
+    toast({
+      title: "Form Reset",
+      description: "All values have been reset to defaults.",
+    });
   };
 
   return (
     <div className="space-y-6 pb-8">
-      <div className="flex items-center justify-between pb-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between pb-4 gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight neptune-gold">Roth Conversion Analyzer</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight neptune-gold">Roth Conversion Analyzer</h1>
           <p className="text-muted-foreground">Evaluate tax implications of converting Traditional IRA funds to a Roth IRA.</p>
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
@@ -91,13 +147,20 @@ const RothConversionAnalyzerPage = () => {
                             type="number" 
                             className="pl-7" 
                             {...field} 
-                            onChange={e => field.onChange(Number(e.target.value))}
+                            onChange={e => {
+                              const value = e.target.valueAsNumber || 0;
+                              if (value >= 0) {
+                                field.onChange(value);
+                              }
+                            }}
+                            min={0}
                           />
                         </div>
                       </FormControl>
                       <FormDescription>
                         Your current Traditional IRA balance
                       </FormDescription>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -114,12 +177,18 @@ const RothConversionAnalyzerPage = () => {
                           min={0} 
                           max={120}
                           {...field}
-                          onChange={e => field.onChange(Number(e.target.value))}
+                          onChange={e => {
+                            const value = e.target.valueAsNumber || 0;
+                            if (value >= 0 && value <= 120) {
+                              field.onChange(value);
+                            }
+                          }}
                         />
                       </FormControl>
                       <FormDescription>
                         Age affects early withdrawal penalties
                       </FormDescription>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -148,6 +217,7 @@ const RothConversionAnalyzerPage = () => {
                       <FormDescription>
                         Your tax filing status
                       </FormDescription>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -165,26 +235,45 @@ const RothConversionAnalyzerPage = () => {
                             type="number" 
                             className="pl-7" 
                             {...field} 
-                            onChange={e => field.onChange(Number(e.target.value))}
+                            onChange={e => {
+                              const value = e.target.valueAsNumber || 0;
+                              if (value >= 0) {
+                                field.onChange(value);
+                              }
+                            }}
+                            min={0}
                           />
                         </div>
                       </FormControl>
                       <FormDescription>
                         How much you want to convert to Roth
                       </FormDescription>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
                 
-                <div className="flex gap-2">
-                  <Button type="submit" className="flex-1">
-                    Calculate Tax Impact
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    type="submit" 
+                    className="flex-1"
+                    disabled={isCalculating}
+                  >
+                    {isCalculating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Calculating...
+                      </>
+                    ) : (
+                      "Calculate Tax Impact"
+                    )}
                   </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={handleReset}
                     className="flex items-center gap-2"
+                    disabled={isCalculating}
                   >
                     <RefreshCw className="h-4 w-4" />
                     Reset
@@ -202,7 +291,14 @@ const RothConversionAnalyzerPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {results ? (
+            {isCalculating ? (
+              <div className="flex flex-col items-center justify-center h-full min-h-[200px] py-8">
+                <Loader2 className="h-12 w-12 neptune-gold animate-spin mb-4" />
+                <p className="text-muted-foreground">
+                  Calculating tax implications...
+                </p>
+              </div>
+            ) : results ? (
               <div className="space-y-4">
                 <p className="text-muted-foreground">{results}</p>
                 <div className="p-4 rounded-md bg-primary/10 border border-primary/20">
@@ -223,7 +319,7 @@ const RothConversionAnalyzerPage = () => {
               </div>
             )}
           </CardContent>
-          <CardFooter className="bg-muted/50 rounded-b-lg">
+          <CardFooter className="bg-muted/50 border-t border-primary/10">
             <p className="text-sm text-muted-foreground py-2">
               <strong>Note:</strong> This is a simplified analysis. Consult with a tax professional before making conversion decisions.
             </p>

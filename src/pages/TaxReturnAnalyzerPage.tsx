@@ -1,10 +1,11 @@
+
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Upload, FileText } from "lucide-react";
+import { ArrowLeft, Upload, FileText, Loader2 } from "lucide-react";
 
 // TODO: Implement OCR in Phase 2 once the service is ready.
 // import { OCRService } from "../services/OCRService";
@@ -22,8 +23,22 @@ const TaxReturnAnalyzerPage = () => {
       
       // Check if the file type is supported
       if (selectedFile.type === "application/pdf" || selectedFile.type.startsWith("image/")) {
+        // Check file size (max 10MB)
+        if (selectedFile.size > 10 * 1024 * 1024) {
+          toast({
+            title: "File Too Large",
+            description: "Please upload a file smaller than 10MB.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
         setFile(selectedFile);
         setResults(null); // Reset results when a new file is selected
+        toast({
+          title: "File Selected",
+          description: `${selectedFile.name} has been selected.`,
+        });
       } else {
         toast({
           title: "Unsupported File Format",
@@ -83,7 +98,7 @@ const TaxReturnAnalyzerPage = () => {
 
   return (
     <div className="space-y-6 pb-8">
-      <div className="flex items-center justify-between pb-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between pb-4 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight neptune-gold">Tax Return Analyzer</h1>
           <p className="text-muted-foreground">Upload and analyze your tax returns to identify optimization opportunities.</p>
@@ -107,19 +122,19 @@ const TaxReturnAnalyzerPage = () => {
             Our system will scan your document and identify possible deductions or credits you may have missed.
           </p>
           
-          <div className="rounded-md border border-dashed border-primary/30 p-8 flex flex-col items-center justify-center gap-4">
+          <div className="rounded-md border border-dashed border-primary/30 p-4 sm:p-8 flex flex-col items-center justify-center gap-4">
             <div className="p-3 rounded-full bg-primary/10">
-              <Upload className="h-8 w-8 neptune-gold" />
+              <Upload className="h-6 w-6 sm:h-8 sm:w-8 neptune-gold" />
             </div>
             <div className="text-center">
-              <h3 className="font-medium text-lg neptune-gold">
+              <h3 className="font-medium text-base sm:text-lg neptune-gold">
                 {file ? file.name : "Upload Your Tax Return"}
               </h3>
-              <p className="text-sm text-muted-foreground">
-                Supported formats: PDF, JPG, PNG
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Supported formats: PDF, JPG, PNG (Max 10MB)
               </p>
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-3 justify-center">
               <Input
                 ref={fileInputRef}
                 type="file"
@@ -141,7 +156,14 @@ const TaxReturnAnalyzerPage = () => {
                 disabled={!file || isProcessing}
                 className="bg-[#FFD700] text-black hover:bg-[#E5C100] gap-2"
               >
-                {isProcessing ? "Processing..." : "Process Return"}
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Process Return"
+                )}
               </Button>
             </div>
           </div>
