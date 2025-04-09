@@ -1,3 +1,4 @@
+
 /**
  * Tax Bracket Data Utility
  * 
@@ -224,7 +225,7 @@ export const TAX_BRACKETS_DATA: TaxBracket[] = [
 ];
 
 // Standard Deduction Data for 2021-2023
-export const STANDARD_DEDUCTION = {
+const STANDARD_DEDUCTION = {
   2023: {
     single: 13850,
     married: 27700,
@@ -334,3 +335,6 @@ export const formatPercent = (decimal: number): string => {
     maximumFractionDigits: 1
   }).format(decimal);
 };
+
+// Default export for STANDARD_DEDUCTION
+export default { STANDARD_DEDUCTION };
