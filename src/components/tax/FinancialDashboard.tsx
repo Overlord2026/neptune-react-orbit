@@ -57,6 +57,48 @@ const StatCard = ({ title, value, comparison, targetText, targetValue, targetVal
 const FinancialDashboard = () => {
   return (
     <div className="space-y-6 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          title="Income"
+          value="$9,650"
+          comparison={{ value: "4.5%", isPositive: true, text: "vs last month" }}
+          targetText="Monthly Goal"
+          targetValue="$12,500"
+          targetValueColor="text-emerald-500"
+          trend="up"
+        />
+        
+        <StatCard
+          title="Expenses"
+          value="$6,473"
+          comparison={{ value: "2.9%", isPositive: false, text: "vs last month" }}
+          targetText="Monthly Budget"
+          targetValue="$8,500"
+          targetValueColor="text-amber-500"
+          trend="down"
+        />
+        
+        <StatCard
+          title="Cash Flow"
+          value="$3,177"
+          comparison={{ value: "5.8%", isPositive: true, text: "vs last quarter" }}
+          targetText="Quarterly Avg"
+          targetValue="$3,075"
+          targetValueColor="text-blue-500" 
+          trend="up"
+        />
+        
+        <StatCard
+          title="Savings Rate"
+          value="18.5%"
+          comparison={{ value: "1.2%", isPositive: false, text: "vs last month" }}
+          targetText="Target"
+          targetValue="20%"
+          targetValueColor="text-purple-500"
+          trend="down"
+        />
+      </div>
+
       <div className="rounded-lg border border-primary/20 bg-card p-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 rounded-md bg-primary/10">
