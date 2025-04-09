@@ -1,4 +1,3 @@
-
 /**
  * Tax Utilities
  * 
@@ -11,11 +10,8 @@ import {
   TAX_BRACKETS_DATA, 
   getBrackets, 
   calculateTax,
+  STANDARD_DEDUCTION
 } from './taxBracketData';
-import standardDeductionExport from './taxBracketData';
-
-// Destructure the default export
-const { STANDARD_DEDUCTION } = standardDeductionExport;
 
 /**
  * Calculate taxable income after applying deductions
