@@ -2,9 +2,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Edit, PlusCircle } from 'lucide-react';
+import { Edit, PlusCircle, AlertTriangle } from 'lucide-react';
 
-const ScenarioActionButtons: React.FC = () => {
+interface ScenarioActionButtonsProps {
+  showTaxTrapButton?: boolean;
+  onCheckTaxTraps?: () => void;
+  isTrapCheckLoading?: boolean;
+}
+
+const ScenarioActionButtons: React.FC<ScenarioActionButtonsProps> = ({ 
+  showTaxTrapButton = true,
+  onCheckTaxTraps,
+  isTrapCheckLoading = false
+}) => {
   return (
     <div className="flex flex-wrap gap-4 justify-center pt-4">
       <Link to="/tax-planning/roth-analysis/2021">
@@ -27,6 +37,18 @@ const ScenarioActionButtons: React.FC = () => {
           Create New Scenario
         </Button>
       </Link>
+      
+      {showTaxTrapButton && onCheckTaxTraps && (
+        <Button 
+          onClick={onCheckTaxTraps}
+          className="bg-amber-500 hover:bg-amber-600 text-white"
+          size="lg"
+          disabled={isTrapCheckLoading}
+        >
+          <AlertTriangle className="h-4 w-4 mr-2" />
+          {isTrapCheckLoading ? "Checking Tax Traps..." : "Check for Tax Traps"}
+        </Button>
+      )}
     </div>
   );
 };

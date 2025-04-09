@@ -14,12 +14,18 @@ interface InfoTooltipProps {
   text: string;
   icon?: IconType;
   className?: string;
+  side?: "top" | "right" | "bottom" | "left";
+  align?: "start" | "center" | "end";
+  maxWidth?: string;
 }
 
 const InfoTooltip: React.FC<InfoTooltipProps> = ({ 
   text, 
   icon = 'info',
-  className = "" 
+  className = "",
+  side = "top",
+  align = "center",
+  maxWidth = "xs"
 }) => {
   const getIcon = () => {
     switch (icon) {
@@ -35,6 +41,13 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({
     }
   };
 
+  // Determine max width class
+  let maxWidthClass = "max-w-xs";
+  if (maxWidth === "sm") maxWidthClass = "max-w-sm";
+  if (maxWidth === "md") maxWidthClass = "max-w-md";
+  if (maxWidth === "lg") maxWidthClass = "max-w-lg";
+  if (maxWidth === "none") maxWidthClass = "";
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -43,7 +56,7 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({
             {getIcon()}
           </span>
         </TooltipTrigger>
-        <TooltipContent className="max-w-xs">
+        <TooltipContent side={side} align={align} className={maxWidthClass}>
           <p>{text}</p>
         </TooltipContent>
       </Tooltip>
