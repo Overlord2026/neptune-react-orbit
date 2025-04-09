@@ -3,9 +3,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, LineChart, TrendingUp, BarChart } from "lucide-react";
+import { ArrowLeft, FileText, LineChart, TrendingUp, BarChart, BookOpen } from "lucide-react";
 import { calculateTaxScenario, TaxInput } from '@/utils/taxCalculator';
 import GlossaryTerm from '@/components/GlossaryTerm';
+import InfoTooltip from '@/components/tax/InfoTooltip';
 
 const RothConversionAnalysisPage = () => {
   return (
@@ -32,6 +33,11 @@ const RothConversionAnalysisPage = () => {
             <CardTitle className="text-xl neptune-gold flex items-center gap-3">
               <FileText className="h-5 w-5" />
               2021 Scenario
+              <InfoTooltip 
+                text="This baseline scenario shows your tax situation without any Roth conversions." 
+                link="/tax-planning/basic-education#baseline-scenario"
+                linkText="Understanding baseline scenarios"
+              />
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-4">
@@ -65,6 +71,11 @@ const RothConversionAnalysisPage = () => {
             <CardTitle className="text-xl neptune-gold flex items-center gap-3">
               <LineChart className="h-5 w-5" />
               2022 Scenario
+              <InfoTooltip 
+                text="This scenario shows the impact of preliminary Roth conversion planning." 
+                link="/tax-planning/roth-conversion" 
+                linkText="Learn about conversion planning"
+              />
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-4">
@@ -96,6 +107,13 @@ const RothConversionAnalysisPage = () => {
             <CardTitle className="text-xl neptune-gold flex items-center gap-3">
               <TrendingUp className="h-5 w-5" />
               2023 Scenario
+              <InfoTooltip 
+                text="This optimized scenario includes our recommended Roth conversion strategy."
+                icon="help"
+                link="/tax-planning/advanced-strategies"
+                linkText="See advanced optimization techniques"
+                isAdvanced={true} 
+              />
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-4">
@@ -120,9 +138,11 @@ const RothConversionAnalysisPage = () => {
             </div>
           </CardContent>
           <CardFooter className="bg-muted/20 rounded-b-lg border-t border-primary/10 flex justify-end p-4">
-            <Button className="bg-[#FFD700] hover:bg-[#E5C100] text-black">
-              View 2023 Scenario
-            </Button>
+            <Link to="/tax-planning/roth-analysis/2023">
+              <Button className="bg-[#FFD700] hover:bg-[#E5C100] text-black">
+                View 2023 Scenario
+              </Button>
+            </Link>
           </CardFooter>
         </Card>
       </div>
@@ -138,12 +158,36 @@ const RothConversionAnalysisPage = () => {
 
       <div className="mt-8 p-4 bg-primary/5 border border-primary/20 rounded-md">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground flex items-center">
             You can add or modify scenarios to customize your <GlossaryTerm termId="roth_conversion">Roth conversion</GlossaryTerm> plans.
+            <InfoTooltip 
+              text="Planning multiple conversion scenarios across different years can help minimize your overall tax burden."
+              link="/tax-planning/advanced-strategies#multi-year-planning"
+              linkText="Advanced multi-year planning strategies"
+              isAdvanced={true}
+            />
           </p>
           <Button variant="outline" className="border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700]/10">
             Create New Scenario
           </Button>
+        </div>
+      </div>
+      
+      <div className="mt-6 p-4 bg-slate-50/10 border border-slate-200/20 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2 neptune-gold flex items-center">
+          <BookOpen className="h-5 w-5 mr-2" />
+          Related Educational Resources
+        </h3>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/tax-planning/avoiding-tax-traps" className="text-primary hover:underline flex items-center">
+            How Roth Conversions Impact IRMAA
+          </Link>
+          <Link to="/tax-planning/recommended-reading" className="text-primary hover:underline flex items-center">
+            The Ultimate Roth Conversion Blueprint
+          </Link>
+          <Link to="/tax-planning/bracket-manager" className="text-primary hover:underline flex items-center">
+            Tax Bracket Management Strategies
+          </Link>
         </div>
       </div>
     </div>

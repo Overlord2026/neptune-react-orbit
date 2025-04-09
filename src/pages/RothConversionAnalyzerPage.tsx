@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calculator, RefreshCw, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Calculator, RefreshCw, Loader2, AlertCircle, BookOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import InfoTooltip from '@/components/tax/InfoTooltip';
+import GlossaryTerm from '@/components/GlossaryTerm';
 
 type FormValues = {
   iraBalance: number;
@@ -116,7 +117,9 @@ const RothConversionAnalyzerPage = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between pb-4 gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight neptune-gold">Roth Conversion Analyzer</h1>
-          <p className="text-muted-foreground">Evaluate tax implications of converting Traditional IRA funds to a Roth IRA.</p>
+          <p className="text-muted-foreground">
+            Evaluate tax implications of converting <GlossaryTerm termId="traditional_ira">Traditional IRA</GlossaryTerm> funds to a <GlossaryTerm termId="roth_ira">Roth IRA</GlossaryTerm>.
+          </p>
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
@@ -140,7 +143,14 @@ const RothConversionAnalyzerPage = () => {
                   name="iraBalance"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Traditional IRA Balance</FormLabel>
+                      <FormLabel className="flex items-center">
+                        Traditional IRA Balance
+                        <InfoTooltip 
+                          text="Your total balance in all Traditional IRA accounts."
+                          link="/tax-planning/basic-education#traditional-iras"
+                          linkText="Learn about Traditional IRAs"
+                        />
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-3">$</span>
@@ -171,7 +181,14 @@ const RothConversionAnalyzerPage = () => {
                   name="age"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Current Age</FormLabel>
+                      <FormLabel className="flex items-center">
+                        Your Current Age
+                        <InfoTooltip 
+                          text="Age impacts early withdrawal penalties. Before 59½, you may face penalties."
+                          link="/tax-planning/basic-education#retirement-ages"
+                          linkText="Read about important age milestones"
+                        />
+                      </FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -199,7 +216,14 @@ const RothConversionAnalyzerPage = () => {
                   name="filingStatus"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Filing Status</FormLabel>
+                      <FormLabel className="flex items-center">
+                        Filing Status
+                        <InfoTooltip 
+                          text="Your tax filing status affects your tax brackets and standard deduction."
+                          link="/tax-planning/bracket-manager"
+                          linkText="View tax brackets by filing status"
+                        />
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -228,7 +252,15 @@ const RothConversionAnalyzerPage = () => {
                   name="conversionAmount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Amount to Convert</FormLabel>
+                      <FormLabel className="flex items-center">
+                        Amount to Convert
+                        <InfoTooltip 
+                          text="Amount you want to convert from Traditional IRA to Roth IRA. The conversion amount will be added to your taxable income for the year."
+                          link="/tax-planning/advanced-strategies#partial-conversions"
+                          linkText="Learn optimal conversion sizing"
+                          isAdvanced={true}
+                        />
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-3">$</span>
@@ -303,7 +335,14 @@ const RothConversionAnalyzerPage = () => {
               <div className="space-y-4">
                 <p className="text-muted-foreground">{results}</p>
                 <div className="p-4 rounded-md bg-primary/10 border border-primary/20">
-                  <h3 className="font-semibold neptune-gold mb-2">Recommendation</h3>
+                  <h3 className="font-semibold neptune-gold mb-2 flex items-center">
+                    Recommendation
+                    <InfoTooltip 
+                      text="This recommendation is based on your current inputs and may change with different parameters."
+                      link="/tax-planning/roth-analysis"
+                      linkText="View detailed scenario analysis"
+                    />
+                  </h3>
                   <p className="text-muted-foreground">
                     Based on your input, you might owe ${taxLiability?.toLocaleString()} in taxes now, 
                     but your future withdrawals will be tax-free and your investments will grow tax-free.
@@ -315,7 +354,12 @@ const RothConversionAnalyzerPage = () => {
                   <h3 className="font-semibold text-yellow-500 flex items-center mb-2">
                     <AlertCircle className="h-4 w-4 mr-2" />
                     IRMAA Consideration
-                    <InfoTooltip text="High income in a given year could increase your Medicare premiums two years later." />
+                    <InfoTooltip 
+                      text="High income in a given year could increase your Medicare premiums two years later."
+                      link="/tax-planning/avoiding-tax-traps#irmaa"
+                      linkText="Learn about IRMAA thresholds"
+                      icon="alertTriangle"
+                    />
                   </h3>
                   <p className="text-muted-foreground text-sm">
                     Be aware that a large Roth conversion could potentially trigger Income-Related Monthly Adjustment Amount 
@@ -337,6 +381,24 @@ const RothConversionAnalyzerPage = () => {
             </p>
           </CardFooter>
         </Card>
+      </div>
+      
+      <div className="mt-6 p-4 bg-slate-50/10 border border-slate-200/20 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2 neptune-gold flex items-center">
+          <BookOpen className="h-5 w-5 mr-2" />
+          Related Educational Resources
+        </h3>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/tax-planning/avoiding-tax-traps" className="text-primary hover:underline flex items-center">
+            How Conversions Impact IRMAA
+          </Link>
+          <Link to="/tax-planning/recommended-reading" className="text-primary hover:underline flex items-center">
+            The Ultimate Roth Conversion Blueprint
+          </Link>
+          <Link to="/tax-planning/roth-analysis/compare" className="text-primary hover:underline flex items-center">
+            Compare Roth Conversion Scenarios
+          </Link>
+        </div>
       </div>
     </div>
   );

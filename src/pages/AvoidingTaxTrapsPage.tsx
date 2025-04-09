@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink, ArrowLeft, ChevronDown } from 'lucide-react';
+import { ExternalLink, ArrowLeft, ChevronDown, BookOpen } from 'lucide-react';
 import { 
   Card, 
   CardContent, 
@@ -22,6 +21,7 @@ import {
 } from '@/utils/taxTrapChecker';
 import TaxTrapVisualizer from '@/components/tax/TaxTrapVisualizer';
 import TaxTrapResourceLink from '@/components/tax/TaxTrapResourceLink';
+import GlossaryTerm from '@/components/GlossaryTerm';
 
 const AvoidingTaxTrapsPage: React.FC = () => {
   return (
@@ -55,16 +55,21 @@ const AvoidingTaxTrapsPage: React.FC = () => {
       <div className="grid grid-cols-1 gap-6">
         <Accordion type="multiple" className="w-full">
           {/* IRMAA Surcharges Section */}
-          <AccordionItem value="irmaa">
+          <AccordionItem value="irmaa" id="irmaa">
             <AccordionTrigger className="text-xl font-medium">
               IRMAA Surcharges
-              <InfoTooltip text="Income-Related Monthly Adjustment Amount" className="ml-2" />
+              <InfoTooltip 
+                text="Income-Related Monthly Adjustment Amount"
+                link="/tax-planning/glossary#irmaa" 
+                linkText="See full definition in glossary"
+                className="ml-2" 
+              />
             </AccordionTrigger>
             <AccordionContent className="space-y-4">
               <div className="prose max-w-none dark:prose-invert">
                 <h3>What are IRMAA Surcharges?</h3>
                 <p>
-                  Medicare Part B & D costs can increase based on your modified adjusted gross income (MAGI) from two years prior. 
+                  Medicare Part B & D costs can increase based on your <GlossaryTerm termId="magi">modified adjusted gross income</GlossaryTerm> (MAGI) from two years prior. 
                   These surcharges, known as Income-Related Monthly Adjustment Amounts (IRMAA), can significantly increase your 
                   healthcare costs in retirement.
                 </p>
@@ -79,10 +84,18 @@ const AvoidingTaxTrapsPage: React.FC = () => {
 
                 <h3>Strategies to Mitigate IRMAA Surcharges</h3>
                 <ul>
-                  <li><strong>Spread out Roth conversions</strong> over multiple years to avoid large income spikes</li>
+                  <li>
+                    <strong>Spread out <GlossaryTerm termId="roth_conversion">Roth conversions</GlossaryTerm></strong> over multiple years to avoid large income spikes
+                    <InfoTooltip 
+                      text="Advanced multi-year conversion planning can help minimize IRMAA impacts."
+                      link="/tax-planning/advanced-strategies"
+                      linkText="Advanced conversion strategies"
+                      isAdvanced={true}
+                    />
+                  </li>
                   <li><strong>Plan for partial conversions earlier</strong> in retirement, before Medicare enrollment at 65</li>
                   <li><strong>Manage capital gains</strong> strategically to avoid crossing IRMAA thresholds</li>
-                  <li><strong>Consider qualified charitable distributions (QCDs)</strong> from IRAs, which don't count toward MAGI</li>
+                  <li><strong>Consider <GlossaryTerm termId="qcd">qualified charitable distributions</GlossaryTerm> (QCDs)</strong> from IRAs, which don't count toward MAGI</li>
                   <li><strong>File for a "life-changing event" appeal</strong> if your income has decreased due to specific circumstances</li>
                 </ul>
               </div>
@@ -105,6 +118,9 @@ const AvoidingTaxTrapsPage: React.FC = () => {
                   title="SSA IRMAA Appeal Process" 
                   url="https://www.ssa.gov/forms/ssa-44-ext.pdf" 
                 />
+                <Link to="/tax-planning/recommended-reading" className="text-primary text-sm underline hover:no-underline">
+                  View our recommended reading on IRMAA planning
+                </Link>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -272,7 +288,15 @@ const AvoidingTaxTrapsPage: React.FC = () => {
 
       <Card className="bg-slate-50/80 dark:bg-slate-900/20 mt-6">
         <CardHeader>
-          <CardTitle className="neptune-gold text-xl">Planning Considerations</CardTitle>
+          <CardTitle className="neptune-gold text-xl flex items-center">
+            Planning Considerations
+            <InfoTooltip 
+              text="Proper planning requires looking at all tax traps together, not in isolation."
+              link="/tax-planning/advanced-strategies"
+              linkText="Learn advanced planning techniques"
+              isAdvanced={true}
+            />
+          </CardTitle>
         </CardHeader>
         <CardContent className="prose dark:prose-invert">
           <p>
@@ -285,13 +309,39 @@ const AvoidingTaxTrapsPage: React.FC = () => {
             balancing income across several years to minimize overall tax burden over time rather than in any single year.
           </p>
         </CardContent>
-        <CardFooter className="border-t pt-6">
+        <CardFooter className="border-t pt-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
           <Link to="/tax-planning/roth-analysis/compare" className="text-primary flex items-center hover:underline">
             <span>Try our comparison tools to analyze your scenarios</span>
             <ArrowLeft className="h-4 w-4 ml-2 transform rotate-180" />
           </Link>
+          
+          <Link to="/tax-planning/recommended-reading" className="flex items-center gap-2 px-4 py-2 bg-[#9b87f5] hover:bg-[#8a76e4] text-white rounded-md">
+            <BookOpen className="h-4 w-4" />
+            View Recommended Reading
+          </Link>
         </CardFooter>
       </Card>
+      
+      <div className="mt-6 p-4 bg-slate-50/10 border border-slate-200/20 rounded-lg">
+        <h3 className="text-lg font-semibold mb-3 neptune-gold flex items-center">
+          <BookOpen className="h-5 w-5 mr-2" />
+          Suggested Educational Resources
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-3 rounded-md bg-slate-50/5 hover:bg-slate-50/10 border border-slate-100/10">
+            <Link to="/tax-planning/recommended-reading#retirement" className="hover:no-underline">
+              <h4 className="font-medium text-white">Tax Bracket Management Guide</h4>
+              <p className="text-sm text-muted-foreground">Learn strategies to control your effective tax rate through income timing.</p>
+            </Link>
+          </div>
+          <div className="p-3 rounded-md bg-slate-50/5 hover:bg-slate-50/10 border border-slate-100/10">
+            <Link to="/tax-planning/recommended-reading#retirement" className="hover:no-underline">
+              <h4 className="font-medium text-white">The Ultimate Roth Conversion Blueprint</h4>
+              <p className="text-sm text-muted-foreground">Step-by-step strategies for optimizing Roth conversions across market cycles.</p>
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

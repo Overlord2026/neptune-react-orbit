@@ -10,6 +10,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } fr
 import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
 import InfoTooltip from '@/components/tax/InfoTooltip';
+import GlossaryTerm from '@/components/GlossaryTerm';
 
 type FormValues = {
   annualIncome: number;
@@ -64,7 +65,9 @@ const SocialSecurityCalculatorPage = () => {
       <div className="flex items-center justify-between pb-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight neptune-gold">Social Security Tax Calculator</h1>
-          <p className="text-muted-foreground">Estimate the tax impact of your Social Security benefits</p>
+          <p className="text-muted-foreground">
+            Estimate the tax impact of your <GlossaryTerm termId="social_security_benefits">Social Security benefits</GlossaryTerm>
+          </p>
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
@@ -114,7 +117,11 @@ const SocialSecurityCalculatorPage = () => {
                     <FormItem>
                       <FormLabel className="flex items-center">
                         Annual Social Security Benefits
-                        <InfoTooltip text="Depending on your total provisional income, up to 85% of Social Security can be taxable." />
+                        <InfoTooltip 
+                          text="Depending on your total provisional income, up to 85% of Social Security can be taxable." 
+                          link="/tax-planning/avoiding-tax-traps"
+                          linkText="Learn about Social Security taxation"
+                        />
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
@@ -151,6 +158,11 @@ const SocialSecurityCalculatorPage = () => {
                       </FormControl>
                       <FormDescription>
                         Your current age affects certain tax calculations
+                        <InfoTooltip 
+                          text="Social Security claiming strategies differ based on your age." 
+                          link="/tax-planning/basic-education"
+                          linkText="Read about optimal claiming strategies"
+                        />
                       </FormDescription>
                     </FormItem>
                   )}
@@ -203,13 +215,27 @@ const SocialSecurityCalculatorPage = () => {
                     <div className="text-xl neptune-gold font-semibold">${taxResults.totalIncome.toLocaleString()}</div>
                   </div>
                   <div className="p-4 rounded-md bg-primary/5 border border-primary/20">
-                    <div className="text-sm text-muted-foreground mb-1">Taxable SSI Portion</div>
+                    <div className="text-sm text-muted-foreground mb-1">
+                      Taxable SSI Portion
+                      <InfoTooltip 
+                        text="The amount of your Social Security benefits subject to income tax depends on your total income."
+                        link="/tax-planning/avoiding-tax-traps"
+                        linkText="Learn about SSI taxation thresholds"
+                      />
+                    </div>
                     <div className="text-xl neptune-gold font-semibold">${taxResults.taxableSSI.toLocaleString()}</div>
                   </div>
                 </div>
                 
                 <div className="p-4 rounded-md bg-primary/10 border border-primary/20">
-                  <h3 className="font-semibold neptune-gold mb-2">Estimated Tax on Social Security</h3>
+                  <h3 className="font-semibold neptune-gold mb-2">
+                    Estimated Tax on Social Security
+                    <InfoTooltip 
+                      text="This estimation assumes a 22% marginal tax rate on the taxable portion of your benefits."
+                      link="/tax-planning/bracket-manager"
+                      linkText="See tax bracket details"
+                    />
+                  </h3>
                   <div className="text-2xl neptune-gold font-bold">${taxResults.estimatedTaxOnSSI.toLocaleString()}</div>
                   <p className="text-muted-foreground mt-2 text-sm">
                     Based on an estimated tax rate of 22% on the taxable portion of your benefits.
@@ -219,9 +245,35 @@ const SocialSecurityCalculatorPage = () => {
                 <div className="p-4 rounded-md bg-primary/5 border border-primary/20">
                   <h3 className="font-semibold neptune-gold mb-2">Recommendation</h3>
                   <p className="text-muted-foreground">
-                    {taxResults.taxableSSI > 0 ? 
-                      "Consider strategies to reduce your overall income to potentially lower the taxable portion of your Social Security benefits." : 
-                      "Your Social Security benefits are currently not subject to federal income tax."}
+                    {taxResults.taxableSSI > 0 ? (
+                      <>
+                        Consider strategies to reduce your overall income to potentially lower the taxable portion of your 
+                        Social Security benefits.
+                        <InfoTooltip 
+                          text="Advanced tax planning can help minimize Social Security benefit taxation through strategic income timing."
+                          link="/tax-planning/advanced-strategies"
+                          linkText="Explore advanced strategies"
+                          isAdvanced={true}
+                        />
+                      </>
+                    ) : (
+                      "Your Social Security benefits are currently not subject to federal income tax."
+                    )}
+                  </p>
+                </div>
+                
+                <div className="p-4 rounded-md bg-yellow-900/20 border border-yellow-600/30">
+                  <h3 className="font-semibold text-yellow-500 flex items-center mb-2">
+                    IRMAA Considerations
+                    <InfoTooltip 
+                      text="Income-Related Monthly Adjustment Amount (IRMAA) can increase your Medicare premiums if your income exceeds certain thresholds."
+                      link="/tax-planning/avoiding-tax-traps"
+                      linkText="Learn about IRMAA thresholds"
+                      icon="alertCircle"
+                    />
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Be aware that high income in retirement can trigger additional Medicare premium costs through IRMAA surcharges.
                   </p>
                 </div>
               </div>
@@ -239,6 +291,21 @@ const SocialSecurityCalculatorPage = () => {
             </p>
           </CardFooter>
         </Card>
+      </div>
+      
+      <div className="mt-6 p-4 bg-slate-50/10 border border-slate-200/20 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2 neptune-gold">Related Resources</h3>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/tax-planning/avoiding-tax-traps" className="text-primary hover:underline flex items-center">
+            Common Tax Traps and How to Avoid Them
+          </Link>
+          <Link to="/tax-planning/recommended-reading" className="text-primary hover:underline flex items-center">
+            Recommended Reading on Social Security Optimization
+          </Link>
+          <Link to="/tax-planning/roth-analysis" className="text-primary hover:underline flex items-center">
+            How Roth Conversions Affect Social Security Taxation
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Info, AlertCircle, HelpCircle, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 type IconType = 'info' | 'help' | 'alertCircle' | 'alertTriangle';
 
@@ -17,6 +18,9 @@ interface InfoTooltipProps {
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
   maxWidth?: string;
+  link?: string;
+  linkText?: string;
+  isAdvanced?: boolean;
 }
 
 const InfoTooltip: React.FC<InfoTooltipProps> = ({ 
@@ -25,7 +29,10 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({
   className = "",
   side = "top",
   align = "center",
-  maxWidth = "xs"
+  maxWidth = "xs",
+  link,
+  linkText = "Learn more",
+  isAdvanced = false
 }) => {
   const getIcon = () => {
     switch (icon) {
@@ -57,7 +64,28 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({
           </span>
         </TooltipTrigger>
         <TooltipContent side={side} align={align} className={maxWidthClass}>
-          <p>{text}</p>
+          <div className="space-y-2">
+            <p>{text}</p>
+            {link && (
+              <div className="pt-1 text-sm">
+                {isAdvanced ? (
+                  <Link 
+                    to="/tax-planning/advanced-tax-education" 
+                    className="text-[#9b87f5] hover:underline flex items-center"
+                  >
+                    {linkText || "Learn more in our Advanced Course"}
+                  </Link>
+                ) : (
+                  <Link 
+                    to={link} 
+                    className="text-primary hover:underline flex items-center"
+                  >
+                    {linkText}
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
