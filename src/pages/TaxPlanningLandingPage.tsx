@@ -11,7 +11,7 @@ const TaxPlanningLandingPage = () => {
       title: "Tax Return Analyzer",
       description: "Analyze your tax returns for missed deductions and optimization opportunities.",
       icon: <FileText className="h-8 w-8 mb-4 neptune-gold" />,
-      comingSoon: true,
+      comingSoon: false,
       path: "/tax-planning/analyzer"
     },
     {
@@ -94,11 +94,9 @@ const TaxPlanningLandingPage = () => {
             </CardContent>
             <CardFooter>
               {feature.comingSoon ? (
-                <Link to={feature.path} className="w-full">
-                  <Button variant="outline" className="w-full">
-                    View Preview
-                  </Button>
-                </Link>
+                <Button variant="outline" className="w-full" disabled>
+                  Coming Soon
+                </Button>
               ) : (
                 <Link to={feature.path} className="w-full">
                   <Button className="w-full justify-between">
