@@ -1,84 +1,274 @@
+# Project Neptune
 
-# Project Neptune: Advanced Tax Planning Suite
+Project Neptune is a confidential tax planning feature suite designed to enhance financial decision-making capabilities.
 
-**CONFIDENTIAL: Internal Development Only**
+## Table of Contents
+- [Color Palette and Theme](#color-palette-and-theme)
+- [Using the Dashboard Layout](#using-the-dashboard-layout)
+- [Card Components](#card-components)
+- [Page Organization](#page-organization)
+- [Responsive Design](#responsive-design)
 
-## Overview
+## Color Palette and Theme
 
-Project Neptune is a confidential tax planning feature suite designed to enhance financial decision-making capabilities. This prototype demonstrates various tax planning tools that will eventually be integrated into the primary application.
+### Core Colors
+- **Background:**
+  - Primary: `#111111` (Dark background)
+  - Secondary: `#1E1E1E` (Cards, containers)
+  - Tertiary: `#222222` (Highlights, hover states)
 
-## Features
+- **Accent/Brand:**
+  - Gold: `#FFD700` (Primary accent color)
+  - Gold Hover: `#E5C100` (Darker gold for hover states)
 
-The prototype currently includes the following modules:
+- **Text:**
+  - Primary: `#FFFFFF` (White text)
+  - Secondary: `#A0A0A0` (Muted text)
+  - Accent: `#FFD700` (Gold text for emphasis)
 
-### 🟢 Available for Testing
+- **Status Colors:**
+  - Success: `#4CAF50` (Green)
+  - Warning: `#FFA500` (Orange) 
+  - Error: `#FF4D4D` (Red)
 
-- **Tax Return Analyzer**: Analyzes previous tax returns to identify missed deductions and optimization opportunities through OCR technology.
-- **Roth Conversion Analyzer**: Interactive calculator to evaluate tax implications of converting traditional IRAs to Roth IRAs.
-- **Dynamic Bracket Manager**: Visual tax bracket analysis tool to help optimize income timing and deductions.
-- **Social Security Tax Calculator**: Tool to determine optimal social security withdrawal strategies based on tax implications.
-- **Tax Vault**: Secure document storage system for sensitive tax information.
+### Theme Usage
 
-### 🟡 Coming Soon
+The theme is defined in multiple locations:
 
-- **Tax Document Aggregator**: Automated collection and organization of tax documents from financial institutions.
-- **Advanced Tax Strategies**: Sophisticated tax planning approaches tailored to high-net-worth individuals.
+1. **CSS Variables:**
+   - See `src/index.css` and `src/styles/globalStyles.css` for CSS variables
+   - Example usage: `var(--bg-primary)`, `var(--accent)`
 
-## Setup Instructions
+2. **Tailwind Configuration:**
+   - Extended theme in `tailwind.config.ts`
+   - Example usage: `bg-custom-background-primary`, `text-custom-accent`
 
-### Prerequisites
-- Node.js (v16+)
-- npm (v8+)
+3. **Theme Object:**
+   - JavaScript theme object in `src/styles/theme.js`
+   - Import with: `import { colors, typography } from '../styles/theme'`
 
-### Installation
+### Button Variants
 
-```bash
-# Clone the repository
-git clone [repository-url]
+1. **Primary Button:**
+   ```jsx
+   <Button className="bg-[#FFD700] text-black hover:bg-[#E5C100] transition-colors duration-200">
+     Primary Action
+   </Button>
+   ```
 
-# Navigate to project directory
-cd project-neptune
+2. **Secondary Button:**
+   ```jsx
+   <Button variant="secondary" className="border border-[#FFD700] text-[#FFD700] hover:bg-[#222222] transition-colors duration-200">
+     Secondary Action
+   </Button>
+   ```
 
-# Install dependencies
-npm install
+## Using the Dashboard Layout
 
-# Start the development server
-npm run dev
+The `DashboardLayout` component provides a consistent page structure with navigation sidebar and header.
+
+### Basic Usage
+
+1. **Import the layout:**
+
+```tsx
+import DashboardLayout from "../components/DashboardLayout";
 ```
 
-The application will be available at `http://localhost:5173/`.
+2. **Use the layout in your route configurations:**
 
-## Integration Guidelines
+The layout is already configured in `App.tsx` to wrap your page components:
 
-This prototype is designed for eventual integration into the primary platform. When ready for production implementation:
+```tsx
+// From App.tsx
+<Route path="/" element={<DashboardLayout />}>
+  <Route index element={<Index />} />
+  <Route path="calendar" element={<Calendar />} />
+  {/* Other routes */}
+</Route>
+```
 
-1. **Authentication**: Connect to the main application's authentication system.
-2. **Data Persistence**: Integrate with the existing data storage infrastructure.
-3. **User Profile Connection**: Link tax planning tools to user financial profiles.
-4. **Design System**: Ensure UI components match the parent application's design system.
-5. **API Integration**: Connect to the core platform API for real-time data access.
+3. **Creating a new page component:**
 
-## Development Notes
+```tsx
+import React from 'react';
 
-- The Tax Return Analyzer will require OCR service integration.
-- Roth Conversion calculations need to be synced with current tax bracket data.
-- Document storage requires secure encryption implementation before production.
-- All calculations are currently using placeholder data and should not be used for actual financial decisions.
+const NewPage = () => {
+  return (
+    <div>
+      <h1 className="text-xl font-semibold mb-6">Page Title</h1>
+      {/* Page content */}
+    </div>
+  );
+};
 
-## Security Considerations
+export default NewPage;
+```
 
-- All tax information must be handled with strict confidentiality.
-- Document encryption should use industry-standard protocols.
-- User data should never leave the secure environment.
-- Integration must maintain compliance with data protection regulations.
+## Card Components
 
-## Technical Architecture
+### StatCard
 
-- Built with React, TypeScript, and Tailwind CSS
-- Uses shadcn/ui component library
-- State management via React Query
-- Routing with React Router
+Used for displaying metrics or statistics with optional change indicators.
 
----
+```tsx
+import StatCard from '@/components/StatCard';
+import { BarChart3 } from 'lucide-react';
 
-*This document is confidential and proprietary. Do not distribute outside the development team.*
+// Usage
+<StatCard 
+  title="Total Revenue"
+  value="$24,500"
+  change="+12%"
+  timeframe="vs. last month"
+  icon={<BarChart3 className="h-5 w-5 text-[#FFD700]" />}
+/>
+```
+
+### StatsCard
+
+A simpler card for displaying metrics.
+
+```tsx
+import StatsCard from '@/components/dashboard/StatsCard';
+import { Users } from 'lucide-react';
+
+// Usage
+<StatsCard
+  title="Active Users"
+  value="1,234"
+  description="7% increase from last month"
+  icon={<Users className="h-5 w-5" />}
+/>
+```
+
+### Creating Custom Card Components
+
+Follow these guidelines when creating new card components:
+
+1. Use consistent padding: `p-6` or `p-4 md:p-6`
+2. Maintain consistent border radius with `rounded-md` or `rounded-lg`
+3. Use the theme colors: 
+   - Background: `bg-[#1E1E1E]`
+   - Border: `border-[#333333]`
+   - Hover: `hover:border-[#444444]` or `hover:border-[#FFD700]`
+4. Implement hover transitions: `transition-colors duration-200`
+
+## Page Organization
+
+### Page Structure
+
+1. **Core Pages:** Place in `src/pages/`
+   - Example: `Index.tsx`, `Calendar.tsx`, `Settings.tsx`
+
+2. **Feature-specific Pages:** Also in `src/pages/` with descriptive names
+   - Example: `TaxPlanningLandingPage.tsx`, `RothConversionAnalyzerPage.tsx`
+
+3. **Administrative Pages:** In `src/pages/` with "Admin" prefix
+   - Example: `AdminDashboardPage.tsx`
+
+### Adding New Pages
+
+1. Create the page component in `src/pages/`
+2. Add the route to `App.tsx`:
+
+```tsx
+// In App.tsx
+<Route path="new-feature" element={<NewFeaturePage />} />
+```
+
+3. Add navigation links in the appropriate location, such as `Sidebar.tsx`
+
+## Responsive Design
+
+Project Neptune uses a mobile-first approach with responsive breakpoints.
+
+### Breakpoints
+
+```
+- xs: (Default) Mobile-first design
+- sm: 640px and above
+- md: 768px and above
+- lg: 1024px and above
+- xl: 1280px and above
+- 2xl: 1536px and above
+```
+
+### Mobile Sidebar
+
+The responsive sidebar automatically converts to a drawer on mobile screens:
+
+```tsx
+{isMobile ? (
+  <Drawer open={sidebarOpen} onOpenChange={setSidebarOpen}>
+    <DrawerOverlay />
+    <DrawerContent className="p-0 max-w-[80%]">
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
+    </DrawerContent>
+  </Drawer>
+) : (
+  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
+)}
+```
+
+### Responsive Grid
+
+For card layouts, use these grid patterns:
+
+```jsx
+// Responsive grid that adjusts from 1 to 4 columns
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+  {/* Cards */}
+</div>
+
+// Two-column layout that stacks on mobile
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+  {/* Content */}
+</div>
+```
+
+### Customizing Breakpoints
+
+To customize breakpoints beyond what's provided by Tailwind:
+
+1. Add custom breakpoints in `tailwind.config.ts`:
+
+```js
+theme: {
+  screens: {
+    'xs': '375px',
+    'sm': '640px',
+    'md': '768px',
+    'lg': '1024px',
+    'xl': '1280px',
+    '2xl': '1536px',
+  },
+}
+```
+
+2. Use custom media queries when needed:
+
+```css
+@media (min-width: 540px) {
+  /* Custom breakpoint styles */
+}
+```
+
+## Best Practices
+
+1. **Maintain Theme Consistency**
+   - Use established color variables and classes
+   - Follow existing component patterns
+
+2. **Responsive Development**
+   - Start with mobile-first approach
+   - Test across different screen sizes frequently
+
+3. **Accessibility**
+   - Ensure sufficient color contrast
+   - Include focus states for interactive elements
+   - Use semantic HTML elements
+
+4. **Component Organization**
+   - Keep components focused and modular
+   - Use consistent naming conventions
