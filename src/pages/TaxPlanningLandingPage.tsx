@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calculator, FileText, CircleDollarSign, Shield, Book, SquareAsterisk } from "lucide-react";
+import FinancialDashboard from "@/components/tax/FinancialDashboard";
 
 const TaxPlanningLandingPage = () => {
   const features = [
@@ -62,6 +63,11 @@ const TaxPlanningLandingPage = () => {
           Back to Home
         </Link>
       </div>
+      
+      {/* Financial Dashboard */}
+      <FinancialDashboard />
+      
+      <h2 className="text-2xl font-bold tracking-tight neptune-gold mt-8">Available Tools</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {features.map((feature, index) => (
