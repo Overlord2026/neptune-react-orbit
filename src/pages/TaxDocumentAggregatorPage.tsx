@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -19,6 +18,8 @@ import {
 import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle, Sparkles, File } from "lucide-react";
 import DocumentUploader from "@/components/tax/DocumentUploader";
 import MissingDocumentsReport from "@/components/tax/MissingDocumentsReport";
+import FloatingAssistantButton from "@/components/tax/FloatingAssistantButton";
+import AIDocumentAssistant from "@/components/tax/AIDocumentAssistant";
 
 // Sample document data
 const documentsByYear = {
@@ -51,6 +52,7 @@ const TaxDocumentAggregatorPage = () => {
   const [showScanSheet, setShowScanSheet] = useState(false);
   const [showMissingDocsDialog, setShowMissingDocsDialog] = useState(false);
   const [enableAIClassification, setEnableAIClassification] = useState(true);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
   
   const years = Object.keys(documentsByYear).sort().reverse();
   
@@ -364,6 +366,15 @@ const TaxDocumentAggregatorPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Floating AI Assistant Button */}
+      <FloatingAssistantButton onClick={() => setShowAIAssistant(true)} />
+      
+      {/* AI Document Assistant */}
+      <AIDocumentAssistant 
+        isOpen={showAIAssistant} 
+        onClose={() => setShowAIAssistant(false)} 
+      />
     </div>
   );
 };
