@@ -44,9 +44,11 @@ const TaxPlanningLandingPage = () => {
               </p>
 
               <div className="flex flex-wrap gap-4 mb-6">
-                <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] text-white">
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  Basic Tax Education
+                <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] text-white" asChild>
+                  <Link to="/tax-planning/basic-education">
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Basic Tax Education
+                  </Link>
                 </Button>
                 <Button variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#1A1F2C]/50">
                   <BookText className="mr-2 h-4 w-4" />

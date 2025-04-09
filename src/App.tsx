@@ -29,6 +29,7 @@ import Scenario2021Return from "./pages/Scenario2021Return";
 import Scenario2023Return from "./pages/Scenario2023Return";
 import CompareRothScenariosPage from "./pages/CompareRothScenariosPage";
 import AvoidingTaxTrapsPage from "./pages/AvoidingTaxTrapsPage";
+import BasicTaxEducationPage from "./pages/BasicTaxEducationPage";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="settings" element={<Settings />} />
             <Route path="admin" element={<AdminDashboardPage />} />
             <Route path="tax-planning" element={<TaxPlanningLandingPage />} />
+            <Route path="tax-planning/basic-education" element={<BasicTaxEducationPage />} />
             <Route path="tax-planning/analyzer" element={<TaxReturnAnalyzerPage />} />
             <Route path="tax-planning/aggregator" element={<TaxDocumentAggregatorPage />} />
             <Route path="tax-planning/roth-conversion" element={<RothConversionAnalyzerPage />} />
