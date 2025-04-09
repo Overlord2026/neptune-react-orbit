@@ -27,6 +27,7 @@ import SystemHealthDashboardPage from "./pages/SystemHealthDashboardPage";
 import SystemDiagnosticsPage from "./pages/SystemDiagnosticsPage";
 import Scenario2021Return from "./pages/Scenario2021Return";
 import CompareRothScenariosPage from "./pages/CompareRothScenariosPage";
+import AvoidingTaxTrapsPage from "./pages/AvoidingTaxTrapsPage";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="tax-planning/bracket-manager" element={<DynamicBracketManagerPage />} />
             <Route path="tax-planning/tax-vault" element={<TaxVaultPage />} />
             <Route path="tax-planning/advanced-strategies" element={<AdvancedTaxStrategiesPage />} />
+            <Route path="tax-planning/avoiding-tax-traps" element={<AvoidingTaxTrapsPage />} />
             <Route path="system-health" element={<SystemHealthDashboardPage />} />
             <Route path="system-diagnostics" element={<SystemDiagnosticsPage />} />
             <Route path="stat-card-demo" element={<StatCardDemo />} />
