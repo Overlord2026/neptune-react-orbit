@@ -1,3 +1,4 @@
+
 /**
  * Tax Calculation Utilities
  * 
@@ -14,6 +15,12 @@ import {
   calculateTaxableIncome,
   calculateTotalTaxLiability
 } from './taxUtils';
+import { 
+  checkTaxDataCurrency, 
+  getFormattedUpdateDate, 
+  markTaxDataAsCurrent, 
+  TaxDataCacheInfo 
+} from './dataFeedUtils';
 
 // Types
 export type { FilingStatusType } from './taxBracketData';
@@ -51,6 +58,8 @@ export interface TaxResult {
     capitalGains: { bracket: number; amount: number; tax: number }[];
   };
   updated_at: Date;
+  tax_data_updated_at?: string; // When the tax data used was last updated
+  tax_data_is_current?: boolean; // Whether the tax data is current
   safe_harbor?: SafeHarborResult;
 }
 
@@ -71,9 +80,35 @@ export interface SafeHarborResult {
 }
 
 /**
- * Calculate tax scenario based on inputs
+ * Pre-check if tax data is current before calculation
+ * Returns information about data currency and when it was last updated
  */
-export function calculateTaxScenario(input: TaxInput, scenario_name: string): TaxResult {
+export function checkTaxDataBeforeCalculation(
+  sessionId: string = "default",
+  cacheTimeoutMinutes: number = 15
+): TaxDataCacheInfo {
+  return checkTaxDataCurrency(sessionId, cacheTimeoutMinutes);
+}
+
+/**
+ * Mark the user's session tax data as current (after they choose to refresh)
+ */
+export function refreshTaxData(sessionId: string = "default"): void {
+  markTaxDataAsCurrent(sessionId);
+}
+
+/**
+ * Calculate tax scenario based on inputs
+ * Includes data currency information in the result
+ */
+export function calculateTaxScenario(
+  input: TaxInput, 
+  scenario_name: string, 
+  sessionId: string = "default"
+): TaxResult {
+  // Check tax data currency for this session
+  const taxDataInfo = checkTaxDataCurrency(sessionId);
+
   // Calculate total income
   const total_income = 
     input.wages + 
@@ -119,11 +154,11 @@ export function calculateTaxScenario(input: TaxInput, scenario_name: string): Ta
     input.itemizedDeductionAmount
   );
   
-  // Return result with enhanced data
+  // Return result with enhanced data including tax data currency information
   return {
     scenario_name,
     year: input.year,
-    filing_status: input.filing_status, // Include filing status in result
+    filing_status: input.filing_status,
     total_income,
     agi,
     taxable_income,
@@ -134,7 +169,9 @@ export function calculateTaxScenario(input: TaxInput, scenario_name: string): Ta
     marginal_capital_gains_rate: taxResults.marginalCapitalGainsRate,
     effective_rate: taxResults.effectiveRate,
     brackets_breakdown: taxResults.bracketsBreakdown,
-    updated_at: new Date()
+    updated_at: new Date(),
+    tax_data_updated_at: taxDataInfo.dataUpdatedAt,
+    tax_data_is_current: taxDataInfo.isCurrent
   };
 }
 
@@ -180,10 +217,11 @@ export function calculateSafeHarbor(input: SafeHarborInput): SafeHarborResult {
 export function calculateTaxScenarioWithSafeHarbor(
   taxInput: TaxInput, 
   safeHarborInput: SafeHarborInput, 
-  scenario_name: string
+  scenario_name: string,
+  sessionId: string = "default"
 ): TaxResult {
-  // First calculate the basic tax scenario
-  const basicResult = calculateTaxScenario(taxInput, scenario_name);
+  // First calculate the basic tax scenario with tax data currency check
+  const basicResult = calculateTaxScenario(taxInput, scenario_name, sessionId);
   
   // Calculate safe harbor with the newly calculated tax amount
   const safeHarborResult = calculateSafeHarbor({

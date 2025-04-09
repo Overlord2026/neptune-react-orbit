@@ -5,9 +5,10 @@ import { TaxResult } from '@/utils/taxCalculator';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoIcon, AlertTriangleIcon, ExternalLinkIcon } from 'lucide-react';
+import { InfoIcon, AlertTriangleIcon, ExternalLinkIcon, ClockIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatCurrency, formatPercent } from '@/utils/taxBracketData';
+import { getFormattedUpdateDate } from '@/utils/dataFeedUtils';
 
 interface BracketSummaryProps {
   scenario: TaxResult;
@@ -123,6 +124,19 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario, showHeader = 
             <p className="text-sm text-amber-700 dark:text-amber-300">
               You're only {formatCurrency(nextOrdinaryBracket.distance)} away from the next bracket ({(Number(nextOrdinaryBracket.nextBracketRate) * 100).toFixed(1)}%). Consider adjusting your conversions or capital gains to stay in a lower bracket.
             </p>
+          </div>
+        )}
+        
+        {/* Tax data currency info */}
+        {scenario.tax_data_updated_at && (
+          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+            <ClockIcon className="h-3.5 w-3.5" />
+            <span>
+              Based on IRS data updated on {getFormattedUpdateDate(scenario.tax_data_updated_at)}
+              {!scenario.tax_data_is_current && (
+                <span className="text-amber-500 ml-1">(newer data available)</span>
+              )}
+            </span>
           </div>
         )}
         
