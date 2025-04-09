@@ -9,7 +9,8 @@ interface StatCardProps {
   value: string;
   change?: string;
   timeframe?: string;
-  budget?: string;
+  budgetLabel?: string;
+  budgetAmount?: string;
   icon?: React.ReactNode;
   className?: string;
 }
@@ -19,7 +20,8 @@ const StatCard = ({
   value,
   change,
   timeframe,
-  budget,
+  budgetLabel,
+  budgetAmount,
   icon,
   className
 }: StatCardProps) => {
@@ -53,8 +55,26 @@ const StatCard = ({
             )}
           </div>
           
-          {budget && (
-            <div className="mt-2 text-xs text-[#A0A0A0]">{budget}</div>
+          {budgetLabel && budgetAmount && (
+            <div className="mt-4">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#A0A0A0]">{budgetLabel}</span>
+                <span className="text-[#FFD700]">{budgetAmount}</span>
+              </div>
+              <div className="mt-2 h-1 w-full bg-[#333333] rounded-full overflow-hidden">
+                <div 
+                  className={cn(
+                    "h-full rounded-full",
+                    isPositive ? "bg-[#4CAF50]" : 
+                    isNegative ? "bg-[#FF4D4D]" : 
+                    "bg-[#FFD700]"
+                  )}
+                  style={{ 
+                    width: '65%' 
+                  }}
+                ></div>
+              </div>
+            </div>
           )}
         </div>
       </CardContent>
