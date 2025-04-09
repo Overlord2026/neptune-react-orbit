@@ -1,4 +1,3 @@
-
 import React from "react";
 import { TaxResult } from "@/utils/taxCalculator";
 import ScenarioComparisonHeader from "@/components/tax/ScenarioComparisonHeader";
@@ -22,7 +21,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.114,
-    filing_status: "married", // Add filing_status to match TaxResult interface
+    filing_status: "married", // Already matches TaxResult interface
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [
@@ -46,7 +45,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.126,
-    filing_status: "married", // Add filing_status
+    filing_status: "married", // Already matches TaxResult interface
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [
@@ -70,7 +69,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.135,
-    filing_status: "married", // Add filing_status
+    filing_status: "married", // Already matches TaxResult interface
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [

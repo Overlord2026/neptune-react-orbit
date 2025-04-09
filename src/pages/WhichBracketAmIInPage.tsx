@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Info } from 'lucide-react'; // Changed from InfoCircle to Info
+import { Info } from 'lucide-react'; // Correctly import Info from lucide-react
 import { 
   Table, 
   TableBody, 
@@ -133,7 +133,7 @@ const WhichBracketAmIInPage: React.FC = () => {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <InfoCircle className="inline-block ml-2 h-4 w-4 text-gray-500" />
+                          <Info className="inline-block ml-2 h-4 w-4 text-gray-500" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="max-w-xs">This is your total taxable income from wages, self-employment, interest, etc. after deductions.</p>
@@ -155,7 +155,7 @@ const WhichBracketAmIInPage: React.FC = () => {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <InfoCircle className="inline-block ml-2 h-4 w-4 text-gray-500" />
+                          <Info className="inline-block ml-2 h-4 w-4 text-gray-500" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="max-w-xs">Gains from assets held for more than a year, which are taxed at preferential rates.</p>
@@ -196,7 +196,7 @@ const WhichBracketAmIInPage: React.FC = () => {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <InfoCircle className="inline-block ml-2 h-4 w-4 text-gray-500" />
+                        <Info className="inline-block ml-2 h-4 w-4 text-gray-500" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
                         <p>Marginal tax rates apply to specific income ranges. Each dollar of income is taxed at the rate for its bracket.</p>
@@ -238,7 +238,7 @@ const WhichBracketAmIInPage: React.FC = () => {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <InfoCircle className="inline-block ml-2 h-4 w-4 text-gray-500" />
+                        <Info className="inline-block ml-2 h-4 w-4 text-gray-500" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
                         <p>Long-term capital gains are taxed at lower rates than ordinary income, but the bracket you fall into depends on your total taxable income.</p>

@@ -36,6 +36,7 @@ export interface TaxInput {
 export interface TaxResult {
   scenario_name: string;
   year: number;
+  filing_status: FilingStatusType; // Added to interface
   total_income: number;
   agi: number;
   taxable_income: number;
@@ -122,6 +123,7 @@ export function calculateTaxScenario(input: TaxInput, scenario_name: string): Ta
   return {
     scenario_name,
     year: input.year,
+    filing_status: input.filing_status, // Include filing status in result
     total_income,
     agi,
     taxable_income,
