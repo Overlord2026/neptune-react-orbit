@@ -1,6 +1,9 @@
 
 import { DataFeed, DataFeedLog } from './types';
-import { dataFeeds, dataFeedLogs } from './mockData';
+import { dataFeeds as dataFeedsImport, dataFeedLogs } from './mockData';
+
+// Create a mutable copy of the imported data feeds
+let dataFeeds = [...dataFeedsImport];
 
 // Helper function to get a data feed by ID
 export const getDataFeedById = (feedId: string): DataFeed | undefined => {

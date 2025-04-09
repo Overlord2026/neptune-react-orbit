@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BookText, ArrowRight, CheckCircle, ExternalLink } from 'lucide-react';
@@ -19,7 +20,7 @@ const AdvancedTaxEducationPage = () => {
   
   const contentOptions = {
     year: selectedYear,
-    format: 'currency'
+    format: 'currency' as const // Fixed by adding 'as const' to ensure type is correctly inferred
   };
 
   const moduleData = [

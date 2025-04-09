@@ -43,7 +43,7 @@ const BasicTaxEducationPage = () => {
   const contentOptions = {
     year: selectedYear,
     filingStatus: selectedFilingStatus,
-    format: 'currency'
+    format: 'currency' as const // Fixed by adding 'as const'
   };
   
   return (
@@ -98,7 +98,7 @@ const BasicTaxEducationPage = () => {
         
         <div className="flex items-end ml-auto">
           <p className="text-xs text-muted-foreground">
-            Data last updated: <DynamicContentText as="span">{`\{\{tax_data_last_update\}\}`}</DynamicContentText>
+            Data last updated: <DynamicContentText as="span">{`tax_data_last_update`}</DynamicContentText>
           </p>
         </div>
       </div>
@@ -116,7 +116,7 @@ const BasicTaxEducationPage = () => {
               </DynamicContentText>
               
               <DynamicContentText options={contentOptions}>
-                For example, in {{selectedYear}}, a single filer might pay 10% on the first $11,000 of income, 12% on income from $11,001 to $44,725, and so on. This means not all of your income is taxed at your highest bracket rate.
+                For example, in {selectedYear}, a single filer might pay 10% on the first $11,000 of income, 12% on income from $11,001 to $44,725, and so on. This means not all of your income is taxed at your highest bracket rate.
               </DynamicContentText>
 
               <Accordion type="single" collapsible className="w-full">
@@ -127,7 +127,7 @@ const BasicTaxEducationPage = () => {
                   <AccordionContent>
                     <div className="p-4 bg-[#1A1F2C] rounded-md">
                       <DynamicContentText options={contentOptions}>
-                        For a {{selectedFilingStatus}} filer with $60,000 taxable income in {{selectedYear}}:
+                        For a {selectedFilingStatus} filer with $60,000 taxable income in {selectedYear}:
                       </DynamicContentText>
                       <ul className="list-disc list-inside space-y-1">
                         <li>Pay 10% on first $11,000 = $1,100</li>
