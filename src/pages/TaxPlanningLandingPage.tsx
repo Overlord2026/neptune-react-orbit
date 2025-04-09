@@ -20,7 +20,7 @@ const TaxPlanningLandingPage = () => {
       description: "Centralize and organize all your tax documents in one secure location.",
       icon: <Book className="h-8 w-8 mb-4 neptune-gold" />,
       comingSoon: true,
-      path: "/tax-planning"
+      path: "/tax-planning/aggregator"
     },
     {
       title: "Roth Conversion Analyzer",
