@@ -5,65 +5,65 @@
 
 @layer base {
   :root {
-    --background: 0 0% 7%;
-    --foreground: 60 100% 50%;
+    --background: 222 30% 10%;
+    --foreground: 0 0% 90%;
 
-    --card: 0 0% 10%;
-    --card-foreground: 60 100% 50%;
+    --card: 222 25% 14%;
+    --card-foreground: 0 0% 90%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 60 100% 50%;
+    --popover: 222 25% 14%;
+    --popover-foreground: 0 0% 90%;
 
-    --primary: 60 100% 50%;
-    --primary-foreground: 0 0% 7%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 60 50% 40%;
-    --secondary-foreground: 0 0% 7%;
+    --secondary: 222 20% 28%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 20%;
-    --muted-foreground: 60 30% 70%;
+    --muted: 222 20% 20%;
+    --muted-foreground: 0 0% 69%;
 
-    --accent: 60 100% 50%;
-    --accent-foreground: 0 0% 7%;
+    --accent: 210 100% 50%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 7%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 60 100% 50%;
+    --border: 222 25% 25%;
+    --input: 222 25% 25%;
+    --ring: 210 100% 50%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 7%;
-    --foreground: 60 100% 50%;
+    --background: 222 30% 10%;
+    --foreground: 0 0% 90%;
 
-    --card: 0 0% 10%;
-    --card-foreground: 60 100% 50%;
+    --card: 222 25% 14%;
+    --card-foreground: 0 0% 90%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 60 100% 50%;
+    --popover: 222 25% 14%;
+    --popover-foreground: 0 0% 90%;
 
-    --primary: 60 100% 50%;
-    --primary-foreground: 0 0% 7%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 60 50% 40%;
-    --secondary-foreground: 0 0% 7%;
+    --secondary: 222 20% 28%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 20%;
-    --muted-foreground: 60 30% 70%;
+    --muted: 222 20% 20%;
+    --muted-foreground: 0 0% 69%;
 
-    --accent: 60 100% 50%;
-    --accent-foreground: 0 0% 7%;
+    --accent: 210 100% 50%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 60 100% 50%;
+    --border: 222 25% 25%;
+    --input: 222 25% 25%;
+    --ring: 210 100% 50%;
   }
 }
 
@@ -74,17 +74,17 @@
 
   body {
     @apply bg-background text-foreground;
-    background-color: #111111;
-    color: #FFD700;
+    background-color: #101521;
+    color: #E5E5E5;
     font-family: 'Inter', Arial, sans-serif;
   }
   
   h1 {
-    @apply text-xl md:text-2xl font-bold text-white;
+    @apply text-xl md:text-2xl font-semibold text-white;
   }
   
   h2 {
-    @apply text-lg md:text-xl font-bold text-[#FFD700];
+    @apply text-lg md:text-xl font-semibold text-white;
   }
   
   h3 {
@@ -92,45 +92,61 @@
   }
   
   h4 {
-    @apply text-sm md:text-base font-semibold text-[#FFD700];
+    @apply text-sm md:text-base font-medium text-white;
   }
 
   /* Add focus styles for accessibility */
   *:focus-visible {
-    @apply outline-none ring-2 ring-[#FFD700] ring-opacity-60;
+    @apply outline-none ring-2 ring-[#007BFF] ring-opacity-60;
   }
 }
 
-/* Project Neptune specific classes */
+/* Neptune specific classes */
 .neptune-gold {
   color: #FFD700;
 }
 
+.neptune-accent {
+  color: #007BFF;
+}
+
+.neptune-accent-green {
+  color: #00C47C;
+}
+
 .neptune-bg {
-  background-color: #111111;
+  background-color: #101521;
+}
+
+.neptune-card-bg {
+  background-color: #1A1F2C;
 }
 
 .neptune-border {
-  border-color: #FFD700;
+  border-color: #007BFF;
 }
 
 /* Button variations with hover transitions */
 .neptune-btn-primary {
-  @apply bg-[#FFD700] text-black transition-colors duration-200 hover:bg-[#E5C100] focus:ring-2 focus:ring-[#FFD700] focus:ring-offset-2 focus:outline-none;
+  @apply bg-[#007BFF] text-white transition-colors duration-200 hover:bg-[#0069d9] focus:ring-2 focus:ring-[#007BFF] focus:ring-offset-2 focus:outline-none;
 }
 
 .neptune-btn-secondary {
-  @apply bg-transparent text-[#FFD700] border border-[#FFD700] transition-colors duration-200 hover:bg-[#222222] focus:ring-2 focus:ring-[#FFD700] focus:ring-offset-2 focus:outline-none;
+  @apply bg-transparent text-[#007BFF] border border-[#007BFF] transition-colors duration-200 hover:bg-[#1A1F2C] focus:ring-2 focus:ring-[#007BFF] focus:ring-offset-2 focus:outline-none;
+}
+
+.neptune-btn-green {
+  @apply bg-[#00C47C] text-white transition-colors duration-200 hover:bg-[#00a067] focus:ring-2 focus:ring-[#00C47C] focus:ring-offset-2 focus:outline-none;
 }
 
 /* Card styling */
 .neptune-card {
-  @apply bg-[#1E1E1E] border border-[#333333] rounded-md p-4 hover:border-[#FFD700] transition-all duration-200;
+  @apply bg-[#1A1F2C] border border-[#2a3142] rounded-md p-4 hover:border-[#007BFF] transition-all duration-200;
 }
 
 /* Form elements */
 .neptune-input {
-  @apply bg-[#2A2A2A] border border-[#444444] text-white rounded-md p-2 focus:border-[#FFD700] outline-none transition-colors duration-200 w-full;
+  @apply bg-[#242A38] border border-[#353e52] text-white rounded-md p-2 focus:border-[#007BFF] outline-none transition-colors duration-200 w-full;
 }
 
 /* Status colors */
@@ -193,11 +209,11 @@
 }
 
 .nav-item:hover {
-  @apply bg-[#222222] text-[#FFD700];
+  @apply bg-[#242A38] text-[#FFFFFF];
 }
 
 .nav-item.active {
-  @apply bg-[#222222] text-[#FFD700] border-l-2 border-[#FFD700];
+  @apply bg-[#242A38] text-[#FFFFFF] border-l-2 border-[#007BFF];
 }
 
 /* Responsive text sizing */

@@ -13,11 +13,11 @@ const TaxPlanningLandingPage = () => {
     <div className="container content-padding section-margin">
       <div className="flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
         <div className="space-y-0.5">
-          <h2 className="text-3xl font-bold tracking-tight neptune-gold flex items-center gap-2">
-            <FileCheck className="w-8 h-8 text-[#FFD700]" />
+          <h2 className="text-3xl font-semibold tracking-tight text-white flex items-center gap-2">
+            <FileCheck className="w-8 h-8 text-[#007BFF]" />
             Tax Planning Hub
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-[#B0B0B0]">
             Optimize your tax strategy with our suite of advanced tools.
           </p>
         </div>

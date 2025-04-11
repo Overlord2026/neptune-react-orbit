@@ -35,8 +35,8 @@ const SidebarItem = ({ icon, label, href, isActive }: SidebarItemProps) => {
         className={cn(
           "w-full justify-start gap-2 transition-all duration-200",
           isActive 
-            ? "bg-[#222222] text-[#FFD700] border-l-2 border-l-[#FFD700]" 
-            : "hover:bg-[#222222] hover:text-[#FFD700] focus:ring-2 focus:ring-[#FFD700]"
+            ? "bg-[#242A38] text-[#FFFFFF] border-l-2 border-l-[#007BFF]" 
+            : "text-[#9AA0AC] hover:bg-[#242A38] hover:text-[#FFFFFF] focus:ring-2 focus:ring-[#007BFF]"
         )}
       >
         {icon}
@@ -57,23 +57,23 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
 
   return (
     <div className={cn(
-      "fixed inset-y-0 left-0 z-20 flex w-64 flex-col border-r bg-background transition-transform duration-300 ease-in-out",
+      "fixed inset-y-0 left-0 z-20 flex w-64 flex-col border-r border-[#242A38] bg-[#101521] transition-transform duration-300 ease-in-out",
       isMobile && !isOpen && "-translate-x-full",
       isMobile && isOpen && "translate-x-0"
     )}>
-      <div className="flex h-16 items-center border-b px-4">
+      <div className="flex h-16 items-center border-b border-[#242A38] px-4">
         <Link to="/" className="flex items-center space-x-2">
-          <div className="h-8 w-8 rounded-full bg-neptune-600 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full bg-[#007BFF] flex items-center justify-center">
             <span className="font-bold text-white text-lg">N</span>
           </div>
-          <span className="font-bold text-xl">ProjectNeptune</span>
+          <span className="font-bold text-xl text-white">ProjectNeptune</span>
         </Link>
         {isMobile && (
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={toggleSidebar} 
-            className="ml-auto hover:bg-[#222222] hover:text-[#FFD700] transition-colors duration-200 focus:ring-2 focus:ring-[#FFD700]"
+            className="ml-auto text-[#E5E5E5] hover:bg-[#242A38] hover:text-[#FFFFFF] transition-colors duration-200 focus:ring-2 focus:ring-[#007BFF]"
           >
             <X className="h-5 w-5" />
             <span className="sr-only">Close sidebar</span>
@@ -120,9 +120,9 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }: SidebarProps) => {
           />
         </div>
       </div>
-      <div className="border-t p-4">
+      <div className="border-t border-[#242A38] p-4">
         <Button 
-          className="w-full justify-start gap-2 bg-[#FFD700] text-black hover:bg-[#E5C100] transition-all duration-200 focus:ring-2 focus:ring-[#FFD700] focus:ring-offset-2"
+          className="w-full justify-start gap-2 bg-[#007BFF] text-white hover:bg-[#0069d9] transition-all duration-200 focus:ring-2 focus:ring-[#007BFF] focus:ring-offset-2"
         >
           <PlusCircle className="h-5 w-5" />
           <span>New Project</span>

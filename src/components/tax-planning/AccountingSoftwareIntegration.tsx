@@ -32,29 +32,29 @@ const AccountingSoftwareIntegration = () => {
   return (
     <div className="my-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-        <h2 className="text-2xl font-semibold text-[#FFD700] mb-2 md:mb-0">Accounting Software Integration</h2>
+        <h2 className="text-2xl font-semibold text-white mb-2 md:mb-0">Accounting Software Integration</h2>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {softwareOptions.map((software, index) => (
-          <Card key={index} className="overflow-hidden bg-[#242A38] border border-[#333] hover:border-[#FFD700] transition-colors">
-            <CardHeader className="bg-[#1A1F2C] pb-2">
+          <Card key={index} className="overflow-hidden bg-[#1A1F2C] border border-[#242A38] hover:border-[#007BFF] transition-colors">
+            <CardHeader className="bg-[#242A38] pb-2">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-[#E5DEFF] text-xl">
+                <CardTitle className="text-[#E5E5E5] text-xl">
                   {software.name}
                 </CardTitle>
                 {software.isPopular && (
-                  <Badge className="bg-[#FFD700] text-black hover:bg-[#E5C100]">Popular</Badge>
+                  <Badge className="bg-[#007BFF] text-white hover:bg-[#0069d9]">Popular</Badge>
                 )}
               </div>
             </CardHeader>
             <CardContent className="pt-4">
-              <p className="text-[#E5E5E5] mb-4">
+              <p className="text-[#B0B0B0] mb-4">
                 {software.description}
               </p>
               <Button 
                 variant="outline" 
-                className="w-full text-[#FFD700] border-[#444] hover:bg-[#1A1F2C] hover:border-[#FFD700] group"
+                className="w-full text-[#007BFF] border-[#353e52] hover:bg-[#242A38] hover:border-[#007BFF] group"
               >
                 Connect
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

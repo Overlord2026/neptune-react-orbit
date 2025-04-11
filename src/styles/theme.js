@@ -1,24 +1,28 @@
-
 /**
- * Project Neptune Theme Configuration
+ * Project Neptune Theme Configuration - Dark Theme
  * This file contains the theme settings for the entire application
  */
 
 export const colors = {
   // Base
   background: {
-    primary: '#111111',
-    secondary: '#1E1E1E',
-    tertiary: '#222222',
-    sidebar: '#0F0F0F',
+    primary: '#101521',
+    secondary: '#1A1F2C',
+    tertiary: '#242A38',
+    sidebar: '#101521',
   },
   
   // Main colors
-  accent: '#FFD700', // Gold
+  accent: {
+    primary: '#007BFF',
+    secondary: '#00C47C',
+    gold: '#FFD700',
+  },
   text: {
     primary: '#FFFFFF',
-    secondary: '#A0A0A0', // Muted text
-    accent: '#FFD700',
+    secondary: '#E5E5E5',
+    muted: '#B0B0B0',
+    nav: '#9AA0AC',
   },
   
   // Status colors
@@ -31,15 +35,20 @@ export const colors = {
   // Button variants
   button: {
     primary: {
-      background: '#FFD700',
-      text: '#000000',
-      hover: '#E5C100',
+      background: '#007BFF',
+      text: '#FFFFFF',
+      hover: '#0069d9',
     },
     secondary: {
       background: 'transparent',
-      text: '#FFD700',
-      border: '#FFD700',
-      hover: '#333333',
+      text: '#007BFF',
+      border: '#007BFF',
+      hover: '#1A1F2C',
+    },
+    green: {
+      background: '#00C47C',
+      text: '#FFFFFF',
+      hover: '#00a067',
     },
     danger: {
       background: '#FF4D4D',
@@ -50,35 +59,35 @@ export const colors = {
   
   // Card and container styling
   card: {
-    background: '#1E1E1E',
-    border: '#333333',
-    hover: '#2A2A2A',
+    background: '#1A1F2C',
+    border: '#2a3142',
+    hover: '#242A38',
   },
   
   // Form elements
   form: {
     input: {
-      background: '#2A2A2A',
-      border: '#444444',
+      background: '#242A38',
+      border: '#353e52',
       text: '#FFFFFF',
-      placeholder: '#A0A0A0',
-      focus: '#FFD700',
+      placeholder: '#9AA0AC',
+      focus: '#007BFF',
     },
   },
 };
 
 export const typography = {
-  fontFamily: 'Inter, Arial, sans-serif',
+  fontFamily: 'Inter, system-ui, sans-serif',
   headings: {
     h1: {
       fontSize: '2rem',
-      fontWeight: 700,
+      fontWeight: 600,
       color: colors.text.primary,
     },
     h2: {
       fontSize: '1.6rem',
-      fontWeight: 700,
-      color: colors.accent,
+      fontWeight: 600,
+      color: colors.text.primary,
     },
     h3: {
       fontSize: '1.3rem',
@@ -88,19 +97,19 @@ export const typography = {
     h4: {
       fontSize: '1.1rem',
       fontWeight: 600,
-      color: colors.accent,
+      color: colors.text.primary,
     },
   },
   body: {
     regular: {
       fontSize: '1rem',
       fontWeight: 400,
-      color: colors.text.primary,
+      color: colors.text.secondary,
     },
     small: {
       fontSize: '0.875rem',
       fontWeight: 400,
-      color: colors.text.secondary,
+      color: colors.text.muted,
     },
   },
 };
@@ -154,10 +163,13 @@ export const cssVariables = `
     /* Text Colors */
     --text-primary: ${colors.text.primary};
     --text-secondary: ${colors.text.secondary};
-    --text-accent: ${colors.accent};
+    --text-muted: ${colors.text.muted};
+    --text-nav: ${colors.text.nav};
     
-    /* Accent Color */
-    --accent: ${colors.accent};
+    /* Accent Colors */
+    --accent-primary: ${colors.accent.primary};
+    --accent-secondary: ${colors.accent.secondary};
+    --accent-gold: ${colors.accent.gold};
     
     /* Status Colors */
     --success: ${colors.status.success};

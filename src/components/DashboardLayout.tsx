@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { cn } from '../lib/utils';
@@ -56,20 +57,20 @@ const NavItem = ({
           toggleSubmenu?.();
         } : undefined}
         className={cn(
-          "flex items-center px-3 py-2 rounded-md text-white hover:bg-[#222222] group transition-colors duration-200",
-          isActive && !hasSubMenu && "bg-custom-background-tertiary border-l-2 border-l-[#FFD700] pl-[10px]"
+          "flex items-center px-3 py-2 rounded-md text-[#9AA0AC] hover:bg-[#242A38] hover:text-[#FFFFFF] group transition-colors duration-200",
+          isActive && !hasSubMenu && "bg-[#242A38] text-white border-l-2 border-l-[#007BFF] pl-[10px]"
         )}
       >
         <span className="flex items-center w-full">
           <span className={cn(
-            "mr-3 text-gray-400 group-hover:text-[#FFD700] transition-colors duration-200",
-            isActive && "text-[#FFD700]"
+            "mr-3 group-hover:text-[#FFFFFF] transition-colors duration-200",
+            isActive && "text-white"
           )}>
             {icon}
           </span>
-          <span className="flex-1 group-hover:text-[#FFD700] transition-colors duration-200">{label}</span>
+          <span className="flex-1 group-hover:text-[#FFFFFF] transition-colors duration-200">{label}</span>
           {hasSubMenu && (
-            <span className="ml-auto group-hover:text-[#FFD700] transition-colors duration-200">
+            <span className="ml-auto group-hover:text-[#FFFFFF] transition-colors duration-200">
               {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
             </span>
           )}
@@ -84,8 +85,8 @@ const NavSubItem = ({ label, href, isActive }: NavSubItemProps) => {
     <Link
       to={href}
       className={cn(
-        "flex items-center pl-9 py-2 text-sm rounded-md text-white hover:bg-[#222222] hover:text-[#FFD700] transition-colors duration-200",
-        isActive && "bg-custom-background-tertiary border-l-2 border-l-[#FFD700] pl-[34px]"
+        "flex items-center pl-9 py-2 text-sm rounded-md text-[#9AA0AC] hover:bg-[#242A38] hover:text-[#FFFFFF] transition-colors duration-200",
+        isActive && "bg-[#242A38] text-white border-l-2 border-l-[#007BFF] pl-[34px]"
       )}
     >
       {label}
@@ -216,10 +217,10 @@ const DashboardLayout = () => {
   return (
     <div className="flex min-h-screen">
       {!isMobile && (
-        <aside className="fixed left-0 top-0 h-full w-64 bg-[#111111] border-r border-gray-800 shadow-xl z-20">
-          <div className="flex items-center justify-center h-16 border-b border-gray-800 px-4">
+        <aside className="fixed left-0 top-0 h-full w-64 bg-[#101521] border-r border-[#242A38] shadow-xl z-20">
+          <div className="flex items-center justify-center h-16 border-b border-[#242A38] px-4">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-full bg-neptune-600 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-[#007BFF] flex items-center justify-center">
                 <span className="font-bold text-white text-lg">B</span>
               </div>
               <span className="font-bold text-xl text-white">Family Office</span>
@@ -232,16 +233,16 @@ const DashboardLayout = () => {
       
       {isMobile && (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-          <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-[#111111]">
-            <div className="flex items-center justify-center h-16 border-b border-gray-800 px-4">
+          <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-[#101521] border-r border-[#242A38]">
+            <div className="flex items-center justify-center h-16 border-b border-[#242A38] px-4">
               <Link to="/" className="flex items-center space-x-2" onClick={() => setSidebarOpen(false)}>
-                <div className="h-8 w-8 rounded-full bg-neptune-600 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-[#007BFF] flex items-center justify-center">
                   <span className="font-bold text-white text-lg">B</span>
                 </div>
                 <span className="font-bold text-xl text-white">Family Office</span>
               </Link>
               <button 
-                className="ml-auto text-white hover:text-[#FFD700] transition-colors duration-200"
+                className="ml-auto text-[#E5E5E5] hover:text-white transition-colors duration-200"
                 onClick={() => setSidebarOpen(false)}
               >
                 <X size={18} />
@@ -254,17 +255,17 @@ const DashboardLayout = () => {
       )}
       
       <div className={`flex-1 ${!isMobile ? 'ml-64' : 'ml-0'}`}>
-        <header className="sticky top-0 z-10 h-16 border-b border-gray-800 bg-[#111111] px-6 flex items-center justify-between">
+        <header className="sticky top-0 z-10 h-16 border-b border-[#242A38] bg-[#101521] px-6 flex items-center justify-between">
           {isMobile && (
             <button 
-              className="mr-4 p-1 text-white hover:text-[#FFD700] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+              className="mr-4 p-1 text-[#E5E5E5] hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#007BFF]"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu size={20} />
             </button>
           )}
           
-          <h1 className="text-xl font-semibold">
+          <h1 className="text-xl font-semibold text-white">
             {location.pathname === '/' 
               ? 'Dashboard' 
               : location.pathname.includes('tax-planning')
@@ -276,15 +277,15 @@ const DashboardLayout = () => {
           </h1>
           
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-400 hidden sm:block">John Doe</span>
+            <span className="text-sm text-[#9AA0AC] hidden sm:block">John Doe</span>
             <Avatar className="h-8 w-8">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-[#FFD700] text-black">JD</AvatarFallback>
+              <AvatarFallback className="bg-[#007BFF] text-white">JD</AvatarFallback>
             </Avatar>
           </div>
         </header>
         
-        <main className="p-4 sm:p-6 bg-[#111111] min-h-[calc(100vh-64px)]">
+        <main className="p-4 sm:p-6 bg-[#101521] min-h-[calc(100vh-64px)]">
           <Outlet />
         </main>
       </div>

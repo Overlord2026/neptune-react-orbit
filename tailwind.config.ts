@@ -76,17 +76,23 @@ export default {
                     900: '#0c4a6e',
                     950: '#082f49',
                 },
-                // Custom Neptune theme colors
+                // Custom theme colors updated to match the requested dark theme
                 custom: {
                   background: {
-                    primary: '#111111',
-                    secondary: '#1E1E1E',
-                    tertiary: '#222222',
+                    primary: '#101521',
+                    secondary: '#1A1F2C',
+                    tertiary: '#242A38',
                   },
-                  accent: '#FFD700',
+                  accent: {
+                    blue: '#007BFF',
+                    green: '#00C47C',
+                    gold: '#FFD700',
+                  },
                   text: {
                     primary: '#FFFFFF',
-                    secondary: '#A0A0A0',
+                    secondary: '#E5E5E5',
+                    muted: '#B0B0B0',
+                    nav: '#9AA0AC',
                   },
                   status: {
                     success: '#4CAF50',
