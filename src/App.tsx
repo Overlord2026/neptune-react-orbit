@@ -13,6 +13,7 @@ import AdminAuditLogPage from './pages/AdminAuditLogPage';
 import AdvancedTaxEducationPage from './pages/AdvancedTaxEducationPage';
 import BasicTaxEducationPage from './pages/BasicTaxEducationPage';
 import TaxGlossaryPage from './pages/TaxGlossaryPage';
+import MyCoursesPage from './pages/MyCoursesPage';
 import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter([
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
   {
     path: "/tax-planning/glossary",
     element: <TaxGlossaryPage />,
+  },
+  {
+    path: "/my-courses",
+    element: <MyCoursesPage />,
   },
   {
     path: "/admin/data-feeds",
