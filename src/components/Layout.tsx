@@ -7,7 +7,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Drawer, DrawerContent, DrawerOverlay } from './ui/drawer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bell, HelpCircle } from 'lucide-react';
-import logo from '@/assets/images/logo.png';
 
 const Layout = () => {
   const isMobile = useIsMobile();
@@ -24,10 +23,14 @@ const Layout = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#101521]">
-      {/* Top Banner Header - Updated to match the provided HTML */}
+      {/* Top Banner Header with new BFO logo */}
       <header className="fixed top-0 left-0 right-0 h-16 flex items-center justify-center bg-[#1A1F2C] border-b border-[#242A38] z-40">
         <Link to="/" className="flex items-center">
-          <img src={logo} alt="BFO Logo" className="h-8" />
+          <img 
+            src="/lovable-uploads/8d0700d2-7780-4f2b-8b44-e97d71c4e3d9.png" 
+            alt="Boutique Family Office Logo" 
+            className="h-8" 
+          />
         </Link>
       </header>
       
