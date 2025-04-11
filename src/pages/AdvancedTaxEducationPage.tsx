@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BookText, ArrowRight, CheckCircle, ExternalLink } from 'lucide-react';
+import { BookText, ArrowRight, CheckCircle } from 'lucide-react';
 import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import GlossaryTerm from '@/components/GlossaryTerm';
 import DynamicContentText from '@/components/DynamicContentText';
 import EnrollmentDialog from "@/components/tax-education/EnrollmentDialog";
+import ExternalEnrollmentButton from "@/components/tax-education/ExternalEnrollmentButton";
 
 const AdvancedTaxEducationPage = () => {
   // This would normally be determined by checking if user has purchased the course
@@ -23,6 +24,16 @@ const AdvancedTaxEducationPage = () => {
     year: selectedYear,
     format: 'currency' as const
   };
+
+  // Example partner courses data
+  const partnerCourses = [
+    {
+      id: "tax-masters-advanced",
+      partnerName: "Tax Masters Academy",
+      partnerUrl: "https://taxmastersacademy.com/courses/advanced-tax-planning",
+      description: "Comprehensive advanced tax planning course with emphasis on business structures"
+    }
+  ];
 
   const moduleData = [
     {
@@ -136,19 +147,63 @@ const AdvancedTaxEducationPage = () => {
                   <p className="text-2xl font-bold text-white">$299.00</p>
                   <p className="text-sm text-[#9b87f5]">One-time payment, lifetime access</p>
                 </div>
-                {isEnrolled ? (
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    Continue Learning <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button 
-                    className="bg-[#9b87f5] hover:bg-[#8a76e4]"
-                    onClick={() => setEnrollmentDialogOpen(true)}
-                  >
-                    Enroll Now <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                )}
+                <div className="space-x-2">
+                  {isEnrolled ? (
+                    <Button className="bg-green-600 hover:bg-green-700">
+                      Continue Learning <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <>
+                      <Button 
+                        className="bg-[#9b87f5] hover:bg-[#8a76e4]"
+                        onClick={() => setEnrollmentDialogOpen(true)}
+                      >
+                        Enroll Now <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                      
+                      {/* Partner Platform Enrollment Option */}
+                      {partnerCourses.map(course => (
+                        <ExternalEnrollmentButton 
+                          key={course.id}
+                          partnerName={course.partnerName}
+                          partnerUrl={course.partnerUrl}
+                        />
+                      ))}
+                    </>
+                  )}
+                </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Partner Course Section */}
+        <Card className="border-l-4 border-l-[#FFD700] bg-[#1A1F2C]">
+          <CardHeader>
+            <CardTitle className="text-xl">Partner Course Offerings</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              In addition to our in-house course, we've partnered with industry-leading tax education 
+              providers to offer specialized training that complements our curriculum.
+            </p>
+            
+            <div className="grid gap-4 md:grid-cols-2 mt-4">
+              {partnerCourses.map(course => (
+                <Card key={course.id} className="bg-[#14171F] border border-[#333333]">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{course.partnerName}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">{course.description}</p>
+                    <ExternalEnrollmentButton
+                      partnerName={course.partnerName}
+                      partnerUrl={course.partnerUrl}
+                      className="w-full mt-2"
+                    />
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </CardContent>
         </Card>
