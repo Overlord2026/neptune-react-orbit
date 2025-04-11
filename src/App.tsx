@@ -17,6 +17,8 @@ import MyCoursesPage from './pages/MyCoursesPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentErrorPage from './pages/PaymentErrorPage';
 import FileMyTaxesPage from './pages/FileMyTaxesPage';
+import TaxFilingOptionsPage from './pages/TaxFilingOptionsPage';
+import My404Fallback from './components/My404Fallback';
 import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter([
@@ -41,6 +43,10 @@ const router = createBrowserRouter([
     element: <TaxGlossaryPage />,
   },
   {
+    path: "/tax-planning/filing-options",
+    element: <TaxFilingOptionsPage />,
+  },
+  {
     path: "/my-courses",
     element: <MyCoursesPage />,
   },
@@ -55,6 +61,7 @@ const router = createBrowserRouter([
   {
     path: "/file-my-taxes",
     element: <FileMyTaxesPage />,
+    errorElement: <My404Fallback />,
   },
   {
     path: "/admin/data-feeds",
