@@ -23,18 +23,18 @@ const Layout = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#101521]">
-      {/* Top Banner Header with new BFO logo */}
+      {/* Top Banner Header with optimized BFO logo size */}
       <header className="fixed top-0 left-0 right-0 h-16 flex items-center justify-center bg-[#1A1F2C] border-b border-[#242A38] z-40">
-        <Link to="/" className="flex items-center">
+        <Link to="/" className="flex items-center h-full py-2">
           <img 
             src="/lovable-uploads/8d0700d2-7780-4f2b-8b44-e97d71c4e3d9.png" 
             alt="Boutique Family Office Logo" 
-            className="h-8" 
+            className="h-full max-h-12" 
           />
         </Link>
       </header>
       
-      {/* Main Navbar - now positioned below the top banner */}
+      {/* Main Navbar - positioned below the top banner */}
       <Navbar toggleSidebar={toggleSidebar} isMobile={isMobile} />
       
       <div className="flex flex-1 pt-16"> {/* Added padding-top to accommodate the fixed header */}

@@ -30,7 +30,6 @@ const Navbar = ({ toggleSidebar, isMobile }: NavbarProps) => {
               <span className="sr-only">Toggle sidebar</span>
             </Button>
           )}
-          {/* Removed the "Family Office" text and icon as it's redundant with the logo in the header */}
         </div>
         
         <div className="flex-1" />
