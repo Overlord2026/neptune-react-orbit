@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
@@ -10,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 
 const TaxAlertConfigPanel = () => {
   // State for thresholds
@@ -229,6 +229,9 @@ const TaxAlertConfigPanel = () => {
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Use {"{type}"}, {"{year}"}, {"{percentChange}"} as placeholders
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Example: "Important: {"{type}"} changed by {"{percentChange}"}% for tax year {"{year}"}."
                 </p>
               </div>
               
