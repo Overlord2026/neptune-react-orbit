@@ -121,7 +121,7 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
           </div>
           
           <div className="mt-4 pt-4 border-t">
-            <TaxDataVersionInfo taxResult={scenario} />
+            <TaxDataVersionInfo year={scenario.year} />
           </div>
         </CardContent>
       </Card>

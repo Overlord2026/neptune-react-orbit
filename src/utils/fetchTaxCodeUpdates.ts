@@ -316,7 +316,12 @@ const processTaxCodeUpdates = async (
 const processTaxBrackets = async (
   brackets: TaxBracketUpdate[], 
   effectiveDate?: string
-): Promise<{changesCount: number, majorChanges: any[]}> => {
+): Promise<{
+  changesCount: number; 
+  majorChanges: any[];
+  modifiedCount?: number;
+  details?: any;
+}> => {
   console.log("Processing tax brackets:", brackets.length);
   
   // Process with versioning system
@@ -324,6 +329,8 @@ const processTaxBrackets = async (
   
   let majorChanges: any[] = [];
   let changesCount = versionResult.changesCount;
+  let modifiedCount = 0;
+  let details = {};
   
   // Compare incoming brackets with existing ones for major changes
   brackets.forEach(newBracket => {
@@ -366,7 +373,7 @@ const processTaxBrackets = async (
     }
   });
   
-  return { changesCount, majorChanges };
+  return { changesCount, majorChanges, modifiedCount, details };
 };
 
 /**
@@ -375,11 +382,18 @@ const processTaxBrackets = async (
 const processStandardDeductions = async (
   deductions: StandardDeductionUpdate[], 
   effectiveDate?: string
-): Promise<{changesCount: number, majorChanges: any[]}> => {
+): Promise<{
+  changesCount: number;
+  majorChanges: any[];
+  modifiedCount?: number;
+  details?: any;
+}> => {
   console.log("Processing standard deductions:", deductions.length);
   
   let changesCount = 0;
   let majorChanges: any[] = [];
+  let modifiedCount = 0;
+  let details = {};
   
   // Group deductions by year for versioning
   const deductionsByYear: Record<number, StandardDeductionUpdate[]> = {};
@@ -456,7 +470,7 @@ const processStandardDeductions = async (
     });
   });
   
-  return { changesCount, majorChanges };
+  return { changesCount, majorChanges, modifiedCount, details };
 };
 
 /**
@@ -465,7 +479,12 @@ const processStandardDeductions = async (
 const processRetirementLimits = async (
   limits: RetirementLimitUpdate[], 
   effectiveDate?: string
-): Promise<{changesCount: number, majorChanges: any[]}> => {
+): Promise<{
+  changesCount: number;
+  majorChanges: any[];
+  modifiedCount?: number;
+  details?: any;
+}> => {
   console.log("Processing retirement limits:", limits.length);
   
   // Group limits by year for versioning
@@ -493,7 +512,12 @@ const processRetirementLimits = async (
     link_to_learn_more: `/tax-education/retirement?year=${limits[0].year}`
   }] : [];
   
-  return { changesCount: limits.length, majorChanges };
+  return { 
+    changesCount: limits.length, 
+    majorChanges,
+    modifiedCount: 0,
+    details: {}
+  };
 };
 
 /**
@@ -502,7 +526,12 @@ const processRetirementLimits = async (
 const processTaxForms = async (
   forms: TaxFormUpdate[], 
   effectiveDate?: string
-): Promise<{changesCount: number, majorChanges: any[]}> => {
+): Promise<{
+  changesCount: number;
+  majorChanges: any[];
+  modifiedCount?: number;
+  details?: any;
+}> => {
   console.log("Processing tax forms:", forms.length);
   
   // Group forms by year for versioning
@@ -530,7 +559,12 @@ const processTaxForms = async (
     link_to_learn_more: `/tax-education/forms?year=${forms[0].year}`
   }] : [];
   
-  return { changesCount: forms.length, majorChanges };
+  return { 
+    changesCount: forms.length, 
+    majorChanges,
+    modifiedCount: 0,
+    details: {}
+  };
 };
 
 /**

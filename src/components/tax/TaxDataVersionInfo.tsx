@@ -7,18 +7,34 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 import { AlertTriangle, Calendar, Check, Info, Download } from "lucide-react";
-import { getTaxDataVersionsForYear, TaxDataVersion } from '@/utils/taxDataVersioning';
+import { getTaxDataVersionsForYear } from '@/utils/taxDataVersioning';
+import { TaxResult } from '@/utils/taxCalculator';
+
+// Define the TaxDataVersion type locally if it's not exported from taxDataVersioning
+interface TaxDataVersion {
+  id: string;
+  year: number;
+  version: string;
+  effective_date: string;
+  published_date: string;
+  description?: string;
+  is_projected?: boolean;
+  is_correction?: boolean;
+  legislation_reference?: string;
+}
 
 interface TaxDataVersionInfoProps {
   year: number;
   onSelectVersion?: (version: string) => void;
   showControls?: boolean;
+  taxResult?: TaxResult;
 }
 
 const TaxDataVersionInfo: React.FC<TaxDataVersionInfoProps> = ({
   year,
   onSelectVersion,
-  showControls = false
+  showControls = false,
+  taxResult
 }) => {
   const versions = getTaxDataVersionsForYear(year);
   const [selectedVersion, setSelectedVersion] = useState<string | undefined>(
