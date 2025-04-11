@@ -16,7 +16,7 @@ import TaxGlossaryPage from './pages/TaxGlossaryPage';
 import MyCoursesPage from './pages/MyCoursesPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentErrorPage from './pages/PaymentErrorPage';
-import TaxFilingPage from './pages/TaxFilingPage';
+import FileMyTaxesPage from './pages/FileMyTaxesPage';
 import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter([
@@ -54,7 +54,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/file-my-taxes",
-    element: <TaxFilingPage />,
+    element: <FileMyTaxesPage />,
   },
   {
     path: "/admin/data-feeds",
