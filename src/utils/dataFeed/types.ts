@@ -102,3 +102,22 @@ export interface TaxDataVersion {
   is_correction?: boolean;
   is_projected?: boolean;
 }
+
+export interface AuditLogEntry {
+  id: string;
+  action: 'auto_update' | 'manual_update' | 'manual_override' | 'rollback';
+  user_id?: string;
+  timestamp: string;
+  data_feed_id: string;
+  version_id?: string;
+  changes_made: {
+    added?: number;
+    modified?: number;
+    removed?: number;
+    details?: any;
+  };
+  reason?: string;
+  status: 'success' | 'error';
+  affected_years?: number[];
+  error_message?: string;
+}

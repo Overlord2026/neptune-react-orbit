@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, AlertTriangle, Check, Clock, Info } from "lucide-react";
+import { RefreshCw, AlertTriangle, Check, Clock, Info, History, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   DataFeed,
@@ -17,12 +19,15 @@ import {
 import { fetchTaxCodeUpdates, scheduleUpdateChecks } from '@/utils/fetchTaxCodeUpdates';
 import TaxDisclaimerWithCheckbox from '@/components/tax/TaxDisclaimerWithCheckbox';
 import PlaceholdersReferenceSection from '@/components/admin/PlaceholdersReferenceSection';
+import ManualOverrideForm from '@/components/admin/ManualOverrideForm';
+import { TabsProvider, TabsGroup, TabsPanel } from '@/components/ui/tabs';
 
 const DataFeedsAndUpdatesPage = () => {
   const [dataFeeds, setDataFeeds] = useState<DataFeed[]>([]);
   const [disclaimerAcknowledged, setDisclaimerAcknowledged] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [isRefreshing, setIsRefreshing] = useState<{[key: string]: boolean}>({});
+  const [selectedDataFeedId, setSelectedDataFeedId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -186,12 +191,28 @@ const DataFeedsAndUpdatesPage = () => {
       variant: "default",
     });
   };
+  
+  const handleOverrideComplete = () => {
+    // Refresh the data after an override
+    setDataFeeds(getAllDataFeeds());
+    toast({
+      title: "Override applied",
+      description: "Manual override has been recorded in the audit log.",
+      variant: "default",
+    });
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Data Feeds & Live Updates</h1>
         <div className="flex flex-wrap gap-3">
+          <Link to="/admin/audit-log">
+            <Button variant="outline" className="flex items-center gap-2">
+              <History className="h-4 w-4" />
+              Audit Log
+            </Button>
+          </Link>
           <Button 
             className="bg-[#FFD700] text-black hover:bg-[#E5C100]"
             onClick={handleVerifyAllConnections}
@@ -216,94 +237,120 @@ const DataFeedsAndUpdatesPage = () => {
           </p>
         </CardContent>
       </Card>
-
-      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="all">All Data Feeds</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="warning">Warning</TabsTrigger>
-          <TabsTrigger value="error">Error</TabsTrigger>
-        </TabsList>
-        <TabsContent value={activeTab} className="mt-4">
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[250px]">Data Feed</TableHead>
-                  <TableHead>Data Source</TableHead>
-                  <TableHead className="w-[150px]">Frequency</TableHead>
-                  <TableHead className="w-[180px]">Last Updated</TableHead>
-                  <TableHead className="w-[100px]">Status</TableHead>
-                  <TableHead className="w-[100px]">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDataFeeds.map((feed) => {
-                  const statusBadge = getStatusBadge(feed.status);
-                  return (
-                    <TableRow key={feed.id}>
-                      <TableCell className="font-medium">
-                        <div>{feed.name}</div>
-                        <div className="text-xs text-muted-foreground mt-1">{feed.description}</div>
-                        {feed.error_message && (
-                          <div className="text-xs text-red-500 mt-1 flex items-center">
-                            <AlertTriangle className="h-3 w-3 mr-1" />
-                            {feed.error_message}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Input 
-                          value={feed.api_endpoint} 
-                          onChange={(e) => handleEndpointChange(feed.id, e.target.value)}
-                          className="w-full text-xs"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Select 
-                          defaultValue={feed.refresh_frequency}
-                          onValueChange={(value) => handleFrequencyChange(feed.id, value)}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select frequency" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                            <SelectItem value="monthly">Monthly</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>{formatDate(feed.last_update)}</TableCell>
-                      <TableCell>
-                        <Badge className={`flex items-center ${statusBadge.color}`}>
-                          {statusBadge.icon}
-                          {feed.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button 
-                          size="sm" 
-                          onClick={() => handleRefresh(feed.id)}
-                          className="w-full flex items-center gap-1"
-                          disabled={isRefreshing[feed.id]}
-                        >
-                          {isRefreshing[feed.id] ? (
-                            <RefreshCw className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <RefreshCw className="h-3 w-3" />
-                          )}
-                          Refresh
-                        </Button>
-                      </TableCell>
+      
+      <TabsProvider defaultValue="data-feeds">
+        <TabsGroup>
+          <TabsTrigger value="data-feeds">Data Feeds</TabsTrigger>
+          <TabsTrigger value="manual-override">Manual Override</TabsTrigger>
+        </TabsGroup>
+        
+        <TabsPanel value="data-feeds">
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+            <TabsList>
+              <TabsTrigger value="all">All Data Feeds</TabsTrigger>
+              <TabsTrigger value="active">Active</TabsTrigger>
+              <TabsTrigger value="warning">Warning</TabsTrigger>
+              <TabsTrigger value="error">Error</TabsTrigger>
+            </TabsList>
+            <TabsContent value={activeTab} className="mt-4">
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[250px]">Data Feed</TableHead>
+                      <TableHead>Data Source</TableHead>
+                      <TableHead className="w-[150px]">Frequency</TableHead>
+                      <TableHead className="w-[180px]">Last Updated</TableHead>
+                      <TableHead className="w-[100px]">Status</TableHead>
+                      <TableHead className="w-[100px]">Action</TableHead>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </TabsContent>
-      </Tabs>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredDataFeeds.map((feed) => {
+                      const statusBadge = getStatusBadge(feed.status);
+                      return (
+                        <TableRow key={feed.id}>
+                          <TableCell className="font-medium">
+                            <div>{feed.name}</div>
+                            <div className="text-xs text-muted-foreground mt-1">{feed.description}</div>
+                            {feed.error_message && (
+                              <div className="text-xs text-red-500 mt-1 flex items-center">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                {feed.error_message}
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              value={feed.api_endpoint} 
+                              onChange={(e) => handleEndpointChange(feed.id, e.target.value)}
+                              className="w-full text-xs"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Select 
+                              defaultValue={feed.refresh_frequency}
+                              onValueChange={(value) => handleFrequencyChange(feed.id, value)}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select frequency" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="daily">Daily</SelectItem>
+                                <SelectItem value="weekly">Weekly</SelectItem>
+                                <SelectItem value="monthly">Monthly</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell>{formatDate(feed.last_update)}</TableCell>
+                          <TableCell>
+                            <Badge className={`flex items-center ${statusBadge.color}`}>
+                              {statusBadge.icon}
+                              {feed.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button 
+                                size="sm" 
+                                onClick={() => handleRefresh(feed.id)}
+                                className="w-full flex items-center gap-1"
+                                disabled={isRefreshing[feed.id]}
+                              >
+                                {isRefreshing[feed.id] ? (
+                                  <RefreshCw className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <RefreshCw className="h-3 w-3" />
+                                )}
+                                Refresh
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex items-center gap-1"
+                                onClick={() => setSelectedDataFeedId(feed.id)}
+                              >
+                                <Shield className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </TabsPanel>
+        
+        <TabsPanel value="manual-override">
+          <ManualOverrideForm 
+            dataFeedId={selectedDataFeedId || "irs-updates"}
+            onOverrideComplete={handleOverrideComplete}
+          />
+        </TabsPanel>
+      </TabsProvider>
 
       <Card>
         <CardHeader className="pb-2">
@@ -326,6 +373,12 @@ const DataFeedsAndUpdatesPage = () => {
           <p>
             The system will automatically retry failed connections up to 3 times with increasing delays.
             Administrators will receive notifications about significant changes or persistent failures.
+          </p>
+          <p className="mt-2">
+            <Link to="/admin/audit-log" className="text-blue-600 hover:underline flex items-center">
+              <History className="mr-1 h-4 w-4" />
+              View complete audit history for all changes
+            </Link>
           </p>
         </CardContent>
       </Card>

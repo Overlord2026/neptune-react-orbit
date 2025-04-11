@@ -1,4 +1,3 @@
-
 import { 
   DataFeed, 
   DataFeedLog, 
@@ -15,16 +14,12 @@ import { TAX_BRACKETS_DATA, STANDARD_DEDUCTION_BY_YEAR } from './taxBracketData'
 import { toast } from "sonner";
 import { createTaxAlert, isMajorTaxChange } from './taxUpdateUtils';
 import { processTaxBracketsWithVersioning } from './taxDataVersioning';
+import { createAuditLog, getCurrentUserId } from './auditLogUtils';
 
 // Maximum number of retry attempts
 const MAX_RETRY_ATTEMPTS = 3;
 // Delay between retries in milliseconds (exponential backoff)
 const RETRY_DELAY = 1000;
-
-// A mock function to get the current user ID (in a real app, this would come from auth)
-const getCurrentUserId = (): string => {
-  return "current-user";
-};
 
 /**
  * Fetches tax code updates from the configured data feed
@@ -37,6 +32,9 @@ export const fetchTaxCodeUpdates = async (
   manualTrigger: boolean = false
 ): Promise<boolean> => {
   console.log(`Starting tax code update fetch for feed: ${feedId}, manual: ${manualTrigger}`);
+  
+  const userId = manualTrigger ? getCurrentUserId() : undefined;
+  const action = manualTrigger ? 'manual_update' : 'auto_update';
   
   // Get the data feed
   const dataFeed = getDataFeedById(feedId);
@@ -98,6 +96,23 @@ export const fetchTaxCodeUpdates = async (
       changes_count: result.changesCount,
       version_info: result.versionInfo
     });
+    
+    // Create audit log
+    createAuditLog({
+      action: action,
+      user_id: userId,
+      timestamp: new Date().toISOString(),
+      data_feed_id: feedId,
+      version_id: result.versionInfo,
+      changes_made: {
+        added: result.changesCount,
+        modified: result.modifiedCount || 0,
+        removed: result.removedCount || 0,
+        details: result.changes
+      },
+      status: 'success',
+      affected_years: result.affectedYears
+    });
 
     // Show success notification
     toast.success(`Tax code updates successfully fetched and processed.`);
@@ -130,6 +145,19 @@ export const fetchTaxCodeUpdates = async (
       changes_count: 0,
       error_message: error instanceof Error ? error.message : "Unknown error"
     });
+    
+    // Create audit log for error
+    createAuditLog({
+      action: action,
+      user_id: userId,
+      timestamp: new Date().toISOString(),
+      data_feed_id: feedId,
+      changes_made: {
+        details: "Error fetching updates"
+      },
+      status: 'error',
+      error_message: error instanceof Error ? error.message : "Unknown error"
+    });
 
     // Show error notification
     toast.error(`Failed to fetch tax code updates: ${error instanceof Error ? error.message : "Unknown error"}`);
@@ -152,11 +180,23 @@ export const fetchTaxCodeUpdates = async (
 const processTaxCodeUpdates = async (
   data: any, 
   feedId: string
-): Promise<{ changesCount: number, versionInfo?: string, majorChanges: any[] }> => {
+): Promise<{ 
+  changesCount: number, 
+  versionInfo?: string, 
+  majorChanges: any[],
+  modifiedCount?: number,
+  removedCount?: number,
+  affectedYears: number[],
+  changes: any
+}> => {
   console.log("Processing tax code updates:", data);
   
   let changesCount = 0;
+  let modifiedCount = 0;
+  let removedCount = 0;
   let majorChanges: any[] = [];
+  let affectedYears: number[] = [];
+  let changes: any = {};
   
   // Extract version info and effective date if available
   const versionInfo = data.version || data.versionInfo || undefined;
@@ -166,28 +206,76 @@ const processTaxCodeUpdates = async (
   if (data.taxBrackets && Array.isArray(data.taxBrackets)) {
     const bracketResults = await processTaxBrackets(data.taxBrackets, effectiveDate);
     changesCount += bracketResults.changesCount;
+    modifiedCount += bracketResults.modifiedCount || 0;
     majorChanges = [...majorChanges, ...bracketResults.majorChanges];
+    
+    if (data.taxBrackets.length > 0) {
+      // Add affected years
+      data.taxBrackets.forEach((bracket: TaxBracketUpdate) => {
+        if (!affectedYears.includes(bracket.year)) {
+          affectedYears.push(bracket.year);
+        }
+      });
+    }
+    
+    changes.taxBrackets = bracketResults.details;
   }
   
   // Process standard deductions
   if (data.standardDeductions && Array.isArray(data.standardDeductions)) {
     const deductionResults = await processStandardDeductions(data.standardDeductions, effectiveDate);
     changesCount += deductionResults.changesCount;
+    modifiedCount += deductionResults.modifiedCount || 0;
     majorChanges = [...majorChanges, ...deductionResults.majorChanges];
+    
+    if (data.standardDeductions.length > 0) {
+      // Add affected years
+      data.standardDeductions.forEach((deduction: StandardDeductionUpdate) => {
+        if (!affectedYears.includes(deduction.year)) {
+          affectedYears.push(deduction.year);
+        }
+      });
+    }
+    
+    changes.standardDeductions = deductionResults.details;
   }
   
   // Process retirement limits
   if (data.retirementLimits && Array.isArray(data.retirementLimits)) {
     const limitResults = await processRetirementLimits(data.retirementLimits, effectiveDate);
     changesCount += limitResults.changesCount;
+    modifiedCount += limitResults.modifiedCount || 0;
     majorChanges = [...majorChanges, ...limitResults.majorChanges];
+    
+    if (data.retirementLimits.length > 0) {
+      // Add affected years
+      data.retirementLimits.forEach((limit: RetirementLimitUpdate) => {
+        if (!affectedYears.includes(limit.year)) {
+          affectedYears.push(limit.year);
+        }
+      });
+    }
+    
+    changes.retirementLimits = limitResults.details;
   }
   
   // Process form references
   if (data.taxForms && Array.isArray(data.taxForms)) {
     const formResults = await processTaxForms(data.taxForms, effectiveDate);
     changesCount += formResults.changesCount;
+    modifiedCount += formResults.modifiedCount || 0;
     majorChanges = [...majorChanges, ...formResults.majorChanges];
+    
+    if (data.taxForms.length > 0) {
+      // Add affected years
+      data.taxForms.forEach((form: TaxFormUpdate) => {
+        if (!affectedYears.includes(form.year)) {
+          affectedYears.push(form.year);
+        }
+      });
+    }
+    
+    changes.taxForms = formResults.details;
   }
   
   console.log(`Processed ${changesCount} tax code updates`);
@@ -211,7 +299,15 @@ const processTaxCodeUpdates = async (
     });
   }
   
-  return { changesCount, versionInfo, majorChanges };
+  return { 
+    changesCount, 
+    versionInfo, 
+    majorChanges, 
+    modifiedCount, 
+    removedCount, 
+    changes,
+    affectedYears 
+  };
 };
 
 /**
