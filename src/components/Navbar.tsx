@@ -41,19 +41,12 @@ const Navbar = ({ toggleSidebar, isMobile }: NavbarProps) => {
         <div className="flex-1" />
         
         <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative text-[#E5E5E5]">
-                <Settings className="h-5 w-5" />
-                <span className="sr-only">Settings</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-[#1A1F2C] border-[#242A38] text-[#E5E5E5]">
-              <DropdownMenuItem className="hover:bg-[#242A38] focus:bg-[#242A38]">Appearance</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-[#242A38] focus:bg-[#242A38]">Account</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-[#242A38] focus:bg-[#242A38]">Preferences</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Link to="/settings">
+            <Button variant="ghost" size="icon" className="relative text-[#E5E5E5]">
+              <Settings className="h-5 w-5" />
+              <span className="sr-only">Settings</span>
+            </Button>
+          </Link>
         </div>
       </div>
     </header>

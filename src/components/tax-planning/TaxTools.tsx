@@ -28,7 +28,7 @@ const TaxTools: React.FC = () => {
       title: "Tax Document Aggregator",
       icon: <FolderSearch className="w-10 h-10 text-[#FFD700]" />,
       description: "Organize all your tax documents in one place. Auto-categorize receipts, W2s, 1099s and more.",
-      comingSoon: true,
+      comingSoon: false,
       link: "/tax-planning/aggregator"
     },
     {
@@ -52,7 +52,7 @@ const TaxTools: React.FC = () => {
       title: "Social Security Calculator",
       icon: <HeartHandshake className="w-10 h-10 text-[#FFD700]" />,
       description: "Optimize when to take Social Security benefits based on your unique tax situation.",
-      comingSoon: true,
+      comingSoon: false,
       link: "/tax-planning/social-security"
     },
     {
@@ -68,7 +68,7 @@ const TaxTools: React.FC = () => {
       title: "Tax Vault",
       icon: <Lock className="w-10 h-10 text-[#FFD700]" />,
       description: "Securely store all your tax documents with bank-level encryption and easy retrieval.",
-      comingSoon: true,
+      comingSoon: false,
       link: "/tax-planning/tax-vault"
     },
     {

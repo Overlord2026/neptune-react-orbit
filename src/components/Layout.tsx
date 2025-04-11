@@ -23,7 +23,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-[#101521]">
       {/* Top Banner Header */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-[#1A1F2C] border-b border-[#242A38] z-40 px-6 flex items-center justify-between">
         <Link to="/" className="flex items-center">
@@ -59,7 +59,7 @@ const Layout = () => {
         ) : (
           <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
         )}
-        <main className={`flex-1 transition-all duration-300 ${sidebarOpen && !isMobile ? 'ml-64' : 'ml-0'}`}>
+        <main className={`flex-1 transition-all duration-300 bg-[#101521] ${sidebarOpen && !isMobile ? 'ml-64' : 'ml-0'}`}>
           <div className="container p-4 md:p-6">
             <Outlet />
           </div>
