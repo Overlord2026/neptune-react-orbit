@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
@@ -10,8 +11,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import DynamicContent from "@/components/DynamicContent";
 
-const TaxAlertConfigPanel = () => {
+interface TaxAlertConfigProps {
+  type?: string;
+  year?: number;
+  percentChange?: number;
+}
+
+const TaxAlertConfigPanel: React.FC<TaxAlertConfigProps> = ({ 
+  type = "tax_bracket", 
+  year = new Date().getFullYear(), 
+  percentChange = 5 
+}) => {
   // State for thresholds
   const [thresholds, setThresholds] = React.useState({
     tax_bracket: 5, // 5%
@@ -26,6 +38,11 @@ const TaxAlertConfigPanel = () => {
   const [emailNotifications, setEmailNotifications] = React.useState(false);
   const [autoCreateAlerts, setAutoCreateAlerts] = React.useState(true);
   
+  // State for alert templates
+  const [majorTemplate, setMajorTemplate] = React.useState("Important: {type} changed by {percentChange}% for tax year {year}.");
+  const [minorTemplate, setMinorTemplate] = React.useState("Tax update: Minor changes detected for {year} in {type}.");
+  const [infoTemplate, setInfoTemplate] = React.useState("FYI: {type} has been updated for tax year {year}.");
+  
   const handleThresholdChange = (key: string, value: number[]) => {
     setThresholds(prev => ({
       ...prev,
@@ -39,7 +56,12 @@ const TaxAlertConfigPanel = () => {
       thresholds,
       notifyUsers,
       emailNotifications,
-      autoCreateAlerts
+      autoCreateAlerts,
+      templates: {
+        major: majorTemplate,
+        minor: minorTemplate,
+        info: infoTemplate
+      }
     });
     
     toast.success("Tax alert configuration saved successfully");
@@ -56,8 +78,19 @@ const TaxAlertConfigPanel = () => {
     setNotifyUsers(true);
     setEmailNotifications(false);
     setAutoCreateAlerts(true);
+    setMajorTemplate("Important: {type} changed by {percentChange}% for tax year {year}.");
+    setMinorTemplate("Tax update: Minor changes detected for {year} in {type}.");
+    setInfoTemplate("FYI: {type} has been updated for tax year {year}.");
     
     toast.info("Reset to default configuration");
+  };
+
+  // Format example preview with actual values
+  const formatExampleTemplate = (template: string) => {
+    return template
+      .replace(/{type}/g, type)
+      .replace(/{year}/g, year.toString())
+      .replace(/{percentChange}/g, percentChange.toString());
   };
   
   return (
@@ -224,33 +257,45 @@ const TaxAlertConfigPanel = () => {
                 <Label htmlFor="major-template">Major Update Template</Label>
                 <Input 
                   id="major-template" 
-                  defaultValue="Important: Tax changes for {year} may affect your calculations. Learn more." 
+                  value={majorTemplate}
+                  onChange={(e) => setMajorTemplate(e.target.value)}
                   className="mt-1"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Use {"{type}"}, {"{year}"}, {"{percentChange}"} as placeholders
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  Example: "Important: {"{type}"} changed by {"{percentChange}"}% for tax year {"{year}"}."
-                </p>
+                <div className="text-xs text-muted-foreground mt-1 p-2 bg-slate-50 rounded border">
+                  <p className="font-semibold">Preview:</p>
+                  <p>{formatExampleTemplate(majorTemplate)}</p>
+                </div>
               </div>
               
               <div>
                 <Label htmlFor="minor-template">Minor Update Template</Label>
                 <Input 
                   id="minor-template" 
-                  defaultValue="Tax update: Minor changes detected for {year} in {type}." 
+                  value={minorTemplate}
+                  onChange={(e) => setMinorTemplate(e.target.value)}
                   className="mt-1"
                 />
+                <div className="text-xs text-muted-foreground mt-1 p-2 bg-slate-50 rounded border">
+                  <p className="font-semibold">Preview:</p>
+                  <p>{formatExampleTemplate(minorTemplate)}</p>
+                </div>
               </div>
               
               <div>
                 <Label htmlFor="info-template">Info Update Template</Label>
                 <Input 
                   id="info-template" 
-                  defaultValue="FYI: {type} has been updated for tax year {year}." 
+                  value={infoTemplate}
+                  onChange={(e) => setInfoTemplate(e.target.value)}
                   className="mt-1"
                 />
+                <div className="text-xs text-muted-foreground mt-1 p-2 bg-slate-50 rounded border">
+                  <p className="font-semibold">Preview:</p>
+                  <p>{formatExampleTemplate(infoTemplate)}</p>
+                </div>
               </div>
             </div>
           </TabsContent>

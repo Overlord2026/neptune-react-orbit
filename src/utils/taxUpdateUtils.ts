@@ -16,6 +16,21 @@ export const getTaxDataLastUpdate = (): string => {
   return getFormattedTaxDataLastUpdate();
 };
 
+// Interface for alert template formatting
+export interface TaxAlertTemplateVars {
+  type: string;
+  year: number;
+  percentChange: number;
+}
+
+// Format an alert template with actual values
+export const formatAlertTemplate = (template: string, variables: TaxAlertTemplateVars): string => {
+  return template
+    .replace(/{type}/g, variables.type)
+    .replace(/{year}/g, variables.year.toString())
+    .replace(/{percentChange}/g, variables.percentChange.toString());
+};
+
 // Create a new tax alert
 export const createTaxAlert = (
   userId: string, 
