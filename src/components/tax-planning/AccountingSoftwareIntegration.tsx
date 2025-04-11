@@ -28,6 +28,8 @@ const AccountingSoftwareIntegration = () => {
       name: "Xero",
       description: "Sync your Xero accounting data to simplify tax filing and ensure accuracy in your deductions.",
       isPopular: false,
+      authUrl: "https://login.xero.com/identity/connect/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=https://your-app.com/api/xero/callback&response_type=code&scope=accounting.transactions",
+      connectionStatus: 'disconnected',
     },
     {
       name: "Wave",
@@ -51,9 +53,14 @@ const AccountingSoftwareIntegration = () => {
     // In a real implementation, this would be an API call to check which services are connected
     // For demo purposes, we'll check localStorage
     const quickbooksConnected = localStorage.getItem('quickbooks_connected') === 'true';
+    const xeroConnected = localStorage.getItem('xero_connected') === 'true';
     
     if (quickbooksConnected) {
       updateConnectionStatus("QuickBooks", 'connected');
+    }
+    
+    if (xeroConnected) {
+      updateConnectionStatus("Xero", 'connected');
     }
   };
 
@@ -76,10 +83,18 @@ const AccountingSoftwareIntegration = () => {
           title: "Disconnected",
           description: `Successfully disconnected from ${software.name}`,
         });
+      } else if (software.name === "Xero") {
+        // In production, this would call your API to revoke tokens
+        localStorage.removeItem('xero_connected');
+        updateConnectionStatus(software.name, 'disconnected');
+        toast({
+          title: "Disconnected",
+          description: `Successfully disconnected from ${software.name}`,
+        });
       }
     } else {
       // Handle connection
-      if (software.name === "QuickBooks" && software.authUrl) {
+      if ((software.name === "QuickBooks" || software.name === "Xero") && software.authUrl) {
         // Open OAuth window
         const authWindow = window.open(software.authUrl, "_blank", "width=600,height=700");
         
@@ -92,7 +107,12 @@ const AccountingSoftwareIntegration = () => {
           }
           
           // Simulate successful OAuth completion
-          localStorage.setItem('quickbooks_connected', 'true');
+          if (software.name === "QuickBooks") {
+            localStorage.setItem('quickbooks_connected', 'true');
+          } else if (software.name === "Xero") {
+            localStorage.setItem('xero_connected', 'true');
+          }
+          
           updateConnectionStatus(software.name, 'connected');
           toast({
             title: "Connected",
