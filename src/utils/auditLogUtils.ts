@@ -1,7 +1,7 @@
 
 import { AuditLogEntry } from './dataFeed/types';
 import { toast } from "sonner";
-import { getTaxDataVersionForYear } from './taxDataVersioning';
+import { getTaxDataVersionsForYear } from './taxDataVersioning';
 
 // Mock database for audit logs (in a real app, this would be in a database)
 let auditLogs: AuditLogEntry[] = [
@@ -187,7 +187,8 @@ export const recordManualOverride = (
   affectedYears: number[]
 ): AuditLogEntry => {
   // Get the current version for the first affected year to associate with this change
-  const version = affectedYears.length > 0 ? getTaxDataVersionForYear(affectedYears[0]) : undefined;
+  const versions = affectedYears.length > 0 ? getTaxDataVersionsForYear(affectedYears[0]) : [];
+  const version = versions.length > 0 ? versions[0] : undefined;
   
   return createAuditLog({
     action: 'manual_override',

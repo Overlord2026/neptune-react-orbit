@@ -224,11 +224,11 @@ const TaxAlertConfigPanel = () => {
                 <Label htmlFor="major-template">Major Update Template</Label>
                 <Input 
                   id="major-template" 
-                  value="Important: Tax changes for {year} may affect your calculations. Learn more." 
+                  defaultValue="Important: Tax changes for {year} may affect your calculations. Learn more." 
                   className="mt-1"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Use {type}, {year}, {percentChange}, etc. as placeholders
+                  Use {"{type}"}, {"{year}"}, {"{percentChange}"}, etc. as placeholders
                 </p>
               </div>
               
@@ -236,7 +236,7 @@ const TaxAlertConfigPanel = () => {
                 <Label htmlFor="minor-template">Minor Update Template</Label>
                 <Input 
                   id="minor-template" 
-                  value="Tax update: Minor changes detected for {year} in {type}." 
+                  defaultValue="Tax update: Minor changes detected for {year} in {type}." 
                   className="mt-1"
                 />
               </div>
@@ -245,7 +245,7 @@ const TaxAlertConfigPanel = () => {
                 <Label htmlFor="info-template">Info Update Template</Label>
                 <Input 
                   id="info-template" 
-                  value="FYI: {type} has been updated for tax year {year}." 
+                  defaultValue="FYI: {type} has been updated for tax year {year}." 
                   className="mt-1"
                 />
               </div>

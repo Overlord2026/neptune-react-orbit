@@ -1,130 +1,181 @@
 
-import React from 'react';
-import { 
-  AlertCircle,
-  Calendar,
-  Info
-} from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { TaxResult } from '@/utils/taxCalculator';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { AlertTriangle, Calendar, Check, Info, Download } from "lucide-react";
+import { getTaxDataVersionsForYear, TaxDataVersion } from '@/utils/taxDataVersioning';
 
 interface TaxDataVersionInfoProps {
-  taxResult: TaxResult;
-  showWarnings?: boolean;
-  isCompact?: boolean;
+  year: number;
+  onSelectVersion?: (version: string) => void;
+  showControls?: boolean;
 }
 
-const TaxDataVersionInfo: React.FC<TaxDataVersionInfoProps> = ({ 
-  taxResult,
-  showWarnings = true,
-  isCompact = false
+const TaxDataVersionInfo: React.FC<TaxDataVersionInfoProps> = ({
+  year,
+  onSelectVersion,
+  showControls = false
 }) => {
-  // Don't render anything if we don't have version info
-  if (!taxResult.tax_data_updated_at) {
-    return null;
-  }
+  const versions = getTaxDataVersionsForYear(year);
+  const [selectedVersion, setSelectedVersion] = useState<string | undefined>(
+    versions.length > 0 ? versions[0].version : undefined
+  );
+  const { toast: toastFn } = useToast();
   
-  // Format the data update date
-  const updatedDate = new Date(taxResult.tax_data_updated_at);
-  const formattedDate = new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  }).format(updatedDate);
+  const handleVersionSelect = (version: string) => {
+    setSelectedVersion(version);
+    if (onSelectVersion) {
+      onSelectVersion(version);
+    }
+  };
   
-  if (isCompact) {
+  const handleExportData = () => {
+    // In a real app, this would export the data as JSON or CSV
+    toastFn({
+      title: "Data exported",
+      description: `Tax data for ${year} (${selectedVersion}) has been exported.`,
+      variant: "default",
+    });
+  };
+  
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  if (versions.length === 0) {
     return (
-      <div className="text-xs text-muted-foreground flex items-center">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center">
-                <Calendar className="h-3 w-3 mr-1" />
-                <span>
-                  Tax data: {formattedDate}
-                  {taxResult.tax_data_version && ` (v${taxResult.tax_data_version})`}
-                </span>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <div className="max-w-xs">
-                <p className="font-medium">Tax Data Information</p>
-                <p className="text-xs mt-1">
-                  These calculations use tax data that was last updated on {formattedDate}.
-                  {taxResult.tax_data_version && <> Version: {taxResult.tax_data_version}</>}
-                </p>
-                {taxResult.tax_data_warning && (
-                  <p className="text-xs mt-1 text-amber-600 dark:text-amber-400">
-                    {taxResult.tax_data_warning}
-                  </p>
-                )}
-                <p className="text-xs mt-1">
-                  <Link to="/tax-updates-history" className="underline">
-                    View update history
-                  </Link>
-                </p>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        
-        {showWarnings && taxResult.tax_data_warning && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <AlertCircle className="h-3 w-3 ml-2 text-amber-600 dark:text-amber-400" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">{taxResult.tax_data_warning}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center">
+            <AlertTriangle className="h-5 w-5 mr-2 text-yellow-500" />
+            No Tax Data Available
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            No tax data versions were found for the year {year}. This may indicate that the data
+            has not been imported yet or there was an error during the import process.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
-  
+
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center">
-          <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-          <span>
-            Tax data last updated: <span className="font-medium">{formattedDate}</span>
-          </span>
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg flex items-center">
+          <Calendar className="h-5 w-5 mr-2 text-blue-500" />
+          Tax Data Versions for {year}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pb-2">
+        <p className="text-sm text-muted-foreground mb-4">
+          {versions.length > 1 
+            ? `There are ${versions.length} versions of tax data available for ${year}.`
+            : `There is 1 version of tax data available for ${year}.`}
+          {versions.length > 1 && " Select a version to view its details."}
+        </p>
+        
+        <div className="space-y-4">
+          {versions.map((version: TaxDataVersion) => (
+            <div 
+              key={version.id}
+              className={`border rounded-md p-3 cursor-pointer transition-colors ${
+                selectedVersion === version.version 
+                ? 'bg-muted border-primary' 
+                : 'hover:bg-muted/50'
+              }`}
+              onClick={() => handleVersionSelect(version.version)}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-medium flex items-center">
+                  {selectedVersion === version.version && (
+                    <Check className="h-4 w-4 mr-1 text-green-500" />
+                  )}
+                  Version {version.version}
+                </div>
+                <div className="flex gap-2">
+                  {version.is_projected && (
+                    <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50">
+                      Projected
+                    </Badge>
+                  )}
+                  {version.is_correction && (
+                    <Badge variant="outline" className="text-blue-600 border-blue-300 bg-blue-50">
+                      Correction
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Effective: </span>
+                  <span>{formatDate(version.effective_date)}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Published: </span>
+                  <span>{formatDate(version.published_date)}</span>
+                </div>
+              </div>
+              
+              {version.legislation_reference && (
+                <div className="text-sm mt-2">
+                  <span className="text-muted-foreground">Reference: </span>
+                  <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">
+                    {version.legislation_reference}
+                  </span>
+                </div>
+              )}
+              
+              {version.description && (
+                <div className="mt-2 text-sm">
+                  <span className="text-muted-foreground">Description: </span>
+                  <span>{version.description}</span>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
         
-        {taxResult.tax_data_version && (
-          <Badge variant="outline" className="text-xs">
-            Version {taxResult.tax_data_version}
-          </Badge>
+        {showControls && versions.length > 1 && (
+          <>
+            <Separator className="my-4" />
+            <div className="flex items-center text-sm">
+              <Info className="h-4 w-4 mr-2 text-blue-500" />
+              <p>
+                Using tax data from version{" "}
+                <span className="font-semibold">{selectedVersion}</span>
+                {" "}for calculations.
+              </p>
+            </div>
+          </>
         )}
-      </div>
+      </CardContent>
       
-      {showWarnings && taxResult.tax_data_warning && (
-        <Alert variant="warning" className="py-2 px-3 bg-amber-50 dark:bg-amber-950/30 border-amber-200">
-          <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-          <AlertDescription className="text-xs text-amber-800 dark:text-amber-300">
-            {taxResult.tax_data_warning}
-          </AlertDescription>
-        </Alert>
+      {showControls && (
+        <CardFooter className="pt-0">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full flex items-center"
+            onClick={handleExportData}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export Tax Data (Version {selectedVersion})
+          </Button>
+        </CardFooter>
       )}
-      
-      <div className="text-xs text-muted-foreground flex items-center justify-end">
-        <Info className="h-3 w-3 mr-1" />
-        <Link to="/tax-updates-history" className="hover:underline">
-          View tax data history
-        </Link>
-      </div>
-    </div>
+    </Card>
   );
 };
 

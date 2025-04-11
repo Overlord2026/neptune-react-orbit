@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, AlertTriangle, Check, Clock, Info, History, Shield } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { 
   DataFeed,
   getAllDataFeeds,
@@ -20,7 +19,6 @@ import { fetchTaxCodeUpdates, scheduleUpdateChecks } from '@/utils/fetchTaxCodeU
 import TaxDisclaimerWithCheckbox from '@/components/tax/TaxDisclaimerWithCheckbox';
 import PlaceholdersReferenceSection from '@/components/admin/PlaceholdersReferenceSection';
 import ManualOverrideForm from '@/components/admin/ManualOverrideForm';
-import { TabsProvider, TabsGroup, TabsPanel } from '@/components/ui/tabs';
 
 const DataFeedsAndUpdatesPage = () => {
   const [dataFeeds, setDataFeeds] = useState<DataFeed[]>([]);
@@ -28,7 +26,7 @@ const DataFeedsAndUpdatesPage = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [isRefreshing, setIsRefreshing] = useState<{[key: string]: boolean}>({});
   const [selectedDataFeedId, setSelectedDataFeedId] = useState<string | null>(null);
-  const { toast } = useToast();
+  const [currentView, setCurrentView] = useState<"data-feeds" | "manual-override">("data-feeds");
 
   useEffect(() => {
     setDataFeeds(getAllDataFeeds());
@@ -238,13 +236,13 @@ const DataFeedsAndUpdatesPage = () => {
         </CardContent>
       </Card>
       
-      <TabsProvider defaultValue="data-feeds">
-        <TabsGroup>
+      <Tabs defaultValue="data-feeds" value={currentView === "data-feeds" ? "data-feeds" : "manual-override"} onValueChange={(v) => setCurrentView(v as "data-feeds" | "manual-override")}>
+        <TabsList>
           <TabsTrigger value="data-feeds">Data Feeds</TabsTrigger>
           <TabsTrigger value="manual-override">Manual Override</TabsTrigger>
-        </TabsGroup>
+        </TabsList>
         
-        <TabsPanel value="data-feeds">
+        <TabsContent value="data-feeds">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
               <TabsTrigger value="all">All Data Feeds</TabsTrigger>
@@ -328,7 +326,10 @@ const DataFeedsAndUpdatesPage = () => {
                                 size="sm"
                                 variant="outline"
                                 className="flex items-center gap-1"
-                                onClick={() => setSelectedDataFeedId(feed.id)}
+                                onClick={() => {
+                                  setSelectedDataFeedId(feed.id);
+                                  setCurrentView("manual-override");
+                                }}
                               >
                                 <Shield className="h-3 w-3" />
                               </Button>
@@ -342,15 +343,15 @@ const DataFeedsAndUpdatesPage = () => {
               </div>
             </TabsContent>
           </Tabs>
-        </TabsPanel>
+        </TabsContent>
         
-        <TabsPanel value="manual-override">
+        <TabsContent value="manual-override">
           <ManualOverrideForm 
             dataFeedId={selectedDataFeedId || "irs-updates"}
             onOverrideComplete={handleOverrideComplete}
           />
-        </TabsPanel>
-      </TabsProvider>
+        </TabsContent>
+      </Tabs>
 
       <Card>
         <CardHeader className="pb-2">
