@@ -43,14 +43,25 @@ const mockEnrollments = [
   }
 ];
 
+// Define a type for the course data to avoid TypeScript errors
+interface CourseData {
+  title: string;
+  description: string;
+  url: string;
+  image: string;
+  resources_url: string;
+  external?: boolean;
+}
+
 // This would also come from your database 
-const coursesData = {
+const coursesData: Record<string, CourseData> = {
   'advanced_tax_strategies': {
     title: 'Advanced Tax Strategies & Planning Course',
     description: 'Master sophisticated tax planning techniques including multi-year Roth planning, advanced estate strategies, and business tax concepts.',
     url: '/tax-planning/advanced-tax-education',
     image: '/placeholder.svg',
-    resources_url: '/tax-planning/advanced-tax-education#resources'
+    resources_url: '/tax-planning/advanced-tax-education#resources',
+    external: false
   },
   'tax_masters_advanced': {
     title: 'Tax Masters Advanced Planning',
@@ -65,7 +76,8 @@ const coursesData = {
     description: 'A foundational course covering tax fundamentals, filing statuses, deductions vs credits, and tax planning basics.',
     url: '/tax-planning/basic-education',
     image: '/placeholder.svg',
-    resources_url: '/tax-planning/basic-education#resources'
+    resources_url: '/tax-planning/basic-education#resources',
+    external: false
   }
 };
 
