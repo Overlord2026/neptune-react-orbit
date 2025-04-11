@@ -30,12 +30,15 @@ export const createDataFeedLog = (log: Omit<DataFeedLog, 'id'>): DataFeedLog => 
 };
 
 // Helper function to get logs for a specific feed
-export const getDataFeedLogs = (feedId: string): DataFeedLog[] => {
-  return dataFeedLogs.filter(log => log.feed_id === feedId);
+export const getDataFeedLogs = (feedId?: string): DataFeedLog[] => {
+  if (feedId) {
+    return dataFeedLogs.filter(log => log.feed_id === feedId);
+  }
+  return dataFeedLogs;
 };
 
 // Export the dataFeeds array for use in components
-export const getAllDataFeeds = (): DataFeed[] => {
+export const getDataFeeds = (): DataFeed[] => {
   return dataFeeds;
 };
 
