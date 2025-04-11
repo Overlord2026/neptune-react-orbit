@@ -16,6 +16,7 @@ import TaxGlossaryPage from './pages/TaxGlossaryPage';
 import MyCoursesPage from './pages/MyCoursesPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentErrorPage from './pages/PaymentErrorPage';
+import TaxFilingPage from './pages/TaxFilingPage';
 import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter([
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
   {
     path: "/payment-error",
     element: <PaymentErrorPage />,
+  },
+  {
+    path: "/file-my-taxes",
+    element: <TaxFilingPage />,
   },
   {
     path: "/admin/data-feeds",
