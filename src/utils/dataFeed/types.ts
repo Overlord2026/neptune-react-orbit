@@ -46,18 +46,25 @@ export interface TaxBracketUpdate {
   bracket_min?: number;
   bracket_type?: string;
   rate?: number;
+  // Version tracking
+  effective_date?: string;
+  version?: string;
 }
 
 export interface RetirementLimitUpdate {
   type: 'retirement_limits';
   year: number;
   data: any;
+  effective_date?: string;
+  version?: string;
 }
 
 export interface TaxFormUpdate {
   type: 'tax_forms';
   year: number;
   data: any;
+  effective_date?: string;
+  version?: string;
 }
 
 export interface StandardDeductionUpdate {
@@ -66,6 +73,8 @@ export interface StandardDeductionUpdate {
   data: any;
   filing_status?: string; // For compatibility with existing code
   amount?: number; // For compatibility with existing code
+  effective_date?: string;
+  version?: string;
 }
 
 export interface TaxAlert {
@@ -80,4 +89,16 @@ export interface TaxAlert {
   update_type: 'tax_bracket' | 'standard_deduction' | 'retirement_limits' | 'tax_forms' | 'other';
   year: number;
   dismissed: boolean;
+}
+
+export interface TaxDataVersion {
+  id: string;
+  year: number;
+  version: string;
+  effective_date: string;
+  published_date: string;
+  legislation_reference?: string;
+  description?: string;
+  is_correction?: boolean;
+  is_projected?: boolean;
 }

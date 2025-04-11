@@ -1,4 +1,3 @@
-
 /**
  * Tax Calculation Utilities
  * 
@@ -21,6 +20,11 @@ import {
   markTaxDataAsCurrent, 
   TaxDataCacheInfo 
 } from './dataFeedUtils';
+import { 
+  getTaxDataVersionForScenario,
+  hasMidYearUpdates,
+  getMidYearUpdateWarning
+} from './taxDataVersioning';
 
 // Types
 export type { FilingStatusType } from './taxBracketData';
@@ -38,12 +42,13 @@ export interface TaxInput {
   isItemizedDeduction: boolean;
   itemizedDeductionAmount?: number;
   filing_status: FilingStatusType;
+  scenarioDate?: string; // Added for tax data versioning
 }
 
 export interface TaxResult {
   scenario_name: string;
   year: number;
-  filing_status: FilingStatusType; // Added to interface
+  filing_status: FilingStatusType;
   total_income: number;
   agi: number;
   taxable_income: number;
@@ -60,6 +65,8 @@ export interface TaxResult {
   updated_at: Date;
   tax_data_updated_at?: string; // When the tax data used was last updated
   tax_data_is_current?: boolean; // Whether the tax data is current
+  tax_data_version?: string; // Version of tax data used for calculation
+  tax_data_warning?: string; // Warning about tax data (e.g., mid-year update)
   safe_harbor?: SafeHarborResult;
 }
 
@@ -108,6 +115,12 @@ export function calculateTaxScenario(
 ): TaxResult {
   // Check tax data currency for this session
   const taxDataInfo = checkTaxDataCurrency(sessionId);
+  
+  // Check for appropriate tax data version based on year and scenario date
+  const taxDataVersion = getTaxDataVersionForScenario(input.year, input.scenarioDate);
+  
+  // Check if this tax year has mid-year updates that might affect calculation
+  const taxDataWarning = hasMidYearUpdates(input.year) ? getMidYearUpdateWarning(input.year) : undefined;
 
   // Calculate total income
   const total_income = 
@@ -154,7 +167,7 @@ export function calculateTaxScenario(
     input.itemizedDeductionAmount
   );
   
-  // Return result with enhanced data including tax data currency information
+  // Return result with enhanced data including tax data currency and version information
   return {
     scenario_name,
     year: input.year,
@@ -171,7 +184,9 @@ export function calculateTaxScenario(
     brackets_breakdown: taxResults.bracketsBreakdown,
     updated_at: new Date(),
     tax_data_updated_at: taxDataInfo.dataUpdatedAt,
-    tax_data_is_current: taxDataInfo.isCurrent
+    tax_data_is_current: taxDataInfo.isCurrent,
+    tax_data_version: taxDataVersion?.version,
+    tax_data_warning: taxDataWarning
   };
 }
 

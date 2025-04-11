@@ -1,6 +1,7 @@
 
 import { 
   DataFeed, 
+  DataFeedLog, 
   getDataFeedById, 
   updateDataFeed, 
   createDataFeedLog,
@@ -13,6 +14,7 @@ import { markTaxDataAsCurrent } from './dataFeed/taxDataCurrency';
 import { TAX_BRACKETS_DATA, STANDARD_DEDUCTION_BY_YEAR } from './taxBracketData';
 import { toast } from "sonner";
 import { createTaxAlert, isMajorTaxChange } from './taxUpdateUtils';
+import { processTaxBracketsWithVersioning } from './taxDataVersioning';
 
 // Maximum number of retry attempts
 const MAX_RETRY_ATTEMPTS = 3;
@@ -156,33 +158,34 @@ const processTaxCodeUpdates = async (
   let changesCount = 0;
   let majorChanges: any[] = [];
   
-  // Extract version info if available
+  // Extract version info and effective date if available
   const versionInfo = data.version || data.versionInfo || undefined;
+  const effectiveDate = data.effectiveDate || new Date().toISOString().split('T')[0];
   
-  // Process tax brackets
+  // Process tax brackets with versioning
   if (data.taxBrackets && Array.isArray(data.taxBrackets)) {
-    const bracketResults = await processTaxBrackets(data.taxBrackets);
+    const bracketResults = await processTaxBrackets(data.taxBrackets, effectiveDate);
     changesCount += bracketResults.changesCount;
     majorChanges = [...majorChanges, ...bracketResults.majorChanges];
   }
   
   // Process standard deductions
   if (data.standardDeductions && Array.isArray(data.standardDeductions)) {
-    const deductionResults = await processStandardDeductions(data.standardDeductions);
+    const deductionResults = await processStandardDeductions(data.standardDeductions, effectiveDate);
     changesCount += deductionResults.changesCount;
     majorChanges = [...majorChanges, ...deductionResults.majorChanges];
   }
   
   // Process retirement limits
   if (data.retirementLimits && Array.isArray(data.retirementLimits)) {
-    const limitResults = await processRetirementLimits(data.retirementLimits);
+    const limitResults = await processRetirementLimits(data.retirementLimits, effectiveDate);
     changesCount += limitResults.changesCount;
     majorChanges = [...majorChanges, ...limitResults.majorChanges];
   }
   
   // Process form references
   if (data.taxForms && Array.isArray(data.taxForms)) {
-    const formResults = await processTaxForms(data.taxForms);
+    const formResults = await processTaxForms(data.taxForms, effectiveDate);
     changesCount += formResults.changesCount;
     majorChanges = [...majorChanges, ...formResults.majorChanges];
   }
@@ -214,16 +217,19 @@ const processTaxCodeUpdates = async (
 /**
  * Process tax bracket updates 
  */
-const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<{changesCount: number, majorChanges: any[]}> => {
+const processTaxBrackets = async (
+  brackets: TaxBracketUpdate[], 
+  effectiveDate?: string
+): Promise<{changesCount: number, majorChanges: any[]}> => {
   console.log("Processing tax brackets:", brackets.length);
   
-  // In a real app, this would update a database.
-  // For our mock implementation, we'll just log the changes.
+  // Process with versioning system
+  const versionResult = processTaxBracketsWithVersioning(brackets, effectiveDate);
   
-  let changesCount = 0;
   let majorChanges: any[] = [];
+  let changesCount = versionResult.changesCount;
   
-  // Compare incoming brackets with existing ones
+  // Compare incoming brackets with existing ones for major changes
   brackets.forEach(newBracket => {
     const filingStatus = newBracket.filingStatus || newBracket.filing_status;
     const bracketMin = newBracket.bracket_min;
@@ -245,7 +251,6 @@ const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<{change
     
     if (!existingBracket || existingBracket.rate !== rate) {
       console.log(`Change detected in tax bracket: ${year}, ${filingStatus} at ${bracketMin}`);
-      changesCount++;
       
       // Calculate percentage change if there was an existing bracket
       if (existingBracket && existingBracket.rate !== undefined && rate !== undefined) {
@@ -262,9 +267,6 @@ const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<{change
           });
         }
       }
-      
-      // In a real app, update or insert the bracket in the database
-      // For now, we just log it
     }
   });
   
@@ -274,72 +276,88 @@ const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<{change
 /**
  * Process standard deduction updates
  */
-const processStandardDeductions = async (deductions: StandardDeductionUpdate[]): Promise<{changesCount: number, majorChanges: any[]}> => {
+const processStandardDeductions = async (
+  deductions: StandardDeductionUpdate[], 
+  effectiveDate?: string
+): Promise<{changesCount: number, majorChanges: any[]}> => {
   console.log("Processing standard deductions:", deductions.length);
   
   let changesCount = 0;
   let majorChanges: any[] = [];
   
-  deductions.forEach(newDeduction => {
-    const year = newDeduction.year.toString();
-    const filingStatus = newDeduction.filing_status || '';
-    const amount = newDeduction.amount;
-    
-    // Skip if we don't have the required data
-    if (!filingStatus || amount === undefined) {
-      console.warn("Incomplete standard deduction data:", newDeduction);
-      return;
+  // Group deductions by year for versioning
+  const deductionsByYear: Record<number, StandardDeductionUpdate[]> = {};
+  
+  deductions.forEach(deduction => {
+    const year = deduction.year;
+    if (!deductionsByYear[year]) {
+      deductionsByYear[year] = [];
     }
+    deductionsByYear[year].push(deduction);
+    changesCount++;
+  });
+  
+  // Process each year's deductions, detecting major changes
+  Object.entries(deductionsByYear).forEach(([yearStr, yearDeductions]) => {
+    const year = parseInt(yearStr);
     
-    // Check if the year exists in our data
-    if (STANDARD_DEDUCTION_BY_YEAR[year]) {
-      // Check if the filing status exists for this year
-      if (STANDARD_DEDUCTION_BY_YEAR[year][filingStatus]) {
-        // Compare the amounts
-        if (STANDARD_DEDUCTION_BY_YEAR[year][filingStatus] !== amount) {
-          console.log(`Change detected in standard deduction: ${year}, ${filingStatus}`);
-          changesCount++;
-          
-          const oldAmount = STANDARD_DEDUCTION_BY_YEAR[year][filingStatus];
-          const percentChange = (amount - oldAmount) / oldAmount;
-          
-          if (isMajorTaxChange('standard_deduction', percentChange)) {
-            majorChanges.push({
-              type: 'standard_deduction',
-              year: parseInt(year),
-              percentChange,
-              title: `Standard Deduction Change for ${filingStatus} filers`,
-              message: `The standard deduction for ${filingStatus} filers has changed from $${oldAmount.toLocaleString()} to $${amount.toLocaleString()} for tax year ${year}.`,
-              link_to_learn_more: `/tax-education?year=${year}`
-            });
+    yearDeductions.forEach(newDeduction => {
+      const filingStatus = newDeduction.filing_status || '';
+      const amount = newDeduction.amount;
+      
+      // Skip if we don't have the required data
+      if (!filingStatus || amount === undefined) {
+        console.warn("Incomplete standard deduction data:", newDeduction);
+        return;
+      }
+      
+      // Check if the year exists in our data
+      if (STANDARD_DEDUCTION_BY_YEAR[year]) {
+        // Check if the filing status exists for this year
+        if (STANDARD_DEDUCTION_BY_YEAR[year][filingStatus]) {
+          // Compare the amounts
+          if (STANDARD_DEDUCTION_BY_YEAR[year][filingStatus] !== amount) {
+            console.log(`Change detected in standard deduction: ${year}, ${filingStatus}`);
+            
+            const oldAmount = STANDARD_DEDUCTION_BY_YEAR[year][filingStatus];
+            const percentChange = (amount - oldAmount) / oldAmount;
+            
+            if (isMajorTaxChange('standard_deduction', percentChange)) {
+              majorChanges.push({
+                type: 'standard_deduction',
+                year: year,
+                percentChange,
+                title: `Standard Deduction Change for ${filingStatus} filers`,
+                message: `The standard deduction for ${filingStatus} filers has changed from $${oldAmount.toLocaleString()} to $${amount.toLocaleString()} for tax year ${year}.`,
+                link_to_learn_more: `/tax-education?year=${year}`
+              });
+            }
           }
+        } else {
+          console.log(`New filing status for standard deduction: ${year}, ${filingStatus}`);
+          
+          majorChanges.push({
+            type: 'standard_deduction',
+            year: year,
+            percentChange: 1, // 100% increase (new item)
+            title: `New Standard Deduction for ${filingStatus} filers`,
+            message: `A new standard deduction of $${amount.toLocaleString()} has been added for ${filingStatus} filers for tax year ${year}.`,
+            link_to_learn_more: `/tax-education?year=${year}`
+          });
         }
       } else {
-        console.log(`New filing status for standard deduction: ${year}, ${filingStatus}`);
-        changesCount++;
+        console.log(`New year for standard deduction: ${year}`);
         
         majorChanges.push({
           type: 'standard_deduction',
-          year: parseInt(year),
+          year: year,
           percentChange: 1, // 100% increase (new item)
-          title: `New Standard Deduction for ${filingStatus} filers`,
-          message: `A new standard deduction of $${amount.toLocaleString()} has been added for ${filingStatus} filers for tax year ${year}.`,
+          title: `New Standard Deductions for ${year}`,
+          message: `Standard deductions for tax year ${year} have been released with $${amount.toLocaleString()} for ${filingStatus} filers.`,
           link_to_learn_more: `/tax-education?year=${year}`
         });
       }
-    } else {
-      console.log(`New year for standard deduction: ${year}`);
-      changesCount++;
-      
-      majorChanges.push({
-        type: 'standard_deduction',
-        year: parseInt(year),
-        percentChange: 1, // 100% increase (new item)
-        title: `New Standard Deductions for ${year}`,
-        message: `Standard deductions for tax year ${year} have been released with $${amount.toLocaleString()} for ${filingStatus} filers.`,
-        link_to_learn_more: `/tax-education?year=${year}`
-      });
-    }
+    });
   });
   
   return { changesCount, majorChanges };
@@ -348,11 +366,26 @@ const processStandardDeductions = async (deductions: StandardDeductionUpdate[]):
 /**
  * Process retirement limit updates
  */
-const processRetirementLimits = async (limits: RetirementLimitUpdate[]): Promise<{changesCount: number, majorChanges: any[]}> => {
+const processRetirementLimits = async (
+  limits: RetirementLimitUpdate[], 
+  effectiveDate?: string
+): Promise<{changesCount: number, majorChanges: any[]}> => {
   console.log("Processing retirement limits:", limits.length);
   
-  // In a real app, this would compare with existing limits and update as needed
-  // For our mock implementation, we'll just count them all as changes
+  // Group limits by year for versioning
+  const limitsByYear: Record<number, RetirementLimitUpdate[]> = {};
+  
+  limits.forEach(limit => {
+    const year = limit.year;
+    if (!limitsByYear[year]) {
+      limitsByYear[year] = [];
+    }
+    limitsByYear[year].push({
+      ...limit,
+      effective_date: effectiveDate,
+      version: `${new Date().getFullYear()}.${new Date().getMonth() + 1}`
+    });
+  });
   
   // Mock some major changes for retirement limits
   const majorChanges = limits.length > 0 ? [{
@@ -370,11 +403,26 @@ const processRetirementLimits = async (limits: RetirementLimitUpdate[]): Promise
 /**
  * Process tax form updates
  */
-const processTaxForms = async (forms: TaxFormUpdate[]): Promise<{changesCount: number, majorChanges: any[]}> => {
+const processTaxForms = async (
+  forms: TaxFormUpdate[], 
+  effectiveDate?: string
+): Promise<{changesCount: number, majorChanges: any[]}> => {
   console.log("Processing tax forms:", forms.length);
   
-  // In a real app, this would compare with existing forms and update as needed
-  // For our mock implementation, we'll just count them all as changes
+  // Group forms by year for versioning
+  const formsByYear: Record<number, TaxFormUpdate[]> = {};
+  
+  forms.forEach(form => {
+    const year = form.year;
+    if (!formsByYear[year]) {
+      formsByYear[year] = [];
+    }
+    formsByYear[year].push({
+      ...form,
+      effective_date: effectiveDate,
+      version: `${new Date().getFullYear()}.${new Date().getMonth() + 1}`
+    });
+  });
   
   // Mock some major changes for tax forms
   const majorChanges = forms.length > 0 ? [{

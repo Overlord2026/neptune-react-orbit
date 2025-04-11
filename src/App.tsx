@@ -1,20 +1,21 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import HomePage from './pages/HomePage';
 import TaxCalculatorPage from './pages/TaxCalculatorPage';
 import TaxCreditsPage from './pages/TaxCreditsPage';
 import TaxPlanningLandingPage from './pages/TaxPlanningLandingPage';
 import DataFeedsAndUpdatesPage from './pages/DataFeedsAndUpdatesPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import TaxUpdatesHistoryPage from './pages/TaxUpdatesHistoryPage';
+import TaxDataHistoryPage from './pages/TaxDataHistoryPage';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: <TaxPlanningLandingPage />,
   },
   {
     path: "/tax-calculator",
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: "/tax-updates-history",
     element: <TaxUpdatesHistoryPage />
+  },
+  {
+    path: "/admin/tax-data-history",
+    element: <TaxDataHistoryPage />
   }
 ]);
 
