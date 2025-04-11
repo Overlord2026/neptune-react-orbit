@@ -57,7 +57,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { AuditLogEntry } from '@/utils/dataFeed/types';
 import { getAuditLogs, performRollback, getCurrentUserId, hasAdminPermission } from '@/utils/auditLogUtils';
-import { getAllDataFeeds } from '@/utils/dataFeedUtils';
+import { getDataFeeds } from '@/utils/dataFeedUtils';
 import { toast } from 'sonner';
 
 const ITEMS_PER_PAGE = 10;
@@ -87,7 +87,7 @@ const AdminAuditLogPage: React.FC = () => {
     setIsAdmin(hasAdminPermission(userId));
     
     // Get data feeds for filter dropdown
-    const feeds = getAllDataFeeds().map(feed => ({
+    const feeds = getDataFeeds().map(feed => ({
       id: feed.id,
       name: feed.name
     }));

@@ -228,7 +228,7 @@ const TaxAlertConfigPanel = () => {
                   className="mt-1"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Use {"{type}"}, {"{year}"}, {"{percentChange}"}, etc. as placeholders
+                  Use {"{type}"}, {"{year}"}, {"{percentChange}"} as placeholders
                 </p>
               </div>
               
