@@ -1,16 +1,28 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Check, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+
+interface SoftwareOption {
+  name: string;
+  description: string;
+  isPopular: boolean;
+  authUrl?: string;
+  connectionStatus?: 'connected' | 'disconnected';
+}
 
 const AccountingSoftwareIntegration = () => {
-  const softwareOptions = [
+  const { toast } = useToast();
+  const [softwareOptions, setSoftwareOptions] = useState<SoftwareOption[]>([
     {
       name: "QuickBooks",
       description: "Connect your QuickBooks account to automatically import income and expense data for tax projections.",
       isPopular: true,
+      authUrl: "https://appcenter.intuit.com/connect/oauth2?client_id=ABCxyz123&redirect_uri=https://your-app.com/api/quickbooks/callback&response_type=code&scope=com.intuit.quickbooks.accounting",
+      connectionStatus: 'disconnected',
     },
     {
       name: "Xero",
@@ -27,7 +39,75 @@ const AccountingSoftwareIntegration = () => {
       description: "Import your FreshBooks data to streamline tax preparation and maximize potential deductions.",
       isPopular: true,
     },
-  ];
+  ]);
+
+  // Check for existing connections on component mount
+  useEffect(() => {
+    // This would typically be an API call to your backend to check connection status
+    checkExistingConnections();
+  }, []);
+
+  const checkExistingConnections = () => {
+    // In a real implementation, this would be an API call to check which services are connected
+    // For demo purposes, we'll check localStorage
+    const quickbooksConnected = localStorage.getItem('quickbooks_connected') === 'true';
+    
+    if (quickbooksConnected) {
+      updateConnectionStatus("QuickBooks", 'connected');
+    }
+  };
+
+  const updateConnectionStatus = (softwareName: string, status: 'connected' | 'disconnected') => {
+    setSoftwareOptions(prevOptions => 
+      prevOptions.map(option => 
+        option.name === softwareName ? { ...option, connectionStatus: status } : option
+      )
+    );
+  };
+
+  const handleConnect = (software: SoftwareOption) => {
+    if (software.connectionStatus === 'connected') {
+      // Handle disconnection
+      if (software.name === "QuickBooks") {
+        // In production, this would call your API to revoke tokens
+        localStorage.removeItem('quickbooks_connected');
+        updateConnectionStatus(software.name, 'disconnected');
+        toast({
+          title: "Disconnected",
+          description: `Successfully disconnected from ${software.name}`,
+        });
+      }
+    } else {
+      // Handle connection
+      if (software.name === "QuickBooks" && software.authUrl) {
+        // Open OAuth window
+        const authWindow = window.open(software.authUrl, "_blank", "width=600,height=700");
+        
+        // In a real implementation, the OAuth callback would set the connection status
+        // For this demo, we'll simulate a successful connection after 3 seconds
+        setTimeout(() => {
+          if (authWindow) {
+            // The window would normally close itself after OAuth completion
+            authWindow.close();
+          }
+          
+          // Simulate successful OAuth completion
+          localStorage.setItem('quickbooks_connected', 'true');
+          updateConnectionStatus(software.name, 'connected');
+          toast({
+            title: "Connected",
+            description: `Successfully connected to ${software.name}`,
+          });
+        }, 3000);
+      } else {
+        // For other services without implementation yet
+        toast({
+          title: "Integration Coming Soon",
+          description: `${software.name} integration is not yet available.`,
+        });
+      }
+    }
+  };
 
   return (
     <div className="my-8">
@@ -43,9 +123,14 @@ const AccountingSoftwareIntegration = () => {
                 <CardTitle className="text-[#E5E5E5] text-xl">
                   {software.name}
                 </CardTitle>
-                {software.isPopular && (
-                  <Badge className="bg-[#007BFF] text-white hover:bg-[#0069d9]">Popular</Badge>
-                )}
+                <div className="flex items-center gap-2">
+                  {software.connectionStatus === 'connected' && (
+                    <Badge className="bg-[#00C47C] text-white hover:bg-[#00a067]">Connected</Badge>
+                  )}
+                  {software.isPopular && !software.connectionStatus && (
+                    <Badge className="bg-[#007BFF] text-white hover:bg-[#0069d9]">Popular</Badge>
+                  )}
+                </div>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -53,11 +138,25 @@ const AccountingSoftwareIntegration = () => {
                 {software.description}
               </p>
               <Button 
-                variant="outline" 
-                className="w-full text-[#007BFF] border-[#353e52] hover:bg-[#242A38] hover:border-[#007BFF] group"
+                variant={software.connectionStatus === 'connected' ? "outline" : "outline"}
+                className={`w-full ${
+                  software.connectionStatus === 'connected'
+                    ? "text-[#00C47C] border-[#353e52] hover:bg-[#242A38] hover:border-[#00C47C] group"
+                    : "text-[#007BFF] border-[#353e52] hover:bg-[#242A38] hover:border-[#007BFF] group"
+                }`}
+                onClick={() => handleConnect(software)}
               >
-                Connect
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                {software.connectionStatus === 'connected' ? (
+                  <>
+                    Disconnect
+                    <RefreshCw className="ml-2 h-4 w-4 group-hover:rotate-90 transition-transform" />
+                  </>
+                ) : (
+                  <>
+                    Connect
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>
