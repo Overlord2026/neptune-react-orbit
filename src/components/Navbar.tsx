@@ -30,12 +30,7 @@ const Navbar = ({ toggleSidebar, isMobile }: NavbarProps) => {
               <span className="sr-only">Toggle sidebar</span>
             </Button>
           )}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-full bg-[#007BFF] flex items-center justify-center animate-float">
-              <span className="font-bold text-white text-lg">B</span>
-            </div>
-            <span className="font-bold text-xl text-white hidden sm:inline-block">Family Office</span>
-          </Link>
+          {/* Removed the "Family Office" text and icon as it's redundant with the logo in the header */}
         </div>
         
         <div className="flex-1" />
