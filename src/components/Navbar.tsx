@@ -32,9 +32,9 @@ const Navbar = ({ toggleSidebar, isMobile }: NavbarProps) => {
           )}
           <Link to="/" className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-full bg-[#007BFF] flex items-center justify-center animate-float">
-              <span className="font-bold text-white text-lg">N</span>
+              <span className="font-bold text-white text-lg">B</span>
             </div>
-            <span className="font-bold text-xl text-white hidden sm:inline-block">ProjectNeptune</span>
+            <span className="font-bold text-xl text-white hidden sm:inline-block">Family Office</span>
           </Link>
         </div>
         

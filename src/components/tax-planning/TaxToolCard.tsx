@@ -27,7 +27,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
       <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
           <Link to={link} className="block transition-all duration-200 hover:scale-[1.02]">
-            <Card className="border-[#2A2F3C] bg-[#1A1F2C] hover:border-[#007BFF] transition-colors">
+            <Card className="border-[#2A2F3C] bg-[#1A1F2C] hover:border-[#00C47C] transition-colors">
               <CardHeader className="space-y-1">
                 <CardTitle className="text-xl font-semibold text-white flex items-center gap-3">
                   {icon}

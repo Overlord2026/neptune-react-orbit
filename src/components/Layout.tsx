@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import Navbar from './Navbar';
-import Sidebar from './Sidebar';
+import AppSidebar from './AppSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Drawer, DrawerContent, DrawerTrigger, DrawerOverlay } from './ui/drawer';
+import { Drawer, DrawerContent, DrawerOverlay } from './ui/drawer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bell, HelpCircle } from 'lucide-react';
 import logo from '@/assets/images/logo.png';
@@ -48,19 +48,19 @@ const Layout = () => {
       {/* Main Navbar - now positioned below the top banner */}
       <Navbar toggleSidebar={toggleSidebar} isMobile={isMobile} />
       
-      <div className="flex flex-1 mt-16"> {/* Added margin-top to accommodate the fixed header */}
+      <div className="flex flex-1 pt-16"> {/* Added padding-top to accommodate the fixed header */}
         {isMobile ? (
           <Drawer open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <DrawerOverlay />
             <DrawerContent className="p-0 max-w-[80%]">
-              <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
+              <AppSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
             </DrawerContent>
           </Drawer>
         ) : (
-          <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
+          <AppSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
         )}
         <main className={`flex-1 transition-all duration-300 bg-[#101521] ${sidebarOpen && !isMobile ? 'ml-64' : 'ml-0'}`}>
-          <div className="container p-4 md:p-6">
+          <div className="container p-4 md:p-6 mt-16">
             <Outlet />
           </div>
         </main>

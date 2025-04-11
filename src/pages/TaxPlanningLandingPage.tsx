@@ -15,7 +15,7 @@ const TaxPlanningLandingPage = () => {
       <div className="flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
         <div className="space-y-0.5">
           <h2 className="text-3xl font-semibold tracking-tight text-white flex items-center gap-2">
-            <FileCheck className="w-8 h-8 text-[#007BFF]" />
+            <FileCheck className="w-8 h-8 text-[#00C47C]" />
             Tax Planning Hub
           </h2>
           <p className="text-[#B0B0B0]">
