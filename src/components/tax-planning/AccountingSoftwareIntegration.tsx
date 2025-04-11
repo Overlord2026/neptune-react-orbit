@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Check, RefreshCw } from 'lucide-react';
+import { ArrowRight, Check, RefreshCw, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SoftwareOption {
   name: string;
@@ -12,6 +13,7 @@ interface SoftwareOption {
   isPopular: boolean;
   authUrl?: string;
   connectionStatus?: 'connected' | 'disconnected';
+  lastSynced?: string;
 }
 
 const AccountingSoftwareIntegration = () => {
@@ -55,19 +57,42 @@ const AccountingSoftwareIntegration = () => {
     const quickbooksConnected = localStorage.getItem('quickbooks_connected') === 'true';
     const xeroConnected = localStorage.getItem('xero_connected') === 'true';
     
+    // Check for connection timestamps
+    const quickbooksLastSynced = localStorage.getItem('quickbooks_last_synced');
+    const xeroLastSynced = localStorage.getItem('xero_last_synced');
+    
     if (quickbooksConnected) {
-      updateConnectionStatus("QuickBooks", 'connected');
+      updateConnectionStatus("QuickBooks", 'connected', quickbooksLastSynced || getCurrentTimestamp());
     }
     
     if (xeroConnected) {
-      updateConnectionStatus("Xero", 'connected');
+      updateConnectionStatus("Xero", 'connected', xeroLastSynced || getCurrentTimestamp());
     }
   };
 
-  const updateConnectionStatus = (softwareName: string, status: 'connected' | 'disconnected') => {
+  const getCurrentTimestamp = () => {
+    return new Date().toISOString();
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  };
+
+  const updateConnectionStatus = (
+    softwareName: string, 
+    status: 'connected' | 'disconnected', 
+    lastSynced?: string
+  ) => {
     setSoftwareOptions(prevOptions => 
       prevOptions.map(option => 
-        option.name === softwareName ? { ...option, connectionStatus: status } : option
+        option.name === softwareName 
+          ? { 
+              ...option, 
+              connectionStatus: status,
+              lastSynced: status === 'connected' ? (lastSynced || getCurrentTimestamp()) : undefined
+            } 
+          : option
       )
     );
   };
@@ -78,6 +103,7 @@ const AccountingSoftwareIntegration = () => {
       if (software.name === "QuickBooks") {
         // In production, this would call your API to revoke tokens
         localStorage.removeItem('quickbooks_connected');
+        localStorage.removeItem('quickbooks_last_synced');
         updateConnectionStatus(software.name, 'disconnected');
         toast({
           title: "Disconnected",
@@ -86,6 +112,7 @@ const AccountingSoftwareIntegration = () => {
       } else if (software.name === "Xero") {
         // In production, this would call your API to revoke tokens
         localStorage.removeItem('xero_connected');
+        localStorage.removeItem('xero_last_synced');
         updateConnectionStatus(software.name, 'disconnected');
         toast({
           title: "Disconnected",
@@ -107,13 +134,17 @@ const AccountingSoftwareIntegration = () => {
           }
           
           // Simulate successful OAuth completion
+          const currentTime = getCurrentTimestamp();
+          
           if (software.name === "QuickBooks") {
             localStorage.setItem('quickbooks_connected', 'true');
+            localStorage.setItem('quickbooks_last_synced', currentTime);
           } else if (software.name === "Xero") {
             localStorage.setItem('xero_connected', 'true');
+            localStorage.setItem('xero_last_synced', currentTime);
           }
           
-          updateConnectionStatus(software.name, 'connected');
+          updateConnectionStatus(software.name, 'connected', currentTime);
           toast({
             title: "Connected",
             description: `Successfully connected to ${software.name}`,
@@ -127,6 +158,24 @@ const AccountingSoftwareIntegration = () => {
         });
       }
     }
+  };
+
+  const handleSync = (software: SoftwareOption) => {
+    // In a real implementation, this would call your API to sync data from the accounting software
+    const currentTime = getCurrentTimestamp();
+    
+    if (software.name === "QuickBooks") {
+      localStorage.setItem('quickbooks_last_synced', currentTime);
+    } else if (software.name === "Xero") {
+      localStorage.setItem('xero_last_synced', currentTime);
+    }
+    
+    updateConnectionStatus(software.name, 'connected', currentTime);
+    
+    toast({
+      title: "Sync Complete",
+      description: `Successfully synced data from ${software.name}`,
+    });
   };
 
   return (
@@ -145,7 +194,9 @@ const AccountingSoftwareIntegration = () => {
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   {software.connectionStatus === 'connected' && (
-                    <Badge className="bg-[#00C47C] text-white hover:bg-[#00a067]">Connected</Badge>
+                    <Badge className="bg-[#00C47C] text-white hover:bg-[#00a067] flex items-center gap-1">
+                      Connected <Check className="h-3 w-3" />
+                    </Badge>
                   )}
                   {software.isPopular && !software.connectionStatus && (
                     <Badge className="bg-[#007BFF] text-white hover:bg-[#0069d9]">Popular</Badge>
@@ -157,27 +208,54 @@ const AccountingSoftwareIntegration = () => {
               <p className="text-[#B0B0B0] mb-4">
                 {software.description}
               </p>
-              <Button 
-                variant={software.connectionStatus === 'connected' ? "outline" : "outline"}
-                className={`w-full ${
-                  software.connectionStatus === 'connected'
-                    ? "text-[#00C47C] border-[#353e52] hover:bg-[#242A38] hover:border-[#00C47C] group"
-                    : "text-[#007BFF] border-[#353e52] hover:bg-[#242A38] hover:border-[#007BFF] group"
-                }`}
-                onClick={() => handleConnect(software)}
-              >
+              
+              {software.connectionStatus === 'connected' && software.lastSynced && (
+                <div className="flex items-center text-xs text-[#B0B0B0] mb-3">
+                  <Calendar className="mr-1 h-3 w-3" /> 
+                  <span>Last synced: {formatTimestamp(software.lastSynced)}</span>
+                </div>
+              )}
+              
+              <div className="flex gap-2">
                 {software.connectionStatus === 'connected' ? (
                   <>
-                    Disconnect
-                    <RefreshCw className="ml-2 h-4 w-4 group-hover:rotate-90 transition-transform" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="outline"
+                            className="text-[#007BFF] border-[#353e52] hover:bg-[#242A38] hover:border-[#007BFF] flex-1"
+                            onClick={() => handleSync(software)}
+                          >
+                            Sync Now
+                            <RefreshCw className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Fetch the latest data from {software.name}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    
+                    <Button 
+                      variant="outline"
+                      className="text-[#00C47C] border-[#353e52] hover:bg-[#242A38] hover:border-[#00C47C]"
+                      onClick={() => handleConnect(software)}
+                    >
+                      Disconnect
+                    </Button>
                   </>
                 ) : (
-                  <>
+                  <Button 
+                    variant="outline"
+                    className="text-[#007BFF] border-[#353e52] hover:bg-[#242A38] hover:border-[#007BFF] group w-full"
+                    onClick={() => handleConnect(software)}
+                  >
                     Connect
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </>
+                  </Button>
                 )}
-              </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
