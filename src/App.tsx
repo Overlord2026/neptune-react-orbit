@@ -11,6 +11,8 @@ import TaxUpdatesHistoryPage from './pages/TaxUpdatesHistoryPage';
 import TaxDataHistoryPage from './pages/TaxDataHistoryPage';
 import AdminAuditLogPage from './pages/AdminAuditLogPage';
 import AdvancedTaxEducationPage from './pages/AdvancedTaxEducationPage';
+import BasicTaxEducationPage from './pages/BasicTaxEducationPage';
+import TaxGlossaryPage from './pages/TaxGlossaryPage';
 import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter([
@@ -25,6 +27,14 @@ const router = createBrowserRouter([
   {
     path: "/tax-planning/advanced-tax-education",
     element: <AdvancedTaxEducationPage />,
+  },
+  {
+    path: "/tax-planning/basic-education",
+    element: <BasicTaxEducationPage />,
+  },
+  {
+    path: "/tax-planning/glossary",
+    element: <TaxGlossaryPage />,
   },
   {
     path: "/admin/data-feeds",

@@ -11,13 +11,11 @@ import EnrollmentDialog from "@/components/tax-education/EnrollmentDialog";
 import ExternalEnrollmentButton from "@/components/tax-education/ExternalEnrollmentButton";
 
 const AdvancedTaxEducationPage = () => {
-  // This would normally be determined by checking if user has purchased the course
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState<boolean>(false);
   
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   
-  // For demonstration purposes
   const availableYears = [2023, 2024, 2025];
   
   const contentOptions = {
@@ -25,7 +23,6 @@ const AdvancedTaxEducationPage = () => {
     format: 'currency' as const
   };
 
-  // Example partner courses data
   const partnerCourses = [
     {
       id: "tax-masters-advanced",
@@ -101,7 +98,6 @@ const AdvancedTaxEducationPage = () => {
         </div>
       </div>
       
-      {/* Year Selector */}
       <div className="flex flex-col md:flex-row gap-4 my-6 p-4 border border-gray-200 dark:border-gray-800 rounded-lg bg-card">
         <div className="space-y-2">
           <label htmlFor="year-select" className="text-sm font-medium">Reference Tax Year</label>
@@ -127,7 +123,6 @@ const AdvancedTaxEducationPage = () => {
         </div>
       </div>
 
-      {/* Course Overview */}
       <div className="grid gap-6 py-6">
         <Card className="bg-[#1A1F2C] border border-[#8E9196] overflow-hidden">
           <CardHeader>
@@ -161,7 +156,6 @@ const AdvancedTaxEducationPage = () => {
                         Enroll Now <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                       
-                      {/* Partner Platform Enrollment Option */}
                       {partnerCourses.map(course => (
                         <ExternalEnrollmentButton 
                           key={course.id}
@@ -177,7 +171,6 @@ const AdvancedTaxEducationPage = () => {
           </CardContent>
         </Card>
 
-        {/* Partner Course Section */}
         <Card className="border-l-4 border-l-[#FFD700] bg-[#1A1F2C]">
           <CardHeader>
             <CardTitle className="text-xl">Partner Course Offerings</CardTitle>
@@ -208,7 +201,6 @@ const AdvancedTaxEducationPage = () => {
           </CardContent>
         </Card>
 
-        {/* Course Modules */}
         <h3 className="text-2xl font-bold mt-6">Course Modules</h3>
         <div className="grid gap-4">
           {moduleData.map((module) => (
@@ -247,7 +239,6 @@ const AdvancedTaxEducationPage = () => {
           ))}
         </div>
 
-        {/* Current Tax Limits Section */}
         <Card className="bg-[#1A1F2C] border border-[#8E9196] overflow-hidden mt-6">
           <CardHeader>
             <CardTitle className="text-xl text-[#FFD700]">Current Tax Limits ({selectedYear})</CardTitle>
@@ -307,7 +298,6 @@ const AdvancedTaxEducationPage = () => {
           </CardContent>
         </Card>
 
-        {/* Additional Resources */}
         <h3 className="text-2xl font-bold mt-6">Additional Resources (Included)</h3>
         <div className="grid md:grid-cols-3 gap-4">
           {additionalResources.map((resource, index) => (
@@ -322,7 +312,6 @@ const AdvancedTaxEducationPage = () => {
           ))}
         </div>
 
-        {/* Disclaimers */}
         <div className="my-6 p-4 bg-[#1A1F2C] rounded-md border border-[#8E9196]">
           <h4 className="font-medium mb-2">Important Disclaimers</h4>
           <p className="text-sm text-muted-foreground">
@@ -332,7 +321,6 @@ const AdvancedTaxEducationPage = () => {
           </p>
         </div>
 
-        {/* Navigation Buttons */}
         <div className="flex flex-wrap gap-4 pt-4">
           <Button asChild>
             <Link to="/tax-planning">
@@ -352,7 +340,6 @@ const AdvancedTaxEducationPage = () => {
         </div>
       </div>
       
-      {/* Enrollment Dialog */}
       <EnrollmentDialog 
         open={enrollmentDialogOpen} 
         onOpenChange={setEnrollmentDialogOpen}
