@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
-import { FileCheck } from "lucide-react"; // ✅ This icon exists in lucide-react
+import { FileCheck } from "lucide-react";
 import EducationResources from '@/components/tax-planning/EducationResources';
 import TaxTools from '@/components/tax-planning/TaxTools';
 import TaxUpdateDemo from '@/components/tax/TaxUpdateDemo';
+import AccountingSoftwareIntegration from '@/components/tax-planning/AccountingSoftwareIntegration';
 
 const TaxPlanningLandingPage = () => {
   const [isEducationOpen, setIsEducationOpen] = useState<boolean>(true);
@@ -26,6 +28,7 @@ const TaxPlanningLandingPage = () => {
           onOpenChange={setIsEducationOpen}
         />
         <TaxTools />
+        <AccountingSoftwareIntegration />
         <TaxUpdateDemo userId="current-user" />
       </div>
     </div>
