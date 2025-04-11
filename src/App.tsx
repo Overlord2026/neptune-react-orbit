@@ -14,6 +14,8 @@ import AdvancedTaxEducationPage from './pages/AdvancedTaxEducationPage';
 import BasicTaxEducationPage from './pages/BasicTaxEducationPage';
 import TaxGlossaryPage from './pages/TaxGlossaryPage';
 import MyCoursesPage from './pages/MyCoursesPage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentErrorPage from './pages/PaymentErrorPage';
 import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter([
@@ -40,6 +42,14 @@ const router = createBrowserRouter([
   {
     path: "/my-courses",
     element: <MyCoursesPage />,
+  },
+  {
+    path: "/payment-success",
+    element: <PaymentSuccessPage />,
+  },
+  {
+    path: "/payment-error",
+    element: <PaymentErrorPage />,
   },
   {
     path: "/admin/data-feeds",

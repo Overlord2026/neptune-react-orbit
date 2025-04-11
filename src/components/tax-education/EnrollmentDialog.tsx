@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -22,6 +23,7 @@ const EnrollmentDialog: React.FC<EnrollmentDialogProps> = ({
   coursePrice,
   courseTitle
 }) => {
+  const navigate = useNavigate();
   const [paymentStep, setPaymentStep] = useState<'confirmation' | 'processing' | 'success' | 'error'>('confirmation');
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   
@@ -50,10 +52,16 @@ const EnrollmentDialog: React.FC<EnrollmentDialogProps> = ({
         // Trigger enrollment success callback after a brief delay
         setTimeout(() => {
           onEnrollmentSuccess();
-        }, 2000);
+          onOpenChange(false); // Close the dialog
+          
+          // Navigate to the success page with course name and URL parameters
+          navigate(`/payment-success?course=${encodeURIComponent(courseTitle)}&url=${encodeURIComponent('/tax-planning/advanced-tax-education')}`);
+        }, 1000);
       } else {
         setPaymentStep('error');
         setErrorDialogOpen(true);
+        
+        // Navigate to error page after user acknowledges the error
       }
     }, 3000);
   };
@@ -61,6 +69,11 @@ const EnrollmentDialog: React.FC<EnrollmentDialogProps> = ({
   const resetPaymentFlow = () => {
     setPaymentStep('confirmation');
     setErrorDialogOpen(false);
+  };
+  
+  const handleErrorDialogClose = () => {
+    setErrorDialogOpen(false);
+    navigate(`/payment-error?course=${encodeURIComponent(courseTitle)}&enrollUrl=${encodeURIComponent('/tax-planning/advanced-tax-education')}`);
   };
 
   return (
@@ -152,8 +165,8 @@ const EnrollmentDialog: React.FC<EnrollmentDialogProps> = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => onOpenChange(false)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={resetPaymentFlow} className="bg-[#9b87f5] hover:bg-[#8a76e4]">
-              Try Again
+            <AlertDialogAction onClick={handleErrorDialogClose} className="bg-[#9b87f5] hover:bg-[#8a76e4]">
+              View Details
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
