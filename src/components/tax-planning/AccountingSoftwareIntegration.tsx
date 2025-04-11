@@ -2,10 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Check, RefreshCw, Calendar } from 'lucide-react';
+import { ArrowRight, Check, RefreshCw, Calendar, Info, Shield, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import InfoTooltip from '@/components/tax/InfoTooltip';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface SoftwareOption {
   name: string;
@@ -182,6 +185,31 @@ const AccountingSoftwareIntegration = () => {
     <div className="my-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
         <h2 className="text-2xl font-semibold text-white mb-2 md:mb-0">Accounting Software Integration</h2>
+        
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Shield className="h-4 w-4 text-[#00C47C]" />
+              Data Policy
+              <ExternalLink className="h-3 w-3" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80 bg-[#1A1F2C] border border-[#242A38] text-[#E5E5E5]">
+            <div className="space-y-2">
+              <h4 className="font-medium">How We Handle Your Data</h4>
+              <p className="text-xs text-[#B0B0B0]">
+                We use industry-standard encryption and OAuth protocols to ensure your financial data remains secure.
+                Your accounting data is only used for tax projections and planning purposes.
+              </p>
+              <p className="text-xs text-[#B0B0B0]">
+                We never store your accounting software passwords. All connections are made using secure OAuth tokens that you can revoke at any time.
+              </p>
+              <p className="text-xs text-[#B0B0B0] mt-2">
+                View our complete <a href="#" className="text-[#007BFF] hover:underline">Privacy Policy</a> for more details.
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -216,7 +244,7 @@ const AccountingSoftwareIntegration = () => {
                 </div>
               )}
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 mb-3">
                 {software.connectionStatus === 'connected' ? (
                   <>
                     <TooltipProvider>
@@ -256,9 +284,37 @@ const AccountingSoftwareIntegration = () => {
                   </Button>
                 )}
               </div>
+
+              {!software.connectionStatus && (
+                <div className="flex items-start mt-2 space-x-1.5">
+                  <Info className="h-3.5 w-3.5 text-[#808080] mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-[#808080]">
+                    By connecting, you grant us permission to access your financial data for tax projections. 
+                    Your credentials are protected by OAuth; we never store your password.
+                  </p>
+                </div>
+              )}
+
+              {software.connectionStatus === 'connected' && (
+                <Alert className="bg-[#1a2336] border border-[#353e52] p-2 mt-2">
+                  <AlertDescription className="text-xs text-[#B0B0B0] flex items-center">
+                    <Shield className="h-3.5 w-3.5 text-[#00C47C] mr-1.5 flex-shrink-0" />
+                    Your connection is secure and can be revoked at any time.
+                  </AlertDescription>
+                </Alert>
+              )}
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="mt-6 text-center">
+        <InfoTooltip 
+          text="We use industry-standard security practices to protect your data. All connections are secured via OAuth and HTTPS."
+          icon="info"
+          link="#"
+          linkText="View our complete security policy"
+        />
       </div>
     </div>
   );
