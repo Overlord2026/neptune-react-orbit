@@ -15,7 +15,8 @@ import {
   Shield,
   Banknote,
   Scroll,
-  Briefcase
+  Briefcase,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
