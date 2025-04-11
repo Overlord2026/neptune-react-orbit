@@ -4,14 +4,20 @@ import { useTaxDataUpdate } from '@/hooks/useTaxDataUpdate';
 
 interface TaxDataLastUpdateProps {
   className?: string;
+  userId?: string;
+  showAlerts?: boolean;
 }
 
-const TaxDataLastUpdate: React.FC<TaxDataLastUpdateProps> = ({ className = '' }) => {
-  const lastUpdate = useTaxDataUpdate();
+const TaxDataLastUpdate: React.FC<TaxDataLastUpdateProps> = ({ 
+  className = '',
+  userId,
+  showAlerts = false
+}) => {
+  const updateInfo = useTaxDataUpdate(userId);
   
   return (
     <span className={className}>
-      {lastUpdate}
+      {updateInfo.lastUpdate}
     </span>
   );
 };

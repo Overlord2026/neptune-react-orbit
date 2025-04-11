@@ -67,3 +67,17 @@ export interface StandardDeductionUpdate {
   filing_status?: string; // For compatibility with existing code
   amount?: number; // For compatibility with existing code
 }
+
+export interface TaxAlert {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  link_to_learn_more?: string;
+  created_at: string;
+  read_at?: string;
+  severity: 'major' | 'minor' | 'info';
+  update_type: 'tax_bracket' | 'standard_deduction' | 'retirement_limits' | 'tax_forms' | 'other';
+  year: number;
+  dismissed: boolean;
+}

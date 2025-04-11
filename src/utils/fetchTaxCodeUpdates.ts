@@ -12,11 +12,17 @@ import {
 import { markTaxDataAsCurrent } from './dataFeed/taxDataCurrency';
 import { TAX_BRACKETS_DATA, STANDARD_DEDUCTION_BY_YEAR } from './taxBracketData';
 import { toast } from "sonner";
+import { createTaxAlert, isMajorTaxChange } from './taxUpdateUtils';
 
 // Maximum number of retry attempts
 const MAX_RETRY_ATTEMPTS = 3;
 // Delay between retries in milliseconds (exponential backoff)
 const RETRY_DELAY = 1000;
+
+// A mock function to get the current user ID (in a real app, this would come from auth)
+const getCurrentUserId = (): string => {
+  return "current-user";
+};
 
 /**
  * Fetches tax code updates from the configured data feed
@@ -144,49 +150,78 @@ export const fetchTaxCodeUpdates = async (
 const processTaxCodeUpdates = async (
   data: any, 
   feedId: string
-): Promise<{ changesCount: number, versionInfo?: string }> => {
+): Promise<{ changesCount: number, versionInfo?: string, majorChanges: any[] }> => {
   console.log("Processing tax code updates:", data);
   
   let changesCount = 0;
+  let majorChanges: any[] = [];
   
   // Extract version info if available
   const versionInfo = data.version || data.versionInfo || undefined;
   
   // Process tax brackets
   if (data.taxBrackets && Array.isArray(data.taxBrackets)) {
-    changesCount += await processTaxBrackets(data.taxBrackets);
+    const bracketResults = await processTaxBrackets(data.taxBrackets);
+    changesCount += bracketResults.changesCount;
+    majorChanges = [...majorChanges, ...bracketResults.majorChanges];
   }
   
   // Process standard deductions
   if (data.standardDeductions && Array.isArray(data.standardDeductions)) {
-    changesCount += await processStandardDeductions(data.standardDeductions);
+    const deductionResults = await processStandardDeductions(data.standardDeductions);
+    changesCount += deductionResults.changesCount;
+    majorChanges = [...majorChanges, ...deductionResults.majorChanges];
   }
   
   // Process retirement limits
   if (data.retirementLimits && Array.isArray(data.retirementLimits)) {
-    changesCount += await processRetirementLimits(data.retirementLimits);
+    const limitResults = await processRetirementLimits(data.retirementLimits);
+    changesCount += limitResults.changesCount;
+    majorChanges = [...majorChanges, ...limitResults.majorChanges];
   }
   
   // Process form references
   if (data.taxForms && Array.isArray(data.taxForms)) {
-    changesCount += await processTaxForms(data.taxForms);
+    const formResults = await processTaxForms(data.taxForms);
+    changesCount += formResults.changesCount;
+    majorChanges = [...majorChanges, ...formResults.majorChanges];
   }
   
   console.log(`Processed ${changesCount} tax code updates`);
   
-  return { changesCount, versionInfo };
+  // Create alerts for major changes
+  if (majorChanges.length > 0) {
+    const userId = getCurrentUserId();
+    
+    majorChanges.forEach(change => {
+      createTaxAlert(
+        userId,
+        `Important Tax Update: ${change.title}`,
+        change.message,
+        {
+          severity: 'major',
+          update_type: change.type,
+          year: change.year,
+          link_to_learn_more: change.link_to_learn_more
+        }
+      );
+    });
+  }
+  
+  return { changesCount, versionInfo, majorChanges };
 };
 
 /**
  * Process tax bracket updates 
  */
-const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<number> => {
+const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<{changesCount: number, majorChanges: any[]}> => {
   console.log("Processing tax brackets:", brackets.length);
   
   // In a real app, this would update a database.
   // For our mock implementation, we'll just log the changes.
   
   let changesCount = 0;
+  let majorChanges: any[] = [];
   
   // Compare incoming brackets with existing ones
   brackets.forEach(newBracket => {
@@ -194,6 +229,7 @@ const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<number>
     const bracketMin = newBracket.bracket_min;
     const bracketType = newBracket.bracket_type;
     const rate = newBracket.rate;
+    const year = newBracket.year;
     
     if (!filingStatus || bracketMin === undefined || !bracketType) {
       console.warn("Incomplete tax bracket data:", newBracket);
@@ -201,31 +237,48 @@ const processTaxBrackets = async (brackets: TaxBracketUpdate[]): Promise<number>
     }
     
     const existingBracket = TAX_BRACKETS_DATA.find(
-      b => b.tax_year === newBracket.year && 
+      b => b.tax_year === year && 
            b.filing_status === filingStatus &&
            b.bracket_min === bracketMin &&
            b.bracket_type === bracketType
     );
     
     if (!existingBracket || existingBracket.rate !== rate) {
-      console.log(`Change detected in tax bracket: ${newBracket.year}, ${filingStatus} at ${bracketMin}`);
+      console.log(`Change detected in tax bracket: ${year}, ${filingStatus} at ${bracketMin}`);
       changesCount++;
+      
+      // Calculate percentage change if there was an existing bracket
+      if (existingBracket && existingBracket.rate !== undefined && rate !== undefined) {
+        const percentChange = (rate - existingBracket.rate) / existingBracket.rate;
+        
+        if (isMajorTaxChange('tax_bracket', percentChange)) {
+          majorChanges.push({
+            type: 'tax_bracket',
+            year,
+            percentChange,
+            title: `Tax Bracket Change for ${filingStatus}`,
+            message: `The tax rate for ${filingStatus} filers with income starting at $${bracketMin.toLocaleString()} has changed from ${(existingBracket.rate * 100).toFixed(1)}% to ${(rate * 100).toFixed(1)}%.`,
+            link_to_learn_more: `/tax-education?year=${year}`
+          });
+        }
+      }
       
       // In a real app, update or insert the bracket in the database
       // For now, we just log it
     }
   });
   
-  return changesCount;
+  return { changesCount, majorChanges };
 };
 
 /**
  * Process standard deduction updates
  */
-const processStandardDeductions = async (deductions: StandardDeductionUpdate[]): Promise<number> => {
+const processStandardDeductions = async (deductions: StandardDeductionUpdate[]): Promise<{changesCount: number, majorChanges: any[]}> => {
   console.log("Processing standard deductions:", deductions.length);
   
   let changesCount = 0;
+  let majorChanges: any[] = [];
   
   deductions.forEach(newDeduction => {
     const year = newDeduction.year.toString();
@@ -247,47 +300,93 @@ const processStandardDeductions = async (deductions: StandardDeductionUpdate[]):
           console.log(`Change detected in standard deduction: ${year}, ${filingStatus}`);
           changesCount++;
           
-          // In a real app, update the database
+          const oldAmount = STANDARD_DEDUCTION_BY_YEAR[year][filingStatus];
+          const percentChange = (amount - oldAmount) / oldAmount;
+          
+          if (isMajorTaxChange('standard_deduction', percentChange)) {
+            majorChanges.push({
+              type: 'standard_deduction',
+              year: parseInt(year),
+              percentChange,
+              title: `Standard Deduction Change for ${filingStatus} filers`,
+              message: `The standard deduction for ${filingStatus} filers has changed from $${oldAmount.toLocaleString()} to $${amount.toLocaleString()} for tax year ${year}.`,
+              link_to_learn_more: `/tax-education?year=${year}`
+            });
+          }
         }
       } else {
         console.log(`New filing status for standard deduction: ${year}, ${filingStatus}`);
         changesCount++;
         
-        // In a real app, insert the new filing status
+        majorChanges.push({
+          type: 'standard_deduction',
+          year: parseInt(year),
+          percentChange: 1, // 100% increase (new item)
+          title: `New Standard Deduction for ${filingStatus} filers`,
+          message: `A new standard deduction of $${amount.toLocaleString()} has been added for ${filingStatus} filers for tax year ${year}.`,
+          link_to_learn_more: `/tax-education?year=${year}`
+        });
       }
     } else {
       console.log(`New year for standard deduction: ${year}`);
       changesCount++;
       
-      // In a real app, insert the new year
+      majorChanges.push({
+        type: 'standard_deduction',
+        year: parseInt(year),
+        percentChange: 1, // 100% increase (new item)
+        title: `New Standard Deductions for ${year}`,
+        message: `Standard deductions for tax year ${year} have been released with $${amount.toLocaleString()} for ${filingStatus} filers.`,
+        link_to_learn_more: `/tax-education?year=${year}`
+      });
     }
   });
   
-  return changesCount;
+  return { changesCount, majorChanges };
 };
 
 /**
  * Process retirement limit updates
  */
-const processRetirementLimits = async (limits: RetirementLimitUpdate[]): Promise<number> => {
+const processRetirementLimits = async (limits: RetirementLimitUpdate[]): Promise<{changesCount: number, majorChanges: any[]}> => {
   console.log("Processing retirement limits:", limits.length);
   
   // In a real app, this would compare with existing limits and update as needed
   // For our mock implementation, we'll just count them all as changes
   
-  return limits.length;
+  // Mock some major changes for retirement limits
+  const majorChanges = limits.length > 0 ? [{
+    type: 'retirement_limits',
+    year: limits[0].year,
+    percentChange: 0.1, // Assume 10% increase
+    title: `Retirement Contribution Limits Increased`,
+    message: `The IRS has increased retirement contribution limits for ${limits[0].year}. Check the details to see how this might affect your retirement planning.`,
+    link_to_learn_more: `/tax-education/retirement?year=${limits[0].year}`
+  }] : [];
+  
+  return { changesCount: limits.length, majorChanges };
 };
 
 /**
  * Process tax form updates
  */
-const processTaxForms = async (forms: TaxFormUpdate[]): Promise<number> => {
+const processTaxForms = async (forms: TaxFormUpdate[]): Promise<{changesCount: number, majorChanges: any[]}> => {
   console.log("Processing tax forms:", forms.length);
   
   // In a real app, this would compare with existing forms and update as needed
   // For our mock implementation, we'll just count them all as changes
   
-  return forms.length;
+  // Mock some major changes for tax forms
+  const majorChanges = forms.length > 0 ? [{
+    type: 'tax_forms',
+    year: forms[0].year,
+    percentChange: 1, // Significant change
+    title: `Tax Form Updates for ${forms[0].year}`,
+    message: `The IRS has released updated tax forms for ${forms[0].year}. There are important changes that might affect how you file your taxes.`,
+    link_to_learn_more: `/tax-education/forms?year=${forms[0].year}`
+  }] : [];
+  
+  return { changesCount: forms.length, majorChanges };
 };
 
 /**
