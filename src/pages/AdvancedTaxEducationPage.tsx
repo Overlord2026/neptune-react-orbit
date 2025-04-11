@@ -7,10 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GlossaryTerm from '@/components/GlossaryTerm';
 import DynamicContentText from '@/components/DynamicContentText';
+import EnrollmentDialog from "@/components/tax-education/EnrollmentDialog";
 
 const AdvancedTaxEducationPage = () => {
   // This would normally be determined by checking if user has purchased the course
-  const isEnrolled = false;
+  const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
+  const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState<boolean>(false);
   
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   
@@ -19,7 +21,7 @@ const AdvancedTaxEducationPage = () => {
   
   const contentOptions = {
     year: selectedYear,
-    format: 'currency' as const // Fixed by adding 'as const' to ensure type is correctly inferred
+    format: 'currency' as const
   };
 
   const moduleData = [
@@ -67,6 +69,11 @@ const AdvancedTaxEducationPage = () => {
       description: "Connect with other course participants and occasionally interact with course instructors."
     }
   ];
+
+  const handleEnrollmentSuccess = () => {
+    setIsEnrolled(true);
+    setEnrollmentDialogOpen(false);
+  };
 
   return (
     <div className="container content-padding section-margin">
@@ -134,7 +141,10 @@ const AdvancedTaxEducationPage = () => {
                     Continue Learning <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
-                  <Button className="bg-[#9b87f5] hover:bg-[#8a76e4]">
+                  <Button 
+                    className="bg-[#9b87f5] hover:bg-[#8a76e4]"
+                    onClick={() => setEnrollmentDialogOpen(true)}
+                  >
                     Enroll Now <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 )}
@@ -286,6 +296,15 @@ const AdvancedTaxEducationPage = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Enrollment Dialog */}
+      <EnrollmentDialog 
+        open={enrollmentDialogOpen} 
+        onOpenChange={setEnrollmentDialogOpen}
+        onEnrollmentSuccess={handleEnrollmentSuccess}
+        coursePrice={299.00}
+        courseTitle="Advanced Tax Strategies & Planning Course"
+      />
     </div>
   );
 };

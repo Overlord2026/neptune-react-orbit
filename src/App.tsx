@@ -10,6 +10,8 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import TaxUpdatesHistoryPage from './pages/TaxUpdatesHistoryPage';
 import TaxDataHistoryPage from './pages/TaxDataHistoryPage';
 import AdminAuditLogPage from './pages/AdminAuditLogPage';
+import AdvancedTaxEducationPage from './pages/AdvancedTaxEducationPage';
+import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/tax-planning",
     element: <TaxPlanningLandingPage />,
+  },
+  {
+    path: "/tax-planning/advanced-tax-education",
+    element: <AdvancedTaxEducationPage />,
   },
   {
     path: "/admin/data-feeds",
@@ -46,6 +52,7 @@ function App() {
   return (
     <React.StrictMode>
       <RouterProvider router={router} />
+      <Toaster position="top-right" />
     </React.StrictMode>
   );
 }
