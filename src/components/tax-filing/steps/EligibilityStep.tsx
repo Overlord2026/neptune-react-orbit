@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { TaxReturnData } from '../SimpleReturnFilingFlow';
+import { TaxReturnData } from '../types/TaxReturnTypes';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';

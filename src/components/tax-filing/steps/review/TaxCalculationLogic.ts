@@ -1,5 +1,5 @@
 
-import { TaxReturnData } from '../../SimpleReturnFilingFlow';
+import { TaxReturnData } from '../../types/TaxReturnTypes';
 
 export const calculateTaxValues = (data: TaxReturnData): {
   calculatedRefund: number;

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { TaxReturnData } from '../SimpleReturnFilingFlow';
+import { TaxReturnData } from '../types/TaxReturnTypes';
 import { Button } from '@/components/ui/button';
 import DisclaimerSection from '@/components/tax/DisclaimerSection';
 import ReviewSummaryCard from './review/ReviewSummaryCard';

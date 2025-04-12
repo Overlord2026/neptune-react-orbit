@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TaxReturnData } from '../../SimpleReturnFilingFlow';
+import { TaxReturnData } from '../../types/TaxReturnTypes';
 import { TaxTrapAdapter } from '@/components/tax/TaxTrapAdapter';
 import { Card } from '@/components/ui/card';
 
