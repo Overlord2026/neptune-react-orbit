@@ -9,7 +9,8 @@ import {
   BarChart2, 
   Lock, 
   AlertTriangle,
-  FileCheck
+  FileCheck,
+  Gift
 } from "lucide-react";
 import TaxToolCard from './TaxToolCard';
 
@@ -22,6 +23,14 @@ const TaxTools: React.FC = () => {
       description: "Plan single-year or long-term Roth conversion strategies. Model RMDs, bracket filling, and tax implications.",
       comingSoon: false,
       link: "/tax-planning/roth"
+    },
+    {
+      id: "estate-gifting",
+      title: "Estate & Gifting Scenarios",
+      icon: <Gift className="w-10 h-10 text-[#FFD700]" />,
+      description: "Analyze the impact of gifting during your lifetime vs. leaving assets at death, including potential estate tax calculations and trust planning considerations.",
+      comingSoon: false,
+      link: "/tax-planning/estate-gifting"
     },
     {
       id: "tax-analyzer",

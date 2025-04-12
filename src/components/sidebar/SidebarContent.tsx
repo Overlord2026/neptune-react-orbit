@@ -16,7 +16,8 @@ import {
   Briefcase,
   Settings,
   AlertTriangle,
-  LayoutGrid
+  LayoutGrid,
+  Gift
 } from 'lucide-react';
 
 const SidebarContent = () => {
@@ -85,6 +86,12 @@ const SidebarContent = () => {
           label="Roth Conversion Planner" 
           href="/tax-planning/roth" 
           isActive={location.pathname === '/tax-planning/roth'} 
+        />
+        <SidebarItem 
+          icon={<Gift className="h-5 w-5" />} 
+          label="Estate & Gifting" 
+          href="/tax-planning/estate-gifting" 
+          isActive={location.pathname === '/tax-planning/estate-gifting'} 
         />
         <SidebarItem 
           icon={<Shield className="h-5 w-5" />} 

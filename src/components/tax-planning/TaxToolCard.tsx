@@ -22,6 +22,9 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   comingSoon, 
   link 
 }) => {
+  // Add bullets for estate and gifting
+  const showBullets = id === "estate-gifting";
+  
   return (
     <Link to={link} className="block transition-all duration-200 hover:scale-[1.02]">
       <Card className="h-full border-[#2A2F3C] bg-[#1A1F2C] hover:border-[#00C47C] transition-colors">
@@ -37,11 +40,19 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
             {comingSoon && <span className="ml-1 text-xs text-yellow-500">(Coming Soon)</span>}
           </p>
           
+          {showBullets && (
+            <ul className="list-disc pl-5 space-y-1 text-sm text-[#B0B0B0]">
+              <li>Compare immediate gifting vs. inheritance</li>
+              <li>Check for estate tax thresholds</li>
+              <li>Factor in trust disclaimers if relevant</li>
+            </ul>
+          )}
+          
           <Button 
             variant="outline"
             className="border-primary text-primary hover:bg-primary/10"
           >
-            Start Tool <ArrowRight className="ml-2 h-4 w-4" />
+            {id === "estate-gifting" ? "Start Estate & Gifting Analysis" : "Start Tool"} <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </CardContent>
       </Card>
