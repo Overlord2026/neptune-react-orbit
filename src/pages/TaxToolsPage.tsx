@@ -57,7 +57,7 @@ const TaxToolsPage: React.FC = () => {
         "Visualize impact on IRMAA surcharges"
       ],
       icon: <Banknote className="w-10 h-10 text-[#FFD700]" />,
-      link: "/tax-planning/roth-conversion"
+      link: "/tax-planning/roth"
     },
     {
       title: "Tax Trap Checker",

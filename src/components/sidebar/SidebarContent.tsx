@@ -82,9 +82,9 @@ const SidebarContent = () => {
         />
         <SidebarItem 
           icon={<BarChart3 className="h-5 w-5" />} 
-          label="Roth Conversion" 
-          href="/tax-planning/roth-conversion" 
-          isActive={location.pathname === '/tax-planning/roth-conversion'} 
+          label="Roth Conversion Planner" 
+          href="/tax-planning/roth" 
+          isActive={location.pathname === '/tax-planning/roth'} 
         />
         <SidebarItem 
           icon={<Shield className="h-5 w-5" />} 

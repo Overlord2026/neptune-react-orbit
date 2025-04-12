@@ -1,94 +1,71 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import ShareFeature from "@/components/tax-planning/ShareFeature";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ArrowLeft, FileText, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
+import SingleYearRothConversion from "@/components/tax/roth-conversion/SingleYearRothConversion";
+import MultiYearRothConversion from "@/components/tax/roth-conversion/MultiYearRothConversion";
+import TaxProjectionDisclaimer from "@/components/tax/TaxProjectionDisclaimer";
 
 const RothConversionPage = () => {
+  const [activeTab, setActiveTab] = useState("single-year");
+
   return (
-    <div className="space-y-6 pb-8">
-      <div className="flex flex-col sm:flex-row items-center justify-between pb-4 gap-4">
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight neptune-gold">
-            Roth IRA Conversion
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Roth Conversion & Multi-Year Planner</h1>
           <p className="text-muted-foreground">
-            Learn about converting your Traditional IRA funds to a Roth IRA to potentially save on taxes in retirement.
+            Model single-year or long-term Roth conversion strategies to optimize your tax situation
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <ShareFeature 
-            title="Roth IRA Conversion" 
-            description="Learn about Roth IRA conversion strategies and tax implications."
-            variant="button"
-          />
-          <Button variant="outline" asChild>
-            <Link to="/tax-planning" className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Tax Planning Hub
-            </Link>
-          </Button>
-        </div>
+        <Link to="/tax-planning/tax-tools" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Tax Tools
+        </Link>
       </div>
-      
-      <Card className="bg-card border-primary/20 relative">
-        <ShareFeature title="Roth Conversion Basics" position="top-right" />
-        <CardHeader>
-          <CardTitle className="text-xl neptune-gold">
-            Roth Conversion Basics
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-muted-foreground">
-            A Roth IRA conversion involves transferring retirement funds from a Traditional IRA, 401(k), or similar tax-deferred account to a Roth IRA. 
-            While you'll pay taxes on the converted amount in the current year, all future qualified withdrawals will be tax-free.
-          </p>
-          <p className="text-muted-foreground">
-            This strategy can be particularly beneficial if:
-          </p>
-          <ul className="list-disc pl-5 text-muted-foreground space-y-2">
-            <li>You expect to be in a higher tax bracket in retirement</li>
-            <li>You want tax-free income during retirement</li>
-            <li>You want to leave tax-free assets to your heirs</li>
-            <li>You're currently in a temporarily lower tax bracket</li>
-          </ul>
-        </CardContent>
-      </Card>
-      
-      <Card className="bg-card border-primary/20 relative">
-        <ShareFeature title="Tax Implications" position="top-right" />
-        <CardHeader>
-          <CardTitle className="text-xl neptune-gold">
-            Tax Implications
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-muted-foreground">
-            When you convert funds from a Traditional IRA to a Roth IRA, you'll need to pay income tax on the converted amount.
-            However, once the money is in the Roth IRA, it grows tax-free and qualified withdrawals are tax-free.
-          </p>
-          <div className="p-4 rounded-md bg-primary/10 border border-primary/20">
-            <h3 className="font-semibold neptune-gold mb-2">Important Considerations</h3>
-            <ul className="list-disc pl-5 text-muted-foreground space-y-2">
-              <li>Converted amounts are added to your taxable income for the year</li>
-              <li>This may push you into a higher tax bracket</li>
-              <li>Consider converting smaller amounts over several years</li>
-              <li>Consult with a tax professional before making large conversions</li>
-            </ul>
+
+      <Card className="border-primary/20">
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-xl text-white">Conversion Analysis Mode</CardTitle>
           </div>
+        </CardHeader>
+        <CardContent>
+          <Tabs 
+            defaultValue="single-year" 
+            value={activeTab} 
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
+            <TabsList className="grid grid-cols-2 mb-6">
+              <TabsTrigger 
+                value="single-year"
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <FileText className="h-4 w-4" />
+                Single-Year Snapshot
+              </TabsTrigger>
+              <TabsTrigger 
+                value="multi-year"
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <Clock className="h-4 w-4" />
+                Multi-Year Advanced
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="single-year" className="mt-0">
+              <SingleYearRothConversion />
+            </TabsContent>
+            <TabsContent value="multi-year" className="mt-0">
+              <MultiYearRothConversion />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
-      
-      <div className="flex justify-center mt-6">
-        <Button variant="outline" asChild className="mr-2">
-          <Link to="/tax-planning/roth-conversion">Use Roth Conversion Analyzer</Link>
-        </Button>
-        <Button className="bg-[#9b87f5] hover:bg-[#8a76e4]" asChild>
-          <Link to="/tax-planning/roth-analysis">Compare Conversion Scenarios</Link>
-        </Button>
-      </div>
+
+      <TaxProjectionDisclaimer />
     </div>
   );
 };
