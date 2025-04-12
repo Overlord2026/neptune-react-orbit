@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { InfoCircle } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 const TaxTrapCheckerPage: React.FC = () => {
   const [filingStatus, setFilingStatus] = useState<'single' | 'married' | 'married_separate' | 'head_of_household'>('single');
@@ -186,7 +186,7 @@ const TaxTrapCheckerPage: React.FC = () => {
               
               <div className="rounded-md border p-4 bg-muted/50">
                 <div className="flex gap-2">
-                  <InfoCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                  <Info className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-sm font-medium">What are tax traps?</h4>
                     <p className="text-sm text-muted-foreground">
