@@ -3,7 +3,8 @@ import React from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
-  Outlet
+  Outlet,
+  Navigate
 } from "react-router-dom";
 import TaxPlanningLandingPage from './pages/TaxPlanningLandingPage';
 import DataFeedsAndUpdatesPage from './pages/DataFeedsAndUpdatesPage';
@@ -24,8 +25,6 @@ import CompareRothScenariosPage from './pages/CompareRothScenariosPage';
 import My404Fallback from './components/My404Fallback';
 import { Toaster } from "./components/ui/sonner";
 import TaxReturnAnalyzerPage from './pages/TaxReturnAnalyzerPage';
-import RothConversionAnalyzerPage from './pages/RothConversionAnalyzerPage';
-import RothConversionAnalysisPage from './pages/RothConversionAnalysisPage';
 import DynamicBracketManagerPage from './pages/DynamicBracketManagerPage';
 import AdvancedTaxStrategiesPage from './pages/AdvancedTaxStrategiesPage';
 import TaxDocumentAggregatorPage from './pages/TaxDocumentAggregatorPage';
@@ -78,17 +77,19 @@ const router = createBrowserRouter([
         path: "/tax-planning/aggregator",
         element: <TaxDocumentAggregatorPage />,
       },
-      {
-        path: "/tax-planning/roth-conversion",
-        element: <RothConversionAnalyzerPage />,
-      },
+      // Consolidated Roth conversion routes
       {
         path: "/tax-planning/roth",
         element: <RothConversionPage />,
       },
+      // Redirects for old Roth conversion routes
+      {
+        path: "/tax-planning/roth-conversion",
+        element: <Navigate to="/tax-planning/roth" replace />,
+      },
       {
         path: "/tax-planning/roth-analysis",
-        element: <RothConversionAnalysisPage />,
+        element: <Navigate to="/tax-planning/roth" replace />,
       },
       {
         path: "/tax-planning/social-security",

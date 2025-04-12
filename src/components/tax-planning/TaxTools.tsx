@@ -8,13 +8,21 @@ import {
   HeartHandshake, 
   BarChart2, 
   Lock, 
-  Lightbulb,
+  AlertTriangle,
   FileCheck
 } from "lucide-react";
 import TaxToolCard from './TaxToolCard';
 
 const TaxTools: React.FC = () => {
   const tools = [
+    {
+      id: "roth-conversion",
+      title: "Roth Conversion & Multi-Year Planner",
+      icon: <Banknote className="w-10 h-10 text-[#FFD700]" />,
+      description: "Plan single-year or long-term Roth conversion strategies. Model RMDs, bracket filling, and tax implications.",
+      comingSoon: false,
+      link: "/tax-planning/roth"
+    },
     {
       id: "tax-analyzer",
       title: "Tax Return Analyzer",
@@ -32,20 +40,12 @@ const TaxTools: React.FC = () => {
       link: "/tax-planning/aggregator"
     },
     {
-      id: "roth-conversion",
-      title: "Roth Conversion Analyzer",
-      icon: <Banknote className="w-10 h-10 text-[#FFD700]" />,
-      description: "Calculate tax implications of converting traditional IRA assets to Roth accounts over time.",
+      id: "tax-trap-checker",
+      title: "Tax Trap Checker",
+      icon: <AlertTriangle className="w-10 h-10 text-[#FFD700]" />,
+      description: "Identify threshold issues that could trigger unexpected tax increases like IRMAA and ACA subsidies.",
       comingSoon: false,
-      link: "/tax-planning/roth-conversion"
-    },
-    {
-      id: "roth-analysis",
-      title: "Roth Conversion Analysis",
-      icon: <LineChart className="w-10 h-10 text-[#FFD700]" />,
-      description: "Compare different Roth conversion scenarios across multiple tax years.",
-      comingSoon: false,
-      link: "/tax-planning/roth-analysis"
+      link: "/tax-planning/tax-traps"
     },
     {
       id: "social-security",
@@ -70,14 +70,6 @@ const TaxTools: React.FC = () => {
       description: "Securely store all your tax documents with bank-level encryption and easy retrieval.",
       comingSoon: false,
       link: "/tax-planning/tax-vault"
-    },
-    {
-      id: "advanced-strategies",
-      title: "Advanced Tax Strategies",
-      icon: <Lightbulb className="w-10 h-10 text-[#FFD700]" />,
-      description: "Learn advanced tax optimization strategies including estate planning, charitable giving and more.",
-      comingSoon: false,
-      link: "/tax-planning/advanced-strategies"
     },
     {
       id: "filing-options",

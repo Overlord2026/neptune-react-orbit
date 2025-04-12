@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import * as z from "zod";
 import { MultiYearScenarioData } from '../MultiYearRothConversion';
 
@@ -121,7 +121,7 @@ const RMDCalculationStep: React.FC<RMDCalculationStepProps> = ({
                 
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-md border border-blue-200 dark:border-blue-800/40">
                   <div className="flex items-start gap-2">
-                    <InfoCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                    <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
                     <div className="space-y-1">
                       <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
                         RMD Calculation Information
