@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +14,7 @@ import RealTimeBracketPreview from '@/components/tax/RealTimeBracketPreview';
 import ShareFeature from '@/components/tax-planning/ShareFeature';
 
 const INITIAL_TAX_INPUT: TaxInput = {
-  year: 2023,
+  year: 2025, // Updated from 2023 to 2025
   wages: 120000,
   interest: 5000,
   dividends: 8000,
@@ -25,16 +26,16 @@ const INITIAL_TAX_INPUT: TaxInput = {
   filing_status: 'married',
 };
 
-const SCENARIO_ID = "2023-base-scenario";
+const SCENARIO_ID = "2025-base-scenario"; // Updated from 2023 to 2025
 
-const Scenario2023Return: React.FC = () => {
+const Scenario2025Return: React.FC = () => {
   const [taxInput, setTaxInput] = useState<TaxInput>(INITIAL_TAX_INPUT);
   const [taxResult, setTaxResult] = useState<TaxResult | null>(null);
   const [thresholdWarnings, setThresholdWarnings] = useState<TaxTrapWarning[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    const result = calculateTaxScenario(taxInput, "2023 Return Scenario");
+    const result = calculateTaxScenario(taxInput, "2025 Return Scenario"); // Updated scenario name
     setTaxResult(result);
 
     const trapInput: TaxTrapInput = {
@@ -73,10 +74,10 @@ const Scenario2023Return: React.FC = () => {
   return (
     <div className="container mx-auto py-6 max-w-4xl">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold mb-6">2023 Tax Return Scenario</h1>
+        <h1 className="text-3xl font-bold mb-6">2025 Tax Return Scenario</h1>
         <ShareFeature 
-          title="2023 Tax Return Scenario" 
-          description="My optimized 2023 tax return analysis with Roth conversion planning."
+          title="2025 Tax Return Scenario" 
+          description="My optimized 2025 tax return analysis with Roth conversion planning."
           variant="button"
         />
       </div>
@@ -194,9 +195,9 @@ const Scenario2023Return: React.FC = () => {
             scenarioData={{
               year: taxInput.year,
               filing_status: taxInput.filing_status,
-              agi: taxResult.agi,
-              total_income: taxResult.total_income,
-              taxable_income: taxResult.taxable_income,
+              agi: result.agi,
+              total_income: result.total_income,
+              taxable_income: result.taxable_income,
               capital_gains_long: taxInput.capital_gains,
               capital_gains_short: 0,
               social_security_amount: taxInput.social_security,
@@ -211,4 +212,4 @@ const Scenario2023Return: React.FC = () => {
   );
 };
 
-export default Scenario2023Return;
+export default Scenario2025Return;

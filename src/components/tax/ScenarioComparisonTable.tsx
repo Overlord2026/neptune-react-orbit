@@ -33,13 +33,13 @@ const ScenarioComparisonTable: React.FC<ScenarioComparisonTableProps> = ({
           <TableRow>
             <TableHead className="w-[180px]">Metric</TableHead>
             <TableHead className="text-center bg-blue-950/30">
-              Scenario 1 (2021)
+              Scenario 1 (2022)
             </TableHead>
             <TableHead className="text-center bg-green-950/30">
-              Scenario 2 (2022)
+              Scenario 2 (2024)
             </TableHead>
             <TableHead className="text-center bg-amber-950/30">
-              Scenario 3 (2023 w/ Roth)
+              Scenario 3 (2025 w/ Roth)
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -88,6 +88,9 @@ const ScenarioComparisonTable: React.FC<ScenarioComparisonTableProps> = ({
           </TableRow>
         </TableBody>
       </Table>
+      <div className="mt-2 text-xs text-muted-foreground">
+        <p>Note: 2025 values are projected/estimated and subject to change when official IRS data is released.</p>
+      </div>
     </div>
   );
 };

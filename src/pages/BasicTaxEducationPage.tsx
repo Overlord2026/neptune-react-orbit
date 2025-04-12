@@ -16,7 +16,7 @@ import FilingStatusOverviewSection from '@/components/tax-education/FilingStatus
 import NavigationButtons from '@/components/tax-education/NavigationButtons';
 
 const BasicTaxEducationPage = () => {
-  const [selectedYear, setSelectedYear] = useState<number>(2023); // Default year
+  const [selectedYear, setSelectedYear] = useState<number>(2025); // Default year updated to 2025
   const [selectedFilingStatus, setSelectedFilingStatus] = useState<'single' | 'married' | 'head_of_household'>('single');
   
   // Get available years from tax data

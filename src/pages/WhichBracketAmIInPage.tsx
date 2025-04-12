@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -16,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Info } from 'lucide-react'; // Correctly import Info from lucide-react
+import { Info } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -37,14 +36,14 @@ import { FilingStatusType, getBrackets, formatCurrency, formatPercent } from '@/
 const WhichBracketAmIInPage: React.FC = () => {
   // States for the form inputs and selections
   const [filingStatus, setFilingStatus] = useState<FilingStatusType>('single');
-  const [taxYear, setTaxYear] = useState<number>(2023);
+  const [taxYear, setTaxYear] = useState<number>(2025);
   const [ordinaryIncome, setOrdinaryIncome] = useState<string>('');
   const [capitalGains, setCapitalGains] = useState<string>('');
   const [calculatedOrdinaryBracket, setCalculatedOrdinaryBracket] = useState<number | null>(null);
   const [calculatedCapitalGainsBracket, setCalculatedCapitalGainsBracket] = useState<number | null>(null);
   
-  // Get available years from the data (we'll assume 2021-2023 for now)
-  const availableTaxYears = [2021, 2022, 2023];
+  // Get available years from the data (we'll assume 2021-2025 for now)
+  const availableTaxYears = [2025, 2023, 2022, 2021];
 
   // Get brackets based on selected filing status and year
   const ordinaryBrackets = getBrackets(taxYear, filingStatus, 'ordinary');
@@ -117,10 +116,17 @@ const WhichBracketAmIInPage: React.FC = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {availableTaxYears.map(year => (
-                    <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                    <SelectItem key={year} value={year.toString()}>
+                      {year} {year === 2025 && "(Projected)"}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {taxYear === 2025 && (
+                <p className="text-xs text-amber-500 mt-1">
+                  Note: 2025 values are projected/estimated and subject to change.
+                </p>
+              )}
             </div>
             
             <div className="pt-4 border-t">
@@ -185,6 +191,7 @@ const WhichBracketAmIInPage: React.FC = () => {
               Filing as: {filingStatus === 'single' ? 'Single' : 
                         filingStatus === 'married' ? 'Married Filing Jointly' : 
                         'Head of Household'}
+              {taxYear === 2025 && " (Projected Brackets)"}
             </CardDescription>
           </CardHeader>
           <CardContent>

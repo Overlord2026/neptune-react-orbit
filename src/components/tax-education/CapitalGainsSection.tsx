@@ -53,10 +53,11 @@ const CapitalGainsSection: React.FC<CapitalGainsSectionProps> = ({
                         options={{...contentOptions, filingStatus: 'married'}}
                       >{`capital_gains_0_rate_max`}</DynamicContentText> (married filing jointly)
                     </li>
-                    <li><strong>15% rate:</strong> Income from $44,626 to $492,300 (single) or $89,251 to $553,850 (married filing jointly)</li>
-                    <li><strong>20% rate:</strong> Income above $492,300 (single) or $553,850 (married filing jointly)</li>
+                    <li><strong>15% rate:</strong> Income from $47,001 to $518,000 (single) or $94,001 to $583,000 (married filing jointly)</li>
+                    <li><strong>20% rate:</strong> Income above $518,000 (single) or $583,000 (married filing jointly)</li>
                   </ul>
                   <p className="mt-2 text-sm text-yellow-300">Note: An additional 3.8% Net Investment Income Tax may apply to high-income earners.</p>
+                  <p className="mt-2 text-sm text-yellow-300">Important: These are projected/estimated 2025 figures and may be adjusted when official IRS data is released.</p>
                 </div>
               </AccordionContent>
             </AccordionItem>
