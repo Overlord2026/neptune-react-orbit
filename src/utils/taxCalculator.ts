@@ -31,6 +31,8 @@ import { MultiYearScenarioData, YearlyResult } from '../components/tax/roth-conv
 export type { FilingStatusType } from './taxBracketData';
 export { STANDARD_DEDUCTION } from './taxBracketData';
 
+import { type TrapAlert } from '@/types/taxTrapTypes';
+
 export interface TaxInput {
   year: number;
   wages: number;
@@ -521,6 +523,9 @@ export const calculateMultiYearScenario = async (
     // Calculate tax scenario
     const taxResult = calculateTaxScenario(taxInput, `Year ${currentYear}`, "multi_year");
     
+    // Use the TrapAlert type for the warnings array
+    const warnings: TrapAlert[] = [];
+    
     // Check for tax traps
     const trapInput = {
       scenario_id: `multi_year_${i}`,
@@ -588,7 +593,7 @@ export const calculateMultiYearScenario = async (
       rmdAmount,
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
-      warnings: trapWarnings,
+      warnings,
       cumulativeTaxPaid,
       cumulativeTaxSaved,
       traditionalScenarioBalance,
