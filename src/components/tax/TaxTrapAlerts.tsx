@@ -28,7 +28,11 @@ const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" })
   const [isOpen, setIsOpen] = useState(true);
   
   if (!alerts || alerts.length === 0) {
-    return null;
+    return (
+      <div className="text-sm text-muted-foreground p-4 bg-slate-800/10 rounded-md border border-slate-700/30">
+        No additional surcharges or bracket issues detected for your tax situation.
+      </div>
+    );
   }
   
   // Get the educational page link based on trap type

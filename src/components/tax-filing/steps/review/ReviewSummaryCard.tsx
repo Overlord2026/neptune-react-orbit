@@ -9,7 +9,7 @@ interface ReviewSummaryCardProps {
 
 const ReviewSummaryCard: React.FC<ReviewSummaryCardProps> = ({ refund, owed }) => {
   return (
-    <Card className="border-2 overflow-hidden">
+    <Card className="border-2 border-primary/30 overflow-hidden shadow-md">
       <div className={`p-4 text-white ${refund > 0 ? "bg-green-600" : "bg-amber-600"}`}>
         <h4 className="text-xl font-bold">
           {refund > 0 
