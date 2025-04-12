@@ -29,7 +29,7 @@ const ScenarioActionButtons: React.FC<ScenarioActionButtonsProps> = ({
       </Button>
       <Button className="bg-[#FFD700] hover:bg-[#E5C100] text-black" size="lg">
         <Edit className="h-4 w-4 mr-2" />
-        Edit 2023 Scenario
+        Edit 2025 Scenario
       </Button>
       <Link to="/tax-planning/roth-analysis/new">
         <Button className="bg-primary hover:bg-primary/90" size="lg">

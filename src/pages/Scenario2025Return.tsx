@@ -14,7 +14,7 @@ import RealTimeBracketPreview from '@/components/tax/RealTimeBracketPreview';
 import ShareFeature from '@/components/tax-planning/ShareFeature';
 
 const INITIAL_TAX_INPUT: TaxInput = {
-  year: 2025, // Updated from 2023 to 2025
+  year: 2025,
   wages: 120000,
   interest: 5000,
   dividends: 8000,
@@ -26,7 +26,7 @@ const INITIAL_TAX_INPUT: TaxInput = {
   filing_status: 'married',
 };
 
-const SCENARIO_ID = "2025-base-scenario"; // Updated from 2023 to 2025
+const SCENARIO_ID = "2025-base-scenario";
 
 const Scenario2025Return: React.FC = () => {
   const [taxInput, setTaxInput] = useState<TaxInput>(INITIAL_TAX_INPUT);
@@ -35,7 +35,7 @@ const Scenario2025Return: React.FC = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const result = calculateTaxScenario(taxInput, "2025 Return Scenario"); // Updated scenario name
+    const result = calculateTaxScenario(taxInput, "2025 Return Scenario");
     setTaxResult(result);
 
     const trapInput: TaxTrapInput = {

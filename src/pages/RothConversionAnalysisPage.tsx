@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -43,11 +44,14 @@ const RothConversionAnalysisPage = () => {
         </div>
       </div>
 
-      {/* New Real-Time Bracket Preview Section */}
+      {/* Real-Time Bracket Preview Section */}
       <div className="mb-6">
+        <p className="text-xs text-gray-400 mb-2">
+          Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+        </p>
         <RealTimeBracketPreview 
           baseIncome={120000} 
-          year={2023} 
+          year={2025} 
           filingStatus="married"
           capitalGains={15000}
           maxConversion={500000}
@@ -133,11 +137,11 @@ const RothConversionAnalysisPage = () => {
         </Card>
 
         <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-200 hover:shadow-md relative">
-          <ShareFeature title="2023 Scenario" position="top-right" />
+          <ShareFeature title="2025 Scenario" position="top-right" />
           <CardHeader className="bg-amber-950/30 rounded-t-lg border-b border-primary/10">
             <CardTitle className="text-xl neptune-gold flex items-center gap-3">
               <TrendingUp className="h-5 w-5" />
-              2023 Scenario
+              2025 Scenario
               <InfoTooltip 
                 text="This optimized scenario includes our recommended Roth conversion strategy."
                 icon="help"
@@ -149,7 +153,7 @@ const RothConversionAnalysisPage = () => {
           </CardHeader>
           <CardContent className="p-6 space-y-4">
             <p className="text-sm text-muted-foreground">
-              View your 2023 projection with recommended <GlossaryTerm termId="roth_conversion">Roth conversion</GlossaryTerm> strategy.
+              View your 2025 projection with recommended <GlossaryTerm termId="roth_conversion">Roth conversion</GlossaryTerm> strategy.
             </p>
             <div className="flex items-center gap-4">
               <div className="text-sm">
@@ -169,9 +173,9 @@ const RothConversionAnalysisPage = () => {
             </div>
           </CardContent>
           <CardFooter className="bg-muted/20 rounded-b-lg border-t border-primary/10 flex justify-end p-4">
-            <Link to="/tax-planning/roth-analysis/2023">
+            <Link to="/tax-planning/roth-analysis/2025">
               <Button className="bg-[#FFD700] hover:bg-[#E5C100] text-black">
-                View 2023 Scenario
+                View 2025 Scenario
               </Button>
             </Link>
           </CardFooter>

@@ -1,4 +1,3 @@
-
 import { TaxTrapWarning } from './types';
 
 // IRMAA Thresholds
@@ -12,7 +11,23 @@ interface IRMAAThreshold {
 }
 
 const IRMAA_THRESHOLDS: IRMAAThreshold[] = [
-  // 2023 Single
+  // 2025 Single (projected/estimated)
+  { year: 2025, filing_status: 'single', magi_min: 0, magi_max: 99000, monthly_surcharge_partB: 0, monthly_surcharge_partD: 0 },
+  { year: 2025, filing_status: 'single', magi_min: 99000, magi_max: 124000, monthly_surcharge_partB: 68.00, monthly_surcharge_partD: 12.80 },
+  { year: 2025, filing_status: 'single', magi_min: 124000, magi_max: 155000, monthly_surcharge_partB: 170.00, monthly_surcharge_partD: 32.50 },
+  { year: 2025, filing_status: 'single', magi_min: 155000, magi_max: 186000, monthly_surcharge_partB: 272.00, monthly_surcharge_partD: 52.00 },
+  { year: 2025, filing_status: 'single', magi_min: 186000, magi_max: 520000, monthly_surcharge_partB: 374.00, monthly_surcharge_partD: 72.20 },
+  { year: 2025, filing_status: 'single', magi_min: 520000, magi_max: Infinity, monthly_surcharge_partB: 408.00, monthly_surcharge_partD: 78.50 },
+  
+  // 2025 Married (projected/estimated)
+  { year: 2025, filing_status: 'married', magi_min: 0, magi_max: 198000, monthly_surcharge_partB: 0, monthly_surcharge_partD: 0 },
+  { year: 2025, filing_status: 'married', magi_min: 198000, magi_max: 248000, monthly_surcharge_partB: 68.00, monthly_surcharge_partD: 12.80 },
+  { year: 2025, filing_status: 'married', magi_min: 248000, magi_max: 310000, monthly_surcharge_partB: 170.00, monthly_surcharge_partD: 32.50 },
+  { year: 2025, filing_status: 'married', magi_min: 310000, magi_max: 372000, monthly_surcharge_partB: 272.00, monthly_surcharge_partD: 52.00 },
+  { year: 2025, filing_status: 'married', magi_min: 372000, magi_max: 770000, monthly_surcharge_partB: 374.00, monthly_surcharge_partD: 72.20 },
+  { year: 2025, filing_status: 'married', magi_min: 770000, magi_max: Infinity, monthly_surcharge_partB: 408.00, monthly_surcharge_partD: 78.50 },
+  
+  // 2023 Single - Keep for historical reference
   { year: 2023, filing_status: 'single', magi_min: 0, magi_max: 97000, monthly_surcharge_partB: 0, monthly_surcharge_partD: 0 },
   { year: 2023, filing_status: 'single', magi_min: 97000, magi_max: 123000, monthly_surcharge_partB: 65.90, monthly_surcharge_partD: 12.20 },
   { year: 2023, filing_status: 'single', magi_min: 123000, magi_max: 153000, monthly_surcharge_partB: 164.80, monthly_surcharge_partD: 31.50 },
@@ -20,7 +35,7 @@ const IRMAA_THRESHOLDS: IRMAAThreshold[] = [
   { year: 2023, filing_status: 'single', magi_min: 183000, magi_max: 500000, monthly_surcharge_partB: 362.60, monthly_surcharge_partD: 70.00 },
   { year: 2023, filing_status: 'single', magi_min: 500000, magi_max: Infinity, monthly_surcharge_partB: 395.60, monthly_surcharge_partD: 76.40 },
   
-  // 2023 Married
+  // 2023 Married - Keep for historical reference
   { year: 2023, filing_status: 'married', magi_min: 0, magi_max: 194000, monthly_surcharge_partB: 0, monthly_surcharge_partD: 0 },
   { year: 2023, filing_status: 'married', magi_min: 194000, magi_max: 246000, monthly_surcharge_partB: 65.90, monthly_surcharge_partD: 12.20 },
   { year: 2023, filing_status: 'married', magi_min: 246000, magi_max: 306000, monthly_surcharge_partB: 164.80, monthly_surcharge_partD: 31.50 },
@@ -43,7 +58,7 @@ export function checkIRMAASurcharges(
   );
   
   if (thresholds.length === 0) {
-    // Default to 2023 if year not found
+    // Default to 2025 if year not found
     const latestThresholds = IRMAA_THRESHOLDS.filter(
       t => t.filing_status === filingStatus
     );
