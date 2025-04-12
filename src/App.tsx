@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -32,6 +33,7 @@ import TaxVaultPage from './pages/TaxVaultPage';
 import SocialSecurityCalculatorPage from './pages/SocialSecurityCalculatorPage';
 import RothConversionPage from './pages/RothConversionPage';
 import TaxTrapCheckerPage from './pages/TaxTrapCheckerPage';
+import TaxToolsPage from './pages/TaxToolsPage';
 import Layout from './components/Layout';
 
 const router = createBrowserRouter([
@@ -107,6 +109,10 @@ const router = createBrowserRouter([
       {
         path: "/tax-planning/tax-traps",
         element: <TaxTrapCheckerPage />,
+      },
+      {
+        path: "/tax-planning/tax-tools",
+        element: <TaxToolsPage />,
       },
       {
         path: "/my-courses",

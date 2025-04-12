@@ -15,7 +15,8 @@ import {
   Scroll,
   Briefcase,
   Settings,
-  AlertTriangle
+  AlertTriangle,
+  LayoutGrid
 } from 'lucide-react';
 
 const SidebarContent = () => {
@@ -28,6 +29,13 @@ const SidebarContent = () => {
         label="Dashboard" 
         href="/" 
         isActive={location.pathname === '/'} 
+      />
+      
+      <SidebarItem 
+        icon={<LayoutGrid className="h-5 w-5" />} 
+        label="Tax Tools" 
+        href="/tax-planning/tax-tools" 
+        isActive={location.pathname === '/tax-planning/tax-tools'} 
       />
       
       <SidebarGroup 
