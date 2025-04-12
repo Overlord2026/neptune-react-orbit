@@ -7,6 +7,7 @@
  */
 
 import { useToast } from "@/hooks/use-toast";
+import { getTaxYears } from "./taxYearUtils";
 
 export interface MissingDocument {
   id: string;
@@ -27,6 +28,16 @@ export interface UserIncomeSource {
 
 // Mock user income sources - in production this would come from a database
 const mockUserIncomeSources: Record<string, UserIncomeSource[]> = {
+  "2025": [
+    { type: "wages", source: "Employer Inc.", amount: 92000, taxYear: "2025" },
+    { type: "interest", source: "Bank of America", amount: 450, taxYear: "2025" },
+    { type: "dividends", source: "Vanguard", amount: 1500, taxYear: "2025" }
+  ],
+  "2024": [
+    { type: "wages", source: "Employer Inc.", amount: 88000, taxYear: "2024" },
+    { type: "interest", source: "Bank of America", amount: 400, taxYear: "2024" },
+    { type: "dividends", source: "Vanguard", amount: 1300, taxYear: "2024" }
+  ],
   "2023": [
     { type: "wages", source: "Employer Inc.", amount: 85000, taxYear: "2023" },
     { type: "interest", source: "Bank of America", amount: 350, taxYear: "2023" },
@@ -47,6 +58,8 @@ const mockUserIncomeSources: Record<string, UserIncomeSource[]> = {
 
 // Mock document database - in production this would be queried from a database
 const mockUserDocuments: Record<string, { type: string; source?: string }[]> = {
+  "2025": [],
+  "2024": [],
   "2023": [
     { type: "W-2", source: "Employer Inc." },
     { type: "1099-DIV", source: "Vanguard" }

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -7,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Upload, FileText, Shield, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getTaxYears } from "@/utils/taxYearUtils";
 
 interface Document {
   id: string;
@@ -14,33 +14,39 @@ interface Document {
   uploadDate: Date;
   type: string;
   size: string;
+  taxYear?: string;
 }
 
 const TaxVaultPage = () => {
   const [documents, setDocuments] = useState<Document[]>([
-    // Placeholder documents
     { 
       id: '1', 
       name: 'W-2_2024.pdf', 
       uploadDate: new Date('2024-02-15'), 
       type: 'PDF', 
-      size: '1.2 MB' 
+      size: '1.2 MB',
+      taxYear: '2024'
     },
     { 
       id: '2', 
       name: 'Schedule_C_2023.pdf', 
       uploadDate: new Date('2023-04-10'), 
       type: 'PDF', 
-      size: '890 KB' 
+      size: '890 KB',
+      taxYear: '2023'
     },
     { 
       id: '3', 
       name: '1099-MISC.jpg', 
       uploadDate: new Date('2024-01-25'), 
       type: 'Image', 
-      size: '750 KB' 
+      size: '750 KB',
+      taxYear: '2023'
     }
   ]);
+  
+  const availableTaxYears = getTaxYears().map(year => year.toString());
+  const [selectedTaxYear, setSelectedTaxYear] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -49,18 +55,17 @@ const TaxVaultPage = () => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    // Create new document entries from uploaded files
     const newDocs: Document[] = Array.from(files).map(file => ({
       id: Math.random().toString(36).substring(2, 9),
       name: file.name,
       uploadDate: new Date(),
       type: file.type.split('/')[1].toUpperCase(),
-      size: formatFileSize(file.size)
+      size: formatFileSize(file.size),
+      taxYear: file.name.split('_')[1].split('.')[0]
     }));
 
     setDocuments([...newDocs, ...documents]);
     
-    // Reset file input
     if (fileInputRef.current) fileInputRef.current.value = '';
     
     toast({
@@ -91,6 +96,10 @@ const TaxVaultPage = () => {
     });
   };
 
+  const filteredDocuments = selectedTaxYear 
+    ? documents.filter(doc => doc.taxYear === selectedTaxYear)
+    : documents;
+
   return (
     <div className="space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4">
@@ -104,7 +113,29 @@ const TaxVaultPage = () => {
         </Link>
       </div>
 
-      {/* Upload Area */}
+      <Card className="bg-card">
+        <CardHeader>
+          <CardTitle className="text-lg">Filter by Tax Year</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-3">
+          <Button 
+            variant={selectedTaxYear === null ? "default" : "outline"} 
+            onClick={() => setSelectedTaxYear(null)}
+          >
+            All Years
+          </Button>
+          {availableTaxYears.map(year => (
+            <Button 
+              key={year} 
+              variant={selectedTaxYear === year ? "default" : "outline"}
+              onClick={() => setSelectedTaxYear(year)}
+            >
+              {year}
+            </Button>
+          ))}
+        </CardContent>
+      </Card>
+
       <Card className="bg-card border-primary/20 hover:border-primary/40 transition-colors">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 neptune-gold">
@@ -142,7 +173,6 @@ const TaxVaultPage = () => {
         </CardContent>
       </Card>
 
-      {/* Security Notice */}
       <div className="bg-card/50 border border-primary/10 rounded-lg p-4 flex items-start gap-3">
         <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
         <div className="text-sm">
@@ -154,13 +184,14 @@ const TaxVaultPage = () => {
         </div>
       </div>
 
-      {/* Document List */}
       <div>
-        <h2 className="text-xl font-bold mb-4 neptune-gold">Your Documents ({documents.length})</h2>
+        <h2 className="text-xl font-bold mb-4 neptune-gold">
+          {selectedTaxYear ? `${selectedTaxYear} Documents (${filteredDocuments.length})` : `Your Documents (${filteredDocuments.length})`}
+        </h2>
         
-        {documents.length > 0 ? (
+        {filteredDocuments.length > 0 ? (
           <div className="grid gap-4">
-            {documents.map(doc => (
+            {filteredDocuments.map(doc => (
               <Card key={doc.id} className="bg-card border-primary/10 transition-colors">
                 <div className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -171,6 +202,7 @@ const TaxVaultPage = () => {
                         <span>Uploaded: {formatDate(doc.uploadDate)}</span>
                         <span>Type: {doc.type}</span>
                         <span>Size: {doc.size}</span>
+                        {doc.taxYear && <span className="font-medium text-primary">Tax Year: {doc.taxYear}</span>}
                       </div>
                     </div>
                   </div>
@@ -195,7 +227,9 @@ const TaxVaultPage = () => {
           </div>
         ) : (
           <Card className="bg-card border-primary/10 p-8 text-center">
-            <p className="text-muted-foreground">No documents uploaded yet.</p>
+            <p className="text-muted-foreground">
+              {selectedTaxYear ? `No documents uploaded yet for ${selectedTaxYear}.` : 'No documents uploaded yet.'}
+            </p>
           </Card>
         )}
       </div>

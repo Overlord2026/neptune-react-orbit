@@ -2,11 +2,12 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DynamicContentText from '@/components/DynamicContentText';
+import { getTaxYears } from '@/utils/taxYearUtils';
 
 interface YearSelectorBarProps {
   selectedYear: number;
   setSelectedYear: (year: number) => void;
-  availableYears: number[];
+  availableYears?: number[];
 }
 
 const YearSelectorBar: React.FC<YearSelectorBarProps> = ({ 
@@ -14,6 +15,9 @@ const YearSelectorBar: React.FC<YearSelectorBarProps> = ({
   setSelectedYear,
   availableYears
 }) => {
+  // Use provided years or get them from the utility function
+  const years = availableYears || getTaxYears().sort((a, b) => b - a);
+  
   return (
     <div className="flex flex-col md:flex-row gap-4 my-6 p-4 border border-gray-200 dark:border-gray-800 rounded-lg bg-card">
       <div className="space-y-2">
@@ -26,8 +30,10 @@ const YearSelectorBar: React.FC<YearSelectorBarProps> = ({
             <SelectValue placeholder="Select year" />
           </SelectTrigger>
           <SelectContent>
-            {availableYears.map(year => (
-              <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+            {years.map(year => (
+              <SelectItem key={year} value={year.toString()}>
+                {year}{year === 2025 && " (Projected)"}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

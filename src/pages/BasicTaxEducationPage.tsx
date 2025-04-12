@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { BookOpen } from 'lucide-react';
 import { STANDARD_DEDUCTION_BY_YEAR } from '@/utils/taxBracketData';
+import { getTaxYears } from '@/utils/taxYearUtils';
 
 // Import all the new component sections
 import YearFilingSelector from '@/components/tax-education/YearFilingSelector';
@@ -16,13 +16,11 @@ import FilingStatusOverviewSection from '@/components/tax-education/FilingStatus
 import NavigationButtons from '@/components/tax-education/NavigationButtons';
 
 const BasicTaxEducationPage = () => {
-  const [selectedYear, setSelectedYear] = useState<number>(2025); // Default year updated to 2025
+  const [selectedYear, setSelectedYear] = useState<number>(2025); // Default year set to 2025
   const [selectedFilingStatus, setSelectedFilingStatus] = useState<'single' | 'married' | 'head_of_household'>('single');
   
-  // Get available years from tax data
-  const availableYears = Object.keys(STANDARD_DEDUCTION_BY_YEAR)
-    .map(Number)
-    .sort((a, b) => b - a); // Sort in descending order
+  // Get available years from tax data and our utility
+  const availableYears = getTaxYears().sort((a, b) => b - a);
   
   return (
     <div className="container content-padding section-margin">

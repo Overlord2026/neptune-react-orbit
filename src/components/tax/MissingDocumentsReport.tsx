@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -7,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MissingDocument, useMissingDocsChecker, markDocumentAsNotApplicable } from "@/utils/missingDocsChecker";
 import { AlertTriangle, FileText, Upload, Download, File, FilePlus } from "lucide-react";
+import { isProjectedTaxYear } from "@/utils/taxYearUtils";
 
 interface MissingDocumentsReportProps {
   taxYear: string;
@@ -18,6 +18,8 @@ const MissingDocumentsReport = ({ taxYear, onRequestUpload }: MissingDocumentsRe
   const [missingDocs, setMissingDocs] = useState<MissingDocument[]>([]);
   const [hasGenerated, setHasGenerated] = useState(false);
   const { generateMissingDocsReport } = useMissingDocsChecker();
+
+  const isProjected = isProjectedTaxYear(parseInt(taxYear));
 
   const handleGenerateReport = async () => {
     setIsLoading(true);
@@ -52,6 +54,11 @@ const MissingDocumentsReport = ({ taxYear, onRequestUpload }: MissingDocumentsRe
             <CardDescription>
               Check if you're missing any important tax documents based on your financial profile
             </CardDescription>
+            {isProjected && (
+              <p className="text-xs text-gray-400 mt-1">
+                Tax rates and thresholds for {taxYear} are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+              </p>
+            )}
           </CardHeader>
           <CardContent className="pt-2">
             <p className="text-muted-foreground mb-4">
@@ -77,6 +84,11 @@ const MissingDocumentsReport = ({ taxYear, onRequestUpload }: MissingDocumentsRe
             <CardDescription>
               The following documents appear to be missing from your records:
             </CardDescription>
+            {isProjected && (
+              <p className="text-xs text-gray-400 mt-1">
+                Tax rates and thresholds for {taxYear} are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+              </p>
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
