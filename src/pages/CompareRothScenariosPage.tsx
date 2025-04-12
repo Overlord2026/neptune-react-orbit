@@ -1,3 +1,4 @@
+
 import React from "react";
 import { TaxResult } from "@/utils/taxCalculator";
 import ScenarioComparisonHeader from "@/components/tax/ScenarioComparisonHeader";
@@ -6,6 +7,7 @@ import ScenarioComparisonChart from "@/components/tax/ScenarioComparisonChart";
 import ScenarioComparisonTable from "@/components/tax/ScenarioComparisonTable";
 import BracketSummary from "@/components/tax/BracketSummary";
 import { formatCurrency, formatPercent } from "@/utils/taxBracketData";
+import ShareFeature from "@/components/tax-planning/ShareFeature";
 
 const CompareRothScenariosPage: React.FC = () => {
   // Sample data - would come from API or state in real app
@@ -93,30 +95,50 @@ const CompareRothScenariosPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <ScenarioComparisonHeader 
-        title="Roth Conversion Scenario Comparison"
-        description="Compare different Roth conversion strategies and their tax implications" 
-      />
+      <div className="flex justify-between items-start mb-6">
+        <ScenarioComparisonHeader 
+          title="Roth Conversion Scenario Comparison"
+          description="Compare different Roth conversion strategies and their tax implications" 
+        />
+        <ShareFeature 
+          title="Roth Conversion Comparison" 
+          description="Compare different Roth conversion strategies and their tax implications"
+          variant="button"
+        />
+      </div>
       
       <div className="space-y-8 mt-8">
-        <ScenarioComparisonCards scenarios={scenarios} chartData={chartData} />
-        <ScenarioComparisonChart chartData={chartData} />
+        <div className="relative">
+          <ShareFeature title="Scenario Cards" position="top-right" />
+          <ScenarioComparisonCards scenarios={scenarios} chartData={chartData} />
+        </div>
+        
+        <div className="relative">
+          <ShareFeature title="Tax Comparison Chart" position="top-right" />
+          <ScenarioComparisonChart chartData={chartData} />
+        </div>
         
         {/* New Bracket Summary Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {scenarios.map((scenario, index) => (
-            <BracketSummary 
-              key={`bracket-summary-${index}`}
-              scenario={scenario}
-            />
+            <div key={`bracket-summary-container-${index}`} className="relative">
+              <ShareFeature title={`${scenario.scenario_name} Summary`} position="top-right" />
+              <BracketSummary 
+                key={`bracket-summary-${index}`}
+                scenario={scenario}
+              />
+            </div>
           ))}
         </div>
 
-        <ScenarioComparisonTable 
-          scenarios={scenarios} 
-          formatCurrency={formatCurrency} 
-          formatPercent={formatPercent} 
-        />
+        <div className="relative">
+          <ShareFeature title="Detailed Comparison" position="top-right" />
+          <ScenarioComparisonTable 
+            scenarios={scenarios} 
+            formatCurrency={formatCurrency} 
+            formatPercent={formatPercent} 
+          />
+        </div>
       </div>
     </div>
   );

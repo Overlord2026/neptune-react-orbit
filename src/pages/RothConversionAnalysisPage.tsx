@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { calculateTaxScenario, TaxInput } from '@/utils/taxCalculator';
 import GlossaryTerm from '@/components/GlossaryTerm';
 import InfoTooltip from '@/components/tax/InfoTooltip';
 import RealTimeBracketPreview from '@/components/tax/RealTimeBracketPreview';
+import ShareFeature from '@/components/tax-planning/ShareFeature';
 
 const RothConversionAnalysisPage = () => {
   // State for the bracket preview
@@ -30,10 +30,17 @@ const RothConversionAnalysisPage = () => {
             affect your overall tax situation across different years.
           </p>
         </div>
-        <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Tax Planning Hub
-        </Link>
+        <div className="flex items-center gap-2">
+          <ShareFeature 
+            title="Roth Conversion Analysis" 
+            description="Compare different Roth conversion scenarios across multiple tax years."
+            variant="button"
+          />
+          <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Tax Planning Hub
+          </Link>
+        </div>
       </div>
 
       {/* New Real-Time Bracket Preview Section */}
@@ -49,7 +56,8 @@ const RothConversionAnalysisPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-        <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-200 hover:shadow-md">
+        <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-200 hover:shadow-md relative">
+          <ShareFeature title="2021 Scenario" position="top-right" />
           <CardHeader className="bg-blue-950/30 rounded-t-lg border-b border-primary/10">
             <CardTitle className="text-xl neptune-gold flex items-center gap-3">
               <FileText className="h-5 w-5" />
@@ -87,7 +95,8 @@ const RothConversionAnalysisPage = () => {
           </CardFooter>
         </Card>
 
-        <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-200 hover:shadow-md">
+        <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-200 hover:shadow-md relative">
+          <ShareFeature title="2022 Scenario" position="top-right" />
           <CardHeader className="bg-green-950/30 rounded-t-lg border-b border-primary/10">
             <CardTitle className="text-xl neptune-gold flex items-center gap-3">
               <LineChart className="h-5 w-5" />
@@ -123,7 +132,8 @@ const RothConversionAnalysisPage = () => {
           </CardFooter>
         </Card>
 
-        <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-200 hover:shadow-md">
+        <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-200 hover:shadow-md relative">
+          <ShareFeature title="2023 Scenario" position="top-right" />
           <CardHeader className="bg-amber-950/30 rounded-t-lg border-b border-primary/10">
             <CardTitle className="text-xl neptune-gold flex items-center gap-3">
               <TrendingUp className="h-5 w-5" />

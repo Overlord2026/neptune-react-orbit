@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import ShareFeature from '@/components/tax-planning/ShareFeature';
 
 interface TaxStrategy {
   id: string;
@@ -65,10 +66,17 @@ const AdvancedTaxStrategiesPage = () => {
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight neptune-gold">Advanced Tax Strategies</h1>
           <p className="text-muted-foreground">Sophisticated approaches to minimize your tax burden and maximize wealth retention.</p>
         </div>
-        <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Tax Planning Hub
-        </Link>
+        <div className="flex items-center gap-2">
+          <ShareFeature 
+            title="Advanced Tax Strategies" 
+            description="Discover sophisticated approaches to minimize your tax burden."
+            variant="button"
+          />
+          <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Tax Planning Hub
+          </Link>
+        </div>
       </div>
 
       <Card className="bg-card border-primary/20">
@@ -81,9 +89,15 @@ const AdvancedTaxStrategiesPage = () => {
           <Accordion type="single" collapsible className="w-full">
             {strategies.map((strategy) => (
               <AccordionItem key={strategy.id} value={strategy.id} className="border-b border-primary/20">
-                <AccordionTrigger className="text-lg font-medium neptune-gold hover:no-underline hover:text-primary/90 py-4">
-                  {strategy.title}
-                </AccordionTrigger>
+                <div className="flex items-center justify-between">
+                  <AccordionTrigger className="text-lg font-medium neptune-gold hover:no-underline hover:text-primary/90 py-4">
+                    {strategy.title}
+                  </AccordionTrigger>
+                  <ShareFeature 
+                    title={strategy.title} 
+                    description={`Learn about ${strategy.title} - an advanced tax planning strategy.`}
+                  />
+                </div>
                 <AccordionContent className="pb-4 text-white">
                   <p className="mb-4">{strategy.description}</p>
                   <a 

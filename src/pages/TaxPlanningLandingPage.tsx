@@ -6,6 +6,7 @@ import TaxTools from '@/components/tax-planning/TaxTools';
 import TaxUpdateDemo from '@/components/tax/TaxUpdateDemo';
 import AccountingSoftwareIntegration from '@/components/tax-planning/AccountingSoftwareIntegration';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
+import ShareFeature from '@/components/tax-planning/ShareFeature';
 
 const TaxPlanningLandingPage = () => {
   const [isEducationOpen, setIsEducationOpen] = useState<boolean>(true);
@@ -22,9 +23,15 @@ const TaxPlanningLandingPage = () => {
             Optimize your tax strategy with our suite of advanced tools.
           </p>
         </div>
+        <ShareFeature 
+          title="Tax Planning Hub" 
+          description="Optimize your tax strategy with our advanced planning tools."
+          variant="button"
+        />
       </div>
       <div className="py-4 space-y-8">
-        <Card className="border border-[#2A2F3C] bg-[#1A1F2C]">
+        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+          <ShareFeature title="Education Resources" position="top-right" />
           <CardHeader>
             <CardTitle className="text-[#E5E5E5]">Education Resources</CardTitle>
           </CardHeader>
@@ -36,7 +43,8 @@ const TaxPlanningLandingPage = () => {
           </CardContent>
         </Card>
         
-        <Card className="border border-[#2A2F3C] bg-[#1A1F2C]">
+        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+          <ShareFeature title="Tax Tools" position="top-right" />
           <CardHeader>
             <CardTitle className="text-[#E5E5E5]">Tax Tools</CardTitle>
           </CardHeader>
@@ -45,7 +53,8 @@ const TaxPlanningLandingPage = () => {
           </CardContent>
         </Card>
         
-        <Card className="border border-[#2A2F3C] bg-[#1A1F2C]">
+        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+          <ShareFeature title="Tax Updates" position="top-right" />
           <CardHeader>
             <CardTitle className="text-[#E5E5E5]">Tax Updates</CardTitle>
           </CardHeader>
@@ -54,7 +63,8 @@ const TaxPlanningLandingPage = () => {
           </CardContent>
         </Card>
         
-        <Card className="border border-[#2A2F3C] bg-[#1A1F2C]">
+        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+          <ShareFeature title="Software Integration" position="top-right" />
           <CardHeader>
             <CardTitle className="text-[#E5E5E5]">Software Integration</CardTitle>
           </CardHeader>
