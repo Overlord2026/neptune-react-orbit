@@ -24,10 +24,12 @@ const RothConversionPage = () => {
             description="Learn about Roth IRA conversion strategies and tax implications."
             variant="button"
           />
-          <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Tax Planning Hub
-          </Link>
+          <Button variant="outline" asChild>
+            <Link to="/tax-planning" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Tax Planning Hub
+            </Link>
+          </Button>
         </div>
       </div>
       
@@ -80,10 +82,10 @@ const RothConversionPage = () => {
       </Card>
       
       <div className="flex justify-center mt-6">
-        <Button variant="outline" className="mr-2">
+        <Button variant="outline" asChild className="mr-2">
           <Link to="/tax-planning/roth-conversion">Use Roth Conversion Analyzer</Link>
         </Button>
-        <Button className="bg-[#9b87f5] hover:bg-[#8a76e4]">
+        <Button className="bg-[#9b87f5] hover:bg-[#8a76e4]" asChild>
           <Link to="/tax-planning/roth-analysis">Compare Conversion Scenarios</Link>
         </Button>
       </div>

@@ -86,18 +86,15 @@ const TaxFilingOptionsPage = () => {
                 )}
               </div>
             </div>
-            <Button 
-              variant={isInTrial ? "default" : "outline"} 
-              className={isInTrial ? "" : "cursor-not-allowed"} 
-              disabled={!isInTrial}
-              asChild={isInTrial}
-            >
-              {isInTrial ? (
+            {isInTrial ? (
+              <Button variant="default" asChild>
                 <Link to="/file-my-taxes/advanced">Start Advanced Return</Link>
-              ) : (
-                <span>Premium Feature</span>
-              )}
-            </Button>
+              </Button>
+            ) : (
+              <Button variant="outline" disabled className="cursor-not-allowed">
+                Premium Feature
+              </Button>
+            )}
           </div>
         </div>
         
