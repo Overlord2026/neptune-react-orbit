@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -84,6 +83,12 @@ export interface TaxReturnData {
   
   // Disclaimer
   disclaimerAcknowledged?: boolean;
+  
+  // Add the missing properties
+  investmentIncome?: number;
+  socialSecurityBenefits?: number;
+  isOver65?: boolean;
+  hasHealthInsurance?: boolean;
 }
 
 const SimpleReturnFilingFlow: React.FC = () => {
