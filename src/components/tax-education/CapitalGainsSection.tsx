@@ -57,7 +57,11 @@ const CapitalGainsSection: React.FC<CapitalGainsSectionProps> = ({
                     <li><strong>20% rate:</strong> Income above $518,000 (single) or $583,000 (married filing jointly)</li>
                   </ul>
                   <p className="mt-2 text-sm text-yellow-300">Note: An additional 3.8% Net Investment Income Tax may apply to high-income earners.</p>
-                  <p className="mt-2 text-sm text-yellow-300">Important: These are projected/estimated 2025 figures and may be adjusted when official IRS data is released.</p>
+                  {selectedYear === 2025 && (
+                    <p className="mt-2 text-xs text-gray-400">
+                      Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+                    </p>
+                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>

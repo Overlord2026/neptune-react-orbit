@@ -84,6 +84,9 @@ const Scenario2025Return: React.FC = () => {
       
       <div className="mb-8 relative">
         <ShareFeature title="Tax Bracket Analysis" position="top-right" />
+        <p className="text-xs text-gray-400 mb-2">
+          Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+        </p>
         <RealTimeBracketPreview
           baseIncome={taxInput.wages + taxInput.interest + taxInput.dividends + taxInput.ira_distributions + 0.85 * taxInput.social_security} 
           year={taxInput.year} 
@@ -195,9 +198,9 @@ const Scenario2025Return: React.FC = () => {
             scenarioData={{
               year: taxInput.year,
               filing_status: taxInput.filing_status,
-              agi: result.agi,
-              total_income: result.total_income,
-              taxable_income: result.taxable_income,
+              agi: taxResult.agi,
+              total_income: taxResult.total_income,
+              taxable_income: taxResult.taxable_income,
               capital_gains_long: taxInput.capital_gains,
               capital_gains_short: 0,
               social_security_amount: taxInput.social_security,

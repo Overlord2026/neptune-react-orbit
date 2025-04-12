@@ -34,7 +34,7 @@ const CompareRothScenariosPage: React.FC = () => {
 
   const scenario1: TaxResult = {
     scenario_name: "No Roth Conversion",
-    year: 2023,
+    year: 2025,
     total_income: 80000,
     agi: 75000,
     taxable_income: 62150,
@@ -58,7 +58,7 @@ const CompareRothScenariosPage: React.FC = () => {
 
   const scenario2: TaxResult = {
     scenario_name: "With $10k Roth Conversion",
-    year: 2023,
+    year: 2025,
     total_income: 90000,
     agi: 85000,
     taxable_income: 72150,
@@ -82,7 +82,7 @@ const CompareRothScenariosPage: React.FC = () => {
 
   const scenario3: TaxResult = {
     scenario_name: "With $20k Roth Conversion",
-    year: 2023,
+    year: 2025,
     total_income: 100000,
     agi: 95000,
     taxable_income: 82150,
@@ -209,6 +209,10 @@ const CompareRothScenariosPage: React.FC = () => {
           variant="button"
         />
       </div>
+      
+      <p className="text-xs text-gray-400 mb-4">
+        Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+      </p>
       
       <div className="space-y-8 mt-8">
         <div className="relative">

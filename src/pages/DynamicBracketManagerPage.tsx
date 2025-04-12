@@ -25,7 +25,7 @@ import InfoTooltip from '@/components/tax/InfoTooltip';
 const DynamicBracketManagerPage = () => {
   const [income, setIncome] = useState<number>(100000);
   const [deductions, setDeductions] = useState<number>(13850); // Standard deduction 2023
-  const [selectedYear, setSelectedYear] = useState<number>(2023);
+  const [selectedYear, setSelectedYear] = useState<number>(2025); // Updated default year to 2025
   const [filingStatus, setFilingStatus] = useState<"single" | "married" | "head_of_household">("single");
   const [bracketType, setBracketType] = useState<"ordinary" | "ltcg">("ordinary");
   
@@ -105,6 +105,11 @@ const DynamicBracketManagerPage = () => {
               linkText="Learn about tax brackets"
             />
           </p>
+          {selectedYear === 2025 && (
+            <p className="text-xs text-gray-400 mt-1">
+              Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+            </p>
+          )}
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2 whitespace-nowrap">
           <ArrowLeft className="h-4 w-4" />
@@ -157,6 +162,7 @@ const DynamicBracketManagerPage = () => {
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
                   className="bg-transparent"
                 >
+                  <option value={2025}>2025 (Projected)</option>
                   <option value={2023}>2023</option>
                   <option value={2022}>2022</option>
                   <option value={2021}>2021</option>

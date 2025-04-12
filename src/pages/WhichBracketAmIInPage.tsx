@@ -123,8 +123,8 @@ const WhichBracketAmIInPage: React.FC = () => {
                 </SelectContent>
               </Select>
               {taxYear === 2025 && (
-                <p className="text-xs text-amber-500 mt-1">
-                  Note: 2025 values are projected/estimated and subject to change.
+                <p className="text-xs text-gray-400 mt-1">
+                  Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
                 </p>
               )}
             </div>
@@ -193,6 +193,11 @@ const WhichBracketAmIInPage: React.FC = () => {
                         'Head of Household'}
               {taxYear === 2025 && " (Projected Brackets)"}
             </CardDescription>
+            {taxYear === 2025 && (
+              <p className="text-xs text-gray-400 mt-1">
+                Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+              </p>
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-6">

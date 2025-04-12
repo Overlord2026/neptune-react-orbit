@@ -35,6 +35,11 @@ const BasicTaxEducationPage = () => {
           <p className="text-muted-foreground">
             Learn the fundamentals of how taxes work in the United States, common tax forms, and key definitions.
           </p>
+          {selectedYear === 2025 && (
+            <p className="text-xs text-gray-400 mt-1">
+              Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+            </p>
+          )}
         </div>
       </div>
       
@@ -67,7 +72,7 @@ const BasicTaxEducationPage = () => {
         <DeductionsVsCreditsSection />
 
         {/* Marginal vs. Effective Tax Rates */}
-        <TaxRatesSection />
+        <TaxRatesSection selectedYear={selectedYear} />
 
         {/* Capital Gains Basics */}
         <CapitalGainsSection

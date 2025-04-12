@@ -29,6 +29,11 @@ const TaxBracketsSection: React.FC<TaxBracketsSectionProps> = ({
     <Card className="overflow-hidden">
       <CardHeader className="bg-[#1A1F2C]">
         <CardTitle id="tax-brackets">How Tax Brackets Work</CardTitle>
+        {selectedYear === 2025 && (
+          <p className="text-xs text-gray-400 mt-1">
+            Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+          </p>
+        )}
       </CardHeader>
       <CardContent className="pt-6">
         <div className="space-y-4">

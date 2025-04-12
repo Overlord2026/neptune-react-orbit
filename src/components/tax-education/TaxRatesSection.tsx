@@ -3,11 +3,22 @@ import React from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import GlossaryTerm from '@/components/GlossaryTerm';
 
-const TaxRatesSection: React.FC = () => {
+interface TaxRatesSectionProps {
+  selectedYear?: number;
+}
+
+const TaxRatesSection: React.FC<TaxRatesSectionProps> = ({ 
+  selectedYear = new Date().getFullYear() 
+}) => {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="bg-[#1A1F2C]">
         <CardTitle>Marginal vs. Effective Tax Rates</CardTitle>
+        {selectedYear === 2025 && (
+          <p className="text-xs text-gray-400 mt-1">
+            Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+          </p>
+        )}
       </CardHeader>
       <CardContent className="pt-6">
         <div className="space-y-4">

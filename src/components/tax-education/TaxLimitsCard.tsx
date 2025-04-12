@@ -32,7 +32,9 @@ const TaxLimitsCard: React.FC<TaxLimitsCardProps> = ({ selectedYear }) => {
       <CardHeader>
         <CardTitle className="text-xl text-[#FFD700]">Current Tax Limits ({selectedYear})</CardTitle>
         {selectedYear === 2025 && (
-          <p className="text-sm text-yellow-300">Note: These are projected/estimated figures for 2025</p>
+          <p className="text-xs text-gray-400">
+            Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+          </p>
         )}
       </CardHeader>
       <CardContent>

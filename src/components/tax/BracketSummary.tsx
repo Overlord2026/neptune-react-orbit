@@ -28,6 +28,11 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
               </span>
             )}
           </div>
+          {scenario.year === 2025 && (
+            <p className="text-xs text-gray-400 mt-1">
+              Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+            </p>
+          )}
         </CardHeader>
         <CardContent>
           {isFutureProjection && (
