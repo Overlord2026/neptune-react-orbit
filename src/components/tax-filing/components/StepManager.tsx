@@ -6,7 +6,7 @@ import PersonalInfoStep from '../steps/PersonalInfoStep';
 import IncomeStep from '../steps/IncomeStep';
 import DeductionsStep from '../steps/DeductionsStep';
 import ReviewStep from '../steps/ReviewStep';
-import FilingStep from '../steps/FilingStep';
+import FilingStepComponent from '../steps/FilingStep'; // Renamed import to avoid conflict with type
 import ConfirmationStep from '../steps/ConfirmationStep';
 import TaxDisclaimerWithCheckbox from '@/components/tax/TaxDisclaimerWithCheckbox';
 import { useToast } from '@/hooks/use-toast';
@@ -85,7 +85,7 @@ const StepManager: React.FC<StepManagerProps> = ({
       );
     case 'file':
       return (
-        <FilingStep 
+        <FilingStepComponent 
           data={taxData} 
           onComplete={(data) => onStepComplete('file', data)} 
         />

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { TaxReturnData } from '../../SimpleReturnFilingFlow';
+import { TaxReturnData } from '../../types/TaxReturnTypes';
 
 interface IncomeReviewProps {
   data: TaxReturnData;

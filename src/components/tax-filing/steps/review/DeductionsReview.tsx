@@ -1,13 +1,19 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { TaxReturnData } from '../../SimpleReturnFilingFlow';
+import { TaxReturnData } from '../../types/TaxReturnTypes';
 
 interface DeductionsReviewProps {
   data: TaxReturnData;
 }
 
 const DeductionsReview: React.FC<DeductionsReviewProps> = ({ data }) => {
+  // Calculate the total itemized deductions safely
+  const totalItemizedDeductions = Object.values(data.itemizedDeductions).reduce(
+    (sum, value) => sum + (typeof value === 'number' ? value : 0), 
+    0
+  );
+
   return (
     <>
       <h4 className="font-medium">Deductions & Credits</h4>
@@ -20,7 +26,7 @@ const DeductionsReview: React.FC<DeductionsReviewProps> = ({ data }) => {
           {!data.useStandardDeduction && (
             <div>
               <dt className="font-medium text-muted-foreground">Total Itemized Amount:</dt>
-              <dd>${Object.values(data.itemizedDeductions).reduce((sum, value) => sum + value, 0).toLocaleString()}</dd>
+              <dd>${totalItemizedDeductions.toLocaleString()}</dd>
             </div>
           )}
           <div>

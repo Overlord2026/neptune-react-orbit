@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { TaxReturnData } from '../SimpleReturnFilingFlow';
+import React, { useState } from 'react';
+import { TaxReturnData } from '../types/TaxReturnTypes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -41,7 +40,6 @@ const personalInfoSchema = z.object({
 type FormValues = z.infer<typeof personalInfoSchema>;
 
 const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete }) => {
-  // Form setup with react-hook-form and zod validation
   const form = useForm<FormValues>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
@@ -59,14 +57,12 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
     },
   });
 
-  // Use useFieldArray hook separately, not from form object
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "dependents",
   });
 
   function onSubmit(values: FormValues) {
-    // Convert form values to TaxReturnData structure, ensuring the types match exactly
     const formattedData: Partial<TaxReturnData> = {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -96,7 +92,6 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Name section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -126,7 +121,6 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
             />
           </div>
 
-          {/* SSN and Filing Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -168,7 +162,6 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
             />
           </div>
 
-          {/* Address section */}
           <div className="space-y-4">
             <h4 className="font-medium">Address</h4>
             <div className="grid grid-cols-1 gap-4">
@@ -229,7 +222,6 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
             </div>
           </div>
 
-          {/* Dependents section */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h4 className="font-medium">Dependents</h4>
