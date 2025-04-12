@@ -4,6 +4,7 @@ import { TaxReturnData } from '../SimpleReturnFilingFlow';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import DisclaimerSection from '@/components/tax/DisclaimerSection';
+import { TaxTrapAdapter } from '@/components/tax/TaxTrapAdapter';
 
 interface ReviewStepProps {
   data: TaxReturnData;
@@ -102,6 +103,28 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
           </p>
         </CardContent>
       </Card>
+      
+      {/* Tax Traps Section */}
+      <div className="space-y-2">
+        <h4 className="font-medium">Potential Tax Considerations</h4>
+        <TaxTrapAdapter
+          scenarioId="tax-filing-review"
+          scenarioData={{
+            year: 2023, // Using current tax year for filing
+            filing_status: data.filingStatus as any,
+            agi: data.w2Forms.reduce((sum, form) => sum + form.wages, 0) + data.interestIncome + data.dividendIncome,
+            total_income: data.w2Forms.reduce((sum, form) => sum + form.wages, 0) + data.interestIncome + data.dividendIncome,
+            taxable_income: Math.max(0, (data.w2Forms.reduce((sum, form) => sum + form.wages, 0) + data.interestIncome + data.dividendIncome) - 
+              (data.useStandardDeduction ? 12950 : Object.values(data.itemizedDeductions).reduce((sum, value) => sum + value, 0))),
+            capital_gains_long: data.investmentIncome || 0,
+            social_security_amount: data.socialSecurityBenefits || 0,
+            household_size: data.dependents.length + 1,
+            medicare_enrollment: data.isOver65 || false,
+            aca_enrollment: data.hasHealthInsurance || false
+          }}
+          className="mb-4"
+        />
+      </div>
       
       {/* Information Review */}
       <div className="space-y-4">

@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from '@/hooks/use-toast';
-import { TaxTrapChecker } from '@/components/tax/TaxTrapChecker';
-import { TaxTrapWarning, checkTaxTraps, TaxTrapInput } from '@/utils/taxTrapChecker';
+import { TaxTrapAdapter } from '@/components/tax/TaxTrapAdapter';
 import RothConversionSlider from '@/components/tax/RothConversionSlider';
 import { TaxInput, calculateTaxScenario, TaxResult } from '@/utils/taxCalculator';
 import { Shield } from 'lucide-react';
@@ -31,30 +29,11 @@ const SCENARIO_ID = "2025-base-scenario";
 const Scenario2025Return: React.FC = () => {
   const [taxInput, setTaxInput] = useState<TaxInput>(INITIAL_TAX_INPUT);
   const [taxResult, setTaxResult] = useState<TaxResult | null>(null);
-  const [thresholdWarnings, setThresholdWarnings] = useState<TaxTrapWarning[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
     const result = calculateTaxScenario(taxInput, "2025 Return Scenario");
     setTaxResult(result);
-
-    const trapInput: TaxTrapInput = {
-      scenario_id: SCENARIO_ID,
-      year: taxInput.year,
-      filing_status: taxInput.filing_status,
-      agi: result.agi,
-      total_income: result.total_income,
-      taxable_income: result.taxable_income,
-      capital_gains_long: taxInput.capital_gains,
-      capital_gains_short: 0,
-      social_security_amount: taxInput.social_security,
-      household_size: 2,
-      medicare_enrollment: true,
-      aca_enrollment: false
-    };
-
-    const trapResults = checkTaxTraps(trapInput);
-    setThresholdWarnings(trapResults.warnings);
   }, [taxInput]);
 
   const handleRothConversionChange = (value: number) => {
@@ -193,7 +172,7 @@ const Scenario2025Return: React.FC = () => {
         <ShareFeature title="Tax Impact Analysis" position="top-right" />
         <h2 className="text-xl font-semibold mb-4">Tax Impact Analysis</h2>
         {taxResult && (
-          <TaxTrapChecker 
+          <TaxTrapAdapter 
             scenarioId={SCENARIO_ID} 
             scenarioData={{
               year: taxInput.year,
