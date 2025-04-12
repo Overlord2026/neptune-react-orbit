@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -30,6 +31,7 @@ import AdvancedTaxStrategiesPage from './pages/AdvancedTaxStrategiesPage';
 import TaxDocumentAggregatorPage from './pages/TaxDocumentAggregatorPage';
 import TaxVaultPage from './pages/TaxVaultPage';
 import SocialSecurityCalculatorPage from './pages/SocialSecurityCalculatorPage';
+import RothConversionPage from './pages/RothConversionPage';
 import Layout from './components/Layout';
 
 const router = createBrowserRouter([
@@ -77,6 +79,10 @@ const router = createBrowserRouter([
       {
         path: "/tax-planning/roth-conversion",
         element: <RothConversionAnalyzerPage />,
+      },
+      {
+        path: "/tax-planning/roth",
+        element: <RothConversionPage />,
       },
       {
         path: "/tax-planning/roth-analysis",
