@@ -19,7 +19,7 @@ interface ScenarioComparisonCardsProps {
 const ScenarioComparisonCards: React.FC<ScenarioComparisonCardsProps> = ({ scenarios, chartData }) => {
   // Check if any scenarios use projected tax years
   const hasProjectedData = scenarios.some(scenario => {
-    const year = parseInt(scenario.tax_year.toString());
+    const year = parseInt(scenario.year.toString());
     return isProjectedTaxYear(year);
   });
 
