@@ -25,6 +25,7 @@ import {
   hasMidYearUpdates,
   getMidYearUpdateWarning
 } from './taxDataVersioning';
+import { MultiYearScenarioData, YearlyResult } from '../components/tax/roth-conversion/MultiYearRothConversion';
 
 // Types
 export type { FilingStatusType } from './taxBracketData';
@@ -382,3 +383,272 @@ function getBracketsLegacy(year: number, filing_status: FilingStatusType) {
 
   return TAX_BRACKETS[year as keyof typeof TAX_BRACKETS]?.[filing_status] || TAX_BRACKETS[2023][filing_status];
 }
+
+/**
+ * Calculate RMD amount based on IRA balance and age
+ * Uses IRS Uniform Lifetime Table
+ */
+export const calculateRMD = (balance: number, age: number): number => {
+  // IRS Uniform Lifetime Table (simplified version)
+  const lifeExpectancyTable: Record<number, number> = {
+    73: 26.5, 74: 25.5, 75: 24.6, 76: 23.7, 77: 22.9, 78: 22.0, 79: 21.1,
+    80: 20.2, 81: 19.4, 82: 18.5, 83: 17.7, 84: 16.8, 85: 16.0, 86: 15.2,
+    87: 14.4, 88: 13.7, 89: 12.9, 90: 12.2, 91: 11.5, 92: 10.8, 93: 10.1,
+    94: 9.5, 95: 8.9, 96: 8.4, 97: 7.8, 98: 7.3, 99: 6.8, 100: 6.4,
+    // Add more ages as needed
+  };
+  
+  // If age not found in table or below RMD age, return 0
+  if (!lifeExpectancyTable[age]) {
+    return 0;
+  }
+  
+  // Calculate RMD: account balance divided by life expectancy factor
+  return balance / lifeExpectancyTable[age];
+};
+
+/**
+ * Get maximum conversion amount based on bracket fill strategy
+ */
+export const getMaxConversionAmount = (
+  strategy: 'fixed' | 'bracket_12' | 'bracket_12_22',
+  income: number,
+  year: number,
+  filingStatus: FilingStatusType,
+  fixedAmount?: number
+): number => {
+  // If fixed strategy, return the fixed amount
+  if (strategy === 'fixed' && fixedAmount !== undefined) {
+    return fixedAmount;
+  }
+  
+  // Get bracket information
+  const brackets = getBrackets(year, filingStatus, "ordinary");
+  
+  // Find 12% and 22% brackets
+  const bracket12 = brackets.find(b => Math.round(b.rate * 100) === 12);
+  const bracket22 = brackets.find(b => Math.round(b.rate * 100) === 22);
+  
+  if (!bracket12) {
+    return 0; // Safety check
+  }
+  
+  // Calculate available space in 12% bracket
+  let availableSpace = bracket12.bracket_max - income;
+  
+  // If we want to go up to 22% bracket and it exists
+  if (strategy === 'bracket_12_22' && bracket22) {
+    availableSpace = bracket22.bracket_max - income;
+  }
+  
+  // Make sure we don't go negative
+  return Math.max(0, availableSpace);
+};
+
+/**
+ * Calculate multi-year Roth conversion scenario
+ */
+export const calculateMultiYearScenario = async (
+  scenarioData: MultiYearScenarioData
+): Promise<YearlyResult[]> => {
+  const results: YearlyResult[] = [];
+  
+  // Initial account balances
+  let traditionalIRABalance = scenarioData.traditionalIRAStartBalance;
+  let rothIRABalance = scenarioData.rothIRAStartBalance;
+  let cumulativeTaxPaid = 0;
+  let cumulativeTaxSaved = 0;
+  
+  // Traditional-only scenario (for comparison)
+  let traditionalScenarioBalance = traditionalIRABalance + rothIRABalance;
+
+  // Track if break-even has occurred
+  let breakEvenOccurred = false;
+  
+  // Process each year
+  for (let i = 0; i < scenarioData.numYears; i++) {
+    const currentYear = scenarioData.startYear + i;
+    const currentAge = scenarioData.startAge + i;
+    
+    // Calculate projected income for this year with growth
+    const baseIncome = scenarioData.baseAnnualIncome * 
+      Math.pow(1 + scenarioData.incomeGrowthRate, i);
+    
+    // Calculate RMD if applicable
+    let rmdAmount = 0;
+    if (scenarioData.includeRMDs && currentAge >= scenarioData.rmdStartAge) {
+      rmdAmount = calculateRMD(traditionalIRABalance, currentAge);
+    }
+    
+    // Total income before conversion
+    const totalPreConversionIncome = baseIncome + rmdAmount;
+    
+    // Determine conversion amount based on strategy
+    let conversionAmount = 0;
+    switch (scenarioData.conversionStrategy) {
+      case 'fixed':
+        conversionAmount = scenarioData.fixedConversionAmount || 0;
+        break;
+      case 'bracket_12':
+      case 'bracket_12_22':
+        conversionAmount = getMaxConversionAmount(
+          scenarioData.conversionStrategy,
+          totalPreConversionIncome,
+          currentYear,
+          scenarioData.filingStatus,
+          scenarioData.fixedConversionAmount
+        );
+        break;
+    }
+    
+    // Make sure we don't convert more than available
+    conversionAmount = Math.min(conversionAmount, traditionalIRABalance);
+    
+    // Calculate tax on income including conversion and RMD
+    const taxInput = {
+      year: currentYear,
+      wages: baseIncome,
+      interest: 0,
+      dividends: 0,
+      capital_gains: 0,
+      ira_distributions: rmdAmount + conversionAmount,
+      roth_conversion: 0, // Already included in ira_distributions
+      social_security: 0,
+      isItemizedDeduction: false,
+      filing_status: scenarioData.filingStatus,
+    };
+    
+    // Calculate tax scenario
+    const taxResult = calculateTaxScenario(taxInput, `Year ${currentYear}`, "multi_year");
+    
+    // Check for tax traps
+    const trapInput = {
+      scenario_id: `multi_year_${i}`,
+      year: currentYear,
+      filing_status: scenarioData.filingStatus as any,
+      agi: taxResult.agi,
+      magi: taxResult.agi,
+      total_income: taxResult.total_income,
+      taxable_income: taxResult.taxable_income,
+      capital_gains_long: 0,
+      capital_gains_short: 0,
+      social_security_amount: 0,
+      household_size: scenarioData.filingStatus === 'married' ? 2 : 1,
+      medicare_enrollment: currentAge >= 65,
+      aca_enrollment: false,
+    };
+    
+    const trapWarnings = getTaxTrapWarnings(trapInput);
+    
+    // Update account balances
+    traditionalIRABalance = (traditionalIRABalance - conversionAmount - rmdAmount) * 
+      (1 + scenarioData.expectedAnnualReturn);
+    
+    rothIRABalance = (rothIRABalance + conversionAmount) * 
+      (1 + scenarioData.expectedAnnualReturn);
+    
+    // Traditional-only scenario (for comparison)
+    // In this scenario, no conversions happen, just RMDs when required
+    let traditionalOnlyRMD = 0;
+    if (scenarioData.includeRMDs && currentAge >= scenarioData.rmdStartAge) {
+      traditionalOnlyRMD = calculateRMD(traditionalScenarioBalance, currentAge);
+    }
+    
+    traditionalScenarioBalance = (traditionalScenarioBalance - traditionalOnlyRMD) * 
+      (1 + scenarioData.expectedAnnualReturn);
+    
+    // Track cumulative tax impact
+    cumulativeTaxPaid += taxResult.total_tax;
+    
+    // Calculate tax in traditional-only scenario
+    const traditionalOnlyTax = calculateTaxOnAmount(
+      baseIncome + traditionalOnlyRMD,
+      currentYear,
+      scenarioData.filingStatus
+    );
+    
+    cumulativeTaxSaved += (traditionalOnlyTax - taxResult.total_tax);
+    
+    // Determine if this is the break-even year
+    // Break-even occurs when Roth balance + tax savings exceed traditional balance
+    const rothTotalValue = rothIRABalance + cumulativeTaxSaved;
+    const isBreakEvenYear = !breakEvenOccurred && rothTotalValue > traditionalScenarioBalance;
+    
+    if (isBreakEvenYear) {
+      breakEvenOccurred = true;
+    }
+    
+    // Add to results
+    results.push({
+      year: currentYear,
+      age: currentAge,
+      traditionalIRABalance,
+      rothIRABalance,
+      conversionAmount,
+      rmdAmount,
+      totalTax: taxResult.total_tax,
+      marginalRate: taxResult.marginal_rate,
+      warnings: trapWarnings,
+      cumulativeTaxPaid,
+      cumulativeTaxSaved,
+      traditionalScenarioBalance,
+      rothScenarioBalance: rothIRABalance,
+      breakEvenYear: isBreakEvenYear
+    });
+  }
+  
+  // Handle beneficiary inheritance scenario if requested
+  if (scenarioData.includeBeneficiary && scenarioData.assumedDeathYear) {
+    // Find index of death year
+    const deathYearIndex = scenarioData.assumedDeathYear - scenarioData.startYear;
+    
+    if (deathYearIndex >= 0 && deathYearIndex < results.length) {
+      // Add beneficiary inheritance analysis
+      // This would be implemented in a more detailed way in a real application
+      console.log("Calculating beneficiary inheritance from year", scenarioData.assumedDeathYear);
+    }
+  }
+  
+  return results;
+};
+
+/**
+ * Calculate approximate tax on a specific amount
+ * This is a simplified version for comparative purposes
+ */
+const calculateTaxOnAmount = (
+  amount: number,
+  year: number,
+  filingStatus: FilingStatusType
+): number => {
+  const taxInput = {
+    year,
+    wages: amount,
+    interest: 0,
+    dividends: 0,
+    capital_gains: 0,
+    ira_distributions: 0,
+    roth_conversion: 0,
+    social_security: 0,
+    isItemizedDeduction: false,
+    filing_status: filingStatus,
+  };
+  
+  const result = calculateTaxScenario(taxInput, "Tax Calculation", "tax_only");
+  return result.total_tax;
+};
+
+/**
+ * Get tax trap warnings based on the tax trap checker utility
+ */
+const getTaxTrapWarnings = (trapInput: any): TrapAlert[] => {
+  try {
+    // Import dynamically to avoid circular dependency
+    const { checkTaxTraps } = require('./taxTrapChecker');
+    const result = checkTaxTraps(trapInput);
+    return result.warnings || [];
+  } catch (error) {
+    console.error("Error checking tax traps:", error);
+    return [];
+  }
+};

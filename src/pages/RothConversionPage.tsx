@@ -9,7 +9,7 @@ import MultiYearRothConversion from "@/components/tax/roth-conversion/MultiYearR
 import TaxProjectionDisclaimer from "@/components/tax/TaxProjectionDisclaimer";
 
 const RothConversionPage = () => {
-  const [activeTab, setActiveTab] = useState("single-year");
+  const [activeTab, setActiveTab] = useState("multi-year");
   const currentYear = new Date().getFullYear();
 
   return (
@@ -35,7 +35,7 @@ const RothConversionPage = () => {
         </CardHeader>
         <CardContent>
           <Tabs 
-            defaultValue="single-year" 
+            defaultValue="multi-year" 
             value={activeTab} 
             onValueChange={setActiveTab}
             className="w-full"
