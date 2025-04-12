@@ -14,7 +14,8 @@ import {
   Banknote,
   Scroll,
   Briefcase,
-  Settings
+  Settings,
+  AlertTriangle
 } from 'lucide-react';
 
 const SidebarContent = () => {
@@ -82,6 +83,12 @@ const SidebarContent = () => {
           label="Bracket Manager" 
           href="/tax-planning/bracket-manager" 
           isActive={location.pathname === '/tax-planning/bracket-manager'} 
+        />
+        <SidebarItem 
+          icon={<AlertTriangle className="h-5 w-5" />} 
+          label="Tax Trap Checker" 
+          href="/tax-planning/tax-traps" 
+          isActive={location.pathname === '/tax-planning/tax-traps'} 
         />
         <SidebarItem 
           icon={<Banknote className="h-5 w-5" />} 
