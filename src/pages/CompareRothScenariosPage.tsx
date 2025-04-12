@@ -1,5 +1,5 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { TaxResult } from "@/utils/taxCalculator";
 import ScenarioComparisonHeader from "@/components/tax/ScenarioComparisonHeader";
 import ScenarioComparisonCards from "@/components/tax/ScenarioComparisonCards";
@@ -8,9 +8,30 @@ import ScenarioComparisonTable from "@/components/tax/ScenarioComparisonTable";
 import BracketSummary from "@/components/tax/BracketSummary";
 import { formatCurrency, formatPercent } from "@/utils/taxBracketData";
 import ShareFeature from "@/components/tax-planning/ShareFeature";
+import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Calendar, Lock } from "lucide-react";
+import { toast } from "sonner";
 
 const CompareRothScenariosPage: React.FC = () => {
-  // Sample data - would come from API or state in real app
+  const navigate = useNavigate();
+  const [isInTrial, setIsInTrial] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  
+  useEffect(() => {
+    checkAccess();
+  }, []);
+  
+  const checkAccess = () => {
+    const trialStatus = localStorage.getItem('is_in_trial') === 'true';
+    setIsInTrial(trialStatus);
+    
+    // Simulate loading
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  };
+
   const scenario1: TaxResult = {
     scenario_name: "No Roth Conversion",
     year: 2023,
@@ -23,7 +44,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.114,
-    filing_status: "married", // Already matches TaxResult interface
+    filing_status: "married",
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [
@@ -47,7 +68,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.126,
-    filing_status: "married", // Already matches TaxResult interface
+    filing_status: "married",
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [
@@ -71,7 +92,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.135,
-    filing_status: "married", // Already matches TaxResult interface
+    filing_status: "married",
     updated_at: new Date(),
     brackets_breakdown: {
       ordinary: [
@@ -85,13 +106,95 @@ const CompareRothScenariosPage: React.FC = () => {
 
   const scenarios = [scenario1, scenario2, scenario3];
   
-  // Prepare chart data for the comparison chart
   const chartData = scenarios.map(scenario => ({
     name: scenario.scenario_name,
     totalTax: scenario.total_tax,
-    effectiveRate: scenario.effective_rate * 100, // Convert to percentage for chart display
+    effectiveRate: scenario.effective_rate * 100,
     scenario: scenario.scenario_name
   }));
+
+  const handleStartFreeTrial = () => {
+    toast.success("Starting your free trial!", { 
+      description: "Redirecting to trial activation..." 
+    });
+    navigate('/pricing');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-12 px-4 flex justify-center">
+        <div className="animate-pulse">
+          <div className="h-8 bg-[#2A2F3C] rounded w-64 mb-8"></div>
+          <div className="h-48 bg-[#2A2F3C] rounded w-full max-w-4xl mb-6"></div>
+          <div className="h-24 bg-[#2A2F3C] rounded w-full max-w-4xl"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isInTrial) {
+    return (
+      <div className="container mx-auto py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <Card className="border-[#9b87f5]/30 bg-[#1A1F2C]">
+            <CardHeader className="text-center">
+              <Lock className="mx-auto h-12 w-12 text-[#9b87f5] mb-4" />
+              <CardTitle className="text-2xl">Premium Feature</CardTitle>
+              <CardDescription className="text-base">
+                Roth Conversion Scenarios is a premium feature available with our 90-day free trial.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-[#9b87f5]/10 border border-[#9b87f5]/30 rounded-md p-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-[#9b87f5]" />
+                  <h3 className="font-medium text-[#9b87f5]">FREE 90-DAY TRIAL</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Start your free trial today to gain access to all premium features including:
+                </p>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li className="flex items-start">
+                    <span className="text-[#9b87f5] mr-2">•</span>
+                    <span>Roth conversion analysis and scenario comparison</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#9b87f5] mr-2">•</span>
+                    <span>Advanced tax strategies and tax-loss harvesting tools</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#9b87f5] mr-2">•</span>
+                    <span>Social Security optimization calculator</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#9b87f5] mr-2">•</span>
+                    <span>QuickBooks & Xero integration for seamless tax planning</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-4">
+                  No credit card required. Cancel anytime during the trial period.
+                </p>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-3">
+              <Button 
+                className="w-full bg-[#9b87f5] hover:bg-[#8a76e4]" 
+                onClick={handleStartFreeTrial}
+              >
+                Start 90-Day Free Trial
+              </Button>
+              <Button variant="outline" className="w-full" asChild>
+                <Link to="/tax-planning">Return to Tax Planning Hub</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-6 px-4">
@@ -118,7 +221,6 @@ const CompareRothScenariosPage: React.FC = () => {
           <ScenarioComparisonChart chartData={chartData} />
         </div>
         
-        {/* New Bracket Summary Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {scenarios.map((scenario, index) => (
             <div key={`bracket-summary-container-${index}`} className="relative">

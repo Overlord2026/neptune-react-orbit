@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   createBrowserRouter,
@@ -19,6 +18,8 @@ import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentErrorPage from './pages/PaymentErrorPage';
 import FileMyTaxesPage from './pages/FileMyTaxesPage';
 import TaxFilingOptionsPage from './pages/TaxFilingOptionsPage';
+import TaxPlanningPricingPage from './pages/TaxPlanningPricingPage';
+import CompareRothScenariosPage from './pages/CompareRothScenariosPage';
 import My404Fallback from './components/My404Fallback';
 import { Toaster } from "./components/ui/sonner";
 import TaxReturnAnalyzerPage from './pages/TaxReturnAnalyzerPage';
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/tax-planning",
         element: <TaxPlanningLandingPage />,
+      },
+      {
+        path: "/pricing",
+        element: <TaxPlanningPricingPage />,
       },
       {
         path: "/tax-planning/advanced-tax-education",
@@ -128,6 +133,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/audit-log",
         element: <AdminAuditLogPage />,
+      },
+      {
+        path: "/tax-planning/roth-comparison",
+        element: <CompareRothScenariosPage />,
       }
     ]
   },
