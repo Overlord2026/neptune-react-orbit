@@ -10,6 +10,7 @@ import TaxProjectionDisclaimer from "@/components/tax/TaxProjectionDisclaimer";
 
 const RothConversionPage = () => {
   const [activeTab, setActiveTab] = useState("single-year");
+  const currentYear = new Date().getFullYear();
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -65,7 +66,7 @@ const RothConversionPage = () => {
         </CardContent>
       </Card>
 
-      <TaxProjectionDisclaimer />
+      <TaxProjectionDisclaimer taxYear={currentYear + 1} currentYear={currentYear} />
     </div>
   );
 };
