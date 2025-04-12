@@ -4,7 +4,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Button } from '@/components/ui/button';
 import { TrapAlert } from './TaxTrapAlerts';
 import TaxTrapAlerts from './TaxTrapAlerts';
-import { AlertTriangle, ChevronDown, FileDown } from 'lucide-react';
+import { AlertTriangle, ChevronDown, FileDown, CheckCircle2 } from 'lucide-react';
 import { Card } from '../ui/card';
 import { Separator } from '../ui/separator';
 import { Link } from 'react-router-dom';
@@ -39,8 +39,17 @@ const TaxTrapWarningsPanel: React.FC<TaxTrapWarningsPanelProps> = ({
       <div className="p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
-            <h3 className="text-lg font-semibold">Tax Trap Analysis</h3>
+            {alerts.length > 0 ? (
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+            ) : (
+              <CheckCircle2 className="h-5 w-5 text-green-500" />
+            )}
+            <h3 className="text-lg font-semibold">
+              {alerts.length > 0 
+                ? `Tax Trap Analysis (${alerts.length})`
+                : "Tax Trap Analysis"
+              }
+            </h3>
           </div>
           <div className="flex items-center gap-2">
             <Button 
@@ -72,7 +81,18 @@ const TaxTrapWarningsPanel: React.FC<TaxTrapWarningsPanelProps> = ({
                 Analysis for <span className="font-medium text-foreground">{scenarioName}</span>
               </p>
               
-              <TaxTrapAlerts alerts={alerts} />
+              {alerts.length > 0 ? (
+                <TaxTrapAlerts alerts={alerts} />
+              ) : (
+                <div className="p-4 bg-green-950/20 border border-green-800/30 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    <p className="text-sm">
+                      No major bracket jumps or surcharges detected for this scenario.
+                    </p>
+                  </div>
+                </div>
+              )}
               
               <div className="pt-2">
                 <Link 
