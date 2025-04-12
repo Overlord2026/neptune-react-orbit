@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   Dialog, 
   DialogContent,
@@ -15,21 +17,23 @@ import {
   DialogHeader, 
   DialogTitle
 } from "@/components/ui/dialog";
-import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle, Sparkles, File, Share2, Download } from "lucide-react";
+import { ArrowLeft, FileText, Upload, Scan, Calendar, Search, Bot, AlertTriangle, Sparkles, File, Share2, Download, Archive } from "lucide-react";
 import DocumentUploader from "@/components/tax/DocumentUploader";
 import MissingDocumentsReport from "@/components/tax/MissingDocumentsReport";
 import FloatingAssistantButton from "@/components/tax/FloatingAssistantButton";
 import AIDocumentAssistant from "@/components/tax/AIDocumentAssistant";
 import ShareDocumentModal from "@/components/tax/ShareDocumentModal";
+import DocumentArchiveSection from "@/components/tax/DocumentArchiveSection";
 import { getTaxYears } from "@/utils/taxYearUtils";
 
-// Sample document data - updated to include 2024 and 2025
+// Sample document data - updated to include 2024, 2025 and archive status
 const documentsByYear = {
   "2025": [
-    // Initially empty for 2025
+    { id: "8", name: "W-2", source: "Employer Inc.", uploadDate: "2025-01-05", type: "Income" }
   ],
   "2024": [
-    // Initially empty for 2024  
+    { id: "6", name: "W-2", source: "Employer Inc.", uploadDate: "2024-01-10", type: "Income" },
+    { id: "7", name: "1099-DIV", source: "Vanguard", uploadDate: "2024-01-25", type: "Dividend" }
   ],
   "2023": [
     { id: "1", name: "W-2", source: "Employer Inc.", uploadDate: "2024-01-15", type: "Income" },
@@ -37,12 +41,12 @@ const documentsByYear = {
     { id: "3", name: "Mortgage Interest Statement", source: "Wells Fargo", uploadDate: "2024-02-01", type: "Deduction" }
   ],
   "2022": [
-    { id: "4", name: "W-2", source: "Employer Inc.", uploadDate: "2023-01-18", type: "Income" },
+    { id: "4", name: "W-2", source: "Employer Inc.", uploadDate: "2023-01-18", type: "Income", archived: true },
     { id: "5", name: "1098-T", source: "State University", uploadDate: "2023-02-05", type: "Education" }
   ],
   "2021": [
-    { id: "6", name: "W-2", source: "Previous Employer", uploadDate: "2022-01-20", type: "Income" },
-    { id: "7", name: "1099-MISC", source: "Freelance Client", uploadDate: "2022-01-25", type: "Income" }
+    { id: "10", name: "W-2", source: "Previous Employer", uploadDate: "2022-01-20", type: "Income", archived: true },
+    { id: "11", name: "1099-MISC", source: "Freelance Client", uploadDate: "2022-01-25", type: "Income", archived: true }
   ]
 };
 
@@ -58,6 +62,7 @@ const missingDocuments = [
 const TaxDocumentAggregatorPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedYear, setSelectedYear] = useState<string>(getTaxYears()[0].toString());
+  const [activeTab, setActiveTab] = useState<string>("documents");
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showScanSheet, setShowScanSheet] = useState(false);
   const [showMissingDocsDialog, setShowMissingDocsDialog] = useState(false);
@@ -66,15 +71,24 @@ const TaxDocumentAggregatorPage = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [documentToShare, setDocumentToShare] = useState<any>(null);
   const [sharingAllForYear, setSharingAllForYear] = useState<string | null>(null);
+  const [refreshCounter, setRefreshCounter] = useState(0);
   
   const years = Object.keys(documentsByYear).sort().reverse();
   
-  // Filter documents based on search query
+  // Count archived documents for each year
+  const archivedDocCounts = years.reduce((counts, year) => {
+    counts[year] = documentsByYear[year].filter(doc => doc.archived).length;
+    return counts;
+  }, {} as Record<string, number>);
+  
+  // Filter documents based on search query and archive status
   const filteredDocuments = selectedYear
     ? documentsByYear[selectedYear].filter(doc => 
-        doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        doc.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.source.toLowerCase().includes(searchQuery.toLowerCase())
+        !doc.archived && (
+          doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          doc.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          doc.source.toLowerCase().includes(searchQuery.toLowerCase())
+        )
       )
     : [];
 
@@ -94,13 +108,21 @@ const TaxDocumentAggregatorPage = () => {
     setSharingAllForYear(year);
     setShowShareModal(true);
   };
+  
+  const handleArchiveStatusChange = () => {
+    // In a real app, this would refresh the data from the server
+    setRefreshCounter(prev => prev + 1);
+  };
+
+  // Get all documents for the selected year (both archived and active)
+  const allDocumentsForYear = selectedYear ? documentsByYear[selectedYear] : [];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-primary">Tax Document Aggregator</h1>
-          <p className="text-muted-foreground">Scan, Upload, and Organize Your Tax Documents by Year</p>
+          <p className="text-muted-foreground">Scan, Upload, Archive, and Organize Your Tax Documents by Year</p>
         </div>
         <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
@@ -114,7 +136,7 @@ const TaxDocumentAggregatorPage = () => {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Easily store, categorize, and share your tax documents in one place.
+            Easily store, categorize, archive, and share your tax documents in one place.
             Upload statements from employers, banks, and other institutions to keep them organized for tax preparation.
           </p>
           
@@ -158,6 +180,14 @@ const TaxDocumentAggregatorPage = () => {
               >
                 <Scan className="mr-2 h-4 w-4" />
                 Scan Documents
+              </Button>
+              <Button 
+                className="w-full justify-start" 
+                variant="outline"
+                onClick={() => setActiveTab("archive")}
+              >
+                <Archive className="mr-2 h-4 w-4" />
+                Document Archive
               </Button>
               <Button className="w-full justify-start" variant="outline">
                 <Calendar className="mr-2 h-4 w-4" />
@@ -206,7 +236,11 @@ const TaxDocumentAggregatorPage = () => {
                   </div>
                 </SheetContent>
               </Sheet>
-              <Button className="w-full justify-start" variant="outline">
+              <Button 
+                className="w-full justify-start" 
+                variant="outline"
+                onClick={() => setShowAIAssistant(true)}
+              >
                 <Bot className="mr-2 h-4 w-4" />
                 AI Assistant
               </Button>
@@ -227,8 +261,13 @@ const TaxDocumentAggregatorPage = () => {
                   >
                     {year}
                     <Badge variant="outline" className="ml-2">
-                      {documentsByYear[year].length}
+                      {documentsByYear[year].filter(doc => !doc.archived).length}
                     </Badge>
+                    {archivedDocCounts[year] > 0 && (
+                      <Badge variant="outline" className="ml-1 text-amber-500 border-amber-500">
+                        {archivedDocCounts[year]} archived
+                      </Badge>
+                    )}
                   </Button>
                   <Button 
                     variant="ghost" 
@@ -248,9 +287,19 @@ const TaxDocumentAggregatorPage = () => {
         <div className="w-full md:w-3/4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg text-primary">
-                Documents for {selectedYear}
-              </CardTitle>
+              <div className="flex items-center gap-4">
+                <CardTitle className="text-lg text-primary">
+                  Documents for {selectedYear}
+                </CardTitle>
+                
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList>
+                    <TabsTrigger value="documents">Active Documents</TabsTrigger>
+                    <TabsTrigger value="archive">Archive Management</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+              
               <div className="w-full max-w-sm">
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -264,63 +313,87 @@ const TaxDocumentAggregatorPage = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Document Name</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Date Added</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredDocuments.length > 0 ? (
-                    filteredDocuments.map((doc) => (
-                      <TableRow key={doc.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center">
-                            <FileText className="h-4 w-4 mr-2 text-primary" />
-                            {doc.name}
-                          </div>
-                        </TableCell>
-                        <TableCell>{doc.source}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{doc.type}</Badge>
-                        </TableCell>
-                        <TableCell>{new Date(doc.uploadDate).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button variant="ghost" size="sm">View</Button>
-                            <Button variant="ghost" size="sm">
-                              <Download className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => handleShareDocument(doc)}
-                            >
-                              <Share2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+              <TabsContent value="documents" className="mt-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Document Name</TableHead>
+                      <TableHead>Source</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Date Added</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredDocuments.length > 0 ? (
+                      filteredDocuments.map((doc) => (
+                        <TableRow key={doc.id}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center">
+                              <FileText className="h-4 w-4 mr-2 text-primary" />
+                              {doc.name}
+                            </div>
+                          </TableCell>
+                          <TableCell>{doc.source}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{doc.type}</Badge>
+                          </TableCell>
+                          <TableCell>{new Date(doc.uploadDate).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button variant="ghost" size="sm">View</Button>
+                              <Button variant="ghost" size="sm">
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => handleShareDocument(doc)}
+                              >
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  // In a real app, this would call archiveDocument
+                                  console.log(`Archive document ${doc.id}`);
+                                  handleArchiveStatusChange();
+                                }}
+                              >
+                                <Archive className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                          {searchQuery 
+                            ? "No documents match your search criteria" 
+                            : "No active documents found for this year"}
                         </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                        {searchQuery 
-                          ? "No documents match your search criteria" 
-                          : "No documents found for this year"}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                    )}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+              
+              <TabsContent value="archive" className="mt-0">
+                <DocumentArchiveSection 
+                  documents={allDocumentsForYear} 
+                  selectedYear={selectedYear}
+                  onArchiveStatusChange={handleArchiveStatusChange}
+                />
+              </TabsContent>
             </CardContent>
             <CardFooter className="flex justify-between border-t py-4">
               <div className="text-sm text-muted-foreground">
-                Showing {filteredDocuments.length} documents
+                Showing {filteredDocuments.length} active documents
+                {archivedDocCounts[selectedYear] > 0 && (
+                  <> (plus {archivedDocCounts[selectedYear]} archived)</>
+                )}
               </div>
               <Button variant="outline" size="sm">
                 Export List

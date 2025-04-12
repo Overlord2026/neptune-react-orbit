@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +25,7 @@ interface DocumentSummary {
   source?: string;
   taxYear: string;
   summary: string;
+  archived?: boolean;
 }
 
 // Mock document summaries - in production would come from a database
@@ -61,7 +63,8 @@ const mockDocumentSummaries: DocumentSummary[] = [
     documentType: "1099-INT",
     source: "Chase Bank",
     taxYear: "2022",
-    summary: "1099-INT from Chase Bank, interest income $275, for tax year 2022."
+    summary: "1099-INT from Chase Bank, interest income $275, for tax year 2022.",
+    archived: true
   },
   {
     id: "6",
@@ -104,7 +107,8 @@ const processUserQuery = (query: string): Promise<string> => {
           if (docsForYear.length > 0) {
             let response = `Here are your documents for ${year}:\n\n`;
             docsForYear.forEach(doc => {
-              response += `- ${doc.documentType} from ${doc.source || 'Unknown source'}\n`;
+              const archiveStatus = doc.archived ? " (Archived)" : "";
+              response += `- ${doc.documentType} from ${doc.source || 'Unknown source'}${archiveStatus}\n`;
             });
             resolve(response);
             return;
@@ -134,7 +138,8 @@ const processUserQuery = (query: string): Promise<string> => {
           );
           
           if (doc) {
-            resolve(`Yes, I found a ${docType} for ${year} from ${doc.source || 'Unknown source'}.`);
+            const archiveStatus = doc.archived ? " Note: This document is currently archived." : "";
+            resolve(`Yes, I found a ${docType} for ${year} from ${doc.source || 'Unknown source'}.${archiveStatus}`);
             return;
           } else {
             resolve(`No, I couldn't find a ${docType} for ${year}. Would you like to upload one?`);
@@ -176,7 +181,8 @@ const processUserQuery = (query: string): Promise<string> => {
             
             if (docs.length > 1) {
               docs.forEach((doc, index) => {
-                response += `${index + 1}. ${doc.summary}\n`;
+                const archiveStatus = doc.archived ? " (Archived)" : "";
+                response += `${index + 1}. ${doc.summary}${archiveStatus}\n`;
               });
             }
             
@@ -217,12 +223,65 @@ const processUserQuery = (query: string): Promise<string> => {
           return;
         }
       }
+
+      // Archive documents
+      if ((lowerQuery.includes("archive") || lowerQuery.includes("store")) && lowerQuery.includes("document")) {
+        const yearMatch = lowerQuery.match(/\b(20\d{2})\b/);
+        const year = yearMatch ? yearMatch[0] : null;
+        
+        if (year) {
+          resolve(`I can help you archive your ${year} documents. This will move them to the archive section but keep them available for reference. Would you like me to archive all documents for ${year}?`);
+          return;
+        }
+        
+        resolve("Which tax year's documents would you like to archive? Archiving older documents helps keep your current documents organized while still allowing access to historical records when needed.");
+        return;
+      }
+      
+      // Show archived documents
+      if (lowerQuery.includes("archived") || (lowerQuery.includes("show") && lowerQuery.includes("archive"))) {
+        const archivedDocs = mockDocumentSummaries.filter(doc => doc.archived);
+        
+        if (archivedDocs.length > 0) {
+          let response = "Here are your archived documents:\n\n";
+          archivedDocs.forEach(doc => {
+            response += `- ${doc.documentType} from ${doc.source || 'Unknown source'} (${doc.taxYear})\n`;
+          });
+          resolve(response);
+        } else {
+          resolve("You don't have any archived documents at this time. You can archive older tax documents to keep your current documents organized.");
+        }
+        return;
+      }
+      
+      // Restore archived documents
+      if (lowerQuery.includes("restore") || lowerQuery.includes("unarchive")) {
+        const yearMatch = lowerQuery.match(/\b(20\d{2})\b/);
+        const year = yearMatch ? yearMatch[0] : null;
+        
+        if (year) {
+          const archivedForYear = mockDocumentSummaries.filter(doc => doc.taxYear === year && doc.archived);
+          
+          if (archivedForYear.length > 0) {
+            resolve(`I found ${archivedForYear.length} archived document(s) from ${year}. Would you like me to restore them to your active documents?`);
+          } else {
+            resolve(`I couldn't find any archived documents from ${year}.`);
+          }
+          return;
+        }
+        
+        resolve("Which tax year's archived documents would you like to restore? I can help you move them back to your active documents.");
+        return;
+      }
       
       // Default response for queries that don't match any patterns
-      resolve("I'm your AI Tax Document Assistant. I can help you find, summarize, and manage your tax documents for years 2021 through 2025. Try asking me things like:\n\n" +
+      resolve("I'm your AI Tax Document Assistant. I can help you find, summarize, archive, and manage your tax documents for years 2021 through 2025. Try asking me things like:\n\n" +
               "- Show me all documents from 2024\n" +
               "- Do I have my 1099-DIV for 2025?\n" +
               "- Summarize my 2024 W-2 from Employer ABC\n" +
+              "- Archive my 2021 tax documents\n" +
+              "- Show me my archived documents\n" +
+              "- Restore my 2022 archived documents\n" +
               "- List any documents missing for my 2025 return");
     }, 1000); // Simulate processing delay
   });

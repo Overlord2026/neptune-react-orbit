@@ -8,8 +8,10 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { TaxResult } from '@/utils/taxCalculator';
 import InfoTooltip from '@/components/tax/InfoTooltip';
+import { isProjectedTaxYear } from '@/utils/taxYearUtils';
 
 interface ScenarioComparisonTableProps {
   scenarios: TaxResult[];
@@ -37,9 +39,19 @@ const ScenarioComparisonTable: React.FC<ScenarioComparisonTableProps> = ({
             </TableHead>
             <TableHead className="text-center bg-green-950/30">
               Scenario 2 (2024)
+              {isProjectedTaxYear(2024) && (
+                <Badge variant="outline" className="ml-1 text-xs bg-amber-500/10">
+                  Projected
+                </Badge>
+              )}
             </TableHead>
             <TableHead className="text-center bg-amber-950/30">
               Scenario 3 (2025 w/ Roth)
+              {isProjectedTaxYear(2025) && (
+                <Badge variant="outline" className="ml-1 text-xs bg-amber-500/10">
+                  Projected
+                </Badge>
+              )}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -89,7 +101,14 @@ const ScenarioComparisonTable: React.FC<ScenarioComparisonTableProps> = ({
         </TableBody>
       </Table>
       <div className="mt-2 text-xs text-muted-foreground">
-        <p>Note: 2025 values are projected/estimated and subject to change when official IRS data is released.</p>
+        <p>
+          Note: 
+          {isProjectedTaxYear(2024) || isProjectedTaxYear(2025) ? (
+            " Values with the 'Projected' badge use estimated tax data and are subject to change."
+          ) : (
+            " All values are based on official IRS data."
+          )}
+        </p>
       </div>
     </div>
   );
