@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -23,8 +22,14 @@ import FloatingAssistantButton from "@/components/tax/FloatingAssistantButton";
 import AIDocumentAssistant from "@/components/tax/AIDocumentAssistant";
 import ShareDocumentModal from "@/components/tax/ShareDocumentModal";
 
-// Sample document data
+// Sample document data - updated to include 2024 and 2025
 const documentsByYear = {
+  "2025": [
+    // Initially empty for 2025
+  ],
+  "2024": [
+    // Initially empty for 2024  
+  ],
   "2023": [
     { id: "1", name: "W-2", source: "Employer Inc.", uploadDate: "2024-01-15", type: "Income" },
     { id: "2", name: "1099-INT", source: "Bank of America", uploadDate: "2024-01-20", type: "Interest" },

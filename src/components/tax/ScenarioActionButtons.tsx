@@ -27,10 +27,18 @@ const ScenarioActionButtons: React.FC<ScenarioActionButtonsProps> = ({
         <Edit className="h-4 w-4 mr-2" />
         Edit 2022 Scenario
       </Button>
-      <Button className="bg-[#FFD700] hover:bg-[#E5C100] text-black" size="lg">
-        <Edit className="h-4 w-4 mr-2" />
-        Edit 2025 Scenario
-      </Button>
+      <Link to="/tax-planning/roth-analysis/2024">
+        <Button className="bg-purple-600 hover:bg-purple-700" size="lg">
+          <Edit className="h-4 w-4 mr-2" />
+          Edit 2024 Scenario
+        </Button>
+      </Link>
+      <Link to="/tax-planning/roth-analysis/2025">
+        <Button className="bg-[#FFD700] hover:bg-[#E5C100] text-black" size="lg">
+          <Edit className="h-4 w-4 mr-2" />
+          Edit 2025 Scenario
+        </Button>
+      </Link>
       <Link to="/tax-planning/roth-analysis/new">
         <Button className="bg-primary hover:bg-primary/90" size="lg">
           <PlusCircle className="h-4 w-4 mr-2" />
