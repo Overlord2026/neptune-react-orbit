@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +12,9 @@ import { FilingStatusType } from '@/utils/taxCalculator';
 import InfoTooltip from '@/components/tax/InfoTooltip';
 import { TaxTrapChecker } from '@/components/tax/TaxTrapChecker';
 import { useToast } from "@/hooks/use-toast";
+import { TrapAlert } from '@/components/tax/TaxTrapAlerts';
+import TaxTrapWarningsPanel from '@/components/tax/TaxTrapWarningsPanel';
+import { checkTaxTraps, TaxTrapInput } from '@/utils/taxTrapChecker';
 
 interface ConversionResult {
   conversionAmount: number;
@@ -31,6 +33,7 @@ const SingleYearRothConversion = () => {
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const [result, setResult] = useState<ConversionResult | null>(null);
   const { toast } = useToast();
+  const [trapAlerts, setTrapAlerts] = useState<TrapAlert[]>([]);
 
   const handleCalculate = () => {
     if (conversionAmount > iraBalance) {
@@ -62,6 +65,36 @@ const SingleYearRothConversion = () => {
         effectiveRate
       });
       
+      // Check for tax traps
+      const currentYear = new Date().getFullYear();
+      const trapInput: TaxTrapInput = {
+        scenario_id: "roth-conversion-single",
+        year: currentYear,
+        filing_status: filingStatus,
+        agi: income + actualConversionAmount,
+        magi: income + actualConversionAmount,
+        total_income: income + actualConversionAmount,
+        taxable_income: income + actualConversionAmount - 12950, // Simple estimation
+        capital_gains_long: 0,
+        capital_gains_short: 0,
+        social_security_amount: 0,
+        household_size: 1,
+        medicare_enrollment: false,
+        aca_enrollment: false
+      };
+      
+      const trapResults = checkTaxTraps(trapInput);
+
+      // Convert TaxTrapWarnings to TrapAlerts format
+      const newAlerts: TrapAlert[] = trapResults.warnings.map(warning => ({
+        trapType: warning.type,
+        severity: warning.severity === 'alert' ? 'critical' : 
+                warning.severity === 'warning' ? 'warning' : 'info',
+        message: warning.title,
+        details: warning.description
+      }));
+      
+      setTrapAlerts(newAlerts);
       setIsCalculating(false);
       
       toast({
@@ -308,24 +341,10 @@ const SingleYearRothConversion = () => {
               </CardContent>
             </Card>
             
-            <h4 className="font-medium text-white">Tax Trap Analysis</h4>
-            
-            <TaxTrapChecker
-              scenarioId="roth-conversion-single"
-              scenarioData={{
-                year: 2023,
-                filing_status: filingStatus,
-                agi: income + result.conversionAmount,
-                magi: income + result.conversionAmount,
-                total_income: income + result.conversionAmount,
-                taxable_income: income + result.conversionAmount - 12950, // Simple estimation
-                capital_gains_long: 0,
-                capital_gains_short: 0,
-                social_security_amount: 0,
-                household_size: 1,
-                medicare_enrollment: false,
-                aca_enrollment: false
-              }}
+            <TaxTrapWarningsPanel 
+              alerts={trapAlerts}
+              scenarioName={`${result.conversionAmount.toLocaleString()} Roth Conversion`}
+              className="mb-4"
             />
           </div>
         ) : (
