@@ -21,6 +21,7 @@ import MissingDocumentsReport from "@/components/tax/MissingDocumentsReport";
 import FloatingAssistantButton from "@/components/tax/FloatingAssistantButton";
 import AIDocumentAssistant from "@/components/tax/AIDocumentAssistant";
 import ShareDocumentModal from "@/components/tax/ShareDocumentModal";
+import { getTaxYears } from "@/utils/taxYearUtils";
 
 // Sample document data - updated to include 2024 and 2025
 const documentsByYear = {
@@ -47,6 +48,8 @@ const documentsByYear = {
 
 // Missing documents suggestion
 const missingDocuments = [
+  { year: "2024", documentType: "W-2", description: "Wage and Tax Statement" },
+  { year: "2025", documentType: "1099-DIV", description: "Dividends and Distributions" },
   { year: "2023", documentType: "1098-E", description: "Student Loan Interest" },
   { year: "2022", documentType: "1099-DIV", description: "Dividends and Distributions" },
   { year: "2023", documentType: "Property Tax Statement", description: "Real Estate Taxes" }
@@ -54,7 +57,7 @@ const missingDocuments = [
 
 const TaxDocumentAggregatorPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedYear, setSelectedYear] = useState<string>("2023");
+  const [selectedYear, setSelectedYear] = useState<string>(getTaxYears()[0].toString());
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showScanSheet, setShowScanSheet] = useState(false);
   const [showMissingDocsDialog, setShowMissingDocsDialog] = useState(false);

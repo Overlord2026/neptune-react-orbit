@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { Bot, X, Send, Sparkles, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { getTaxYears } from '@/utils/taxYearUtils';
 
 // Interface for chat message structure
 interface ChatMessage {
@@ -62,12 +62,34 @@ const mockDocumentSummaries: DocumentSummary[] = [
     source: "Chase Bank",
     taxYear: "2022",
     summary: "1099-INT from Chase Bank, interest income $275, for tax year 2022."
+  },
+  {
+    id: "6",
+    documentType: "W-2",
+    source: "Employer Inc.",
+    taxYear: "2024",
+    summary: "W-2 from Employer Inc., total wages $88,000, federal taxes withheld $16,000, for tax year 2024."
+  },
+  {
+    id: "7",
+    documentType: "1099-DIV",
+    source: "Vanguard",
+    taxYear: "2024",
+    summary: "1099-DIV from Vanguard, total dividends $1,300, qualified dividends $950, for tax year 2024."
+  },
+  {
+    id: "8",
+    documentType: "W-2",
+    source: "Employer Inc.",
+    taxYear: "2025",
+    summary: "W-2 from Employer Inc., total wages $92,000, federal taxes withheld $17,000, for tax year 2025 (Projected)."
   }
 ];
 
 // Simple NLP model simulation
 const processUserQuery = (query: string): Promise<string> => {
   const lowerQuery = query.toLowerCase();
+  const years = getTaxYears().map(year => year.toString());
   
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -170,11 +192,17 @@ const processUserQuery = (query: string): Promise<string> => {
       // List missing documents
       if (lowerQuery.includes("missing") && lowerQuery.includes("document")) {
         const yearMatch = lowerQuery.match(/\b(20\d{2})\b/);
-        const year = yearMatch ? yearMatch[0] : "2023"; // Default to current year if not specified
+        const year = yearMatch ? yearMatch[0] : years[0]; // Default to most recent year if not specified
         
         resolve(`Based on my analysis, you might be missing the following documents for ${year}:\n\n` +
-                `- 1099-R for your IRA distribution\n` +
-                `- 1098 for mortgage interest\n\n` +
+                (year === "2024" ? 
+                  `- 1099-INT for your Bank of America account\n` +
+                  `- 1098 for mortgage interest\n\n` :
+                 year === "2025" ? 
+                  `- 1099-INT for your Bank of America account\n` +
+                  `- 1099-DIV for your Vanguard account\n\n` :
+                  `- 1099-R for your IRA distribution\n` +
+                  `- 1098 for mortgage interest\n\n`) +
                 `Would you like me to generate a full missing documents report?`);
         return;
       }
@@ -191,11 +219,11 @@ const processUserQuery = (query: string): Promise<string> => {
       }
       
       // Default response for queries that don't match any patterns
-      resolve("I'm your AI Tax Document Assistant. I can help you find, summarize, and manage your tax documents. Try asking me things like:\n\n" +
-              "- Show me all documents from 2022\n" +
-              "- Do I have my 1099-DIV for 2021?\n" +
-              "- Summarize my 2022 W-2 from Employer ABC\n" +
-              "- List any documents missing for my 2023 return");
+      resolve("I'm your AI Tax Document Assistant. I can help you find, summarize, and manage your tax documents for years 2021 through 2025. Try asking me things like:\n\n" +
+              "- Show me all documents from 2024\n" +
+              "- Do I have my 1099-DIV for 2025?\n" +
+              "- Summarize my 2024 W-2 from Employer ABC\n" +
+              "- List any documents missing for my 2025 return");
     }, 1000); // Simulate processing delay
   });
 };
