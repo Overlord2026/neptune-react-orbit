@@ -74,6 +74,16 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
     });
   };
   
+  // Calculate AGI for tax trap checking (simplified)
+  const calculatedAGI = data.w2Forms.reduce((sum, form) => sum + form.wages, 0) + 
+                       data.interestIncome + 
+                       data.dividendIncome;
+                       
+  // Calculate taxable income for tax trap checking (simplified)
+  const calculatedTaxableIncome = data.useStandardDeduction 
+    ? Math.max(0, calculatedAGI - 12950) 
+    : Math.max(0, calculatedAGI - Object.values(data.itemizedDeductions).reduce((sum, val) => sum + val, 0));
+  
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -112,15 +122,16 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
           scenarioData={{
             year: 2023, // Using current tax year for filing
             filing_status: data.filingStatus as any,
-            agi: data.w2Forms.reduce((sum, form) => sum + form.wages, 0) + data.interestIncome + data.dividendIncome,
-            total_income: data.w2Forms.reduce((sum, form) => sum + form.wages, 0) + data.interestIncome + data.dividendIncome,
-            taxable_income: Math.max(0, (data.w2Forms.reduce((sum, form) => sum + form.wages, 0) + data.interestIncome + data.dividendIncome) - 
-              (data.useStandardDeduction ? 12950 : Object.values(data.itemizedDeductions).reduce((sum, value) => sum + value, 0))),
+            agi: calculatedAGI,
+            total_income: calculatedAGI,
+            taxable_income: calculatedTaxableIncome,
             capital_gains_long: data.investmentIncome || 0,
+            capital_gains_short: 0,
             social_security_amount: data.socialSecurityBenefits || 0,
             household_size: data.dependents.length + 1,
             medicare_enrollment: data.isOver65 || false,
-            aca_enrollment: data.hasHealthInsurance || false
+            aca_enrollment: data.hasHealthInsurance || false,
+            state_of_residence: data.address?.state
           }}
           className="mb-4"
         />

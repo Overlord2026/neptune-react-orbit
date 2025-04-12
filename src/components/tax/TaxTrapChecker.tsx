@@ -21,10 +21,10 @@ interface TaxTrapCheckerProps {
     aca_enrollment: boolean;
     state_of_residence?: string;
   };
+  className?: string;
 }
 
-// Only use named export to be consistent with the imports
-export function TaxTrapChecker({ scenarioId, scenarioData }: TaxTrapCheckerProps) {
+export function TaxTrapChecker({ scenarioId, scenarioData, className }: TaxTrapCheckerProps) {
   // Convert the component's props to the format expected by checkTaxTraps
   const trapInput: TaxTrapInput = {
     scenario_id: scenarioId,
@@ -47,8 +47,14 @@ export function TaxTrapChecker({ scenarioId, scenarioData }: TaxTrapCheckerProps
   const trapResults: TaxTrapResult = checkTaxTraps(trapInput);
 
   return (
-    <div className="space-y-4">
+    <div className={className || "space-y-4"}>
       <TaxTrapWarnings warnings={trapResults.warnings} />
+      
+      {trapResults.warnings.length === 0 && (
+        <div className="text-sm text-muted-foreground p-4 bg-slate-800/10 rounded-md border border-slate-700/30">
+          No additional surcharges or bracket issues detected.
+        </div>
+      )}
       
       {/* Display additional information based on specific trap types */}
       {trapResults.irmaa_data && (

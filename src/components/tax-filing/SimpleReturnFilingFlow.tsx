@@ -84,7 +84,7 @@ export interface TaxReturnData {
   // Disclaimer
   disclaimerAcknowledged?: boolean;
   
-  // Add the missing properties
+  // Additional properties needed for tax trap checking
   investmentIncome?: number;
   socialSecurityBenefits?: number;
   isOver65?: boolean;
@@ -153,12 +153,18 @@ const SimpleReturnFilingFlow: React.FC = () => {
     }
     
     // If this is the review step, ensure disclaimer is acknowledged
-    if (stepId === 'review' && !disclaimerAcknowledged) {
-      toast({
-        title: "Please acknowledge the disclaimer",
-        description: "You must acknowledge the disclaimer before proceeding to e-file.",
-      });
-      return;
+    if (stepId === 'review') {
+      if (!disclaimerAcknowledged) {
+        toast({
+          title: "Please acknowledge the disclaimer",
+          description: "You must acknowledge the disclaimer before proceeding to e-file.",
+          variant: "destructive"
+        });
+        return;
+      } else {
+        // Update tax data to include the acknowledgment
+        setTaxData(prev => ({ ...prev, disclaimerAcknowledged }));
+      }
     }
     
     // Find next step
