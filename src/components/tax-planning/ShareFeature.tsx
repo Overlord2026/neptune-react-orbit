@@ -77,14 +77,14 @@ const ShareFeature: React.FC<ShareFeatureProps> = ({
                     className="text-xs text-[#9b87f5] border-[#9b87f5]/30 hover:bg-[#9b87f5]/10"
                   >
                     <Share2 className="h-3 w-3 mr-1" />
-                    Share
+                    <span>Share</span>
                   </Button>
                 )}
               </PopoverTrigger>
-              <TooltipContent side="bottom" className="bg-[#1A1F2C] border-[#242A38]">
-                Share this {title}
-              </TooltipContent>
             </TooltipTrigger>
+            <TooltipContent side="bottom" className="bg-[#1A1F2C] border-[#242A38]">
+              <span>Share this {title}</span>
+            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
         <PopoverContent 
