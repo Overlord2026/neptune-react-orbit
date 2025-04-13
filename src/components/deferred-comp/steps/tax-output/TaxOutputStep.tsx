@@ -1,5 +1,5 @@
 import React from "react";
-import type { LoadingState as LoadingStateType } from "@/types/LoadingState";
+import { LoadingStateEnum } from "@/types/LoadingState";
 import { useEquityForm } from "../../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
@@ -18,17 +18,17 @@ import { LoadingState } from "./LoadingState";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
-  loadingState?: LoadingStateType;
+  loadingState?: LoadingStateEnum;
 }
 
 export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   const { formState, calculateAmtImpact, calculateDeferralBenefit, calculateMultiYearImpact } = useEquityForm();
-  const [loadingState, setLoadingState] = React.useState<LoadingStateType>('loading');
+  const [loadingState, setLoadingState] = React.useState<LoadingStateEnum>(LoadingStateEnum.Loading);
   const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      setLoadingState('success');
+      setLoadingState(LoadingStateEnum.Success);
     }, 800);
     return () => clearTimeout(timer);
   }, []);
@@ -75,8 +75,8 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
     }
   };
 
-  if (loadingState === 'loading') {
-    return <LoadingState state="loading" />;
+  if (loadingState === LoadingStateEnum.Loading) {
+    return <LoadingState state={LoadingStateEnum.Loading} />;
   }
 
   const hasEquity = formState.equityType === "NSO" || formState.equityType === "ISO";
