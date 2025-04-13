@@ -94,7 +94,7 @@ const MultiYearRothConversion: React.FC = () => {
         severity: warning.severity === 'high' ? 'critical' : 
                  warning.severity === 'medium' ? 'warning' : 'info' as "critical" | "warning" | "info",
         message: warning.message,
-        details: warning.description
+        details: warning.message // Use message as details since description doesn't exist
       }))
     : [];
 

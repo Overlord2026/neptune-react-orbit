@@ -1,13 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Info, AlertTriangle, Users } from "lucide-react";
+import { Info, AlertTriangle, Users, X, Check } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MultiYearScenarioData } from '../types/ScenarioTypes';
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface SpouseDetailsStepProps {
   scenarioData: MultiYearScenarioData;
@@ -18,6 +20,10 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
   scenarioData, 
   onUpdateScenarioData 
 }) => {
+  const [isMarried, setIsMarried] = useState<boolean>(
+    scenarioData.filingStatus === 'married' || scenarioData.filingStatus === 'married_separate'
+  );
+
   // Helper to format currency inputs
   const formatCurrency = (value: number | undefined) => {
     if (value === undefined) return '';
@@ -34,61 +40,100 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
     }
   };
 
+  // Handle marriage status change
+  const handleMarriageStatusChange = (isMarried: boolean) => {
+    setIsMarried(isMarried);
+    
+    if (isMarried) {
+      onUpdateScenarioData({ 
+        filingStatus: 'married',
+        includeSpouse: true
+      });
+    } else {
+      onUpdateScenarioData({ 
+        filingStatus: 'single',
+        includeSpouse: false,
+        isInCommunityPropertyState: false,
+        splitCommunityIncome: false,
+        compareMfjVsMfs: false
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Filing Status
+            Personal Status
           </CardTitle>
           <CardDescription>
-            Choose your filing status and enter spouse details if applicable
+            Tell us about your personal status to tailor the analysis
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="filingStatus">Filing Status</Label>
-            <Select 
-              value={scenarioData.filingStatus} 
+            <Label htmlFor="maritalStatus">Are you married?</Label>
+            <ToggleGroup 
+              type="single" 
+              value={isMarried ? "yes" : "no"}
               onValueChange={(value) => {
-                const includeSpouse = value === 'married' || value === 'married_separate';
-                onUpdateScenarioData({ 
-                  filingStatus: value as 'single' | 'married' | 'married_separate' | 'head_of_household',
-                  includeSpouse
-                });
+                if (value) handleMarriageStatusChange(value === "yes");
               }}
+              className="justify-start"
             >
-              <SelectTrigger id="filingStatus">
-                <SelectValue placeholder="Select filing status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="single">Single</SelectItem>
-                <SelectItem value="married">Married Filing Jointly (MFJ)</SelectItem>
-                <SelectItem value="married_separate">Married Filing Separately (MFS)</SelectItem>
-                <SelectItem value="head_of_household">Head of Household</SelectItem>
-              </SelectContent>
-            </Select>
+              <ToggleGroupItem value="yes" className="gap-2">
+                <Check className="h-4 w-4" /> Yes
+              </ToggleGroupItem>
+              <ToggleGroupItem value="no" className="gap-2">
+                <X className="h-4 w-4" /> No
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
 
-          {(scenarioData.filingStatus === 'married' || scenarioData.filingStatus === 'married_separate') && (
+          {isMarried && (
             <>
-              <div className="flex items-center space-x-2 pt-2">
-                <Switch 
-                  id="compareMfjVsMfs"
-                  checked={scenarioData.compareMfjVsMfs}
-                  onCheckedChange={(checked) => onUpdateScenarioData({ compareMfjVsMfs: checked })}
-                />
-                <Label htmlFor="compareMfjVsMfs">Compare MFJ vs MFS tax impacts</Label>
+              <div className="space-y-2">
+                <Label htmlFor="filingStatus">Filing Status</Label>
+                <Select 
+                  value={scenarioData.filingStatus} 
+                  onValueChange={(value) => {
+                    onUpdateScenarioData({ 
+                      filingStatus: value as 'single' | 'married' | 'married_separate' | 'head_of_household',
+                    });
+                  }}
+                >
+                  <SelectTrigger id="filingStatus">
+                    <SelectValue placeholder="Select filing status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="married">Married Filing Jointly (MFJ)</SelectItem>
+                    <SelectItem value="married_separate">Married Filing Separately (MFS)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex items-center space-x-2 pt-2">
-                <Switch 
+                <Checkbox 
+                  id="compareMfjVsMfs"
+                  checked={scenarioData.compareMfjVsMfs}
+                  onCheckedChange={(checked) => onUpdateScenarioData({ compareMfjVsMfs: !!checked })}
+                />
+                <Label htmlFor="compareMfjVsMfs" className="text-sm">
+                  Calculate both MFJ and MFS to compare tax impacts
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2 pt-2">
+                <Checkbox 
                   id="isInCommunityPropertyState"
                   checked={scenarioData.isInCommunityPropertyState}
-                  onCheckedChange={(checked) => onUpdateScenarioData({ isInCommunityPropertyState: checked })}
+                  onCheckedChange={(checked) => onUpdateScenarioData({ isInCommunityPropertyState: !!checked })}
                 />
-                <Label htmlFor="isInCommunityPropertyState">Community Property State</Label>
+                <Label htmlFor="isInCommunityPropertyState" className="text-sm">
+                  We live in a community property state
+                </Label>
               </div>
 
               {scenarioData.isInCommunityPropertyState && (
@@ -105,12 +150,12 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
                   </div>
                   <div className="mt-3">
                     <div className="flex items-center space-x-2">
-                      <Switch 
+                      <Checkbox 
                         id="splitCommunityIncome"
                         checked={scenarioData.splitCommunityIncome}
-                        onCheckedChange={(checked) => onUpdateScenarioData({ splitCommunityIncome: checked })}
+                        onCheckedChange={(checked) => onUpdateScenarioData({ splitCommunityIncome: !!checked })}
                       />
-                      <Label htmlFor="splitCommunityIncome">
+                      <Label htmlFor="splitCommunityIncome" className="text-sm">
                         Split community income 50/50 for tax calculations
                       </Label>
                     </div>
@@ -122,7 +167,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
         </CardContent>
       </Card>
 
-      {(scenarioData.filingStatus === 'married' || scenarioData.filingStatus === 'married_separate') && (
+      {isMarried && (
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">Spouse/Partner Details</CardTitle>
@@ -243,7 +288,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
         </Card>
       )}
 
-      {(scenarioData.filingStatus === 'married' || scenarioData.filingStatus === 'married_separate') && 
+      {isMarried && 
        scenarioData.includeSpouse && 
        (scenarioData.spouseTraditionalIRAStartBalance || 0) > 0 && (
         <Card>
@@ -270,7 +315,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
                   : "Separate approach handles each IRA independently with its own conversion strategy."}
               </p>
 
-              {Math.abs((scenarioData.spouseAge || 0) - scenarioData.startAge) >= 8 && (
+              {scenarioData.spouseAge && Math.abs(scenarioData.spouseAge - scenarioData.startAge) >= 8 && (
                 <div className="rounded-lg border border-amber-600/30 bg-amber-50/10 p-4 text-sm mt-4">
                   <div className="flex gap-2">
                     <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
@@ -288,6 +333,22 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
             </div>
           </CardContent>
         </Card>
+      )}
+      
+      {/* Spouse/Partner Data Disclaimer */}
+      {isMarried && (
+        <div className="rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 text-sm">
+          <h4 className="font-medium mb-2">Spousal Data Considerations</h4>
+          <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+            <li>For MFJ filers, we calculate tax impacts based on combined income and assets</li>
+            <li>For MFS filers, we provide separate tax calculations for each spouse</li>
+            {scenarioData.isInCommunityPropertyState && (
+              <li>Community property rules affect how income is allocated between spouses</li>
+            )}
+            <li>Age differences between spouses may impact optimal conversion strategies</li>
+            <li>Consider consulting with a tax professional regarding your specific situation</li>
+          </ul>
+        </div>
       )}
     </div>
   );
