@@ -46,7 +46,7 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
           
           <YearlyPlanTable scenario={scenario} />
           
-          <ResultDisclaimer />
+          <ResultDisclaimer scenario={scenario} />
         </div>
         
         <ResultActions 
