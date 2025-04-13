@@ -50,7 +50,7 @@ const BeneficiaryStep: React.FC<BeneficiaryStepProps> = ({
                   type="number"
                   min={0}
                   max={120}
-                  value={scenarioData.beneficiaryAge.toString()} 
+                  value={scenarioData.beneficiaryAge?.toString() || ''} 
                   onChange={(e) => {
                     const age = parseInt(e.target.value);
                     if (!isNaN(age)) {
@@ -70,7 +70,7 @@ const BeneficiaryStep: React.FC<BeneficiaryStepProps> = ({
                     type="number"
                     min={0}
                     max={100}
-                    value={(scenarioData.beneficiaryIncomeTaxRate * 100).toString()}
+                    value={(scenarioData.beneficiaryIncomeTaxRate ? scenarioData.beneficiaryIncomeTaxRate * 100 : 0).toString()}
                     onChange={(e) => {
                       const rate = parseFloat(e.target.value) / 100;
                       if (!isNaN(rate)) {

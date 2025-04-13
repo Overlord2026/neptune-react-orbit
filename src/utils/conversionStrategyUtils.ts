@@ -1,47 +1,45 @@
 
 /**
- * Conversion Strategy Utilities
- * 
- * Functions for determining Roth conversion amounts based on different strategies.
+ * Utility functions for determining conversion strategies
  */
 
-import { FilingStatusType } from './taxBracketData';
-import { getBrackets } from './taxBracketData';
+import { getTaxBrackets } from './taxBracketData';
 
 /**
- * Get maximum conversion amount based on bracket fill strategy
+ * Get maximum conversion amount based on strategy
  */
 export const getMaxConversionAmount = (
-  strategy: 'fixed' | 'bracket_12' | 'bracket_12_22',
-  income: number,
-  year: number,
-  filingStatus: FilingStatusType,
+  strategy: 'fixed' | 'bracket_12' | 'bracket_22',
+  currentIncome: number,
+  taxYear: number,
+  filingStatus: 'single' | 'married' | 'head_of_household' | 'married_separate',
   fixedAmount?: number
 ): number => {
-  // If fixed strategy, return the fixed amount
-  if (strategy === 'fixed' && fixedAmount !== undefined) {
-    return fixedAmount;
+  // For fixed amount strategy, return the specified amount
+  if (strategy === 'fixed') {
+    return fixedAmount || 0;
   }
   
-  // Get bracket information
-  const brackets = getBrackets(year, filingStatus, "ordinary");
+  // Get tax brackets for the year and filing status
+  const brackets = getTaxBrackets(taxYear, filingStatus);
   
-  // Find 12% and 22% brackets
-  const bracket12 = brackets.find(b => Math.round(b.rate * 100) === 12);
-  const bracket22 = brackets.find(b => Math.round(b.rate * 100) === 22);
-  
-  if (!bracket12) {
-    return 0; // Safety check
+  // Find the target bracket
+  let targetBracket;
+  if (strategy === 'bracket_12') {
+    targetBracket = brackets.find(b => b.rate === 0.12);
+  } else if (strategy === 'bracket_22') {
+    targetBracket = brackets.find(b => b.rate === 0.22);
   }
   
-  // Calculate available space in 12% bracket
-  let availableSpace = bracket12.bracket_max - income;
-  
-  // If we want to go up to 22% bracket and it exists
-  if (strategy === 'bracket_12_22' && bracket22) {
-    availableSpace = bracket22.bracket_max - income;
+  // If target bracket not found, return 0
+  if (!targetBracket) {
+    return 0;
   }
   
-  // Make sure we don't go negative
-  return Math.max(0, availableSpace);
+  // Calculate remaining room in the bracket
+  const maxIncomeInBracket = targetBracket.end;
+  const roomLeft = maxIncomeInBracket - currentIncome;
+  
+  // Return maximum 0 (no room left)
+  return Math.max(0, roomLeft);
 };

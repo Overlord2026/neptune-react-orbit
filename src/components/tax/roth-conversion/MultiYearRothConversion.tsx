@@ -93,8 +93,12 @@ const MultiYearRothConversion: React.FC = () => {
   
   const latestWarnings = yearlyResults.length > 0 
     ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
-        ...warning,
-        trapType: warning.type, // Add trapType for compatibility with TaxTrapWarningsPanel
+        title: warning.message,
+        description: warning.message,
+        type: warning.type,
+        severity: warning.severity === 'high' ? 'critical' : 
+                  warning.severity === 'medium' ? 'warning' : 'info',
+        trapType: warning.trapType || warning.type, // Add trapType for compatibility with TaxTrapWarningsPanel
       }))
     : [];
 

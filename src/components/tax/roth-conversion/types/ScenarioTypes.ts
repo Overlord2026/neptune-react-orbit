@@ -26,6 +26,9 @@ export interface MultiYearScenarioData {
   spouseRothIRAStartBalance?: number;
   spouseBaseAnnualIncome?: number;
   spouseRmdStartAge?: number;
+  spouseFirstName?: string;
+  spouseLastName?: string;
+  spouseAssumedDeathYear?: number;
   
   // IRA approach
   combinedIRAApproach?: boolean;
@@ -57,6 +60,7 @@ export interface YearlyResult {
   marginalRate: number;
   effectiveRate: number;
   traditionalScenarioBalance: number;
+  rothScenarioBalance?: number; // Added this property
   cumulativeTaxPaid: number;
   cumulativeTaxSaved: number;
   breakEvenYear?: boolean;
