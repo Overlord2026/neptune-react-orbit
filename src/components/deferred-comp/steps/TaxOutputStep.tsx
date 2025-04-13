@@ -2,7 +2,7 @@
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, InfoIcon, RefreshCw } from "lucide-react";
+import { ArrowLeft, InfoIcon, RefreshCw, Save } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { TaxResultsSummary } from "../components/TaxResultsSummary";
@@ -11,14 +11,18 @@ import { EquityComparisonChart } from "../components/EquityComparisonChart";
 import { TaxSummaryCard } from "../components/tax-summary/TaxSummaryCard";
 import { BracketChangeVisualizer } from "../components/tax-summary/BracketChangeVisualizer";
 import { EquityStrategySummary } from "../components/EquityStrategySummary";
+import EquityDisclaimerSection from "../components/EquityDisclaimerSection";
+import { toast } from "sonner";
+import { saveScenario } from "@/utils/taxScenarioStorage";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
 }
 
 export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
-  const { formState, calculateAmtImpact, calculateDeferralBenefit } = useEquityForm();
+  const { formState, calculateAmtImpact, calculateDeferralBenefit, calculateMultiYearImpact } = useEquityForm();
   const [loading, setLoading] = React.useState(true);
+  const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
 
   React.useEffect(() => {
     // Simulate API call or calculation
@@ -27,6 +31,33 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
     }, 800);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleSaveAnalysis = async () => {
+    if (!disclaimerAcknowledged) {
+      toast.warning("Please acknowledge the disclaimer before saving your analysis.");
+      return;
+    }
+
+    try {
+      // Create a summary of the scenario
+      const scenarioData = {
+        id: `equity-${Date.now()}`,
+        type: "equity-compensation",
+        name: `${formState.equityType || "Deferred"} Analysis - ${new Date().toLocaleDateString()}`,
+        timestamp: new Date().toISOString(),
+        formState,
+        results: calculateMultiYearImpact(),
+        amtImpact: formState.equityType === "ISO" ? calculateAmtImpact() : 0,
+        deferralBenefit: formState.hasDeferredComp ? calculateDeferralBenefit() : 0
+      };
+
+      await saveScenario(scenarioData);
+      toast.success("Your analysis has been saved successfully.");
+    } catch (error) {
+      console.error("Error saving scenario:", error);
+      toast.error("There was a problem saving your analysis. Please try again.");
+    }
+  };
 
   if (loading) {
     return (
@@ -172,31 +203,23 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
         )}
       </div>
 
-      <Card className="bg-blue-900/20 border-blue-700">
-        <CardContent className="pt-4 pb-4">
-          <div className="flex items-start space-x-4">
-            <div className="rounded-full bg-blue-500/20 p-2">
-              <InfoIcon className="h-6 w-6 text-blue-500" />
-            </div>
-            <div className="space-y-1">
-              <p className="font-medium text-blue-500">Important Disclaimer</p>
-              <p className="text-sm text-muted-foreground">
-                This analysis provides general guidance but is not a substitute for personalized 
-                professional advice. Tax laws can be complex, especially for equity compensation 
-                and AMT calculations. We recommend consulting with a qualified tax professional 
-                to validate these strategies for your specific situation.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* New Disclaimer Section */}
+      <EquityDisclaimerSection 
+        acknowledged={disclaimerAcknowledged} 
+        onAcknowledgeChange={setDisclaimerAcknowledged} 
+      />
 
       <div className="flex space-x-4">
         <Button onClick={onPrevious} variant="outline">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
         
-        <Button className="bg-primary">
+        <Button 
+          className="bg-primary" 
+          onClick={handleSaveAnalysis}
+          disabled={!disclaimerAcknowledged}
+        >
+          <Save className="mr-2 h-4 w-4" />
           Save This Analysis
         </Button>
       </div>

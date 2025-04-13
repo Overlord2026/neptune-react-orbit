@@ -17,6 +17,7 @@ import {
 } from './taxDataVersioning';
 
 import { TaxDataCacheInfo } from './taxCalculatorTypes';
+import { EquityScenario, fetchEquityScenarios } from './taxScenarioStorage';
 
 /**
  * Pre-check if tax data is current before calculation
@@ -34,6 +35,20 @@ export function checkTaxDataBeforeCalculation(
  */
 export function refreshTaxData(sessionId: string = "default"): void {
   markTaxDataAsCurrent(sessionId);
+}
+
+/**
+ * Get equity scenarios for integration with other tax planning tools
+ */
+export async function getEquityScenariosForTaxYear(taxYear: number): Promise<EquityScenario[]> {
+  const scenarios = await fetchEquityScenarios();
+  return scenarios.filter(scenario => {
+    // Find scenarios relevant to the requested tax year
+    if (scenario.results && Array.isArray(scenario.results)) {
+      return scenario.results.some(result => result.year === taxYear);
+    }
+    return false;
+  });
 }
 
 // Re-export for internal use
