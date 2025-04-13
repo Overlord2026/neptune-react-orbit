@@ -1,273 +1,317 @@
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useCharitableContext } from '../context/CharitableContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import InfoTooltip from '@/components/tax/InfoTooltip';
+
+import React from 'react';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription, FormMessage } from "@/components/ui/form";
+import { useCharitable } from '../context/CharitableContext';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { CharitableScenario } from '../types/CharitableTypes';
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Gift, Info } from "lucide-react";
+import { InfoTooltip } from '@/components/tax/InfoTooltip';
 import StepNavButtons from '../components/StepNavButtons';
 import { calculateCrtBenefits } from '../utils/crtCalculationUtils';
-import { Separator } from '@/components/ui/separator';
 
-const CrtStep = () => {
-  const { crtData, setCrtData, nextStep, prevStep } = useCharitableContext();
-  const [results, setResults] = useState<any>(null);
+interface CrtStepProps {
+  scenario: CharitableScenario;
+  updateScenario: (data: Partial<CharitableScenario>) => void;
+  onNext: () => void;
+  onBack: () => void;
+}
 
-  const { control, handleSubmit, watch, setValue } = useForm({
+const formSchema = z.object({
+  useCrt: z.boolean(),
+  type: z.enum(["CRAT", "CRUT"]),
+  fundingAmount: z.number().min(10000, "Minimum funding is $10,000"),
+  payoutRate: z.number().min(5, "Minimum 5%").max(50, "Maximum 50%"),
+  trustTerm: z.union([z.number().min(2, "Minimum 2 years"), z.literal("lifetime")]),
+  beneficiaryAge: z.number().min(18, "Minimum age is 18").max(120, "Maximum age is 120"),
+  spouseBeneficiary: z.boolean(),
+  spouseAge: z.number().optional(),
+});
+
+export const CrtStep: React.FC<CrtStepProps> = ({ 
+  scenario, 
+  updateScenario, 
+  onNext, 
+  onBack 
+}) => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      trustType: crtData?.trustType || 'crat',
-      fundingAmount: crtData?.fundingAmount || 100000,
-      payoutRate: crtData?.payoutRate || 6,
-      annuityAmount: crtData?.annuityAmount || 6000,
-      trustTerm: crtData?.trustTerm || 20,
-      beneficiaryAge: crtData?.beneficiaryAge || 60,
-      deferralYears: crtData?.deferralYears || 0,
-      growthRate: crtData?.growthRate || 7,
-      discountRate: crtData?.discountRate || 5,
-      taxRate: crtData?.taxRate || 20,
-      useFixedTerm: crtData?.useFixedTerm !== undefined ? crtData.useFixedTerm : true,
+      useCrt: scenario.crt?.useCrt || false,
+      type: scenario.crt?.type || "CRAT",
+      fundingAmount: scenario.crt?.fundingAmount || 100000,
+      payoutRate: scenario.crt?.payoutRate || 5,
+      trustTerm: scenario.crt?.trustTerm || "lifetime",
+      beneficiaryAge: scenario.crt?.beneficiaryAge || 65,
+      spouseBeneficiary: scenario.crt?.spouseBeneficiary || false,
+      spouseAge: scenario.crt?.spouseAge || 65
     },
   });
 
-  const trustType = watch("trustType");
-  const useFixedTerm = watch("useFixedTerm");
+  const useCrt = form.watch("useCrt");
+  const type = form.watch("type");
+  const fundingAmount = form.watch("fundingAmount");
+  const payoutRate = form.watch("payoutRate");
+  const trustTerm = form.watch("trustTerm");
+  const beneficiaryAge = form.watch("beneficiaryAge");
+  const spouseBeneficiary = form.watch("spouseBeneficiary");
+  
+  const crtBenefits = useCrt ? calculateCrtBenefits({
+    type,
+    fundingAmount,
+    payoutRate,
+    trustTerm,
+    beneficiaryAge,
+    spouseBeneficiary,
+    spouseAge: form.watch("spouseAge")
+  }) : { immediateDeduction: 0, annualPayout: 0 };
 
-  useEffect(() => {
-    if (trustType === 'crat') {
-      const fundingAmount = watch("fundingAmount");
-      const payoutRate = watch("payoutRate");
-      const newAnnuityAmount = (fundingAmount * (payoutRate / 100));
-      setValue("annuityAmount", newAnnuityAmount);
-    }
-  }, [watch("fundingAmount"), watch("payoutRate"), trustType, setValue]);
-
-  useEffect(() => {
-    if (trustType === 'crat') {
-      const fundingAmount = watch("fundingAmount");
-      const annuityAmount = watch("annuityAmount");
-      const newPayoutRate = (annuityAmount / fundingAmount) * 100;
-      setValue("payoutRate", newPayoutRate);
-    }
-  }, [watch("fundingAmount"), watch("annuityAmount"), trustType, setValue]);
-
-  const onSubmit = (data: any) => {
-    const calculatedResults = calculateCrtBenefits(data);
-    setResults(calculatedResults);
-    setCrtData(data);
-    nextStep();
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    updateScenario({
+      crt: values
+    });
+    onNext();
   };
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle>Trust Structure</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label className="flex items-center">
-                  Trust Type
-                  <InfoTooltip tooltip="A CRAT pays a fixed dollar amount annually, while a CRUT pays a fixed percentage of the trust's value each year." />
-                </Label>
-                <Controller
-                  control={control}
-                  name="trustType"
-                  render={({ field }) => (
-                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="crat" id="r1" />
-                        <Label htmlFor="r1">CRAT (Annuity Trust)</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="crut" id="r2" />
-                        <Label htmlFor="r2">CRUT (Unitrust)</Label>
-                      </div>
-                    </RadioGroup>
-                  )}
-                />
-              </div>
-
-              {trustType === 'crat' && (
-                <div>
-                  <Label className="flex items-center">
-                    Annuity Amount ($)
-                    <InfoTooltip tooltip="The fixed dollar amount paid to the beneficiary each year." />
-                  </Label>
-                  <Controller
-                    name="annuityAmount"
-                    control={control}
+      <Card className="bg-primary/10 border border-primary/20">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <Gift className="text-[#FFD700]" size={20} />
+            <h3 className="font-medium text-lg">Charitable Remainder Trust (CRT)</h3>
+            <InfoTooltip content="A CRT allows you to donate assets to charity while maintaining an income stream, providing immediate tax deductions and potential income tax savings." />
+          </div>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="useCrt"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">
+                        Use Charitable Remainder Trust
+                      </FormLabel>
+                      <FormDescription>
+                        Establish a CRT to provide income and tax benefits
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              {useCrt && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="type"
                     render={({ field }) => (
-                      <Input type="number" {...field} />
+                      <FormItem>
+                        <FormLabel>CRT Type</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select CRT type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="CRAT">CRAT - Fixed Annual Payment</SelectItem>
+                              <SelectItem value="CRUT">CRUT - Variable Payment Based on Trust Value</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <InfoTooltip content="CRAT provides fixed annual payments while CRUT payments vary based on the trust's value each year." />
+                        </div>
+                      </FormItem>
                     )}
                   />
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <div>
-            <Label className="flex items-center">
-              Funding Amount
-              <InfoTooltip tooltip="The assets you'll transfer to the CRT. Can be cash, securities, real estate, or other appreciated assets." />
-            </Label>
-            <Controller
-              name="fundingAmount"
-              control={control}
-              render={({ field }) => (
-                <Input type="number" {...field} />
-              )}
-            />
-          </div>
-          
-          <div>
-            <Label className="flex items-center">
-              Payout Rate (%)
-              <InfoTooltip tooltip="The percentage of the trust that will be paid to income beneficiaries annually. IRS requires 5-50%, and at least 10% must ultimately go to charity." />
-            </Label>
-            <Controller
-              name="payoutRate"
-              control={control}
-              render={({ field }) => (
-                <Input type="number" {...field} />
-              )}
-            />
-          </div>
-          
-          <div>
-            <Label className="flex items-center">
-              Growth Rate (%)
-              <InfoTooltip tooltip="The projected annual growth rate of the trust's assets." />
-            </Label>
-            <Controller
-              name="growthRate"
-              control={control}
-              render={({ field }) => (
-                <Input type="number" {...field} />
-              )}
-            />
-          </div>
-          
-          <div>
-            <Label className="flex items-center">
-              Discount Rate (%)
-              <InfoTooltip tooltip="The discount rate used to calculate the present value of future payments." />
-            </Label>
-            <Controller
-              name="discountRate"
-              control={control}
-              render={({ field }) => (
-                <Input type="number" {...field} />
-              )}
-            />
-          </div>
-          
-          <div>
-            <Label className="flex items-center">
-              Tax Rate (%)
-              <InfoTooltip tooltip="The estimated tax rate on income received from the trust." />
-            </Label>
-            <Controller
-              name="taxRate"
-              control={control}
-              render={({ field }) => (
-                <Input type="number" {...field} />
-              )}
-            />
-          </div>
-          
-          <div>
-            <Label className="flex items-center">
-              Trust Term
-              <InfoTooltip tooltip="CRTs can last for a specified number of years (up to 20) or for the lifetime of the beneficiary(ies)." />
-            </Label>
-            <Controller
-              name="useFixedTerm"
-              control={control}
-              render={({ field }) => (
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="useFixedTerm"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
+                  
+                  <FormField
+                    control={form.control}
+                    name="fundingAmount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Funding Amount</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min={10000}
+                              {...field}
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <InfoTooltip content="The amount of assets you plan to place into the CRT. Generally, larger amounts make more sense due to setup costs." />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                  <Label htmlFor="useFixedTerm">Use Fixed Term</Label>
-                </div>
+                  
+                  <FormField
+                    control={form.control}
+                    name="payoutRate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Payout Rate: {field.value}%</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Slider
+                              min={5}
+                              max={50}
+                              step={0.5}
+                              value={[field.value]}
+                              onValueChange={(vals) => field.onChange(vals[0])}
+                            />
+                          </FormControl>
+                          <InfoTooltip content="The percentage of the trust's value paid annually to the beneficiary. IRS requires a minimum 5% payout rate." />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="trustTerm"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Trust Term</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <Select 
+                            onValueChange={(val) => field.onChange(val === "lifetime" ? "lifetime" : parseInt(val))}
+                            defaultValue={field.value.toString()}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select term" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="lifetime">Lifetime</SelectItem>
+                              <SelectItem value="2">2 Years</SelectItem>
+                              <SelectItem value="5">5 Years</SelectItem>
+                              <SelectItem value="10">10 Years</SelectItem>
+                              <SelectItem value="15">15 Years</SelectItem>
+                              <SelectItem value="20">20 Years</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <InfoTooltip content="The period over which the trust will make payments before the remainder goes to charity. Lifetime terms are based on life expectancy." />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="beneficiaryAge"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Beneficiary Age</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min={18}
+                              max={120}
+                              {...field}
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <InfoTooltip content="Age of the primary income beneficiary. For lifetime CRTs, this affects the charitable deduction calculation." />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="spouseBeneficiary"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Include Spouse as Beneficiary
+                          </FormLabel>
+                          <FormDescription>
+                            Payments continue until the death of both beneficiaries
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  
+                  {spouseBeneficiary && (
+                    <FormField
+                      control={form.control}
+                      name="spouseAge"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Spouse Age</FormLabel>
+                          <div className="flex items-center gap-2">
+                            <FormControl>
+                              <Input
+                                type="number"
+                                min={18}
+                                max={120}
+                                {...field}
+                                onChange={(e) => field.onChange(Number(e.target.value))}
+                              />
+                            </FormControl>
+                            <InfoTooltip content="Age of the spouse, used in the calculation of charitable deduction for lifetime CRTs." />
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                  
+                  <div className="bg-primary/5 rounded-md p-4">
+                    <h4 className="font-medium mb-2">Estimated Benefits</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-sm text-muted-foreground">Charitable Deduction</div>
+                        <div className="text-xl font-medium">${Math.round(crtBenefits.immediateDeduction).toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted-foreground">Annual Payout</div>
+                        <div className="text-xl font-medium">${Math.round(crtBenefits.annualPayout).toLocaleString()}</div>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
-            />
-          </div>
-          
-          {!useFixedTerm && (
-            <div>
-              <Label className="flex items-center">
-                Primary Beneficiary Age
-                <InfoTooltip tooltip="The age of the primary income beneficiary, used to calculate lifetime payments based on actuarial tables." />
-              </Label>
-              <Controller
-                name="beneficiaryAge"
-                control={control}
-                render={({ field }) => (
-                  <Input type="number" {...field} />
-                )}
+              
+              <StepNavButtons
+                onBack={onBack}
+                isSubmitting={form.formState.isSubmitting}
               />
-            </div>
-          )}
-          
-          {useFixedTerm && (
-            <div>
-              <Label className="flex items-center">
-                Trust Term (Years)
-                <InfoTooltip tooltip="The number of years the trust will last. Maximum is typically 20 years." />
-              </Label>
-              <Controller
-                name="trustTerm"
-                control={control}
-                render={({ field }) => (
-                  <Input type="number" {...field} />
-                )}
-              />
-            </div>
-          )}
-          
-          <div>
-            <Label className="flex items-center">
-              Deferral Years
-              <InfoTooltip tooltip="The number of years before payments from the trust begin." />
-            </Label>
-            <Controller
-              name="deferralYears"
-              control={control}
-              render={({ field }) => (
-                <Input type="number" {...field} />
-              )}
-            />
-          </div>
-        </div>
-
-        {results && (
-          <Card className="mt-6 border-primary/20">
-            <CardHeader>
-              <CardTitle>Projected Benefits</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <p>Total Payments: ${results.totalPayments.toLocaleString()}</p>
-                <p>Tax Savings: ${results.taxSavings.toLocaleString()}</p>
-                <p>Charitable Deduction: ${results.charitableDeduction.toLocaleString()}</p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        <StepNavButtons prevStep={prevStep} />
-      </form>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

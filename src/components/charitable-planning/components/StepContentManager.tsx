@@ -4,7 +4,7 @@ import { WizardStep } from '../config/wizardConfig';
 import { BasicGivingStep } from '../steps/BasicGivingStep';
 import { DafBunchingStep } from '../steps/DafBunchingStep';
 import { QcdStep } from '../steps/QcdStep';
-import { CrtStep } from '../steps/CrtStep';
+import CrtStep from '../steps/CrtStep';
 import { MultiYearIntegrationStep } from '../steps/MultiYearIntegrationStep';
 import { ResultsStep } from '../steps/ResultsStep';
 import { CharitableScenario } from '../types/CharitableTypes';
