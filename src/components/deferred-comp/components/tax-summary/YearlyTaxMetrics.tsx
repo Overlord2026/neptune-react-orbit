@@ -1,9 +1,11 @@
 
 import React from "react";
-import { MetricCard } from "./MetricCard";
-import { YearlyTaxImpact } from "../../types/EquityTypes"; // Corrected import path
-import { formatCurrency } from "../../utils/formatUtils";
-import { AlertCircle } from "lucide-react";
+import { YearlyTaxImpact } from "../../types/EquityTypes";
+import { TaxableIncomeMetric } from "./metrics/TaxableIncomeMetric";
+import { TaxImpactMetric } from "./metrics/TaxImpactMetric";
+import { AmtMetric } from "./metrics/AmtMetric";
+import { TaxSavingsMetric } from "./metrics/TaxSavingsMetric";
+import { IrmaaAlertMetric } from "./metrics/IrmaaAlertMetric";
 
 interface YearlyTaxMetricsProps {
   yearData: YearlyTaxImpact;
@@ -22,80 +24,32 @@ export const YearlyTaxMetrics: React.FC<YearlyTaxMetricsProps> = ({
   
   return (
     <>
-      <MetricCard
-        title={`${activeYear === "current" ? currentYear : currentYear + 1} Taxable`}
-        value={formatCurrency(yearData.ordinaryIncome)}
-        subtitle={
-          yearData.incomeBracket && (
-            <div className="text-xs">
-              Tax bracket: <span className="font-medium">{yearData.incomeBracket}</span>
-              {yearData.distanceToNextBracket > 0 && (
-                <span className="text-xs text-muted-foreground"> 
-                  {" "}({formatCurrency(yearData.distanceToNextBracket)} to {yearData.nextBracket})
-                </span>
-              )}
-            </div>
-          )
-        }
+      <TaxableIncomeMetric 
+        year={activeYear === "current" ? currentYear : currentYear + 1}
+        ordinaryIncome={yearData.ordinaryIncome}
+        incomeBracket={yearData.incomeBracket}
+        nextBracket={yearData.nextBracket}
+        distanceToNextBracket={yearData.distanceToNextBracket}
       />
       
-      <MetricCard
-        title="Est. Tax Impact"
-        value={formatCurrency(yearData.totalTax)}
-        subtitle={
-          yearData.taxSavings !== 0 && (
-            <div className={`text-xs ${yearData.taxSavings > 0 ? 'text-green-400' : 'text-amber-400'}`}>
-              {yearData.taxSavings > 0 ? 'Saving: ' : 'Additional: '}
-              <span className="font-medium">{formatCurrency(Math.abs(yearData.taxSavings))}</span>
-            </div>
-          )
-        }
+      <TaxImpactMetric
+        totalTax={yearData.totalTax}
+        taxSavings={yearData.taxSavings}
       />
       
       {triggersAmt && activeYear === "current" && (
-        <MetricCard
-          title="Potential AMT"
-          tooltipContent={<p className="max-w-xs">
-            Alternative Minimum Tax (AMT) is calculated separately from regular tax. 
-            You pay whichever is higher. ISO exercises often trigger AMT.
-          </p>}
-          value={formatCurrency(yearData.amtAdjustment)}
-          subtitle={
-            <div className="text-xs text-amber-400">
-              AMT income: {formatCurrency(yearData.amtIncome)}
-            </div>
-          }
+        <AmtMetric
+          amtAdjustment={yearData.amtAdjustment}
+          amtIncome={yearData.amtIncome}
         />
       )}
       
       {yearData.taxSavings > 0 && (
-        <MetricCard
-          title="Est. Tax Savings"
-          tooltipContent={<p className="max-w-xs">
-            Estimated tax savings assumes you'll be in a lower tax bracket 
-            when deferred amounts are paid out.
-          </p>}
-          value={<span className="text-green-500">{formatCurrency(yearData.taxSavings)}</span>}
-        />
+        <TaxSavingsMetric taxSavings={yearData.taxSavings} />
       )}
       
       {yearData.irmaaImpact && (
-        <MetricCard
-          title="IRMAA Alert"
-          value={
-            <div className="flex items-center">
-              <AlertCircle className="h-4 w-4 text-amber-400 mr-1" />
-              <span className="text-sm text-amber-400">Medicare Premium Impact</span>
-            </div>
-          }
-          subtitle={<div className="text-xs text-amber-400">
-            This income level may trigger higher Medicare premiums
-          </div>}
-          tooltipContent={<p className="max-w-xs">
-            Income-Related Monthly Adjustment Amount (IRMAA) increases your Medicare premiums
-            when your income exceeds certain thresholds.
-          </p>}
-        />
+        <IrmaaAlertMetric />
       )}
     </>
   );
