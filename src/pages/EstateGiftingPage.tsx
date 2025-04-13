@@ -1,11 +1,39 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Gift, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import EstateGiftingWizard from '@/components/estate-gifting/EstateGiftingWizard';
 
 const EstateGiftingPage: React.FC = () => {
+  const [showWizard, setShowWizard] = useState(false);
+  
+  if (showWizard) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Estate & Gifting Analysis Wizard</h1>
+            <p className="text-muted-foreground">
+              Compare lifetime gifting vs. inheritance scenarios
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2"
+            onClick={() => setShowWizard(false)}
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Options
+          </Button>
+        </div>
+
+        <EstateGiftingWizard />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -35,7 +63,10 @@ const EstateGiftingPage: React.FC = () => {
               Evaluate the tax implications of making gifts during your lifetime, including annual exclusion gifts 
               and lifetime exemption usage.
             </p>
-            <Button className="w-full mt-4 flex items-center justify-between">
+            <Button 
+              className="w-full mt-4 flex items-center justify-between"
+              onClick={() => setShowWizard(true)}
+            >
               Start Gifting Analysis <ChevronRight className="h-4 w-4" />
             </Button>
           </CardContent>
@@ -53,7 +84,10 @@ const EstateGiftingPage: React.FC = () => {
               Project potential estate taxes and evaluate strategies for minimizing tax burden 
               on your beneficiaries through various planning techniques.
             </p>
-            <Button className="w-full mt-4 flex items-center justify-between">
+            <Button 
+              className="w-full mt-4 flex items-center justify-between"
+              onClick={() => setShowWizard(true)}
+            >
               Start Estate Planning <ChevronRight className="h-4 w-4" />
             </Button>
           </CardContent>
@@ -92,7 +126,10 @@ const EstateGiftingPage: React.FC = () => {
           </div>
           
           <div className="flex justify-center">
-            <Button size="lg">
+            <Button 
+              size="lg"
+              onClick={() => setShowWizard(true)}
+            >
               Start Comparison Analysis
             </Button>
           </div>

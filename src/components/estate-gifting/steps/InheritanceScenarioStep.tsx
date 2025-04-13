@@ -1,0 +1,126 @@
+
+import React from 'react';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { EstateGiftingData } from '../EstateGiftingWizard';
+import { Slider } from "@/components/ui/slider";
+import { InfoIcon, AlertTriangle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+interface InheritanceScenarioStepProps {
+  data: EstateGiftingData;
+  onUpdateField: (field: keyof EstateGiftingData, value: any) => void;
+}
+
+const CURRENT_YEAR = new Date().getFullYear();
+const MAX_PROJECTION_YEARS = 50;
+
+const InheritanceScenarioStep: React.FC<InheritanceScenarioStepProps> = ({ data, onUpdateField }) => {
+  const handleGrowthRateChange = (values: number[]) => {
+    onUpdateField('growthRate', values[0] / 100);
+  };
+  
+  return (
+    <div className="space-y-6">
+      <h3 className="text-lg font-medium text-white">Inheritance Scenario Planning</h3>
+      
+      <div className="space-y-6">
+        <div>
+          <Label htmlFor="yearOfPassing" className="text-white">
+            Assumed Year of Passing (for planning purposes)
+          </Label>
+          <Input
+            id="yearOfPassing"
+            type="number"
+            min={CURRENT_YEAR}
+            max={CURRENT_YEAR + MAX_PROJECTION_YEARS}
+            value={data.yearOfPassing}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              if (!isNaN(value)) {
+                onUpdateField('yearOfPassing', Math.min(CURRENT_YEAR + MAX_PROJECTION_YEARS, Math.max(CURRENT_YEAR, value)));
+              }
+            }}
+            className="bg-[#1A1F2C] border-[#353e52] text-white"
+          />
+          <p className="text-sm text-[#B0B0B0] mt-1">
+            This is used to estimate future asset values and project estate tax exposure
+          </p>
+        </div>
+        
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <Label htmlFor="growthRate" className="text-white flex items-center gap-2">
+              Estimated Annual Asset Growth Rate
+              <span className="text-[#FFD700] cursor-pointer hover:text-opacity-80" title="The assumed average annual rate of return on your investments and other assets.">
+                <InfoIcon className="w-4 h-4" />
+              </span>
+            </Label>
+            <span className="text-white">{(data.growthRate * 100).toFixed(1)}%</span>
+          </div>
+          
+          <Slider
+            defaultValue={[data.growthRate * 100]}
+            max={15}
+            min={0}
+            step={0.5}
+            value={[data.growthRate * 100]}
+            onValueChange={handleGrowthRateChange}
+            className="py-4"
+          />
+          <div className="flex justify-between text-xs text-[#B0B0B0]">
+            <span>0%</span>
+            <span>5%</span>
+            <span>10%</span>
+            <span>15%</span>
+          </div>
+          <p className="text-sm text-[#B0B0B0] mt-3">
+            This affects how much your assets will grow between now and the assumed year of passing
+          </p>
+        </div>
+
+        <div className="flex items-start space-x-2">
+          <Checkbox 
+            id="useTrustApproach" 
+            checked={data.useTrustApproach}
+            onCheckedChange={(checked) => onUpdateField('useTrustApproach', checked === true)}
+          />
+          <div>
+            <Label 
+              htmlFor="useTrustApproach" 
+              className="text-white cursor-pointer"
+            >
+              I'm interested in trust-based approaches
+            </Label>
+            <p className="text-sm text-[#B0B0B0] mt-1">
+              Various trust structures may help optimize estate planning beyond direct gifting
+            </p>
+          </div>
+        </div>
+        
+        {data.useTrustApproach && (
+          <Alert className="bg-blue-950/20 border-blue-800/30">
+            <InfoIcon className="h-4 w-4 text-blue-500" />
+            <AlertDescription className="text-blue-300">
+              Common trust structures include Revocable Living Trusts, Irrevocable Life Insurance Trusts (ILITs), 
+              Grantor Retained Annuity Trusts (GRATs), and Charitable Remainder Trusts. Consult with an estate planning attorney 
+              to determine which trust structure is appropriate for your situation.
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        <Alert className="bg-amber-950/20 border-amber-800/30">
+          <AlertTriangle className="h-4 w-4 text-amber-500" />
+          <AlertDescription className="text-amber-300">
+            The federal estate tax exemption is scheduled to be reduced in 2026 when certain provisions of the 
+            Tax Cuts and Jobs Act expire. This calculator factors in current law, but we recommend revisiting 
+            your planning as tax laws change.
+          </AlertDescription>
+        </Alert>
+      </div>
+    </div>
+  );
+};
+
+export default InheritanceScenarioStep;
