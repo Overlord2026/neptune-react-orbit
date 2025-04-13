@@ -46,6 +46,19 @@ export interface TaxInput {
   itemizedDeductionAmount?: number;
   filing_status: FilingStatusType;
   scenarioDate?: string; // Added for tax data versioning
+  
+  // Spouse data for married filing scenarios
+  spouseWages?: number;
+  spouseInterest?: number;
+  spouseDividends?: number;
+  spouseCapitalGains?: number;
+  spouseIraDistributions?: number;
+  spouseRothConversion?: number;
+  spouseSocialSecurity?: number;
+  
+  // Community property settings
+  isInCommunityPropertyState?: boolean;
+  splitCommunityIncome?: boolean;
 }
 
 export interface TaxResult {
@@ -71,6 +84,14 @@ export interface TaxResult {
   tax_data_version?: string; // Version of tax data used for calculation
   tax_data_warning?: string; // Warning about tax data (e.g., mid-year update)
   safe_harbor?: SafeHarborResult;
+  
+  // MFS comparison data (if applicable)
+  mfs_comparison?: {
+    primary_tax: number;
+    spouse_tax: number;
+    combined_tax: number;
+    difference: number; // Difference compared to MFJ
+  };
 }
 
 export interface SafeHarborInput {
@@ -108,6 +129,55 @@ export function refreshTaxData(sessionId: string = "default"): void {
 }
 
 /**
+ * Apply community property rules to income
+ * Split income 50/50 between spouses if applicable
+ */
+function applyCommunityPropertyRules(input: TaxInput): TaxInput {
+  if (!input.isInCommunityPropertyState || !input.splitCommunityIncome) {
+    return input;
+  }
+  
+  // Deep clone the input to avoid mutation
+  const result = { ...input };
+  
+  // Income types typically considered community property and split 50/50
+  // Wages are typically the most common community property
+  const primaryWages = input.wages || 0;
+  const spouseWages = input.spouseWages || 0;
+  
+  if (primaryWages > 0 || spouseWages > 0) {
+    const totalWages = primaryWages + spouseWages;
+    result.wages = totalWages / 2;
+    result.spouseWages = totalWages / 2;
+  }
+  
+  // Interest and dividends from community property are typically split
+  const primaryInterest = input.interest || 0;
+  const spouseInterest = input.spouseInterest || 0;
+  
+  if (primaryInterest > 0 || spouseInterest > 0) {
+    const totalInterest = primaryInterest + spouseInterest;
+    result.interest = totalInterest / 2;
+    result.spouseInterest = totalInterest / 2;
+  }
+  
+  const primaryDividends = input.dividends || 0;
+  const spouseDividends = input.spouseDividends || 0;
+  
+  if (primaryDividends > 0 || spouseDividends > 0) {
+    const totalDividends = primaryDividends + spouseDividends;
+    result.dividends = totalDividends / 2;
+    result.spouseDividends = totalDividends / 2;
+  }
+  
+  // Note: IRA distributions and capital gains may have special rules
+  // For simplicity, we'll leave them as-is, as they often relate to
+  // separate property or have special considerations
+  
+  return result;
+}
+
+/**
  * Calculate tax scenario based on inputs
  * Includes data currency information in the result
  */
@@ -125,8 +195,13 @@ export function calculateTaxScenario(
   // Check if this tax year has mid-year updates that might affect calculation
   const taxDataWarning = hasMidYearUpdates(input.year) ? getMidYearUpdateWarning(input.year) : undefined;
 
+  // Apply community property rules if applicable
+  if (input.isInCommunityPropertyState && input.splitCommunityIncome) {
+    input = applyCommunityPropertyRules(input);
+  }
+  
   // Calculate total income
-  const total_income = 
+  let total_income = 
     input.wages + 
     input.interest + 
     input.dividends + 
@@ -134,22 +209,58 @@ export function calculateTaxScenario(
     input.ira_distributions + 
     input.roth_conversion + 
     (input.social_security * 0.85); // 85% of Social Security is typically taxable
+    
+  // Add spouse income for MFJ filing status
+  if (input.filing_status === "married" && 
+      (input.spouseWages || 
+       input.spouseInterest || 
+       input.spouseDividends || 
+       input.spouseCapitalGains || 
+       input.spouseIraDistributions || 
+       input.spouseRothConversion || 
+       input.spouseSocialSecurity)) {
+    
+    total_income += 
+      (input.spouseWages || 0) + 
+      (input.spouseInterest || 0) + 
+      (input.spouseDividends || 0) + 
+      (input.spouseCapitalGains || 0) + 
+      (input.spouseIraDistributions || 0) + 
+      (input.spouseRothConversion || 0) + 
+      ((input.spouseSocialSecurity || 0) * 0.85);
+  }
 
   // AGI (Adjusted Gross Income) - simplification for this scenario
   // In real life, there would be above-the-line deductions
   const agi = total_income;
   
   // Split income into ordinary income and capital gains
-  const ordinary_income = 
+  let ordinary_income = 
     input.wages + 
     input.interest + 
     input.dividends + 
     input.ira_distributions + 
     input.roth_conversion + 
     (input.social_security * 0.85);
+    
+  // Add spouse's ordinary income for MFJ
+  if (input.filing_status === "married") {
+    ordinary_income +=
+      (input.spouseWages || 0) + 
+      (input.spouseInterest || 0) + 
+      (input.spouseDividends || 0) + 
+      (input.spouseIraDistributions || 0) + 
+      (input.spouseRothConversion || 0) + 
+      ((input.spouseSocialSecurity || 0) * 0.85);
+  }
   
   // For simplicity, assuming capital gains are all long-term
-  const capital_gains = input.capital_gains;
+  let capital_gains = input.capital_gains;
+  
+  // Add spouse's capital gains for MFJ
+  if (input.filing_status === "married") {
+    capital_gains += (input.spouseCapitalGains || 0);
+  }
   
   // Calculate tax using our utility function that properly handles ordinary income and capital gains
   const taxResults = calculateTotalTaxLiability(
@@ -170,6 +281,66 @@ export function calculateTaxScenario(
     input.itemizedDeductionAmount
   );
   
+  // Calculate MFS comparison if requested and filing status is MFJ
+  let mfs_comparison;
+  if (input.filing_status === "married" &&
+      (input.spouseWages !== undefined || 
+       input.spouseInterest !== undefined || 
+       input.spouseDividends !== undefined || 
+       input.spouseCapitalGains !== undefined || 
+       input.spouseIraDistributions !== undefined || 
+       input.spouseRothConversion !== undefined || 
+       input.spouseSocialSecurity !== undefined)) {
+    
+    // Create inputs for primary taxpayer and spouse
+    const primaryInput: TaxInput = {
+      year: input.year,
+      wages: input.wages || 0,
+      interest: input.interest || 0,
+      dividends: input.dividends || 0,
+      capital_gains: input.capital_gains || 0,
+      ira_distributions: input.ira_distributions || 0,
+      roth_conversion: input.roth_conversion || 0,
+      social_security: input.social_security || 0,
+      isItemizedDeduction: input.isItemizedDeduction,
+      itemizedDeductionAmount: input.itemizedDeductionAmount ? input.itemizedDeductionAmount / 2 : undefined,
+      filing_status: "married_separate",
+      scenarioDate: input.scenarioDate
+    };
+    
+    const spouseInput: TaxInput = {
+      year: input.year,
+      wages: input.spouseWages || 0,
+      interest: input.spouseInterest || 0,
+      dividends: input.spouseDividends || 0,
+      capital_gains: input.spouseCapitalGains || 0,
+      ira_distributions: input.spouseIraDistributions || 0,
+      roth_conversion: input.spouseRothConversion || 0,
+      social_security: input.spouseSocialSecurity || 0,
+      isItemizedDeduction: input.isItemizedDeduction,
+      itemizedDeductionAmount: input.itemizedDeductionAmount ? input.itemizedDeductionAmount / 2 : undefined,
+      filing_status: "married_separate",
+      scenarioDate: input.scenarioDate
+    };
+    
+    // Calculate taxes for primary taxpayer and spouse as MFS
+    const primaryTaxResult = calculateTaxBasic(primaryInput);
+    const spouseTaxResult = calculateTaxBasic(spouseInput);
+    
+    // Combined MFS taxes
+    const combined_tax = primaryTaxResult.total_tax + spouseTaxResult.total_tax;
+    
+    // Difference between MFJ and MFS
+    const difference = combined_tax - taxResults.totalTax;
+    
+    mfs_comparison = {
+      primary_tax: primaryTaxResult.total_tax,
+      spouse_tax: spouseTaxResult.total_tax,
+      combined_tax,
+      difference
+    };
+  }
+  
   // Return result with enhanced data including tax data currency and version information
   return {
     scenario_name,
@@ -189,7 +360,58 @@ export function calculateTaxScenario(
     tax_data_updated_at: taxDataInfo.dataUpdatedAt,
     tax_data_is_current: taxDataInfo.isCurrent,
     tax_data_version: taxDataVersion?.version,
-    tax_data_warning: taxDataWarning
+    tax_data_warning: taxDataWarning,
+    mfs_comparison
+  };
+}
+
+/**
+ * Simplified version of calculateTaxScenario to use for internal calculations
+ * like MFJ vs MFS comparisons
+ */
+function calculateTaxBasic(input: TaxInput): {
+  total_tax: number;
+  ordinary_tax: number;
+  capital_gains_tax: number;
+} {
+  // Calculate total income
+  const total_income = 
+    input.wages + 
+    input.interest + 
+    input.dividends + 
+    input.capital_gains + 
+    input.ira_distributions + 
+    input.roth_conversion + 
+    (input.social_security * 0.85);
+    
+  // AGI
+  const agi = total_income;
+  
+  // Split income types
+  const ordinary_income = 
+    input.wages + 
+    input.interest + 
+    input.dividends + 
+    input.ira_distributions + 
+    input.roth_conversion + 
+    (input.social_security * 0.85);
+    
+  const capital_gains = input.capital_gains;
+  
+  // Calculate tax
+  const taxResults = calculateTotalTaxLiability(
+    ordinary_income,
+    capital_gains,
+    input.year,
+    input.filing_status,
+    input.isItemizedDeduction,
+    input.itemizedDeductionAmount
+  );
+  
+  return {
+    total_tax: taxResults.totalTax,
+    ordinary_tax: taxResults.ordinaryTax,
+    capital_gains_tax: taxResults.capitalGainsTax
   };
 }
 
@@ -461,8 +683,15 @@ export const calculateMultiYearScenario = async (
   let cumulativeTaxPaid = 0;
   let cumulativeTaxSaved = 0;
   
+  // Spouse account balances (if applicable)
+  let spouseTraditionalIRABalance = scenarioData.spouseTraditionalIRAStartBalance || 0;
+  let spouseRothIRABalance = scenarioData.spouseRothIRAStartBalance || 0;
+  
   // Traditional-only scenario (for comparison)
   let traditionalScenarioBalance = traditionalIRABalance + rothIRABalance;
+  if (scenarioData.includeSpouse) {
+    traditionalScenarioBalance += (spouseTraditionalIRABalance + spouseRothIRABalance);
+  }
 
   // Track if break-even has occurred
   let breakEvenOccurred = false;
@@ -471,10 +700,18 @@ export const calculateMultiYearScenario = async (
   for (let i = 0; i < scenarioData.numYears; i++) {
     const currentYear = scenarioData.startYear + i;
     const currentAge = scenarioData.startAge + i;
+    const spouseAge = scenarioData.spouseAge ? scenarioData.spouseAge + i : undefined;
     
     // Calculate projected income for this year with growth
     const baseIncome = scenarioData.baseAnnualIncome * 
       Math.pow(1 + scenarioData.incomeGrowthRate, i);
+    
+    // Calculate spouse income if applicable
+    let spouseBaseIncome = 0;
+    if (scenarioData.includeSpouse && scenarioData.spouseBaseAnnualIncome) {
+      spouseBaseIncome = scenarioData.spouseBaseAnnualIncome *
+        Math.pow(1 + scenarioData.incomeGrowthRate, i);
+    }
     
     // Calculate RMD if applicable
     let rmdAmount = 0;
@@ -482,178 +719,19 @@ export const calculateMultiYearScenario = async (
       rmdAmount = calculateRMD(traditionalIRABalance, currentAge);
     }
     
+    // Calculate spouse RMD if applicable
+    let spouseRmdAmount = 0;
+    if (scenarioData.includeSpouse && scenarioData.includeRMDs && 
+        spouseAge && spouseAge >= (scenarioData.spouseRmdStartAge || scenarioData.rmdStartAge)) {
+      spouseRmdAmount = calculateRMD(spouseTraditionalIRABalance, spouseAge);
+    }
+    
     // Total income before conversion
-    const totalPreConversionIncome = baseIncome + rmdAmount;
+    const totalPreConversionIncome = baseIncome + spouseBaseIncome + rmdAmount + spouseRmdAmount;
     
     // Determine conversion amount based on strategy
     let conversionAmount = 0;
-    switch (scenarioData.conversionStrategy) {
-      case 'fixed':
-        conversionAmount = scenarioData.fixedConversionAmount || 0;
-        break;
-      case 'bracket_12':
-      case 'bracket_12_22':
-        conversionAmount = getMaxConversionAmount(
-          scenarioData.conversionStrategy,
-          totalPreConversionIncome,
-          currentYear,
-          scenarioData.filingStatus,
-          scenarioData.fixedConversionAmount
-        );
-        break;
-    }
+    let spouseConversionAmount = 0;
     
-    // Make sure we don't convert more than available
-    conversionAmount = Math.min(conversionAmount, traditionalIRABalance);
-    
-    // Calculate tax on income including conversion and RMD
-    const taxInput = {
-      year: currentYear,
-      wages: baseIncome,
-      interest: 0,
-      dividends: 0,
-      capital_gains: 0,
-      ira_distributions: rmdAmount + conversionAmount,
-      roth_conversion: 0, // Already included in ira_distributions
-      social_security: 0,
-      isItemizedDeduction: false,
-      filing_status: scenarioData.filingStatus,
-    };
-    
-    // Calculate tax scenario
-    const taxResult = calculateTaxScenario(taxInput, `Year ${currentYear}`, "multi_year");
-    
-    // Use the TrapAlert type for the warnings array
-    const warnings: TrapAlert[] = [];
-    
-    // Check for tax traps
-    const trapInput = {
-      scenario_id: `multi_year_${i}`,
-      year: currentYear,
-      filing_status: scenarioData.filingStatus as any,
-      agi: taxResult.agi,
-      magi: taxResult.agi,
-      total_income: taxResult.total_income,
-      taxable_income: taxResult.taxable_income,
-      capital_gains_long: 0,
-      capital_gains_short: 0,
-      social_security_amount: 0,
-      household_size: scenarioData.filingStatus === 'married' ? 2 : 1,
-      medicare_enrollment: currentAge >= 65,
-      aca_enrollment: false,
-    };
-    
-    const trapWarnings = getTaxTrapWarnings(trapInput);
-    
-    // Update account balances
-    traditionalIRABalance = (traditionalIRABalance - conversionAmount - rmdAmount) * 
-      (1 + scenarioData.expectedAnnualReturn);
-    
-    rothIRABalance = (rothIRABalance + conversionAmount) * 
-      (1 + scenarioData.expectedAnnualReturn);
-    
-    // Traditional-only scenario (for comparison)
-    // In this scenario, no conversions happen, just RMDs when required
-    let traditionalOnlyRMD = 0;
-    if (scenarioData.includeRMDs && currentAge >= scenarioData.rmdStartAge) {
-      traditionalOnlyRMD = calculateRMD(traditionalScenarioBalance, currentAge);
-    }
-    
-    traditionalScenarioBalance = (traditionalScenarioBalance - traditionalOnlyRMD) * 
-      (1 + scenarioData.expectedAnnualReturn);
-    
-    // Track cumulative tax impact
-    cumulativeTaxPaid += taxResult.total_tax;
-    
-    // Calculate tax in traditional-only scenario
-    const traditionalOnlyTax = calculateTaxOnAmount(
-      baseIncome + traditionalOnlyRMD,
-      currentYear,
-      scenarioData.filingStatus
-    );
-    
-    cumulativeTaxSaved += (traditionalOnlyTax - taxResult.total_tax);
-    
-    // Determine if this is the break-even year
-    // Break-even occurs when Roth balance + tax savings exceed traditional balance
-    const rothTotalValue = rothIRABalance + cumulativeTaxSaved;
-    const isBreakEvenYear = !breakEvenOccurred && rothTotalValue > traditionalScenarioBalance;
-    
-    if (isBreakEvenYear) {
-      breakEvenOccurred = true;
-    }
-    
-    // Add to results
-    results.push({
-      year: currentYear,
-      age: currentAge,
-      traditionalIRABalance,
-      rothIRABalance,
-      conversionAmount,
-      rmdAmount,
-      totalTax: taxResult.total_tax,
-      marginalRate: taxResult.marginal_rate,
-      warnings,
-      cumulativeTaxPaid,
-      cumulativeTaxSaved,
-      traditionalScenarioBalance,
-      rothScenarioBalance: rothIRABalance,
-      breakEvenYear: isBreakEvenYear
-    });
-  }
-  
-  // Handle beneficiary inheritance scenario if requested
-  if (scenarioData.includeBeneficiary && scenarioData.assumedDeathYear) {
-    // Find index of death year
-    const deathYearIndex = scenarioData.assumedDeathYear - scenarioData.startYear;
-    
-    if (deathYearIndex >= 0 && deathYearIndex < results.length) {
-      // Add beneficiary inheritance analysis
-      // This would be implemented in a more detailed way in a real application
-      console.log("Calculating beneficiary inheritance from year", scenarioData.assumedDeathYear);
-    }
-  }
-  
-  return results;
-};
-
-/**
- * Calculate approximate tax on a specific amount
- * This is a simplified version for comparative purposes
- */
-const calculateTaxOnAmount = (
-  amount: number,
-  year: number,
-  filingStatus: FilingStatusType
-): number => {
-  const taxInput = {
-    year,
-    wages: amount,
-    interest: 0,
-    dividends: 0,
-    capital_gains: 0,
-    ira_distributions: 0,
-    roth_conversion: 0,
-    social_security: 0,
-    isItemizedDeduction: false,
-    filing_status: filingStatus,
-  };
-  
-  const result = calculateTaxScenario(taxInput, "Tax Calculation", "tax_only");
-  return result.total_tax;
-};
-
-/**
- * Get tax trap warnings based on the tax trap checker utility
- */
-const getTaxTrapWarnings = (trapInput: any): TrapAlert[] => {
-  try {
-    // Import dynamically to avoid circular dependency
-    const { checkTaxTraps } = require('./taxTrapChecker');
-    const result = checkTaxTraps(trapInput);
-    return result.warnings || [];
-  } catch (error) {
-    console.error("Error checking tax traps:", error);
-    return [];
-  }
-};
+    if (scenarioData.combinedIRAApproach && scenarioData.includeSpouse) {
+      //

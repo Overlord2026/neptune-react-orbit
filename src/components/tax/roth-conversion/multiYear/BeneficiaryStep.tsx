@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -102,6 +103,43 @@ const BeneficiaryStep: React.FC<BeneficiaryStepProps> = ({
                   The year you anticipate passing away. This is used to project the tax impact on your beneficiary under the SECURE Act.
                 </p>
               </div>
+
+              {/* If spouse is included, show option to analyze spouse's death too */}
+              {scenarioData.includeSpouse && (
+                <>
+                  <Separator className="my-4" />
+                  
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      Spouse's Assumed Death Year
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </Label>
+                    <Input 
+                      id="spouseAssumedDeathYear" 
+                      type="number"
+                      min={scenarioData.startYear}
+                      max={scenarioData.startYear + scenarioData.numYears - 1}
+                      value={scenarioData.spouseAssumedDeathYear?.toString() || ''} 
+                      onChange={(e) => {
+                        const year = parseInt(e.target.value);
+                        if (!isNaN(year)) {
+                          onUpdateScenarioData({ spouseAssumedDeathYear: year });
+                        }
+                      }}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      The year your spouse is anticipated to pass away. This impacts inheritance planning for both IRAs.
+                    </p>
+                  </div>
+                  
+                  <div className="rounded-lg border p-3 bg-muted/20">
+                    <p className="text-sm">
+                      <strong>Note:</strong> When analyzing couples, we consider both survival scenarios: 
+                      (1) primary account holder survives spouse, and (2) spouse survives primary account holder.
+                    </p>
+                  </div>
+                </>
+              )}
             </>
           )}
         </CardContent>

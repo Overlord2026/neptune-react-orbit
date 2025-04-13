@@ -36,6 +36,7 @@ export interface MultiYearScenarioData {
   spouseRothIRAStartBalance?: number;
   spouseBaseAnnualIncome?: number;
   spouseRmdStartAge?: number;
+  spouseAssumedDeathYear?: number;
   
   // Combined vs. Separate handling
   combinedIRAApproach: boolean;
