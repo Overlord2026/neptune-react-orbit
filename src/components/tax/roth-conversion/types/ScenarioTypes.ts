@@ -93,6 +93,15 @@ export interface YearlyResult {
   };
 }
 
+export interface TrapAlert {
+  title: string;
+  message?: string; // Optional
+  description?: string;
+  type: string;
+  severity: string;
+  trapType: string;
+}
+
 export type RuleWarning = {
   id: string;
   title: string;
