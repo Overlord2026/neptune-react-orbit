@@ -52,3 +52,4 @@ const AdvancedStrategiesToggle: React.FC<AdvancedStrategiesToggleProps> = ({ con
 };
 
 export default AdvancedStrategiesToggle;
+
