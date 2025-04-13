@@ -35,6 +35,9 @@ import {
 } from '@/components/ui/collapsible';
 import { MultiYearScenarioData, YearlyResult } from '../types/ScenarioTypes';
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
+import FilingStatusComparison from './components/FilingStatusComparison';
+import CommunityPropertyInfo from './components/CommunityPropertyInfo';
+import RmdScheduleDisplay from './components/RmdScheduleDisplay';
 
 // Format currency values
 const formatCurrency = (amount: number): string => {
@@ -75,11 +78,16 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
     year: result.year,
     traditionalIRABalance: result.traditionalIRABalance,
     rothIRABalance: result.rothIRABalance,
+    spouseTraditionalIRABalance: result.spouseTraditionalIRABalance || 0,
+    spouseRothIRABalance: result.spouseRothIRABalance || 0,
     conversionAmount: result.conversionAmount,
+    spouseConversionAmount: result.spouseConversionAmount || 0,
     rmdAmount: result.rmdAmount,
+    spouseRmdAmount: result.spouseRmdAmount || 0,
     totalTax: result.totalTax,
     traditionalScenarioBalance: result.traditionalScenarioBalance,
     combinedBalance: result.traditionalIRABalance + result.rothIRABalance,
+    combinedSpouseBalance: (result.spouseTraditionalIRABalance || 0) + (result.spouseRothIRABalance || 0),
     cumulativeTaxPaid: result.cumulativeTaxPaid,
     cumulativeTaxSaved: result.cumulativeTaxSaved
   }));
@@ -109,13 +117,21 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
   const chartConfig = {
     traditional: { label: "Traditional IRA", theme: { light: "#1e40af", dark: "#3b82f6" } },
     roth: { label: "Roth IRA", theme: { light: "#15803d", dark: "#22c55e" } },
+    spouseTraditional: { label: "Spouse Traditional", theme: { light: "#4f46e5", dark: "#818cf8" } },
+    spouseRoth: { label: "Spouse Roth", theme: { light: "#059669", dark: "#34d399" } },
     conversion: { label: "Conversion Amount", theme: { light: "#9333ea", dark: "#a855f7" } },
+    spouseConversion: { label: "Spouse Conversion", theme: { light: "#7e22ce", dark: "#d8b4fe" } },
     rmd: { label: "RMD Amount", theme: { light: "#b91c1c", dark: "#ef4444" } },
+    spouseRmd: { label: "Spouse RMD", theme: { light: "#9f1239", dark: "#fda4af" } },
     tax: { label: "Annual Tax", theme: { light: "#f59e0b", dark: "#fbbf24" } },
     traditionalOnly: { label: "Traditional Only", theme: { light: "#6b7280", dark: "#9ca3af" } },
     combined: { label: "Combined Balance", theme: { light: "#0369a1", dark: "#38bdf8" } },
     taxSaved: { label: "Tax Savings", theme: { light: "#15803d", dark: "#22c55e" } },
   };
+  
+  // Determine if we should show spouse data
+  const showSpouseData = scenarioData.includeSpouse &&
+    (yearlyResults.some(r => r.spouseTraditionalIRABalance || r.spouseRothIRABalance || r.spouseConversionAmount || r.spouseRmdAmount));
   
   return (
     <div className="space-y-6">
@@ -177,6 +193,28 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
                             strokeWidth={2}
                             dot={false}
                           />
+                          {showSpouseData && (
+                            <>
+                              <Line
+                                type="monotone"
+                                name="spouseTraditional"
+                                dataKey="spouseTraditionalIRABalance"
+                                stroke="var(--color-spouseTraditional)"
+                                strokeWidth={2}
+                                dot={false}
+                                strokeDasharray="5 5"
+                              />
+                              <Line
+                                type="monotone"
+                                name="spouseRoth"
+                                dataKey="spouseRothIRABalance"
+                                stroke="var(--color-spouseRoth)"
+                                strokeWidth={2}
+                                dot={false}
+                                strokeDasharray="5 5"
+                              />
+                            </>
+                          )}
                           <Line
                             type="monotone"
                             name="combined"
@@ -184,7 +222,7 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
                             stroke="var(--color-combined)"
                             strokeWidth={2}
                             dot={false}
-                            strokeDasharray="5 5"
+                            strokeDasharray="3 3"
                           />
                         </LineChart>
                       </ResponsiveContainer>
@@ -219,6 +257,16 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
                             stroke="var(--color-conversion)"
                             strokeWidth={2}
                           />
+                          {showSpouseData && (
+                            <Line
+                              type="monotone"
+                              name="spouseConversion"
+                              dataKey="spouseConversionAmount"
+                              stroke="var(--color-spouseConversion)"
+                              strokeWidth={2}
+                              strokeDasharray="5 5"
+                            />
+                          )}
                           <Line
                             type="monotone"
                             name="rmd"
@@ -226,6 +274,16 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
                             stroke="var(--color-rmd)"
                             strokeWidth={2}
                           />
+                          {showSpouseData && (
+                            <Line
+                              type="monotone"
+                              name="spouseRmd"
+                              dataKey="spouseRmdAmount"
+                              stroke="var(--color-spouseRmd)"
+                              strokeWidth={2}
+                              strokeDasharray="5 5"
+                            />
+                          )}
                         </LineChart>
                       </ResponsiveContainer>
                     </ChartContainer>
@@ -327,6 +385,26 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
         </CardContent>
       </Card>
       
+      {/* Filing Status Comparison - new component */}
+      {scenarioData.compareMfjVsMfs && scenarioData.filingStatus === 'married' && (
+        <FilingStatusComparison 
+          yearlyResults={yearlyResults} 
+          showMfsComparison={scenarioData.compareMfjVsMfs} 
+        />
+      )}
+      
+      {/* Community Property Info - new component */}
+      <CommunityPropertyInfo 
+        scenarioData={scenarioData} 
+        yearlyResults={yearlyResults} 
+      />
+      
+      {/* RMD Schedule - new component */}
+      <RmdScheduleDisplay
+        scenarioData={scenarioData}
+        yearlyResults={yearlyResults}
+      />
+      
       <Collapsible
         open={isDataTableOpen}
         onOpenChange={setIsDataTableOpen}
@@ -359,12 +437,19 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
                       <TableRow>
                         <TableHead>Year</TableHead>
                         <TableHead>Age</TableHead>
-                        <TableHead>Traditional IRA</TableHead>
-                        <TableHead>Roth IRA</TableHead>
-                        <TableHead>Conversion</TableHead>
-                        <TableHead>RMD</TableHead>
-                        <TableHead>Total Tax</TableHead>
-                        <TableHead>Marginal Rate</TableHead>
+                        <TableHead className="text-right">Traditional IRA</TableHead>
+                        <TableHead className="text-right">Roth IRA</TableHead>
+                        <TableHead className="text-right">Conversion</TableHead>
+                        <TableHead className="text-right">RMD</TableHead>
+                        <TableHead className="text-right">Total Tax</TableHead>
+                        <TableHead className="text-right">Marginal Rate</TableHead>
+                        {showSpouseData && (
+                          <>
+                            <TableHead>Spouse Age</TableHead>
+                            <TableHead className="text-right">Spouse Traditional</TableHead>
+                            <TableHead className="text-right">Spouse Roth</TableHead>
+                          </>
+                        )}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -372,12 +457,19 @@ const ResultsStep: React.FC<ResultsStepProps> = ({
                         <TableRow key={index} className={result.breakEvenYear ? "bg-amber-50/50 dark:bg-amber-950/20" : ""}>
                           <TableCell>{result.year}</TableCell>
                           <TableCell>{result.age}</TableCell>
-                          <TableCell>{formatCurrency(result.traditionalIRABalance)}</TableCell>
-                          <TableCell>{formatCurrency(result.rothIRABalance)}</TableCell>
-                          <TableCell>{formatCurrency(result.conversionAmount)}</TableCell>
-                          <TableCell>{formatCurrency(result.rmdAmount)}</TableCell>
-                          <TableCell>{formatCurrency(result.totalTax)}</TableCell>
-                          <TableCell>{formatPercent(result.marginalRate)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(result.traditionalIRABalance)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(result.rothIRABalance)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(result.conversionAmount)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(result.rmdAmount)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(result.totalTax)}</TableCell>
+                          <TableCell className="text-right">{formatPercent(result.marginalRate)}</TableCell>
+                          {showSpouseData && (
+                            <>
+                              <TableCell>{result.spouseAge || '--'}</TableCell>
+                              <TableCell className="text-right">{formatCurrency(result.spouseTraditionalIRABalance || 0)}</TableCell>
+                              <TableCell className="text-right">{formatCurrency(result.spouseRothIRABalance || 0)}</TableCell>
+                            </>
+                          )}
                         </TableRow>
                       ))}
                     </TableBody>

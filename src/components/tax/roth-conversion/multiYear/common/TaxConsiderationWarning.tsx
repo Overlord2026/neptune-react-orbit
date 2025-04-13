@@ -8,12 +8,23 @@ const TaxConsiderationWarning: React.FC = () => {
       <div className="flex gap-2">
         <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
         <div>
-          <p className="font-medium text-amber-500">Important Tax Consideration</p>
-          <p className="text-muted-foreground">
-            For the most accurate results, consider your full tax situation, including other income sources
-            and potential deductions. The projections use a simplified tax model and should not be the sole basis
-            for financial decisions.
-          </p>
+          <p className="font-medium text-amber-500">Important Tax Considerations</p>
+          <div className="space-y-2 text-muted-foreground">
+            <p>
+              For the most accurate results, consider your full tax situation, including other income sources
+              and potential deductions. The projections use a simplified tax model and should not be the sole basis
+              for financial decisions.
+            </p>
+            <p>
+              If comparing MFJ vs. MFS filing statuses, be aware of limitations for married separate filers,
+              including restrictions on certain deductions and credits. Community property rules may affect
+              how income is allocated between spouses for tax purposes.
+            </p>
+            <p>
+              IRMAA surcharges for Medicare may be triggered by higher income. Consult with a qualified tax
+              professional for personalized advice based on your specific situation.
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Card,
@@ -10,6 +11,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, TrendingUp, Calendar, User, CircleDollarSign, FileCheck2 } from "lucide-react";
 import { MultiYearScenarioData, YearlyResult } from '../types/ScenarioTypes';
+import FilingStatusComparison from './components/FilingStatusComparison';
+import CommunityPropertyInfo from './components/CommunityPropertyInfo';
+import RmdScheduleDisplay from './components/RmdScheduleDisplay';
 
 // Format currency values
 const formatCurrency = (amount: number): string => {
@@ -61,6 +65,15 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
   // Get beneficiary analysis if available
   const hasBeneficiaryAnalysis = scenarioData.includeBeneficiary && scenarioData.assumedDeathYear;
   
+  // Add spouse information if included
+  const showSpouseInfo = scenarioData.includeSpouse;
+  
+  // Calculate combined balances if spouse is included
+  const initialSpouseBalance = initialResult.spouseTraditionalIRABalance || 0 + initialResult.spouseRothIRABalance || 0;
+  const finalSpouseBalance = finalResult.spouseTraditionalIRABalance || 0 + finalResult.spouseRothIRABalance || 0;
+  const totalInitialBalance = initialTotalBalance + initialSpouseBalance;
+  const totalFinalBalance = finalTotalBalance + finalSpouseBalance;
+  
   return (
     <div className="space-y-6">
       <Card>
@@ -83,11 +96,11 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Initial Balance</p>
-                    <p className="text-lg font-medium">{formatCurrency(initialTotalBalance)}</p>
+                    <p className="text-lg font-medium">{formatCurrency(showSpouseInfo ? totalInitialBalance : initialTotalBalance)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Final Balance</p>
-                    <p className="text-lg font-medium">{formatCurrency(finalTotalBalance)}</p>
+                    <p className="text-lg font-medium">{formatCurrency(showSpouseInfo ? totalFinalBalance : finalTotalBalance)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Annual Growth</p>
@@ -150,6 +163,26 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
               </CardContent>
             </Card>
           </div>
+
+          {/* Filing Status Comparison - new component */}
+          {scenarioData.compareMfjVsMfs && scenarioData.filingStatus === 'married' && (
+            <FilingStatusComparison 
+              yearlyResults={yearlyResults} 
+              showMfsComparison={scenarioData.compareMfjVsMfs} 
+            />
+          )}
+
+          {/* Community Property Info - new component */}
+          <CommunityPropertyInfo 
+            scenarioData={scenarioData} 
+            yearlyResults={yearlyResults} 
+          />
+
+          {/* RMD Schedule - new component */}
+          <RmdScheduleDisplay
+            scenarioData={scenarioData}
+            yearlyResults={yearlyResults}
+          />
           
           {hasBeneficiaryAnalysis && (
             <Card>
@@ -201,7 +234,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
                   
                   <div className="mt-4 bg-green-50 dark:bg-green-900/20 p-3 rounded border border-green-200 dark:border-green-800/40">
                     <p className="text-sm">
-                      <span className="font-medium">Potential benefit to beneficiary:</span> By converting to Roth, you could save your beneficiary approximately {formatCurrency((yearlyResults.find(r => r.year === scenarioData.assumedDeathYear)?.traditionalIRABalance || 0) * scenarioData.beneficiaryIncomeTaxRate)} in taxes.
+                      <span className="font-medium">Potential benefit to beneficiary:</span> By converting to Roth, you could save your beneficiary approximately {formatCurrency((yearlyResults.find(r => r.year === scenarioData.assumedDeathYear)?.traditionalIRABalance || 0) * (scenarioData.beneficiaryIncomeTaxRate || 0))} in taxes.
                     </p>
                   </div>
                 </div>
@@ -243,6 +276,27 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
                   <span>Roth: {formatPercent(finalResult.rothIRABalance / finalTotalBalance)}</span>
                 </div>
               </div>
+              
+              {/* Spouse balances if included */}
+              {showSpouseInfo && (
+                <div className="mt-6 pt-4 border-t border-muted">
+                  <h3 className="text-sm font-medium mb-3">Spouse Account Balances</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Traditional IRA</p>
+                      <p className="text-lg font-medium">{formatCurrency(finalResult.spouseTraditionalIRABalance || 0)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Roth IRA</p>
+                      <p className="text-lg font-medium">{formatCurrency(finalResult.spouseRothIRABalance || 0)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Total Balance</p>
+                      <p className="text-lg font-medium">{formatCurrency((finalResult.spouseTraditionalIRABalance || 0) + (finalResult.spouseRothIRABalance || 0))}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </CardContent>
