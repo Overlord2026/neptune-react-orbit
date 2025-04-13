@@ -13,8 +13,8 @@ const MultiYearRothConversion: React.FC = () => {
     setCurrentStep(step);
   };
   
-  const handleFinishCalculation = (context: any) => {
-    context.handleCalculate();
+  const handleFinishCalculation = () => {
+    // Access the context inside TabContentManager instead
     navigateToStep('results');
   };
   

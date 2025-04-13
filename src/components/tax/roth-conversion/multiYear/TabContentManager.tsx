@@ -25,8 +25,14 @@ const TabContentManager: React.FC<TabContentManagerProps> = ({
     scenarioData,
     yearlyResults,
     isCalculating,
-    handleUpdateScenarioData
+    handleUpdateScenarioData,
+    handleCalculate
   } = useMultiYearContext();
+
+  const handleFinishWithCalculation = () => {
+    handleCalculate();
+    onFinishCalculation();
+  };
 
   return (
     <>
@@ -71,7 +77,7 @@ const TabContentManager: React.FC<TabContentManagerProps> = ({
         <StepNavigation 
           currentStep="beneficiary" 
           onNavigate={onNavigate}
-          onCalculate={onFinishCalculation}
+          onCalculate={handleFinishWithCalculation}
           isCalculating={isCalculating}
         />
       </TabsContent>
