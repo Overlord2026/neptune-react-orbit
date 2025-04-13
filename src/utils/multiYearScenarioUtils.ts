@@ -1,3 +1,4 @@
+
 /**
  * Multi-Year Scenario Calculation Utilities
  * 
@@ -235,7 +236,7 @@ export const calculateMultiYearScenario = async (
       rmdAmount,
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
-      effectiveRate: taxResult.effective_rate,
+      effectiveRate: taxResult.effective_rate, // Adding the missing effectiveRate property
       warnings: [], // Placeholder for any warnings
       cumulativeTaxPaid,
       cumulativeTaxSaved,
