@@ -1,6 +1,6 @@
 
 import React from "react";
-import type { LoadingState } from "@/types/LoadingState";
+import type { LoadingState as LoadingStateType } from "@/types/LoadingState";
 import { useEquityForm } from "../../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
@@ -15,16 +15,16 @@ import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
 import { toast } from "sonner";
 import { saveScenario, EquityScenario } from "@/utils/taxScenarioStorage";
 import { FilingStatusType } from "@/utils/taxBracketData";
-import LoadingState from "./LoadingState";
+import { LoadingState } from "./LoadingState";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
-  loadingState?: LoadingState;
+  loadingState?: LoadingStateType;
 }
 
 export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   const { formState, calculateAmtImpact, calculateDeferralBenefit, calculateMultiYearImpact } = useEquityForm();
-  const [loadingState, setLoadingState] = React.useState<LoadingState>('loading');
+  const [loadingState, setLoadingState] = React.useState<LoadingStateType>('loading');
   const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
 
   React.useEffect(() => {
