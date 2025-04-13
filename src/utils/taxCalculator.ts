@@ -25,7 +25,7 @@ import {
   hasMidYearUpdates,
   getMidYearUpdateWarning
 } from './taxDataVersioning';
-import { MultiYearScenarioData, YearlyResult } from '../components/tax/roth-conversion/MultiYearRothConversion';
+import { MultiYearScenarioData, YearlyResult } from '../components/tax/roth-conversion/types/ScenarioTypes';
 
 // Types
 export type { FilingStatusType } from './taxBracketData';

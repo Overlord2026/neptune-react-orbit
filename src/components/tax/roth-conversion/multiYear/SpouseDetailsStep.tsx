@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { InfoCircle, AlertTriangle, Users } from "lucide-react";
+import { Info, AlertTriangle, Users } from "lucide-react";
 import { MultiYearScenarioData } from '../types/ScenarioTypes';
 
 interface SpouseDetailsStepProps {
@@ -219,7 +219,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 Spouse RMD Start Age
-                <InfoCircle className="h-4 w-4 text-muted-foreground" />
+                <Info className="h-4 w-4 text-muted-foreground" />
               </Label>
               <Input 
                 id="spouseRmdStartAge" 

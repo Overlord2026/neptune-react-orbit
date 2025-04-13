@@ -33,7 +33,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { MultiYearScenarioData, YearlyResult } from '../MultiYearRothConversion';
+import { MultiYearScenarioData, YearlyResult } from '../types/ScenarioTypes';
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 // Format currency values

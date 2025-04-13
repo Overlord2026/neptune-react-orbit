@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card,
@@ -10,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, TrendingUp, Calendar, User, CircleDollarSign, FileCheck2 } from "lucide-react";
-import { MultiYearScenarioData, YearlyResult } from '../MultiYearRothConversion';
+import { MultiYearScenarioData, YearlyResult } from '../types/ScenarioTypes';
 
 // Format currency values
 const formatCurrency = (amount: number): string => {
