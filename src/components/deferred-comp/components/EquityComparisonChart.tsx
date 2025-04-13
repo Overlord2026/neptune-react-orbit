@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
@@ -9,10 +8,8 @@ export const EquityComparisonChart: React.FC = () => {
   const { formState, calculateMultiYearImpact } = useEquityForm();
   const currentYear = new Date().getFullYear();
   
-  // Get data directly from multi-year impact calculation
   const yearlyImpact = calculateMultiYearImpact();
   
-  // Transform data for chart, ensuring numeric values
   const generateChartData = () => {
     const data = [];
     
@@ -38,7 +35,6 @@ export const EquityComparisonChart: React.FC = () => {
   
   const data = generateChartData();
   
-  // Configure chart
   const chartConfig = {
     incomeWithStrategy: { label: "Income with Strategy", color: "#9b87f5" },
     incomeWithoutStrategy: { label: "Income without Strategy", color: "#6b7280" },
@@ -65,7 +61,7 @@ export const EquityComparisonChart: React.FC = () => {
                     {payload.map((entry) => (
                       <div key={entry.name} className="flex justify-between text-sm">
                         <span className="font-medium mr-2">{entry.name}:</span>
-                        <span>{formatCurrency(entry.value)}</span>
+                        <span>{formatCurrency(Number(entry.value))}</span>
                       </div>
                     ))}
                   </div>
@@ -88,4 +84,3 @@ export const EquityComparisonChart: React.FC = () => {
     </ChartContainer>
   );
 };
-
