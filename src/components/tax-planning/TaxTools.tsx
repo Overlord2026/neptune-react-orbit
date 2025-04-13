@@ -11,7 +11,8 @@ import {
   AlertTriangle,
   FileCheck,
   Gift,
-  HandCoins
+  HandCoins,
+  BarChart
 } from "lucide-react";
 import TaxToolCard from './TaxToolCard';
 
@@ -40,6 +41,14 @@ const TaxTools: React.FC = () => {
       description: "Evaluate how donor-advised funds, QCDs, and other giving strategies can reduce your taxable income and enhance your philanthropic impact.",
       comingSoon: false,
       link: "/tax-planning/charitable-planning"
+    },
+    {
+      id: "deferred-comp",
+      title: "Deferred Comp & Stock Option Analysis",
+      icon: <BarChart className="w-10 h-10 text-[#FFD700]" />,
+      description: "Plan how exercising stock options or deferring bonuses affects your taxable income, potential bracket jumps, AMT, or multi-year planning.",
+      comingSoon: false,
+      link: "/tax-planning/deferred-comp"
     },
     {
       id: "tax-analyzer",

@@ -18,7 +18,8 @@ import {
   AlertTriangle,
   LayoutGrid,
   Gift,
-  HandCoins
+  HandCoins,
+  BarChart
 } from 'lucide-react';
 
 const SidebarContent = () => {
@@ -99,6 +100,12 @@ const SidebarContent = () => {
           label="Charitable Planning" 
           href="/tax-planning/charitable-planning" 
           isActive={location.pathname === '/tax-planning/charitable-planning'} 
+        />
+        <SidebarItem 
+          icon={<BarChart className="h-5 w-5" />} 
+          label="Deferred Comp & Stock Options" 
+          href="/tax-planning/deferred-comp" 
+          isActive={location.pathname === '/tax-planning/deferred-comp'} 
         />
         <SidebarItem 
           icon={<Shield className="h-5 w-5" />} 

@@ -22,8 +22,8 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   comingSoon, 
   link 
 }) => {
-  // Add bullets for estate and gifting, charitable planning and roth tools
-  const showBullets = id === "estate-gifting" || id === "roth-conversion" || id === "charitable-planning";
+  // Add bullets for estate and gifting, charitable planning, roth tools, and deferred comp tools
+  const showBullets = id === "estate-gifting" || id === "roth-conversion" || id === "charitable-planning" || id === "deferred-comp";
   
   const getBullets = () => {
     if (id === "estate-gifting") {
@@ -44,6 +44,12 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
         "Calculate multi-year bunching strategies",
         "Compare QCD from IRA after age 70½"
       ];
+    } else if (id === "deferred-comp") {
+      return [
+        "Analyze NSO vs ISO taxation differences",
+        "Calculate AMT implications of stock options",
+        "Model optimal timing of deferred compensation"
+      ];
     }
     return [];
   };
@@ -54,6 +60,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
       case "roth-conversion": return "Start Roth Conversion Planning";
       case "tax-analyzer": return "Analyze My Tax Return";
       case "charitable-planning": return "Start Charitable Analysis";
+      case "deferred-comp": return "Start Equity Compensation Analysis";
       default: return "Start Tool";
     }
   };

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   createBrowserRouter,
@@ -36,6 +35,8 @@ import TaxToolsPage from './pages/TaxToolsPage';
 import EstateGiftingPage from './pages/EstateGiftingPage';
 import CharitablePlanningPage from './pages/CharitablePlanningPage';
 import Layout from './components/Layout';
+// We would need to create this page in the future
+// import DeferredCompPage from './pages/DeferredCompPage';
 
 const router = createBrowserRouter([
   {
@@ -164,6 +165,10 @@ const router = createBrowserRouter([
       {
         path: "/tax-planning/roth-comparison",
         element: <CompareRothScenariosPage />,
+      },
+      {
+        path: "/tax-planning/deferred-comp",
+        element: <Navigate to="/tax-planning" replace />,
       }
     ]
   },

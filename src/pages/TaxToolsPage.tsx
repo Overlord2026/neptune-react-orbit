@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   FileText, 
@@ -12,7 +11,8 @@ import {
   FileCheck,
   AlertTriangle,
   Gift,
-  HandCoins
+  HandCoins,
+  BarChart
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
@@ -82,6 +82,17 @@ const TaxToolsPage: React.FC = () => {
       ],
       icon: <HandCoins className="w-10 h-10 text-[#FFD700]" />,
       link: "/tax-planning/charitable-planning"
+    },
+    {
+      title: "Deferred Comp & Stock Option Analysis",
+      description: "Plan how exercising stock options or deferring bonuses affects your tax situation",
+      bullets: [
+        "Compare NSO vs ISO tax treatment strategies",
+        "Calculate AMT implications for different exercise timings",
+        "Model optimal timing for deferred compensation"
+      ],
+      icon: <BarChart className="w-10 h-10 text-[#FFD700]" />,
+      link: "/tax-planning/deferred-comp"
     },
     {
       title: "Tax Trap Checker",
