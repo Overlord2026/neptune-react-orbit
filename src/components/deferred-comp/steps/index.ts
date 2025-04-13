@@ -5,4 +5,4 @@ export { default as HoldingPeriodStep } from './HoldingPeriodStep';
 export { default as DeferralStrategyStep } from './DeferralStrategyStep';
 export { default as MultiYearApproachStep } from './MultiYearApproachStep';
 export { default as TaxOutputStep } from './tax-output/TaxOutputStep';
-export { default as LoadingStateComponent } from './tax-output/LoadingState';
+export { default as LoadingStateDisplay } from './tax-output/LoadingState';
