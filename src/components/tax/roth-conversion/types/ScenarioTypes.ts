@@ -1,4 +1,5 @@
 
+
 export type ConversionStrategyType =
   | "fixed"
   | "bracket_12"
@@ -104,7 +105,7 @@ export interface TrapAlert {
   message?: string; // Optional
   description?: string;
   type: string;
-  severity: string;
+  severity: "info" | "warning" | "critical";
   trapType: string;
 }
 
@@ -116,3 +117,4 @@ export type RuleWarning = {
   severity: 'low' | 'medium' | 'high';
   trapType?: string;
 };
+

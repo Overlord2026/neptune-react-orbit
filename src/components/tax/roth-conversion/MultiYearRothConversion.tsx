@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -93,6 +94,7 @@ const MultiYearRothConversion: React.FC = () => {
         trapType: warning.trapType || warning.type || '',
         severity: warning.severity === 'high' ? 'critical' : 
                  warning.severity === 'medium' ? 'warning' : 'info',
+        description: warning.message
       }))
     : [];
 

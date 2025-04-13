@@ -22,11 +22,10 @@ export const getMaxConversionAmount = (
   }
   
   // Get tax brackets for the year and filing status
-  const brackets = getBrackets(taxYear, filingStatus);
+  const brackets = getBrackets(taxYear, filingStatus, "ordinary");
   
   // Find the target bracket
   let targetBracket;
-  let bracket22;
   
   if (strategy === 'bracket_12') {
     targetBracket = brackets.find(b => b.rate === 0.12);
@@ -43,7 +42,7 @@ export const getMaxConversionAmount = (
   }
   
   // Calculate remaining room in the bracket
-  const maxIncomeInBracket = targetBracket.end;
+  const maxIncomeInBracket = targetBracket.bracket_max;
   const roomLeft = maxIncomeInBracket - currentIncome;
   
   // Return maximum 0 (no room left)
