@@ -12,7 +12,7 @@ interface ResultDisclaimerProps {
 const ResultDisclaimer: React.FC<ResultDisclaimerProps> = ({ scenario }) => {
   // Determine what strategies are being used
   const isUsingQcd = scenario?.qcd?.useQcd || false;
-  const isUsingBunching = scenario?.dafBunching?.useBunching || false;
+  const isUsingBunching = scenario?.dafStrategy?.approach === 'bunching' || false;
   
   return (
     <div className="space-y-4">
