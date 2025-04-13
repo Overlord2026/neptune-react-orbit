@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { calculateMultiYearScenario } from '@/utils/taxCalculator';
+import { calculateMultiYearScenario } from '@/utils/rothConversion';
 import { MultiYearScenarioData, YearlyResult } from '../types/ScenarioTypes';
 
 export function useMultiYearScenario(initialScenarioData: MultiYearScenarioData) {

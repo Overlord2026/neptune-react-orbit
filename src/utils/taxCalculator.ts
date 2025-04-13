@@ -24,7 +24,7 @@ import {
 } from './taxDataVersioning';
 import { applyCommunityPropertyRules } from './spouseCalculationUtils';
 import { calculateSafeHarbor } from './safeHarborUtils';
-import { calculateMultiYearScenario } from './multiYearScenarioUtils';
+import { calculateMultiYearScenario } from './rothConversion';
 import { calculateRMD } from './rmdCalculationUtils';
 import { getMaxConversionAmount } from './conversionStrategyUtils';
 import { TaxInput, TaxResult, TaxDataCacheInfo } from './taxCalculatorTypes';
@@ -34,7 +34,7 @@ export type { TaxInput, TaxResult, TaxDataCacheInfo } from './taxCalculatorTypes
 export type { FilingStatusType } from './taxBracketData';
 export { STANDARD_DEDUCTION } from './taxBracketData';
 export { calculateSafeHarbor } from './safeHarborUtils';
-export { calculateMultiYearScenario } from './multiYearScenarioUtils';
+export { calculateMultiYearScenario } from './rothConversion';
 export { calculateRMD } from './rmdCalculationUtils';
 export { getMaxConversionAmount } from './conversionStrategyUtils';
 
