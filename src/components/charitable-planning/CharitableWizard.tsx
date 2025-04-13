@@ -138,19 +138,25 @@ const CharitableWizard: React.FC = () => {
     }
   };
 
+  // Create a non-readonly copy of the steps for the components that expect mutable arrays
+  const stepsForComponents = WIZARD_STEPS.map(step => ({
+    id: step.id,
+    label: step.label
+  }));
+
   return (
     <Card className="bg-card border-primary/20">
       <div className="p-6">
         <WizardHeader
           title="Charitable Contribution Planner"
           currentStep={currentStep}
-          steps={WIZARD_STEPS}
+          steps={stepsForComponents}
         />
         
         {renderStepContent()}
         
         <WizardNavigation
-          steps={WIZARD_STEPS}
+          steps={stepsForComponents}
           currentStep={currentStep}
           onStepChange={setCurrentStep}
           hideSteps={shouldSkipQcdStep && currentStep !== 'qcd' ? ['qcd'] : []}
