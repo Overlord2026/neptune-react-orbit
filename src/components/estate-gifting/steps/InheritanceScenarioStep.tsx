@@ -7,6 +7,7 @@ import { EstateGiftingData } from '../EstateGiftingWizard';
 import { Slider } from "@/components/ui/slider";
 import { InfoIcon, AlertTriangle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface InheritanceScenarioStepProps {
   data: EstateGiftingData;
@@ -26,6 +27,64 @@ const InheritanceScenarioStep: React.FC<InheritanceScenarioStepProps> = ({ data,
       <h3 className="text-lg font-medium text-white">Inheritance Scenario Planning</h3>
       
       <div className="space-y-6">
+        <div>
+          <Label className="text-white mb-2 block">Life Cycle Stage</Label>
+          <RadioGroup 
+            value={data.lifeCycleStage || 'mid-career'} 
+            onValueChange={(value) => {
+              onUpdateField('lifeCycleStage', value);
+              
+              // Update the year of passing based on life cycle stage
+              let yearsToAdd = 30;
+              switch(value) {
+                case 'young-adult':
+                  yearsToAdd = 50;
+                  break;
+                case 'mid-career':
+                  yearsToAdd = 30;
+                  break;
+                case 'pre-retirement':
+                  yearsToAdd = 20;
+                  break;
+                case 'retirement':
+                  yearsToAdd = 15;
+                  break;
+              }
+              onUpdateField('yearOfPassing', CURRENT_YEAR + yearsToAdd);
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          >
+            <div className="flex items-start space-x-2 bg-[#1A1F2C] border border-[#353e52] p-3 rounded-md">
+              <RadioGroupItem value="young-adult" id="young-adult" className="mt-1" />
+              <div className="space-y-1">
+                <Label htmlFor="young-adult" className="text-white cursor-pointer font-medium">Young Adult (20-40)</Label>
+                <p className="text-xs text-[#B0B0B0]">Long-term planning, typically 40-60 years</p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-2 bg-[#1A1F2C] border border-[#353e52] p-3 rounded-md">
+              <RadioGroupItem value="mid-career" id="mid-career" className="mt-1" />
+              <div className="space-y-1">
+                <Label htmlFor="mid-career" className="text-white cursor-pointer font-medium">Mid-Career (40-55)</Label>
+                <p className="text-xs text-[#B0B0B0]">Building wealth, typically 25-40 years</p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-2 bg-[#1A1F2C] border border-[#353e52] p-3 rounded-md">
+              <RadioGroupItem value="pre-retirement" id="pre-retirement" className="mt-1" />
+              <div className="space-y-1">
+                <Label htmlFor="pre-retirement" className="text-white cursor-pointer font-medium">Pre-Retirement (55-65)</Label>
+                <p className="text-xs text-[#B0B0B0]">Wealth preservation, typically 15-25 years</p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-2 bg-[#1A1F2C] border border-[#353e52] p-3 rounded-md">
+              <RadioGroupItem value="retirement" id="retirement" className="mt-1" />
+              <div className="space-y-1">
+                <Label htmlFor="retirement" className="text-white cursor-pointer font-medium">Retirement (65+)</Label>
+                <p className="text-xs text-[#B0B0B0]">Legacy planning, typically 10-20 years</p>
+              </div>
+            </div>
+          </RadioGroup>
+        </div>
+        
         <div>
           <Label htmlFor="yearOfPassing" className="text-white">
             Assumed Year of Passing (for planning purposes)

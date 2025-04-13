@@ -29,6 +29,7 @@ export type EstateGiftingData = {
   yearOfPassing: number;
   growthRate: number;
   useTrustApproach: boolean;
+  lifeCycleStage: 'young-adult' | 'mid-career' | 'pre-retirement' | 'retirement';
   
   // Calculations (will be computed)
   noGiftingTax: number;
@@ -53,9 +54,10 @@ const EstateGiftingWizard: React.FC = () => {
     lifetimeGiftsUsed: 0,
     giftingStrategy: 'annual',
     lumpSumAmount: 0,
-    yearOfPassing: CURRENT_YEAR + 20,
+    yearOfPassing: CURRENT_YEAR + 30,
     growthRate: 0.05, // 5% annual growth
     useTrustApproach: false,
+    lifeCycleStage: 'mid-career',
     noGiftingTax: 0,
     giftingTax: 0,
     taxSavings: 0,

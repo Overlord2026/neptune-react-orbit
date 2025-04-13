@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EstateGiftingData } from '../EstateGiftingWizard';
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { Save, Download, Share2 } from "lucide-react";
+import { Save, Download, Share2, Clock } from "lucide-react";
 import TaxDisclaimerWithCheckbox from "@/components/tax/TaxDisclaimerWithCheckbox";
 
 interface ResultsStepProps {
@@ -18,6 +18,16 @@ const formatCurrency = (value: number): string => {
     currency: 'USD',
     maximumFractionDigits: 0
   }).format(value);
+};
+
+const getLifeCycleStageLabel = (stage: string): string => {
+  switch(stage) {
+    case 'young-adult': return 'Young Adult (20-40)';
+    case 'mid-career': return 'Mid-Career (40-55)';
+    case 'pre-retirement': return 'Pre-Retirement (55-65)';
+    case 'retirement': return 'Retirement (65+)';
+    default: return 'Not specified';
+  }
 };
 
 const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
@@ -46,6 +56,19 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-medium text-white mb-4">Results Summary</h3>
+
+      <div className="bg-[#1A1F2C] p-4 rounded-lg border border-[#353e52] mb-6">
+        <div className="flex items-center gap-2 text-[#B0B0B0] mb-2">
+          <Clock className="w-4 h-4" />
+          <span>Life Cycle Stage:</span>
+          <span className="text-white font-medium">{getLifeCycleStageLabel(data.lifeCycleStage)}</span>
+        </div>
+        <div className="flex gap-2 text-[#B0B0B0]">
+          <span>Planning Timeframe:</span>
+          <span className="text-white font-medium">{yearsOfGifting} years</span>
+          <span>(until {data.yearOfPassing})</span>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border-[#353e52] bg-[#1A1F2C]">
