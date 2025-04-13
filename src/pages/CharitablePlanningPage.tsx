@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import ShareFeature from '@/components/tax-planning/ShareFeature';
+import CharitableWizard from '@/components/charitable-planning/CharitableWizard';
 
 const CharitablePlanningPage: React.FC = () => {
   return (
@@ -26,59 +27,7 @@ const CharitablePlanningPage: React.FC = () => {
         </div>
       </div>
 
-      <Card className="bg-card border-primary/20">
-        <div className="p-6">
-          <p className="text-muted-foreground mb-6">
-            Welcome to the Charitable Contribution Planning tool. This wizard will help you evaluate how 
-            donor-advised funds, QCDs, and other giving strategies can reduce your taxable income and 
-            enhance your philanthropic impact.
-          </p>
-          
-          <div className="bg-primary/10 border border-primary/20 rounded-md p-6 mb-6">
-            <h2 className="text-xl font-semibold text-[#FFD700] mb-4">Available Charitable Planning Strategies</h2>
-            
-            <ul className="space-y-4">
-              <li className="flex gap-4">
-                <div className="h-10 w-10 rounded-full bg-[#242A38] flex items-center justify-center text-[#FFD700]">1</div>
-                <div>
-                  <h3 className="text-lg font-medium text-white">Standard vs. Itemized Deduction Analysis</h3>
-                  <p className="text-sm text-[#B0B0B0]">Compare taking the standard deduction versus itemizing deductions with charitable contributions.</p>
-                </div>
-              </li>
-              
-              <li className="flex gap-4">
-                <div className="h-10 w-10 rounded-full bg-[#242A38] flex items-center justify-center text-[#FFD700]">2</div>
-                <div>
-                  <h3 className="text-lg font-medium text-white">Multi-Year Bunching Strategy</h3>
-                  <p className="text-sm text-[#B0B0B0]">Bundle multiple years of charitable giving into a single tax year to maximize itemized deductions.</p>
-                </div>
-              </li>
-              
-              <li className="flex gap-4">
-                <div className="h-10 w-10 rounded-full bg-[#242A38] flex items-center justify-center text-[#FFD700]">3</div>
-                <div>
-                  <h3 className="text-lg font-medium text-white">Qualified Charitable Distributions (QCDs)</h3>
-                  <p className="text-sm text-[#B0B0B0]">Analyze the benefits of making direct charitable contributions from your IRA if you're over age 70½.</p>
-                </div>
-              </li>
-              
-              <li className="flex gap-4">
-                <div className="h-10 w-10 rounded-full bg-[#242A38] flex items-center justify-center text-[#FFD700]">4</div>
-                <div>
-                  <h3 className="text-lg font-medium text-white">Donor-Advised Fund Strategy</h3>
-                  <p className="text-sm text-[#B0B0B0]">Evaluate the tax advantages of contributing to a donor-advised fund for more strategic giving over time.</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-          
-          <div className="flex justify-center">
-            <button className="bg-[#007BFF] hover:bg-[#0069d9] text-white px-6 py-3 rounded-md font-medium transition-colors">
-              Begin Charitable Planning Analysis
-            </button>
-          </div>
-        </div>
-      </Card>
+      <CharitableWizard />
     </div>
   );
 };
