@@ -85,14 +85,14 @@ const MultiYearRothConversion: React.FC = () => {
     navigateToStep('results');
   };
   
-  const latestWarnings = yearlyResults.length > 0 
+  const latestWarnings: TrapAlert[] = yearlyResults.length > 0 
     ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
         title: warning.message || warning.type || '',
         message: warning.message || '',
         type: warning.type || warning.trapType || '',
         trapType: warning.trapType || warning.type || '',
-        severity: warning.severity === 'high' ? 'critical' : 
-                 warning.severity === 'medium' ? 'warning' : 'info',
+        severity: (warning.severity === 'high' ? 'critical' : 
+                 warning.severity === 'medium' ? 'warning' : 'info') as "critical" | "warning" | "info",
         details: warning.message,
         description: warning.message
       }))
