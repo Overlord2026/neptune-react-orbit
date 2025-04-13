@@ -14,6 +14,17 @@ export const getTaxBracket = (income: number): string => {
   return "37%";
 };
 
+// Get tax bracket rate (as a number) based on income
+export const getTaxBracketRate = (income: number): number => {
+  if (income < 11000) return 0.10;
+  if (income < 44725) return 0.12;
+  if (income < 95375) return 0.22;
+  if (income < 182100) return 0.24;
+  if (income < 231250) return 0.32;
+  if (income < 578125) return 0.35;
+  return 0.37;
+};
+
 // Get marginal tax rate for a given income
 export const getMarginalRate = (income: number): number => {
   if (income < 11000) return 0.10;
@@ -34,6 +45,15 @@ export const getNextBracket = (income: number): { rate: string, threshold: numbe
   if (income < 231250) return { rate: "35%", threshold: 231250, distance: 231250 - income };
   if (income < 578125) return { rate: "37%", threshold: 578125, distance: 578125 - income };
   return { rate: "Top bracket", threshold: 0, distance: 0 }; // Already in top bracket
+};
+
+// Get distance to next tax bracket
+export const getDistanceToNextBracket = (income: number): { nextThreshold: number; distance: number } => {
+  const nextBracket = getNextBracket(income);
+  return {
+    nextThreshold: nextBracket.threshold,
+    distance: nextBracket.distance
+  };
 };
 
 // Check if income would trigger IRMAA surcharges (simplified)

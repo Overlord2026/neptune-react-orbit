@@ -17,7 +17,10 @@ import {
   getEquityEvents,
   getDeferralEvents
 } from '../utils/multiYearCalculations';
-import { getTaxBracketRate, getDistanceToNextBracket } from '../utils/taxBracketUtils';
+import { 
+  getTaxBracketRate,
+  getDistanceToNextBracket
+} from '../utils/taxBracketUtils';
 
 interface EquityFormContextType {
   formState: EquityFormState;
@@ -27,7 +30,7 @@ interface EquityFormContextType {
   calculateMultiYearImpact: () => YearlyTaxImpact[];
   getEquityEvents: () => EquityCompEvent[];
   getDeferralEvents: () => DeferralEvent[];
-  getTaxBracketRate: (income: number) => { rate: string; threshold: number };
+  getTaxBracketRate: (income: number) => number;
   getDistanceToNextBracket: (income: number) => { nextThreshold: number; distance: number };
   checkIrmaaImpact: (income: number) => boolean;
   resetForm: () => void;
@@ -45,8 +48,6 @@ export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const resetForm = useCallback(() => {
     setFormState(defaultFormState);
   }, []);
-  
-  // All calculation functions now import from utility files
   
   const value = {
     formState,

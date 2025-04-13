@@ -1,81 +1,79 @@
 
 /**
- * Calculation utilities for deferred compensation
+ * Deferral calculations utilities
  */
 
 import { EquityFormState, DeferralEvent } from '../types/EquityTypes';
-import { getMarginalRate } from './taxBracketUtils';
+import { getTaxBracketRate } from './taxBracketUtils';
 
 /**
- * Calculate benefit of deferring compensation
+ * Calculate benefit from deferred compensation
  */
 export const calculateDeferralBenefit = (formState: EquityFormState): number => {
-  if (!formState.hasDeferredComp) return 0;
+  if (!formState.hasDeferredComp || formState.deferralAmount <= 0) {
+    return 0;
+  }
+
+  // Simple calculation - assumes tax rate difference of around 3-5% between years
+  const currentIncome = formState.bonusAmount;
+  const currentRate = getTaxBracketRate(currentIncome);
+  const reducedIncome = currentIncome - formState.deferralAmount;
+  const reducedRate = getTaxBracketRate(reducedIncome);
   
-  // Very simplified calculation assuming current tax rate is higher than future
-  // Real calculation would consider progressive tax brackets, other income, etc.
-  const currentTaxRate = 0.37; // Assumed highest bracket
-  const futureTaxRate = 0.32; // Assumed lower bracket after deferral
+  // Calculate tax on full bonus amount
+  const taxOnFullBonus = currentIncome * currentRate;
   
-  const taxSavings = formState.deferralAmount * (currentTaxRate - futureTaxRate);
-  return taxSavings;
+  // Calculate tax on reduced bonus (after deferral)
+  const taxOnReducedBonus = reducedIncome * reducedRate;
+  
+  // Assume future tax on deferred amount is 3% lower (simplified)
+  const assumedFutureRate = Math.max(reducedRate - 0.03, 0.10);
+  const futureTaxOnDeferred = formState.deferralAmount * assumedFutureRate;
+  
+  // Calculate benefit
+  const taxSaving = taxOnFullBonus - (taxOnReducedBonus + futureTaxOnDeferred);
+  
+  return Math.round(taxSaving);
 };
 
 /**
- * Get deferral events for tax impact analysis
+ * Get all deferral events based on form state
  */
 export const getDeferralEvents = (formState: EquityFormState): DeferralEvent[] => {
+  if (!formState.hasDeferredComp || formState.deferralAmount <= 0) {
+    return [];
+  }
+  
   const events: DeferralEvent[] = [];
   const currentYear = new Date().getFullYear();
+  const taxSavings = calculateDeferralBenefit(formState);
   
-  if (formState.hasDeferredComp && formState.deferralAmount > 0) {
-    // Calculate tax benefit (simplified)
-    const currentRate = getMarginalRate(formState.bonusAmount);
-    let futureRate = getMarginalRate(formState.bonusAmount * 0.7); // Assume lower income in future
-    const taxSavings = formState.deferralAmount * (currentRate - futureRate);
+  if (formState.deferralStrategy === "next-year") {
+    // Simple next year deferral
+    events.push({
+      fromYear: currentYear,
+      toYear: currentYear + 1,
+      amount: formState.deferralAmount,
+      taxSavings
+    });
+  } 
+  else if (formState.deferralStrategy === "multi-year") {
+    // Multi-year staggered deferral
+    const amountPerYear = formState.deferralAmount / formState.deferralYears;
+    const savingsPerYear = taxSavings / formState.deferralYears;
     
-    if (formState.planningApproach === "single-year") {
-      if (formState.deferralStrategy === "next-year") {
-        events.push({
-          fromYear: currentYear,
-          toYear: currentYear + 1,
-          amount: formState.deferralAmount,
-          taxSavings
-        });
-      } else if (formState.deferralStrategy === "multi-year") {
-        // Distribute evenly across years
-        const yearlyAmount = formState.deferralAmount / formState.deferralYears;
-        for (let i = 0; i < formState.deferralYears; i++) {
-          events.push({
-            fromYear: currentYear,
-            toYear: currentYear + i + 1,
-            amount: yearlyAmount,
-            taxSavings: taxSavings / formState.deferralYears
-          });
-        }
-      }
-    } else if (formState.planningApproach === "multi-year") {
-      // Year 1 deferral
-      if (formState.year1Deferral > 0) {
-        events.push({
-          fromYear: currentYear,
-          toYear: currentYear + 1,
-          amount: formState.year1Deferral,
-          taxSavings: formState.year1Deferral * (currentRate - futureRate)
-        });
-      }
-      
-      // Year 2 deferral
-      if (formState.year2Deferral > 0) {
-        events.push({
-          fromYear: currentYear + 1,
-          toYear: currentYear + 2,
-          amount: formState.year2Deferral,
-          taxSavings: formState.year2Deferral * (currentRate - futureRate)
-        });
-      }
+    for (let i = 0; i < formState.deferralYears; i++) {
+      events.push({
+        fromYear: currentYear,
+        toYear: currentYear + 1 + i,
+        amount: amountPerYear,
+        taxSavings: savingsPerYear
+      });
     }
   }
   
   return events;
 };
+
+// Re-export IRMAA check from tax bracket utils
+export { checkIrmaaImpact } from './taxBracketUtils';

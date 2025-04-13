@@ -8,6 +8,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { TaxResultsSummary } from "../components/TaxResultsSummary";
 import { EquityPlanningTable } from "../components/EquityPlanningTable";
 import { EquityComparisonChart } from "../components/EquityComparisonChart";
+import { TaxSummaryCard } from "../components/tax-summary/TaxSummaryCard";
+import { BracketChangeVisualizer } from "../components/tax-summary/BracketChangeVisualizer";
+import { EquityStrategySummary } from "../components/EquityStrategySummary";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
@@ -42,7 +45,31 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
 
   return (
     <div className="space-y-6">
-      <TaxResultsSummary />
+      {/* New Tax Summary Card with Year-by-Year breakdown */}
+      <TaxSummaryCard />
+      
+      {/* Grid with strategy summary and bracket visualizer */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <EquityStrategySummary />
+        <BracketChangeVisualizer />
+      </div>
+      
+      {/* Enhanced chart with better visualization */}
+      {(hasEquity || hasDeferred) && formState.planningApproach === "multi-year" && (
+        <Card className="bg-[#1D2433] border-[#2A2F3C]">
+          <CardHeader>
+            <CardTitle>Multi-Year Tax Visualization</CardTitle>
+            <CardDescription>
+              Comparing your tax impact across {currentYear} and {currentYear + 1}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-72">
+              <EquityComparisonChart />
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {hasEquity && (
@@ -144,22 +171,6 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
           </Card>
         )}
       </div>
-
-      {(hasEquity || hasDeferred) && formState.planningApproach === "multi-year" && (
-        <Card className="bg-[#1D2433] border-[#2A2F3C]">
-          <CardHeader>
-            <CardTitle>Multi-Year Tax Visualization</CardTitle>
-            <CardDescription>
-              Comparing your tax impact across {currentYear} and {currentYear + 1}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <EquityComparisonChart />
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       <Card className="bg-blue-900/20 border-blue-700">
         <CardContent className="pt-4 pb-4">

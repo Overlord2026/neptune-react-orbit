@@ -2,122 +2,89 @@
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { formatCurrency } from "../utils/formatUtils";
 
 export const EquityComparisonChart: React.FC = () => {
-  const { formState } = useEquityForm();
+  const { formState, calculateMultiYearImpact } = useEquityForm();
   const currentYear = new Date().getFullYear();
   
-  // Generate simplified data for the chart
+  // Get data directly from multi-year impact calculation
+  const yearlyImpact = calculateMultiYearImpact();
+  
+  // Transform data for chart
   const generateChartData = () => {
     const data = [];
     
-    // Year 1 data
-    const year1Data: any = {
-      name: `${currentYear}`,
-    };
-    
-    // Year 2 data
-    const year2Data: any = {
-      name: `${currentYear + 1}`,
-    };
-    
-    // Add stock option exercise data if applicable
-    if (formState.equityType === "NSO" || formState.equityType === "ISO") {
-      if (formState.planningApproach === "multi-year") {
-        // Multi-year approach data
-        const year1Spread = (formState.fairMarketValue - formState.strikePrice) * (formState.year1Exercise || 0);
-        const year2Spread = (formState.fairMarketValue - formState.strikePrice) * (formState.year2Exercise || 0);
-        
-        year1Data.stockOptions = year1Spread;
-        year2Data.stockOptions = year2Spread;
-      } else {
-        // Single year approach
-        const spread = (formState.fairMarketValue - formState.strikePrice) * formState.vestedShares;
-        if (formState.exerciseStrategy === "full") {
-          year1Data.stockOptions = spread;
-          year2Data.stockOptions = 0;
-        } else if (formState.exerciseStrategy === "partial") {
-          const partialSpread = (formState.fairMarketValue - formState.strikePrice) * formState.partialShares;
-          year1Data.stockOptions = partialSpread;
-          year2Data.stockOptions = 0;
-        } else if (formState.exerciseStrategy === "split") {
-          const sharesPerYear = Math.floor(formState.vestedShares / formState.splitYears);
-          const spreadPerYear = (formState.fairMarketValue - formState.strikePrice) * sharesPerYear;
-          
-          year1Data.stockOptions = spreadPerYear;
-          year2Data.stockOptions = formState.splitYears > 1 ? spreadPerYear : 0;
-        }
+    for (const yearData of yearlyImpact) {
+      const dataPoint: any = {
+        name: `${yearData.year}`,
+        actualIncome: yearData.ordinaryIncome,
+        noStrategyIncome: yearData.ordinaryIncome + yearData.taxSavings,
+        actualTax: yearData.totalTax,
+        noStrategyTax: yearData.taxWithoutStrategy,
+        taxSavings: yearData.taxSavings > 0 ? yearData.taxSavings : 0
+      };
+      
+      if (formState.equityType === "ISO" && yearData.amtAdjustment > 0) {
+        dataPoint.amtImpact = yearData.amtAdjustment;
       }
+      
+      data.push(dataPoint);
     }
-    
-    // Add deferred compensation data if applicable
-    if (formState.hasDeferredComp) {
-      if (formState.planningApproach === "multi-year") {
-        // Multi-year approach data
-        year1Data.deferredComp = formState.hasDeferredComp ? formState.bonusAmount - formState.year1Deferral : 0;
-        year2Data.deferredComp = formState.year2Deferral || 0;
-      } else {
-        // Single year approach based on deferral strategy
-        if (formState.deferralStrategy === "next-year") {
-          year1Data.deferredComp = formState.bonusAmount - formState.deferralAmount;
-          year2Data.deferredComp = formState.deferralAmount;
-        } else if (formState.deferralStrategy === "multi-year") {
-          const amountPerYear = formState.deferralAmount / formState.deferralYears;
-          year1Data.deferredComp = formState.bonusAmount - formState.deferralAmount;
-          year2Data.deferredComp = formState.deferralYears > 0 ? amountPerYear : 0;
-        }
-      }
-    }
-    
-    // Add estimated tax data
-    const calcYear1Tax = (year1Data.stockOptions || 0) * 0.37 + (year1Data.deferredComp || 0) * 0.37;
-    const calcYear2Tax = (year2Data.stockOptions || 0) * 0.35 + (year2Data.deferredComp || 0) * 0.35;
-    
-    year1Data.tax = calcYear1Tax;
-    year2Data.tax = calcYear2Tax;
-    
-    // Add both years to chart data
-    data.push(year1Data);
-    data.push(year2Data);
     
     return data;
   };
   
   const data = generateChartData();
   
+  // Configure chart
+  const chartConfig = {
+    incomeWithStrategy: { label: "Income with Strategy", color: "#9b87f5" },
+    incomeWithoutStrategy: { label: "Income without Strategy", color: "#6b7280" },
+    taxWithStrategy: { label: "Tax with Strategy", color: "#F87171" },
+    taxWithoutStrategy: { label: "Tax without Strategy", color: "#ef4444" },
+    amtImpact: { label: "Potential AMT", color: "#f59e0b" },
+    taxSavings: { label: "Tax Savings", color: "#34d399" }
+  };
+  
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ChartContainer className="aspect-[16/9] w-full" config={chartConfig}>
       <BarChart data={data}>
         <XAxis dataKey="name" />
-        <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
-        <Tooltip 
-          formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
-          labelFormatter={(label) => `Year: ${label}`}
+        <YAxis tickFormatter={(value) => `$${(value / 1000).toLocaleString()}k`} />
+        <ChartTooltip 
+          content={({ active, payload }) => {
+            if (active && payload && payload.length) {
+              return (
+                <div className="rounded-lg border bg-background p-2 shadow-md">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="col-span-2 border-b pb-2 text-center font-medium">
+                      Year: {payload[0].payload.name}
+                    </div>
+                    {payload.map((entry) => (
+                      <div key={entry.name} className="flex justify-between text-sm">
+                        <span className="font-medium mr-2">{entry.name}:</span>
+                        <span>{formatCurrency(entry.value)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          }}
         />
         <Legend />
-        {(formState.equityType === "NSO" || formState.equityType === "ISO") && (
-          <Bar 
-            name="Stock Option Income" 
-            dataKey="stockOptions" 
-            fill="#FFD700" 
-            barSize={40}
-          />
+        <Bar name="Income with Strategy" dataKey="actualIncome" fill="#9b87f5" barSize={30} />
+        <Bar name="Income without Strategy" dataKey="noStrategyIncome" fill="#6b7280" barSize={30} />
+        <Bar name="Tax with Strategy" dataKey="actualTax" fill="#F87171" barSize={30} />
+        <Bar name="Tax without Strategy" dataKey="taxWithoutStrategy" fill="#ef4444" barSize={30} />
+        {formState.equityType === "ISO" && (
+          <Bar name="Potential AMT" dataKey="amtImpact" fill="#f59e0b" barSize={30} />
         )}
-        {formState.hasDeferredComp && (
-          <Bar 
-            name="Deferred Compensation" 
-            dataKey="deferredComp" 
-            fill="#9b87f5" 
-            barSize={40}
-          />
-        )}
-        <Bar 
-          name="Estimated Tax" 
-          dataKey="tax" 
-          fill="#F87171" 
-          barSize={40}
-        />
+        <Bar name="Tax Savings" dataKey="taxSavings" fill="#34d399" barSize={30} />
       </BarChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   );
 };
