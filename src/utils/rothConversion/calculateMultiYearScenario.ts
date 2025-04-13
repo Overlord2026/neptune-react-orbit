@@ -64,7 +64,8 @@ export const calculateMultiYearScenario = async (
       spouseConversionAmount,
       taxResult,
       noConversionTaxResult,
-      charitableContribution
+      charitableContribution,
+      warnings
     } = yearResult;
 
     // Calculate tax savings/cost
@@ -134,7 +135,7 @@ export const calculateMultiYearScenario = async (
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
       effectiveRate: taxResult.effective_rate,
-      warnings: [],
+      warnings: warnings || [],
       cumulativeTaxPaid,
       cumulativeTaxSaved,
       traditionalScenarioBalance,

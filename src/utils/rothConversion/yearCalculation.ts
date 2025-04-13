@@ -9,7 +9,12 @@ import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/Sc
 import { TaxInput, calculateTaxScenario } from '../taxCalculator';
 import { calculateRMD } from '../rmdCalculationUtils';
 import { determineConversionAmounts } from './conversionUtils';
-import { getCharitableContributionForYear, calculateCharitableImpact } from './charitableUtils';
+import { 
+  getCharitableContributionForYear, 
+  calculateCharitableImpact, 
+  calculateCharitableOpportunity 
+} from './charitableUtils';
+import { TaxTrapInput, checkTaxTraps } from '@/utils/taxTraps';
 
 interface YearCalculationInput {
   scenarioData: MultiYearScenarioData;
@@ -84,6 +89,25 @@ export function processSingleYearCalculation({
     spouseTraditionalIRABalance
   });
   
+  // Calculate total AGI before any charitable impacts
+  const baseAGI = totalPreConversionIncome + conversionAmount + (spouseConversionAmount || 0);
+  
+  // Create input for tax trap checking BEFORE charitable contributions
+  const beforeCharitableTraps = checkTaxTraps({
+    scenario_id: `year_${currentYear}_before`,
+    year: currentYear,
+    filing_status: scenarioData.filingStatus,
+    agi: baseAGI,
+    total_income: baseAGI,
+    taxable_income: baseAGI - getStandardDeduction(scenarioData.filingStatus, currentYear),
+    capital_gains_long: 0, // Simplified for this example
+    capital_gains_short: 0,
+    social_security_amount: 0, // Simplified
+    household_size: scenarioData.filingStatus === 'married' ? 2 : 1,
+    medicare_enrollment: currentAge >= 65,
+    aca_enrollment: false
+  });
+  
   // Calculate tax on this year's income and conversion
   const yearTaxInput: TaxInput = {
     year: currentYear,
@@ -107,17 +131,35 @@ export function processSingleYearCalculation({
     splitCommunityIncome: scenarioData.splitCommunityIncome,
   };
   
+  // Collect warnings from trap detection
+  const warnings = [...beforeCharitableTraps.warnings.map(warning => ({
+    type: warning.type,
+    message: warning.description,
+    severity: warning.severity === 'alert' ? 'high' : 
+             warning.severity === 'warning' ? 'medium' : 'low',
+    trapType: warning.type
+  }))];
+  
+  let charitableImpact = {
+    standardDeduction: 0,
+    itemizedDeduction: 0,
+    isItemizing: false,
+    taxSavings: 0
+  };
+  
   // If charitable planning is enabled, adjust the tax input
   if (scenarioData.useCharitablePlanning && charitableContribution.amount > 0) {
-    // Calculate charitable impact on taxes
-    const charitableImpact = calculateCharitableImpact(
+    // Calculate charitable impact on taxes with trap detection
+    charitableImpact = calculateCharitableImpact(
       charitableContribution.amount,
       charitableContribution.useQcd,
       charitableContribution.isBunching,
       scenarioData.filingStatus,
       currentYear,
       0.24, // Estimate marginal rate for initial calculation
-      rmdAmount
+      rmdAmount,
+      baseAGI,
+      beforeCharitableTraps
     );
     
     // Update tax input with itemized deduction info
@@ -143,22 +185,37 @@ export function processSingleYearCalculation({
   );
 
   // Calculate charitable impact with the actual marginal rate from tax result
-  const charitableImpact = scenarioData.useCharitablePlanning && charitableContribution.amount > 0 
-    ? calculateCharitableImpact(
-        charitableContribution.amount,
-        charitableContribution.useQcd,
-        charitableContribution.isBunching,
-        scenarioData.filingStatus,
-        currentYear,
-        taxResult.marginal_rate, // Use actual marginal rate
-        rmdAmount
-      )
-    : {
-        standardDeduction: 0,
-        itemizedDeduction: 0,
-        isItemizing: false,
-        taxSavings: 0
-      };
+  if (scenarioData.useCharitablePlanning && charitableContribution.amount > 0) {
+    charitableImpact = calculateCharitableImpact(
+      charitableContribution.amount,
+      charitableContribution.useQcd,
+      charitableContribution.isBunching,
+      scenarioData.filingStatus,
+      currentYear,
+      taxResult.marginal_rate, // Use actual marginal rate
+      rmdAmount,
+      baseAGI,
+      beforeCharitableTraps
+    );
+    
+    // Check for additional charitable opportunities
+    const opportunity = calculateCharitableOpportunity(
+      beforeCharitableTraps,
+      scenarioData.filingStatus,
+      currentAge,
+      baseAGI,
+      currentYear
+    );
+    
+    if (opportunity) {
+      warnings.push({
+        type: opportunity.trapType,
+        message: opportunity.description,
+        severity: opportunity.severity,
+        trapType: 'charitable_opportunity'
+      });
+    }
+  }
   
   return {
     baseIncome,
@@ -173,6 +230,10 @@ export function processSingleYearCalculation({
     charitableContribution: scenarioData.useCharitablePlanning ? {
       ...charitableContribution,
       ...charitableImpact
-    } : undefined
+    } : undefined,
+    warnings
   };
 }
+
+// Get the standard deduction (already defined in charitableUtils.ts, imported here for direct use)
+import { getStandardDeduction } from './charitableUtils';

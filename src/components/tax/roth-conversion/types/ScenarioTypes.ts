@@ -12,6 +12,13 @@ export interface CharitableContribution {
   isBunching?: boolean;
 }
 
+export interface TrapAvoidance {
+  type: string;
+  title: string;
+  description: string;
+  savings: number;
+}
+
 export interface MultiYearScenarioData {
   startAge: number;
   startYear: number;
@@ -124,6 +131,7 @@ export interface YearlyResult {
     isItemizing: boolean;
     taxSavings: number;
     qcdImpact?: number; // Amount removed from RMD/AGI via QCD
+    trapAvoidance?: TrapAvoidance[]; // Traps avoided through charitable giving
   };
 }
 
