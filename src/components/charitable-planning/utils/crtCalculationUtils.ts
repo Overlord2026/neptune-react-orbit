@@ -15,6 +15,7 @@ interface CrtCalculationParams {
   beneficiaryAge: number;
   spouseBeneficiary: boolean;
   spouseAge?: number;
+  discountRate?: number; // Added discount rate parameter (optional)
 }
 
 interface CrtCalculationResult {
@@ -35,13 +36,19 @@ const getRemainderFactor = (
   age: number, 
   trustTerm: number | "lifetime", 
   isCrut: boolean,
-  payoutRate: number
+  payoutRate: number,
+  discountRate?: number
 ): number => {
+  const effectiveRate = discountRate || CURRENT_IRS_SECTION_7520_RATE;
+  
   // For a term of years
   if (trustTerm !== "lifetime") {
     // Simple approximation based on term and payout rate
     const baseDeductionFactor = isCrut ? 0.5 : 0.55;
-    const adjustedFactor = baseDeductionFactor - (payoutRate * 0.03);
+    // Adjust based on discount rate - higher rates generally benefit CRATs
+    const rateAdjustment = isCrut ? -0.01 : 0.01;
+    // Adjust based on payout rate - higher payouts reduce remainder value
+    const adjustedFactor = baseDeductionFactor - (payoutRate * 0.03) + ((effectiveRate - 4.0) * rateAdjustment);
     return Math.max(0.1, Math.min(adjustedFactor, 0.9));
   }
 
@@ -60,15 +67,16 @@ const getAdjustedRemainderFactor = (
   spouseAge: number,
   trustTerm: number | "lifetime",
   isCrut: boolean,
-  payoutRate: number
+  payoutRate: number,
+  discountRate?: number
 ): number => {
   if (trustTerm !== "lifetime") {
     // For term of years, having two lives doesn't change much
-    return getRemainderFactor(primaryAge, trustTerm, isCrut, payoutRate);
+    return getRemainderFactor(primaryAge, trustTerm, isCrut, payoutRate, discountRate);
   }
   
   // For lifetime, two lives reduces the factor (since payments continue longer)
-  const singleLifeFactor = getRemainderFactor(primaryAge, trustTerm, isCrut, payoutRate);
+  const singleLifeFactor = getRemainderFactor(primaryAge, trustTerm, isCrut, payoutRate, discountRate);
   const youngerAge = Math.min(primaryAge, spouseAge);
   
   // Reduce factor based on younger age
@@ -94,7 +102,8 @@ export const calculateCrtBenefits = (params: CrtCalculationParams): CrtCalculati
     trustTerm, 
     beneficiaryAge,
     spouseBeneficiary,
-    spouseAge
+    spouseAge,
+    discountRate
   } = params;
 
   const isCrut = type === "CRUT";
@@ -112,7 +121,8 @@ export const calculateCrtBenefits = (params: CrtCalculationParams): CrtCalculati
       spouseAge, 
       trustTerm, 
       isCrut,
-      payoutRate / 100
+      payoutRate / 100,
+      discountRate
     );
   } else {
     // Single life calculation
@@ -120,7 +130,8 @@ export const calculateCrtBenefits = (params: CrtCalculationParams): CrtCalculati
       beneficiaryAge, 
       trustTerm, 
       isCrut,
-      payoutRate / 100
+      payoutRate / 100,
+      discountRate
     );
   }
   
