@@ -1,3 +1,4 @@
+
 import React from "react";
 import { LoadingState } from "@/types/LoadingState";
 import { useEquityForm } from "../../context/EquityFormContext";
@@ -14,7 +15,7 @@ import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
 import { toast } from "sonner";
 import { saveScenario, EquityScenario } from "@/utils/taxScenarioStorage";
 import { FilingStatusType } from "@/utils/taxBracketData";
-import { LoadingState as LoadingStateComponent } from "./LoadingState";
+import { LoadingStateDisplay } from "./LoadingState";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
@@ -76,7 +77,7 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   };
 
   if (loadingState === LoadingState.Loading) {
-    return <LoadingStateComponent state={LoadingState.Loading} />;
+    return <LoadingStateDisplay state={LoadingState.Loading} />;
   }
 
   const hasEquity = formState.equityType === "NSO" || formState.equityType === "ISO";

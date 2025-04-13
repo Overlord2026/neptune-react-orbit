@@ -7,7 +7,7 @@ interface LoadingStateProps {
   state?: LoadingState;
 }
 
-export const LoadingState: React.FC<LoadingStateProps> = ({ state = LoadingState.Loading }) => {
+export const LoadingStateDisplay: React.FC<LoadingStateProps> = ({ state = LoadingState.Loading }) => {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <RefreshCw className="h-12 w-12 animate-spin text-primary mb-4" />
@@ -19,4 +19,4 @@ export const LoadingState: React.FC<LoadingStateProps> = ({ state = LoadingState
   );
 };
 
-export default LoadingState;
+export default LoadingStateDisplay;
