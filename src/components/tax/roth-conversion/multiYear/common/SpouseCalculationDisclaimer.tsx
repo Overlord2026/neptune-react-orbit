@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import { MultiYearScenarioData } from '../../types/ScenarioTypes';
 
@@ -9,53 +9,40 @@ interface SpouseCalculationDisclaimerProps {
 }
 
 const SpouseCalculationDisclaimer: React.FC<SpouseCalculationDisclaimerProps> = ({ scenarioData }) => {
-  if (!scenarioData.includeSpouse) return null;
+  if (!scenarioData.includeSpouse) {
+    return null;
+  }
 
-  const isMFJ = scenarioData.filingStatus === 'married';
-  const isMFS = scenarioData.filingStatus === 'married_separate';
-  const isInCommunityState = scenarioData.isInCommunityPropertyState;
-  
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="flex items-start gap-3">
-          <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-          <div className="space-y-2">
-            <h3 className="font-medium">Spousal Calculation Information</h3>
-            <p className="text-sm text-muted-foreground">
-              {isMFJ ? 
-                "For married filing jointly (MFJ), your tax calculations combine both your and your spouse's income, deductions, and credits." :
-                "For married filing separately (MFS), your tax calculations are performed separately for you and your spouse."}
+    <Alert className="bg-blue-950/20 border-blue-800/30">
+      <Info className="h-4 w-4 text-blue-500" />
+      <AlertTitle>Spousal Calculation Disclaimer</AlertTitle>
+      <AlertDescription className="text-sm">
+        <div className="space-y-2 mt-1">
+          <p>
+            This analysis includes both your and your spouse's accounts for a more comprehensive retirement strategy.
+          </p>
+          {scenarioData.isInCommunityPropertyState && (
+            <p>
+              Community Property State: Income is being {scenarioData.splitCommunityIncome ? 'split equally' : 'reported individually'} between spouses.
             </p>
-            
-            {isInCommunityState && (
-              <p className="text-sm text-muted-foreground">
-                As residents of a community property state
-                {scenarioData.splitCommunityIncome ? 
-                  ", income is split 50/50 between you and your spouse for tax purposes." : 
-                  ", income could be split 50/50 between spouses, though you've chosen not to apply this for this analysis."}
-              </p>
-            )}
-            
-            {scenarioData.combinedIRAApproach ? (
-              <p className="text-sm text-muted-foreground">
-                Your analysis uses a combined IRA optimization approach, which coordinates Roth conversions across both IRAs to maximize tax efficiency.
-              </p>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Your analysis uses a separate IRA approach, optimizing each spouse's Roth conversions independently.
-              </p>
-            )}
-            
-            {scenarioData.compareMfjVsMfs && (
-              <p className="text-sm text-muted-foreground font-medium text-blue-500">
-                Your results include a comparison of MFJ vs. MFS filing options to help identify potential tax advantages.
-              </p>
-            )}
-          </div>
+          )}
+          {scenarioData.compareMfjVsMfs && (
+            <p>
+              Filing Status Comparison: This analysis compares tax implications of filing jointly vs. separately.
+            </p>
+          )}
+          {scenarioData.combinedIRAApproach && (
+            <p>
+              Combined IRA Strategy: Conversion amounts are being optimized across both accounts to maximize tax efficiency.
+            </p>
+          )}
+          <p className="text-xs mt-4 text-muted-foreground">
+            Note: These calculations are for estimation purposes only. Please consult with a tax professional before making decisions about your retirement accounts.
+          </p>
         </div>
-      </CardContent>
-    </Card>
+      </AlertDescription>
+    </Alert>
   );
 };
 

@@ -1,12 +1,12 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend, Line, LineChart } from 'recharts';
 import { AlertCircle, TrendingUp, DollarSign, Percent, FileText, Calculator, BarChart4 } from 'lucide-react';
-import { MultiYearScenarioData, YearlyResult } from '../../types/ScenarioTypes';
-import SpouseCalculationDisclaimer from '../common/SpouseCalculationDisclaimer';
+import { MultiYearScenarioData, YearlyResult } from '../types/ScenarioTypes';
+import SpouseCalculationDisclaimer from './common/SpouseCalculationDisclaimer';
 
 interface ResultsStepProps {
   yearlyResults: YearlyResult[];
@@ -93,7 +93,7 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ yearlyResults, scenarioData, 
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultvalue="overview" className="w-full">
+          <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center space-x-2"><TrendingUp className="h-4 w-4" />Overview</TabsTrigger>
               <TabsTrigger value="detailed" className="flex items-center space-x-2"><FileText className="h-4 w-4" />Detailed Results</TabsTrigger>
