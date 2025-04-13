@@ -1,5 +1,5 @@
-
 import React from "react";
+import { LoadingState } from "@/types/LoadingState";
 import { useEquityForm } from "../../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
@@ -11,24 +11,22 @@ import { TaxVisualization } from "./TaxVisualization";
 import { EquityImpactCards } from "./EquityImpactCards";
 import { DeferralImpactCard } from "./DeferralImpactCard";
 import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
-import { LoadingState } from "./LoadingState";
 import { toast } from "sonner";
 import { saveScenario, EquityScenario } from "@/utils/taxScenarioStorage";
 import { FilingStatusType } from "@/utils/taxBracketData";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
-  loading?: boolean;  // Updated type for loading
+  loadingState?: LoadingState;
 }
 
 export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   const { formState, calculateAmtImpact, calculateDeferralBenefit, calculateMultiYearImpact } = useEquityForm();
-  const [loading, setLoading] = React.useState(true);
-  const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
+  const [loadingState, setLoadingState] = React.useState<LoadingState>('loading');
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false);
+      setLoadingState('success');
     }, 800);
     return () => clearTimeout(timer);
   }, []);
@@ -75,7 +73,7 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
     }
   };
 
-  if (loading) {
+  if (loadingState === 'loading') {
     return <LoadingState />;
   }
 
