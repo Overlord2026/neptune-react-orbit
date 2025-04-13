@@ -1,23 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Calculator, ChevronRight, User, Clock, Users, DollarSign, ChartLine, BarChart4 } from "lucide-react";
-import TaxTrapWarningsPanel from '../TaxTrapWarningsPanel';
+
+import React, { useState } from 'react';
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useMultiYearScenario } from './hooks/useMultiYearScenario';
+import StepTabs from './multiYear/navigation/StepTabs';
+import StepNavigation from './multiYear/navigation/StepNavigation';
+import ScenarioWarnings from './multiYear/components/ScenarioWarnings';
 import PartialBracketFillStep from './multiYear/PartialBracketFillStep';
 import SpouseDetailsStep from './multiYear/SpouseDetailsStep';
 import RMDCalculationStep from './multiYear/RMDCalculationStep';
 import BeneficiaryStep from './multiYear/BeneficiaryStep';
 import ResultsStep from './multiYear/ResultsStep';
 import SummaryStep from './multiYear/SummaryStep';
-import { calculateMultiYearScenario } from '@/utils/taxCalculator';
-import { MultiYearScenarioData, YearlyResult, TrapAlert } from './types/ScenarioTypes';
-import TaxConsiderationWarning from './multiYear/common/TaxConsiderationWarning';
 
 const MultiYearRothConversion: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<string>("bracket-fill");
-  const [scenarioData, setScenarioData] = useState<MultiYearScenarioData>({
+  
+  // Initialize with default scenario data
+  const {
+    scenarioData,
+    yearlyResults,
+    isCalculating,
+    hasCalculated,
+    handleUpdateScenarioData,
+    handleCalculate
+  } = useMultiYearScenario({
     startAge: 55,
     startYear: new Date().getFullYear(),
     numYears: 30,
@@ -52,58 +58,16 @@ const MultiYearRothConversion: React.FC = () => {
     includeIrmaa: true
   });
   
-  const [yearlyResults, setYearlyResults] = useState<YearlyResult[]>([]);
-  const [isCalculating, setIsCalculating] = useState<boolean>(false);
-  const [hasCalculated, setHasCalculated] = useState<boolean>(false);
-  
-  useEffect(() => {
-    if (hasCalculated) {
-      runCalculation();
-    }
-  }, [scenarioData, hasCalculated]);
-  
-  const runCalculation = async () => {
-    setIsCalculating(true);
-    
-    try {
-      const results = await calculateMultiYearScenario(scenarioData);
-      setYearlyResults(results);
-    } catch (error) {
-      console.error("Error calculating multi-year scenario:", error);
-    } finally {
-      setIsCalculating(false);
-    }
-  };
-  
   const navigateToStep = (step: string) => {
     setCurrentStep(step);
   };
   
-  const handleCalculate = () => {
-    setHasCalculated(true);
-    runCalculation();
+  const handleFinishCalculation = () => {
+    handleCalculate();
     navigateToStep('results');
   };
   
-  const latestWarnings: TrapAlert[] = yearlyResults.length > 0 
-    ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
-        title: warning.message || warning.type || '',
-        message: warning.message || '',
-        type: warning.type || warning.trapType || '',
-        trapType: warning.trapType || warning.type || '',
-        severity: (warning.severity === 'high' ? 'critical' : 
-                 warning.severity === 'medium' ? 'warning' : 'info') as "critical" | "warning" | "info",
-        details: warning.message,
-        description: warning.message
-      }))
-    : [];
-
-  const handleUpdateScenarioData = (newData: Partial<MultiYearScenarioData>) => {
-    setScenarioData(prev => ({
-      ...prev,
-      ...newData
-    }));
-  };
+  const scenarioName = `Multi-Year Roth Conversion (${scenarioData.startYear} - ${scenarioData.startYear + scenarioData.numYears - 1})`;
   
   return (
     <div className="space-y-6">
@@ -112,72 +76,21 @@ const MultiYearRothConversion: React.FC = () => {
         onValueChange={setCurrentStep}
         className="w-full"
       >
-        <TabsList className="grid grid-cols-6 mb-6">
-          <TabsTrigger 
-            value="bracket-fill"
-            className="flex items-center gap-2"
-          >
-            <Calculator className="h-4 w-4" />
-            <span className="hidden sm:inline">Bracket Fill</span>
-            <span className="sm:hidden">1</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="spouse-details"
-            className="flex items-center gap-2"
-          >
-            <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">Spouse Details</span>
-            <span className="sm:hidden">2</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="rmd"
-            className="flex items-center gap-2"
-          >
-            <Clock className="h-4 w-4" />
-            <span className="hidden sm:inline">RMDs</span>
-            <span className="sm:hidden">3</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="beneficiary"
-            className="flex items-center gap-2"
-          >
-            <User className="h-4 w-4" />
-            <span className="hidden sm:inline">Beneficiary</span>
-            <span className="sm:hidden">4</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="results"
-            className="flex items-center gap-2"
-            disabled={!hasCalculated}
-          >
-            <ChartLine className="h-4 w-4" />
-            <span className="hidden sm:inline">Results</span>
-            <span className="sm:hidden">5</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="summary"
-            className="flex items-center gap-2"
-            disabled={!hasCalculated}
-          >
-            <BarChart4 className="h-4 w-4" />
-            <span className="hidden sm:inline">Summary</span>
-            <span className="sm:hidden">6</span>
-          </TabsTrigger>
-        </TabsList>
+        <StepTabs 
+          currentStep={currentStep} 
+          onStepChange={navigateToStep}
+          hasCalculated={hasCalculated}
+        />
         
         <TabsContent value="bracket-fill" className="mt-0 space-y-4">
           <PartialBracketFillStep 
             scenarioData={scenarioData} 
             onUpdateScenarioData={handleUpdateScenarioData} 
           />
-          <div className="flex justify-end mt-4">
-            <Button 
-              onClick={() => navigateToStep('spouse-details')}
-              className="flex items-center gap-2"
-            >
-              Next <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <StepNavigation 
+            currentStep="bracket-fill" 
+            onNavigate={navigateToStep} 
+          />
         </TabsContent>
         
         <TabsContent value="spouse-details" className="mt-0 space-y-4">
@@ -185,20 +98,10 @@ const MultiYearRothConversion: React.FC = () => {
             scenarioData={scenarioData}
             onUpdateScenarioData={handleUpdateScenarioData}
           />
-          <div className="flex justify-between mt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => navigateToStep('bracket-fill')}
-            >
-              Back
-            </Button>
-            <Button 
-              onClick={() => navigateToStep('rmd')}
-              className="flex items-center gap-2"
-            >
-              Next <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <StepNavigation 
+            currentStep="spouse-details" 
+            onNavigate={navigateToStep} 
+          />
         </TabsContent>
         
         <TabsContent value="rmd" className="mt-0 space-y-4">
@@ -206,20 +109,10 @@ const MultiYearRothConversion: React.FC = () => {
             scenarioData={scenarioData} 
             onUpdateScenarioData={handleUpdateScenarioData} 
           />
-          <div className="flex justify-between mt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => navigateToStep('spouse-details')}
-            >
-              Back
-            </Button>
-            <Button 
-              onClick={() => navigateToStep('beneficiary')}
-              className="flex items-center gap-2"
-            >
-              Next <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <StepNavigation 
+            currentStep="rmd" 
+            onNavigate={navigateToStep} 
+          />
         </TabsContent>
         
         <TabsContent value="beneficiary" className="mt-0 space-y-4">
@@ -227,21 +120,12 @@ const MultiYearRothConversion: React.FC = () => {
             scenarioData={scenarioData} 
             onUpdateScenarioData={handleUpdateScenarioData} 
           />
-          <div className="flex justify-between mt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => navigateToStep('rmd')}
-            >
-              Back
-            </Button>
-            <Button 
-              onClick={handleCalculate}
-              className="flex items-center gap-2"
-              disabled={isCalculating}
-            >
-              {isCalculating ? "Calculating..." : "Calculate Results"}
-            </Button>
-          </div>
+          <StepNavigation 
+            currentStep="beneficiary" 
+            onNavigate={navigateToStep}
+            onCalculate={handleFinishCalculation}
+            isCalculating={isCalculating}
+          />
         </TabsContent>
         
         <TabsContent value="results" className="mt-0 space-y-4">
@@ -250,20 +134,10 @@ const MultiYearRothConversion: React.FC = () => {
             scenarioData={scenarioData}
             isCalculating={isCalculating}
           />
-          <div className="flex justify-between mt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => navigateToStep('beneficiary')}
-            >
-              Back
-            </Button>
-            <Button 
-              onClick={() => navigateToStep('summary')}
-              className="flex items-center gap-2"
-            >
-              View Summary <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <StepNavigation 
+            currentStep="results" 
+            onNavigate={navigateToStep}
+          />
         </TabsContent>
         
         <TabsContent value="summary" className="mt-0 space-y-4">
@@ -271,38 +145,18 @@ const MultiYearRothConversion: React.FC = () => {
             yearlyResults={yearlyResults}
             scenarioData={scenarioData}
           />
-          <div className="flex justify-between mt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => navigateToStep('results')}
-            >
-              Back
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => {
-                setScenarioData({
-                  ...scenarioData,
-                });
-                navigateToStep('bracket-fill');
-              }}
-            >
-              Start New Scenario
-            </Button>
-          </div>
+          <StepNavigation 
+            currentStep="summary" 
+            onNavigate={navigateToStep}
+          />
         </TabsContent>
       </Tabs>
       
-      {hasCalculated && yearlyResults.length > 0 && (
-        <>
-          <TaxConsiderationWarning />
-          <TaxTrapWarningsPanel
-            alerts={latestWarnings}
-            scenarioName={`Multi-Year Roth Conversion (${scenarioData.startYear} - ${scenarioData.startYear + scenarioData.numYears - 1})`}
-            className="mt-2"
-          />
-        </>
-      )}
+      <ScenarioWarnings
+        yearlyResults={yearlyResults}
+        scenarioName={scenarioName}
+        hasCalculated={hasCalculated}
+      />
     </div>
   );
 };
