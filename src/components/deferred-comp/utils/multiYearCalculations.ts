@@ -1,11 +1,10 @@
-
 /**
  * Multi-year tax impact calculations for equity compensation and deferrals
  */
 
 import { EquityFormState, YearlyTaxImpact, EquityCompEvent, DeferralEvent } from '../types/EquityTypes';
 import { calculateAmtImpact } from './equityCalculations';
-import { calculateDeferralBenefit } from './deferralCalculations';
+import { getDeferralEvents as getDeferralEventsFromDeferralUtils } from './deferralCalculations';
 import { getTaxBracket, getNextBracket, checkIrmaaImpact } from './taxBracketUtils';
 
 /**
@@ -18,7 +17,7 @@ export const calculateMultiYearImpact = (formState: EquityFormState): YearlyTaxI
   
   // Get all events
   const equityEvents = getEquityEvents(formState);
-  const deferralEvents = getDeferralEvents(formState);
+  const deferralEvents = getDeferralEventsFromDeferralUtils(formState);
   
   // Calculate impact for current year and next year
   for (let yearOffset = 0; yearOffset <= 1; yearOffset++) {
@@ -200,6 +199,6 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
 };
 
 /**
- * Re-export getDeferralEvents from deferralCalculations
+ * Re-export getDeferralEvents for use elsewhere
  */
 export { getDeferralEvents } from './deferralCalculations';
