@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -36,6 +37,7 @@ import EstateGiftingPage from './pages/EstateGiftingPage';
 import CharitablePlanningPage from './pages/CharitablePlanningPage';
 import Layout from './components/Layout';
 import DeferredCompPage from './pages/DeferredCompPage';
+import SmallBusinessPage from './pages/SmallBusinessPage';
 
 const router = createBrowserRouter([
   {
@@ -98,6 +100,10 @@ const router = createBrowserRouter([
       {
         path: "/tax-planning/charitable-planning",
         element: <CharitablePlanningPage />,
+      },
+      {
+        path: "/tax-planning/small-business",
+        element: <SmallBusinessPage />,
       },
       {
         path: "/tax-planning/deferred-comp",

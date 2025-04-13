@@ -23,7 +23,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   link 
 }) => {
   // Add bullets for estate and gifting, charitable planning, roth tools, and deferred comp tools
-  const showBullets = id === "estate-gifting" || id === "roth-conversion" || id === "charitable-planning" || id === "deferred-comp";
+  const showBullets = id === "estate-gifting" || id === "roth-conversion" || id === "charitable-planning" || id === "deferred-comp" || id === "small-business";
   
   const getBullets = () => {
     if (id === "estate-gifting") {
@@ -50,6 +50,12 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
         "Calculate AMT implications of stock options",
         "Model optimal timing of deferred compensation"
       ];
+    } else if (id === "small-business") {
+      return [
+        "Compare S-Corp vs. sole proprietorship for better tax efficiency",
+        "Calculate self-employment tax implications",
+        "Analyze qualified business income (QBI) deductions"
+      ];
     }
     return [];
   };
@@ -61,6 +67,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
       case "tax-analyzer": return "Analyze My Tax Return";
       case "charitable-planning": return "Start Charitable Analysis";
       case "deferred-comp": return "Start Equity Compensation Analysis";
+      case "small-business": return "Start Business Income Analysis";
       default: return "Start Tool";
     }
   };

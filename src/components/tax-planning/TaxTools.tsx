@@ -12,7 +12,8 @@ import {
   FileCheck,
   Gift,
   HandCoins,
-  BarChart
+  BarChart,
+  Briefcase
 } from "lucide-react";
 import TaxToolCard from './TaxToolCard';
 
@@ -41,6 +42,14 @@ const TaxTools: React.FC = () => {
       description: "Evaluate how donor-advised funds, QCDs, and other giving strategies can reduce your taxable income and enhance your philanthropic impact.",
       comingSoon: false,
       link: "/tax-planning/charitable-planning"
+    },
+    {
+      id: "small-business",
+      title: "Small Business & Side-Hustle",
+      icon: <Briefcase className="w-10 h-10 text-[#FFD700]" />,
+      description: "Estimate self-employment taxes, explore pass-through deductions, and see how side income affects your overall tax plan.",
+      comingSoon: false,
+      link: "/tax-planning/small-business"
     },
     {
       id: "deferred-comp",

@@ -102,6 +102,12 @@ const SidebarContent = () => {
           isActive={location.pathname === '/tax-planning/charitable-planning'} 
         />
         <SidebarItem 
+          icon={<Briefcase className="h-5 w-5" />} 
+          label="Small Business" 
+          href="/tax-planning/small-business" 
+          isActive={location.pathname === '/tax-planning/small-business'} 
+        />
+        <SidebarItem 
           icon={<BarChart className="h-5 w-5" />} 
           label="Deferred Comp & Stock Options" 
           href="/tax-planning/deferred-comp" 
