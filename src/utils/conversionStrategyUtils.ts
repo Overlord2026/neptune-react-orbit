@@ -3,7 +3,7 @@
  * Utility functions for determining conversion strategies
  */
 
-import { getTaxBrackets } from './taxBracketData';
+import { getBrackets } from './taxBracketData';
 
 /**
  * Get maximum conversion amount based on strategy
@@ -21,7 +21,7 @@ export const getMaxConversionAmount = (
   }
   
   // Get tax brackets for the year and filing status
-  const brackets = getTaxBrackets(taxYear, filingStatus);
+  const brackets = getBrackets(taxYear, filingStatus);
   
   // Find the target bracket
   let targetBracket;

@@ -1,4 +1,3 @@
-
 /**
  * Multi-Year Scenario Calculation Utilities
  * 
@@ -217,8 +216,11 @@ export const calculateMultiYearScenario = async (
       const mfsResult = taxResult.mfs_comparison;
       if (mfsResult) {
         mfsComparison = {
-          totalTax: mfsResult.combined_tax,
-          savings: mfsResult.combined_tax - taxResult.total_tax
+          mfjTotalTax: taxResult.total_tax,
+          spouse1Tax: mfsResult.primary_tax,
+          spouse2Tax: mfsResult.spouse_tax,
+          combinedMfsTax: mfsResult.combined_tax,
+          taxDifference: mfsResult.difference
         };
       }
     }
@@ -233,6 +235,7 @@ export const calculateMultiYearScenario = async (
       rmdAmount,
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
+      effectiveRate: taxResult.effective_rate,
       warnings: [], // Placeholder for any warnings
       cumulativeTaxPaid,
       cumulativeTaxSaved,

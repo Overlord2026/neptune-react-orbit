@@ -94,7 +94,7 @@ const IncomeInformationCard: React.FC<IncomeInformationCardProps> = ({
           <RadioGroup 
             id="conversionStrategy"
             value={scenarioData.conversionStrategy}
-            onValueChange={(value: 'fixed' | 'bracket_12' | 'bracket_12_22') => {
+            onValueChange={(value: 'fixed' | 'bracket_12' | 'bracket_22') => {
               onUpdateScenarioData({ conversionStrategy: value });
             }}
             className="pt-2"
@@ -112,8 +112,8 @@ const IncomeInformationCard: React.FC<IncomeInformationCardProps> = ({
               </Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="bracket_12_22" id="bracket_12_22" />
-              <Label htmlFor="bracket_12_22" className="cursor-pointer">
+              <RadioGroupItem value="bracket_22" id="bracket_22" />
+              <Label htmlFor="bracket_22" className="cursor-pointer">
                 Fill 22% Bracket
               </Label>
             </div>

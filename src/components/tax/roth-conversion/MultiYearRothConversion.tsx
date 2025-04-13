@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -36,7 +35,6 @@ const MultiYearRothConversion: React.FC = () => {
     beneficiaryIncomeTaxRate: 0.24,
     taxInflationAdjustment: true,
     
-    // Spouse-related fields with default values
     includeSpouse: true,
     spouseAge: 53,
     spouseTraditionalIRAStartBalance: 300000,
@@ -44,17 +42,13 @@ const MultiYearRothConversion: React.FC = () => {
     spouseBaseAnnualIncome: 60000,
     spouseRmdStartAge: 73,
     
-    // IRA approach
     combinedIRAApproach: true,
     
-    // Community property
     isInCommunityPropertyState: false,
     splitCommunityIncome: false,
     
-    // Compare MFJ vs MFS
     compareMfjVsMfs: false,
     
-    // IRMAA surcharges
     includeIrmaa: true
   });
   
@@ -95,10 +89,11 @@ const MultiYearRothConversion: React.FC = () => {
     ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
         title: warning.message,
         description: warning.message,
+        message: warning.message,
         type: warning.type,
         severity: warning.severity === 'high' ? 'critical' : 
                   warning.severity === 'medium' ? 'warning' : 'info',
-        trapType: warning.trapType || warning.type, // Add trapType for compatibility with TaxTrapWarningsPanel
+        trapType: warning.trapType || warning.type,
       }))
     : [];
 
