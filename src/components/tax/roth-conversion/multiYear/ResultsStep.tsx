@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend, Line, LineChart } from 'recharts';
-import { AlertCircle, TrendingUp, DollarSign, Percent, FileText, Calculator, BarChart4 } from 'lucide-react';
+import { AlertCircle, TrendingUp, DollarSign, Percent, FileText, Calculator, BarChart4, HeartHandshake } from 'lucide-react';
 import { MultiYearScenarioData, YearlyResult } from '../types/ScenarioTypes';
 import SpouseCalculationDisclaimer from './common/SpouseCalculationDisclaimer';
+import CharitableContributionImpact from './components/CharitableContributionImpact';
 
 interface ResultsStepProps {
   yearlyResults: YearlyResult[];
@@ -52,7 +53,8 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ yearlyResults, scenarioData, 
     rothIRABalance: result.rothIRABalance,
     totalTax: result.totalTax,
     conversionAmount: result.conversionAmount,
-    rmdAmount: result.rmdAmount
+    rmdAmount: result.rmdAmount,
+    charitableAmount: result.charitableContribution?.amount || 0
   }));
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -65,6 +67,9 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ yearlyResults, scenarioData, 
           <p>{`Taxes Paid: $${payload[2].value.toFixed(2)}`}</p>
           <p>{`Conversion: $${payload[3].value.toFixed(2)}`}</p>
           <p>{`RMD Amount: $${payload[4].value.toFixed(2)}`}</p>
+          {payload[5] && payload[5].value > 0 && (
+            <p>{`Charitable: $${payload[5].value.toFixed(2)}`}</p>
+          )}
         </div>
       );
     }
@@ -84,6 +89,11 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ yearlyResults, scenarioData, 
     return value;
   };
 
+  // Check if there are any charitable contributions
+  const hasCharitableContributions = yearlyResults.some(
+    result => result.charitableContribution && result.charitableContribution.amount > 0
+  );
+
   return (
     <div className="space-y-6">
       <Card>
@@ -94,10 +104,15 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ yearlyResults, scenarioData, 
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview" className="flex items-center space-x-2"><TrendingUp className="h-4 w-4" />Overview</TabsTrigger>
               <TabsTrigger value="detailed" className="flex items-center space-x-2"><FileText className="h-4 w-4" />Detailed Results</TabsTrigger>
               <TabsTrigger value="charts" className="flex items-center space-x-2"><BarChart4 className="h-4 w-4" />Charts</TabsTrigger>
+              {hasCharitableContributions && (
+                <TabsTrigger value="charitable" className="flex items-center space-x-2">
+                  <HeartHandshake className="h-4 w-4" />Charitable
+                </TabsTrigger>
+              )}
             </TabsList>
             <TabsContent value="overview" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -220,9 +235,15 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ yearlyResults, scenarioData, 
                   <Area type="monotone" dataKey="totalTax" stroke="#ffc658" fill="#ffc658" name="Taxes Paid" />
                   <Area type="monotone" dataKey="conversionAmount" stroke="#a45de2" fill="#a45de2" name="Conversion Amount" />
                   <Area type="monotone" dataKey="rmdAmount" stroke="#3498db" fill="#3498db" name="RMD Amount" />
+                  <Area type="monotone" dataKey="charitableAmount" stroke="#e74c3c" fill="#e74c3c" name="Charitable" />
                 </AreaChart>
               </ResponsiveContainer>
             </TabsContent>
+            {hasCharitableContributions && (
+              <TabsContent value="charitable" className="mt-6">
+                <CharitableContributionImpact yearlyResults={yearlyResults} />
+              </TabsContent>
+            )}
           </Tabs>
         </CardContent>
       </Card>

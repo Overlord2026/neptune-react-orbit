@@ -63,7 +63,8 @@ export const calculateMultiYearScenario = async (
       conversionAmount,
       spouseConversionAmount,
       taxResult,
-      noConversionTaxResult
+      noConversionTaxResult,
+      charitableContribution
     } = yearResult;
 
     // Calculate tax savings/cost
@@ -148,7 +149,10 @@ export const calculateMultiYearScenario = async (
       spouseRmdAmount: scenarioData.includeSpouse ? spouseRmdAmount : undefined,
       
       // MFS comparison results (if applicable)
-      mfsComparison
+      mfsComparison,
+      
+      // Charitable contribution impact
+      charitableContribution
     });
   }
   

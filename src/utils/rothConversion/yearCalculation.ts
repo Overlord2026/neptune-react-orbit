@@ -9,6 +9,7 @@ import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/Sc
 import { TaxInput, calculateTaxScenario } from '../taxCalculator';
 import { calculateRMD } from '../rmdCalculationUtils';
 import { determineConversionAmounts } from './conversionUtils';
+import { getCharitableContributionForYear, calculateCharitableImpact } from './charitableUtils';
 
 interface YearCalculationInput {
   scenarioData: MultiYearScenarioData;
@@ -53,8 +54,22 @@ export function processSingleYearCalculation({
     spouseRmdAmount = calculateRMD(spouseTraditionalIRABalance, spouseAge);
   }
   
-  // Total income before conversion
-  const totalPreConversionIncome = baseIncome + spouseBaseIncome + rmdAmount + spouseRmdAmount;
+  // Get charitable contribution for this year
+  const charitableContribution = getCharitableContributionForYear(
+    scenarioData, 
+    currentYear, 
+    currentAge
+  );
+  
+  // Calculate any reduction to RMD amount if using QCD
+  let adjustedRmdAmount = rmdAmount;
+  if (charitableContribution.useQcd && currentAge >= 70.5) {
+    // QCD can reduce or eliminate RMD up to the contribution amount
+    adjustedRmdAmount = Math.max(0, rmdAmount - charitableContribution.amount);
+  }
+  
+  // Total income before conversion (using adjusted RMD if applicable)
+  const totalPreConversionIncome = baseIncome + spouseBaseIncome + adjustedRmdAmount + spouseRmdAmount;
   
   // Determine conversion amounts
   const { conversionAmount, spouseConversionAmount } = determineConversionAmounts({
@@ -62,7 +77,7 @@ export function processSingleYearCalculation({
     totalPreConversionIncome,
     currentYear,
     baseIncome,
-    rmdAmount,
+    rmdAmount: adjustedRmdAmount, // Use the adjusted RMD amount
     spouseBaseIncome,
     spouseRmdAmount,
     traditionalIRABalance,
@@ -76,10 +91,10 @@ export function processSingleYearCalculation({
     interest: 0,
     dividends: 0,
     capital_gains: 0,
-    ira_distributions: rmdAmount,
+    ira_distributions: adjustedRmdAmount, // Use adjusted RMD amount
     roth_conversion: conversionAmount,
     social_security: 0,
-    isItemizedDeduction: false,
+    isItemizedDeduction: false, // Will be determined based on charitable contribution
     filing_status: scenarioData.filingStatus,
     
     // Add spouse info if applicable
@@ -91,6 +106,26 @@ export function processSingleYearCalculation({
     isInCommunityPropertyState: scenarioData.isInCommunityPropertyState,
     splitCommunityIncome: scenarioData.splitCommunityIncome,
   };
+  
+  // If charitable planning is enabled, adjust the tax input
+  if (scenarioData.useCharitablePlanning && charitableContribution.amount > 0) {
+    // Calculate charitable impact on taxes
+    const charitableImpact = calculateCharitableImpact(
+      charitableContribution.amount,
+      charitableContribution.useQcd,
+      charitableContribution.isBunching,
+      scenarioData.filingStatus,
+      currentYear,
+      0.24, // Estimate marginal rate for initial calculation
+      rmdAmount
+    );
+    
+    // Update tax input with itemized deduction info
+    if (charitableImpact.isItemizing) {
+      yearTaxInput.isItemizedDeduction = true;
+      yearTaxInput.itemizedDeductionAmount = charitableImpact.itemizedDeduction;
+    }
+  }
   
   // Calculate tax on this scenario
   const taxResult = calculateTaxScenario(
@@ -107,6 +142,24 @@ export function processSingleYearCalculation({
     "multi_year_analysis"
   );
 
+  // Calculate charitable impact with the actual marginal rate from tax result
+  const charitableImpact = scenarioData.useCharitablePlanning && charitableContribution.amount > 0 
+    ? calculateCharitableImpact(
+        charitableContribution.amount,
+        charitableContribution.useQcd,
+        charitableContribution.isBunching,
+        scenarioData.filingStatus,
+        currentYear,
+        taxResult.marginal_rate, // Use actual marginal rate
+        rmdAmount
+      )
+    : {
+        standardDeduction: 0,
+        itemizedDeduction: 0,
+        isItemizing: false,
+        taxSavings: 0
+      };
+  
   return {
     baseIncome,
     spouseBaseIncome,
@@ -116,6 +169,10 @@ export function processSingleYearCalculation({
     conversionAmount,
     spouseConversionAmount,
     taxResult,
-    noConversionTaxResult
+    noConversionTaxResult,
+    charitableContribution: scenarioData.useCharitablePlanning ? {
+      ...charitableContribution,
+      ...charitableImpact
+    } : undefined
   };
 }

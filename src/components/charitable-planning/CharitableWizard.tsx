@@ -6,6 +6,7 @@ import WizardNavigation from './WizardNavigation';
 import { CharitableProvider, useCharitable } from './context/CharitableContext';
 import StepContentManager from './components/StepContentManager';
 import { getMutableSteps, shouldSkipQcdStep } from './config/wizardConfig';
+import { MultiYearProvider } from '../tax/roth-conversion/multiYear/context/MultiYearContext';
 
 // The main wizard component that uses the context
 const CharitableWizardContent: React.FC = () => {
@@ -49,9 +50,11 @@ const CharitableWizardContent: React.FC = () => {
 // Public-facing component that wraps the content with the provider
 const CharitableWizard: React.FC = () => {
   return (
-    <CharitableProvider>
-      <CharitableWizardContent />
-    </CharitableProvider>
+    <MultiYearProvider>
+      <CharitableProvider>
+        <CharitableWizardContent />
+      </CharitableProvider>
+    </MultiYearProvider>
   );
 };
 

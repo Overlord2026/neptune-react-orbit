@@ -1,8 +1,16 @@
+
 export type ConversionStrategyType =
   | "fixed"
   | "bracket_12"
   | "bracket_22"
   | "bracket_12_22";
+
+export interface CharitableContribution {
+  year: number;
+  amount: number;
+  useQcd: boolean;
+  isBunching?: boolean;
+}
 
 export interface MultiYearScenarioData {
   startAge: number;
@@ -47,6 +55,15 @@ export interface MultiYearScenarioData {
   
   // IRMAA surcharges
   includeIrmaa?: boolean;
+
+  // Charitable contribution fields
+  charitableContributions?: CharitableContribution[];
+  useCharitablePlanning?: boolean;
+  dafBunching?: {
+    enabled: boolean;
+    bunchingYears: number;
+    bunchingAmount: number;
+  };
 }
 
 export interface YearlyResult {
@@ -95,6 +112,18 @@ export interface YearlyResult {
     originalSpouseIncome: number;
     splitPrimaryIncome: number;
     splitSpouseIncome: number;
+  };
+
+  // Charitable contribution data
+  charitableContribution?: {
+    amount: number;
+    useQcd: boolean;
+    isBunching?: boolean;
+    standardDeduction: number;
+    itemizedDeduction: number;
+    isItemizing: boolean;
+    taxSavings: number;
+    qcdImpact?: number; // Amount removed from RMD/AGI via QCD
   };
 }
 
