@@ -61,6 +61,6 @@ export function fetchScenarios(): Promise<(TaxResult | EquityScenario)[]> {
 export function fetchEquityScenarios(): Promise<EquityScenario[]> {
   return fetchScenarios()
     .then(scenarios => scenarios.filter(
-      scenario => scenario.type === 'equity-compensation'
+      scenario => 'type' in scenario && scenario.type === 'equity-compensation'
     ) as EquityScenario[]);
 }

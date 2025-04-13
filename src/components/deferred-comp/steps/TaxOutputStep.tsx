@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,8 @@ import { BracketChangeVisualizer } from "../components/tax-summary/BracketChange
 import { EquityStrategySummary } from "../components/EquityStrategySummary";
 import EquityDisclaimerSection from "../components/EquityDisclaimerSection";
 import { toast } from "sonner";
-import { saveScenario } from "@/utils/taxScenarioStorage";
+import { saveScenario, EquityScenario } from "@/utils/taxScenarioStorage";
+import { FilingStatusType } from "@/utils/taxBracketData";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
@@ -25,7 +25,6 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
 
   React.useEffect(() => {
-    // Simulate API call or calculation
     const timer = setTimeout(() => {
       setLoading(false);
     }, 800);
@@ -39,12 +38,27 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
     }
 
     try {
-      // Create a summary of the scenario
-      const scenarioData = {
-        id: `equity-${Date.now()}`,
+      const currentYear = new Date().getFullYear();
+      const results = calculateMultiYearImpact();
+      const yearData = results.find(y => y.year === currentYear) || results[0];
+      
+      const scenarioData: EquityScenario = {
+        scenario_name: `${formState.equityType || "Deferred"} Analysis - ${new Date().toLocaleDateString()}`,
         type: "equity-compensation",
-        name: `${formState.equityType || "Deferred"} Analysis - ${new Date().toLocaleDateString()}`,
-        timestamp: new Date().toISOString(),
+        year: currentYear,
+        filing_status: "single" as FilingStatusType,
+        total_income: yearData.ordinaryIncome,
+        agi: yearData.ordinaryIncome,
+        taxable_income: yearData.ordinaryIncome * 0.9,
+        total_tax: yearData.totalTax,
+        ordinary_tax: yearData.totalTax,
+        capital_gains_tax: 0,
+        marginal_rate: yearData.marginalRate,
+        marginal_capital_gains_rate: 0,
+        effective_rate: yearData.totalTax / yearData.ordinaryIncome,
+        updated_at: new Date(),
+        id: `equity-${Date.now()}`,
+        
         formState,
         results: calculateMultiYearImpact(),
         amtImpact: formState.equityType === "ISO" ? calculateAmtImpact() : 0,
@@ -76,16 +90,13 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
 
   return (
     <div className="space-y-6">
-      {/* New Tax Summary Card with Year-by-Year breakdown */}
       <TaxSummaryCard />
       
-      {/* Grid with strategy summary and bracket visualizer */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <EquityStrategySummary />
         <BracketChangeVisualizer />
       </div>
       
-      {/* Enhanced chart with better visualization */}
       {(hasEquity || hasDeferred) && formState.planningApproach === "multi-year" && (
         <Card className="bg-[#1D2433] border-[#2A2F3C]">
           <CardHeader>
@@ -203,7 +214,6 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
         )}
       </div>
 
-      {/* New Disclaimer Section */}
       <EquityDisclaimerSection 
         acknowledged={disclaimerAcknowledged} 
         onAcknowledgeChange={setDisclaimerAcknowledged} 
