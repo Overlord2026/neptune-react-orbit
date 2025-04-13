@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useEquityForm } from "../../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { FilingStatusType } from "@/utils/taxBracketData";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
+  loading?: boolean;  // Updated type for loading
 }
 
 export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
