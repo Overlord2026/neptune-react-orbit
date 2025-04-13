@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Label } from "@/components/ui/label";
@@ -14,7 +13,7 @@ interface DeferralStrategyStepProps {
   onPrevious: () => void;
 }
 
-export const DeferralStrategyStep: React.FC<DeferralStrategyStepProps> = ({ onNext, onPrevious }) => {
+const DeferralStrategyStep: React.FC<DeferralStrategyStepProps> = ({ onNext, onPrevious }) => {
   const { formState, updateForm } = useEquityForm();
   
   // Skip if no deferred comp
@@ -158,3 +157,5 @@ export const DeferralStrategyStep: React.FC<DeferralStrategyStepProps> = ({ onNe
     </div>
   );
 };
+
+export default DeferralStrategyStep;

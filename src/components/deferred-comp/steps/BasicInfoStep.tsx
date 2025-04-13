@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Label } from "@/components/ui/label";
@@ -14,7 +13,7 @@ interface BasicInfoStepProps {
   onNext: () => void;
 }
 
-export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ onNext }) => {
+const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ onNext }) => {
   const { formState, updateForm } = useEquityForm();
 
   const handleContinue = () => {
@@ -138,3 +137,5 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ onNext }) => {
     </div>
   );
 };
+
+export default BasicInfoStep;

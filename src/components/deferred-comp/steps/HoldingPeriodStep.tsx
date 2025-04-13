@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ interface HoldingPeriodStepProps {
   onPrevious: () => void;
 }
 
-export const HoldingPeriodStep: React.FC<HoldingPeriodStepProps> = ({ onNext, onPrevious }) => {
+const HoldingPeriodStep: React.FC<HoldingPeriodStepProps> = ({ onNext, onPrevious }) => {
   const { formState, updateForm } = useEquityForm();
   
   const handleChange = (value: "less-than-year" | "more-than-year" | "unknown") => {
@@ -119,3 +118,5 @@ export const HoldingPeriodStep: React.FC<HoldingPeriodStepProps> = ({ onNext, on
     </div>
   );
 };
+
+export default HoldingPeriodStep;

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Label } from "@/components/ui/label";
@@ -14,7 +13,7 @@ interface MultiYearApproachStepProps {
   onPrevious: () => void;
 }
 
-export const MultiYearApproachStep: React.FC<MultiYearApproachStepProps> = ({ onNext, onPrevious }) => {
+const MultiYearApproachStep: React.FC<MultiYearApproachStepProps> = ({ onNext, onPrevious }) => {
   const { formState, updateForm } = useEquityForm();
   const currentYear = new Date().getFullYear();
 
@@ -137,3 +136,5 @@ export const MultiYearApproachStep: React.FC<MultiYearApproachStepProps> = ({ on
     </div>
   );
 };
+
+export default MultiYearApproachStep;

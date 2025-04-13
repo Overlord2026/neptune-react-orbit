@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Label } from "@/components/ui/label";
@@ -14,7 +13,7 @@ interface OptionDetailsStepProps {
   onPrevious: () => void;
 }
 
-export const OptionDetailsStep: React.FC<OptionDetailsStepProps> = ({ onNext, onPrevious }) => {
+const OptionDetailsStep: React.FC<OptionDetailsStepProps> = ({ onNext, onPrevious }) => {
   const { formState, updateForm } = useEquityForm();
 
   // Skip this step if not relevant based on equityType
@@ -200,3 +199,5 @@ export const OptionDetailsStep: React.FC<OptionDetailsStepProps> = ({ onNext, on
     </div>
   );
 };
+
+export default OptionDetailsStep;

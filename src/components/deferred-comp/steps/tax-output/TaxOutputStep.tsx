@@ -11,6 +11,7 @@ import { TaxVisualization } from "./TaxVisualization";
 import { EquityImpactCards } from "./EquityImpactCards";
 import { DeferralImpactCard } from "./DeferralImpactCard";
 import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
+import LoadingState from "./LoadingState";
 import { toast } from "sonner";
 import { saveScenario, EquityScenario } from "@/utils/taxScenarioStorage";
 import { FilingStatusType } from "@/utils/taxBracketData";
