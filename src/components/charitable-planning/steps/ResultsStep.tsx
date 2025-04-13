@@ -7,6 +7,7 @@ import StrategyList from '../components/StrategyList';
 import YearlyPlanTable from '../components/YearlyPlanTable';
 import ResultDisclaimer from '../components/ResultDisclaimer';
 import ResultActions from '../components/ResultActions';
+import CrtResultsSection from '../components/CrtResultsSection';
 
 interface ResultsStepProps {
   scenario: CharitableScenario;
@@ -26,6 +27,7 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
 
   // Determine what strategies are being used
   const isUsingQcd = scenario.qcd.useQcd;
+  const isUsingCrt = scenario.crt?.useCrt;
 
   return (
     <div className="space-y-6">
@@ -43,6 +45,18 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
           <h4 className="font-medium text-white">Your Charitable Giving Strategy:</h4>
           
           <StrategyList scenario={scenario} />
+          
+          {isUsingCrt && scenario.results.crtDeduction && scenario.results.crtAnnualPayout && (
+            <CrtResultsSection
+              type={scenario.crt.type}
+              fundingAmount={scenario.crt.fundingAmount}
+              payoutRate={scenario.crt.payoutRate}
+              deduction={scenario.results.crtDeduction}
+              annualPayout={scenario.results.crtAnnualPayout}
+              trustTerm={scenario.crt.trustTerm}
+              estateTaxSavings={scenario.results.estateTaxSavings || 0}
+            />
+          )}
           
           <YearlyPlanTable scenario={scenario} />
           

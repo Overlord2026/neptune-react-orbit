@@ -17,6 +17,17 @@ export interface QcdStrategy {
   amount: number;
 }
 
+export interface CharitableRemainderTrust {
+  useCrt: boolean;
+  type: "CRAT" | "CRUT";
+  fundingAmount: number;
+  payoutRate: number;
+  trustTerm: number | "lifetime";
+  beneficiaryAge: number;
+  spouseBeneficiary: boolean;
+  spouseAge?: number;
+}
+
 export interface MultiYearPlan {
   isIntegrated: boolean;
   years: {
@@ -33,6 +44,9 @@ export interface ResultsSummary {
   taxableIncomeReduction: number;
   bracketSavings: number;
   irmaaSavings: number;
+  crtDeduction?: number;
+  crtAnnualPayout?: number;
+  estateTaxSavings?: number;
 }
 
 export interface CharitableScenario {
@@ -41,6 +55,7 @@ export interface CharitableScenario {
   age: number;
   dafStrategy: DafStrategy;
   qcd: QcdStrategy;
+  crt: CharitableRemainderTrust;
   multiYearPlan: MultiYearPlan;
   results: ResultsSummary;
 }

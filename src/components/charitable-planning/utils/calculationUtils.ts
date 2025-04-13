@@ -1,5 +1,6 @@
 
 import { CharitableScenario } from '../types/CharitableTypes';
+import { calculateCrtBenefits } from './crtCalculationUtils';
 
 /**
  * Calculate the reduction in taxable income based on charitable giving strategy
@@ -14,6 +15,21 @@ export const calculateTaxableIncomeReduction = (scenario: CharitableScenario): n
     } else if (scenario.annualGiving.type === 'variable' && scenario.annualGiving.yearlyAmounts) {
       // Sum up first year's contribution for initial calculation
       reduction += scenario.annualGiving.yearlyAmounts[0]?.amount || 0;
+    }
+    
+    // Add CRT deduction if applicable
+    if (scenario.crt?.useCrt) {
+      const crtBenefits = calculateCrtBenefits({
+        type: scenario.crt.type,
+        fundingAmount: scenario.crt.fundingAmount,
+        payoutRate: scenario.crt.payoutRate,
+        trustTerm: scenario.crt.trustTerm,
+        beneficiaryAge: scenario.crt.beneficiaryAge,
+        spouseBeneficiary: scenario.crt.spouseBeneficiary,
+        spouseAge: scenario.crt.spouseAge
+      });
+      
+      reduction += crtBenefits.immediateDeduction;
     }
   }
   
@@ -48,4 +64,37 @@ export const calculateIrmaaSavings = (scenario: CharitableScenario): number => {
     }
   }
   return savings;
+};
+
+/**
+ * Calculate CRT benefits for the results page
+ */
+export const calculateCrtResults = (scenario: CharitableScenario): {
+  crtDeduction: number;
+  crtAnnualPayout: number;
+  estateTaxSavings: number;
+} => {
+  if (!scenario.crt?.useCrt) {
+    return {
+      crtDeduction: 0,
+      crtAnnualPayout: 0,
+      estateTaxSavings: 0
+    };
+  }
+  
+  const crtResults = calculateCrtBenefits({
+    type: scenario.crt.type,
+    fundingAmount: scenario.crt.fundingAmount,
+    payoutRate: scenario.crt.payoutRate,
+    trustTerm: scenario.crt.trustTerm,
+    beneficiaryAge: scenario.crt.beneficiaryAge,
+    spouseBeneficiary: scenario.crt.spouseBeneficiary,
+    spouseAge: scenario.crt.spouseAge
+  });
+  
+  return {
+    crtDeduction: crtResults.immediateDeduction,
+    crtAnnualPayout: crtResults.annualPayout,
+    estateTaxSavings: crtResults.estateTaxSavings
+  };
 };

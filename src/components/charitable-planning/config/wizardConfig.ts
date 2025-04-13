@@ -3,6 +3,7 @@
 export const WIZARD_STEPS = [
   { id: 'basic-giving', label: 'Basic Giving Profile' },
   { id: 'daf-bunching', label: 'Donor-Advised Funds & Bunching' },
+  { id: 'crt', label: 'Charitable Remainder Trust' },
   { id: 'qcd', label: 'QCD from IRA' },
   { id: 'multi-year', label: 'Multi-Year Integration' },
   { id: 'results', label: 'Results' },

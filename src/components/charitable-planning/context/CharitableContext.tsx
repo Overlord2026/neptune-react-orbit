@@ -28,6 +28,15 @@ const initialScenario: CharitableScenario = {
     amount: 0,
     useQcd: false,
   },
+  crt: {
+    useCrt: false,
+    type: "CRAT",
+    fundingAmount: 100000,
+    payoutRate: 5,
+    trustTerm: "lifetime",
+    beneficiaryAge: 65,
+    spouseBeneficiary: false
+  },
   multiYearPlan: {
     isIntegrated: false,
     years: [],
@@ -52,7 +61,7 @@ export const CharitableProvider: React.FC<{ children: ReactNode }> = ({ children
 
   // Navigate to next step based on current config
   const nextStep = () => {
-    const steps = ['basic-giving', 'daf-bunching', 'qcd', 'multi-year', 'results'] as const;
+    const steps = ['basic-giving', 'daf-bunching', 'crt', 'qcd', 'multi-year', 'results'] as const;
     const currentIndex = steps.indexOf(currentStep);
     
     if (currentIndex < steps.length - 1) {
@@ -67,7 +76,7 @@ export const CharitableProvider: React.FC<{ children: ReactNode }> = ({ children
 
   // Navigate to previous step based on current config
   const prevStep = () => {
-    const steps = ['basic-giving', 'daf-bunching', 'qcd', 'multi-year', 'results'] as const;
+    const steps = ['basic-giving', 'daf-bunching', 'crt', 'qcd', 'multi-year', 'results'] as const;
     const currentIndex = steps.indexOf(currentStep);
     
     if (currentIndex > 0) {

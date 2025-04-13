@@ -1,60 +1,109 @@
 
 import React from 'react';
 import { CharitableScenario } from '../types/CharitableTypes';
+import { Badge } from '@/components/ui/badge';
+import { Check, AlertTriangle } from 'lucide-react';
 
 interface StrategyListProps {
   scenario: CharitableScenario;
 }
 
 const StrategyList: React.FC<StrategyListProps> = ({ scenario }) => {
-  const annualGivingAmount = scenario.annualGiving.amount;
-  const isUsingQcd = scenario.qcd.useQcd;
-  const isUsingDaf = scenario.dafStrategy.useDaf;
-  const isUsingBunching = isUsingDaf && scenario.dafStrategy.approach === "bunching";
+  const hasAnnualGiving = 
+    (scenario.annualGiving.type === 'fixed' && scenario.annualGiving.amount > 0) || 
+    (scenario.annualGiving.type === 'variable' && 
+      scenario.annualGiving.yearlyAmounts && 
+      scenario.annualGiving.yearlyAmounts.length > 0);
+  
+  const hasDaf = scenario.dafStrategy.useDaf;
+  const hasQcd = scenario.qcd.useQcd;
+  const hasCrt = scenario.crt?.useCrt;
+  
+  // Format currency values
+  const formatCurrency = (amount: number) => {
+    return amount.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    });
+  };
 
   return (
-    <div className="bg-[#1A1F2C] p-4 rounded-md">
-      <h5 className="font-medium text-white mb-2">Primary Strategies:</h5>
-      <ul className="space-y-3">
-        <li className="flex items-start space-x-3">
-          <div className="h-5 w-5 rounded-full bg-[#00C47C] flex items-center justify-center text-xs font-medium text-black mt-0.5">✓</div>
-          <div>
-            <p className="text-white">Annual Charitable Giving</p>
-            <p className="text-sm text-muted-foreground">
-              {scenario.annualGiving.type === "fixed" 
-                ? `$${annualGivingAmount.toLocaleString()} per year` 
-                : "Variable giving amounts over time"}
-            </p>
+    <ul className="space-y-3">
+      {hasAnnualGiving && (
+        <li className="flex items-center">
+          <div className="bg-[#1A1F2C] h-6 w-6 rounded-full flex items-center justify-center mr-3">
+            <Check className="h-4 w-4 text-emerald-500" />
           </div>
+          <span className="text-white">
+            {scenario.annualGiving.type === 'fixed' 
+              ? `Annual charitable giving of ${formatCurrency(scenario.annualGiving.amount)}`
+              : 'Variable annual charitable giving'
+            }
+            {scenario.isItemizing && (
+              <Badge variant="outline" className="ml-2 bg-emerald-950/50 text-emerald-400 border-emerald-800">
+                Itemized Deduction
+              </Badge>
+            )}
+          </span>
         </li>
-        
-        {isUsingDaf && (
-          <li className="flex items-start space-x-3">
-            <div className="h-5 w-5 rounded-full bg-[#00C47C] flex items-center justify-center text-xs font-medium text-black mt-0.5">✓</div>
-            <div>
-              <p className="text-white">Donor-Advised Fund</p>
-              <p className="text-sm text-muted-foreground">
-                {isUsingBunching 
-                  ? `Bunching ${scenario.dafStrategy.bunchingYears} years of contributions in one year` 
-                  : "Annual contributions to DAF"}
-              </p>
-            </div>
-          </li>
-        )}
-        
-        {isUsingQcd && (
-          <li className="flex items-start space-x-3">
-            <div className="h-5 w-5 rounded-full bg-[#00C47C] flex items-center justify-center text-xs font-medium text-black mt-0.5">✓</div>
-            <div>
-              <p className="text-white">Qualified Charitable Distributions</p>
-              <p className="text-sm text-muted-foreground">
-                ${scenario.qcd.amount.toLocaleString()} annual QCD from IRA, reducing AGI and potentially RMDs
-              </p>
-            </div>
-          </li>
-        )}
-      </ul>
-    </div>
+      )}
+      
+      {hasDaf && (
+        <li className="flex items-center">
+          <div className="bg-[#1A1F2C] h-6 w-6 rounded-full flex items-center justify-center mr-3">
+            <Check className="h-4 w-4 text-emerald-500" />
+          </div>
+          <span className="text-white">
+            Donor-Advised Fund
+            {scenario.dafStrategy.approach === 'bunching' && (
+              <Badge variant="outline" className="ml-2 bg-blue-950/50 text-blue-400 border-blue-800">
+                Bunching Strategy
+              </Badge>
+            )}
+          </span>
+        </li>
+      )}
+      
+      {hasCrt && (
+        <li className="flex items-center">
+          <div className="bg-[#1A1F2C] h-6 w-6 rounded-full flex items-center justify-center mr-3">
+            <Check className="h-4 w-4 text-emerald-500" />
+          </div>
+          <span className="text-white">
+            {scenario.crt.type === 'CRAT' ? 'Charitable Remainder Annuity Trust (CRAT)' : 'Charitable Remainder Unitrust (CRUT)'}
+            <Badge variant="outline" className="ml-2 bg-purple-950/50 text-purple-400 border-purple-800">
+              {formatCurrency(scenario.crt.fundingAmount)} at {scenario.crt.payoutRate}%
+            </Badge>
+          </span>
+        </li>
+      )}
+      
+      {hasQcd && (
+        <li className="flex items-center">
+          <div className="bg-[#1A1F2C] h-6 w-6 rounded-full flex items-center justify-center mr-3">
+            <Check className="h-4 w-4 text-emerald-500" />
+          </div>
+          <span className="text-white">
+            Qualified Charitable Distribution (QCD) from IRA
+            <Badge variant="outline" className="ml-2 bg-amber-950/50 text-amber-400 border-amber-800">
+              {formatCurrency(scenario.qcd.amount)}
+            </Badge>
+          </span>
+        </li>
+      )}
+      
+      {!hasAnnualGiving && !hasDaf && !hasQcd && !hasCrt && (
+        <li className="flex items-center">
+          <div className="bg-[#1A1F2C] h-6 w-6 rounded-full flex items-center justify-center mr-3">
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+          </div>
+          <span className="text-amber-500">
+            No charitable giving strategies configured
+          </span>
+        </li>
+      )}
+    </ul>
   );
 };
 
