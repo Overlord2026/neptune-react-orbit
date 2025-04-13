@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { EstateGiftingData } from '../EstateGiftingWizard';
-import { InfoIcon, Upload, Database, ArrowDownToLine } from "lucide-react";
+import { InfoIcon, Upload, Database, ArrowDownToLine, Link } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import { Link as RouterLink } from "react-router-dom";
 
 interface BasicInformationStepProps {
   data: EstateGiftingData;
@@ -122,6 +123,11 @@ const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
                 ? `Your estate may be subject to federal estate taxes. The amount above the exemption (${formatCurrency(Math.max(0, data.netWorth - data.estateExemption))}) could be taxed at up to 40%.` 
                 : "Based on current law, your estate is below the federal estate tax exemption threshold."}
             </p>
+            {data.aboveThreshold && (
+              <div className="mt-2 text-sm text-[#B0B0B0]">
+                Estate planning strategies like gifting or trusts can help reduce potential tax exposure.
+              </div>
+            )}
           </div>
         )}
 
@@ -137,6 +143,19 @@ const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
           >
             I expect my estate value will exceed the exemption threshold (either through asset growth or future change in tax laws)
           </Label>
+        </div>
+        
+        {/* Cross-link to Roth Multi-Year Planner */}
+        <div className="pt-4 border-t border-[#353e52] mt-6">
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-[#B0B0B0]">
+              Want to incorporate annual gifting into your retirement planning?
+            </p>
+            <RouterLink to="/tax-planning/roth" className="text-[#FFD700] hover:text-[#FFD700]/80 text-sm flex items-center gap-1">
+              <Link className="h-3 w-3" />
+              Go to Multi-Year Planner
+            </RouterLink>
+          </div>
         </div>
       </div>
     </div>

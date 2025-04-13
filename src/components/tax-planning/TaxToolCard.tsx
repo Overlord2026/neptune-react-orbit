@@ -22,8 +22,34 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   comingSoon, 
   link 
 }) => {
-  // Add bullets for estate and gifting
-  const showBullets = id === "estate-gifting";
+  // Add bullets for estate and gifting and other tools as needed
+  const showBullets = id === "estate-gifting" || id === "roth-conversion";
+  
+  const getBullets = () => {
+    if (id === "estate-gifting") {
+      return [
+        "Compare annual gifting vs. inheritance",
+        "Check for estate tax thresholds",
+        "Factor in trust structures if relevant"
+      ];
+    } else if (id === "roth-conversion") {
+      return [
+        "Model how Roth conversions reduce future RMD tax liability",
+        "Compare single-year vs multi-year conversion strategies",
+        "Visualize impact on IRMAA surcharges"
+      ];
+    }
+    return [];
+  };
+  
+  const getButtonText = () => {
+    switch (id) {
+      case "estate-gifting": return "Start Estate & Gifting Analysis";
+      case "roth-conversion": return "Start Roth Conversion Planning";
+      case "tax-analyzer": return "Analyze My Tax Return";
+      default: return "Start Tool";
+    }
+  };
   
   return (
     <Link to={link} className="block transition-all duration-200 hover:scale-[1.02]">
@@ -42,9 +68,9 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
           
           {showBullets && (
             <ul className="list-disc pl-5 space-y-1 text-sm text-[#B0B0B0]">
-              <li>Compare immediate gifting vs. inheritance</li>
-              <li>Check for estate tax thresholds</li>
-              <li>Factor in trust disclaimers if relevant</li>
+              {getBullets().map((bullet, idx) => (
+                <li key={idx}>{bullet}</li>
+              ))}
             </ul>
           )}
           
@@ -52,7 +78,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
             variant="outline"
             className="border-primary text-primary hover:bg-primary/10"
           >
-            {id === "estate-gifting" ? "Start Estate & Gifting Analysis" : "Start Tool"} <ArrowRight className="ml-2 h-4 w-4" />
+            {getButtonText()} <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </CardContent>
       </Card>

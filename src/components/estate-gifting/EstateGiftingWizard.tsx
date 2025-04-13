@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -92,7 +93,9 @@ const EstateGiftingWizard: React.FC = () => {
       numberOfDonees: planData.numberOfRecipients || prevData.numberOfDonees,
       giftingStrategy: 'annual',
       multiYearPlanImported: true,
-      finalMultiYearBalance: planData.finalBalance
+      finalMultiYearBalance: planData.finalBalance,
+      // Check if estate is above threshold based on imported values
+      aboveThreshold: planData.finalBalance > prevData.estateExemption
     }));
 
     toast.success("Multi-Year Plan data imported successfully!");
@@ -187,7 +190,11 @@ const EstateGiftingWizard: React.FC = () => {
     const noGiftingTax = taxableEstateNoGifting * TAX_RATE;
     const giftingTax = taxableEstateWithGifting * TAX_RATE;
     const taxSavings = noGiftingTax - giftingTax;
-    const heirsBenefit = taxSavings + totalGiftValue + trustReductionAmount;
+    
+    // Calculate benefit to heirs - this includes both tax savings and the value of gifts
+    const heirsBenefit = wizardData.aboveThreshold ? 
+      taxSavings + totalGiftValue + trustReductionAmount : 
+      totalGiftValue / 2; // Reduced benefit if below threshold as tax savings less significant
     
     return {
       noGiftingTax,
@@ -272,6 +279,10 @@ const EstateGiftingWizard: React.FC = () => {
                   </p>
                   <p className="mt-2">
                     We strongly recommend consulting with a qualified estate planning attorney and tax advisor before implementing any gifting or estate strategy.
+                  </p>
+                  <p className="mt-2 text-amber-400">
+                    <strong>Important:</strong> The federal estate tax exemption is scheduled to be reduced after 2025, 
+                    potentially impacting your estate planning needs significantly.
                   </p>
                 </>
               }

@@ -1,10 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { EstateGiftingData } from '../EstateGiftingWizard';
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { Save, Download, Share2, Clock, Shield } from "lucide-react";
+import { Save, Download, Share2, Clock, Shield, AlertTriangle, FilePdf } from "lucide-react";
 import TaxDisclaimerWithCheckbox from "@/components/tax/TaxDisclaimerWithCheckbox";
 
 interface ResultsStepProps {
@@ -43,6 +43,8 @@ const getTrustTypeLabel = (type?: string): string => {
 
 const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
   const CURRENT_YEAR = new Date().getFullYear();
+  const [disclaimerAcknowledged, setDisclaimerAcknowledged] = useState(false);
+  const [showPdfPreview, setShowPdfPreview] = useState(false);
   
   // Calculate net to heirs for each scenario
   const netToHeirsNoGifting = data.netWorth - data.noGiftingTax;
@@ -67,6 +69,14 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
   // Trust-related information
   const showTrustInfo = data.useTrustApproach && data.trustType && data.trustType !== 'none';
   const trustReductionValue = data.useTrustApproach ? data.trustReductionFactor * 100 : 0;
+
+  const handleDownloadPDF = () => {
+    setShowPdfPreview(true);
+    // In a real app, this would generate a PDF document
+    setTimeout(() => {
+      setShowPdfPreview(false);
+    }, 1500);
+  };
 
   return (
     <div className="space-y-6">
@@ -232,22 +242,54 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
           )}
         </div>
       </div>
+      
+      {/* Legislative Change Warning Banner */}
+      <div className="bg-amber-950/30 border border-amber-700/30 rounded-lg p-4 flex gap-3">
+        <div className="flex-shrink-0">
+          <AlertTriangle className="w-5 h-5 text-amber-500" />
+        </div>
+        <div className="text-sm">
+          <h5 className="text-amber-400 font-medium mb-1">Legislative Change Warning</h5>
+          <p className="text-[#B0B0B0]">
+            The federal estate tax exemption is scheduled to be reduced after 2025 unless extended by Congress. 
+            This could significantly impact estate tax liabilities. Consider reviewing your plan yearly and 
+            before any major legislative changes.
+          </p>
+        </div>
+      </div>
     
       <div className="flex flex-wrap gap-2 mt-8">
         <Button onClick={onSave} className="flex items-center gap-2">
           <Save className="w-4 h-4" /> Save Scenario
         </Button>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Download className="w-4 h-4" /> Download Report
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2"
+          onClick={handleDownloadPDF}
+        >
+          <FilePdf className="w-4 h-4" /> Download PDF Report
         </Button>
         <Button variant="outline" className="flex items-center gap-2">
           <Share2 className="w-4 h-4" /> Share Results
         </Button>
       </div>
       
+      {/* PDF Preview Toast */}
+      {showPdfPreview && (
+        <div className="fixed bottom-4 right-4 bg-[#1A1F2C] border border-[#353e52] p-4 rounded-lg shadow-lg z-50 animate-in fade-in slide-in-from-bottom-5">
+          <div className="flex items-center gap-3">
+            <FilePdf className="w-6 h-6 text-[#FFD700]" />
+            <div>
+              <h4 className="font-medium text-white">Preparing PDF Report</h4>
+              <p className="text-sm text-[#B0B0B0]">Your Estate & Gifting analysis report is being generated...</p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <TaxDisclaimerWithCheckbox
-        acknowledged={true}
-        onAcknowledgeChange={() => {}}
+        acknowledged={disclaimerAcknowledged}
+        onAcknowledgeChange={setDisclaimerAcknowledged}
         title="Important Information"
         content={
           <>
@@ -255,16 +297,20 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
               This analysis is based on current tax laws as of {CURRENT_YEAR} and the assumptions you provided. 
               Actual results may differ due to changes in tax laws, investment performance, or other factors.
             </p>
-            <p className="mt-2">
-              The federal estate tax exemption is scheduled to decrease after 2025 unless extended by Congress. 
-              This may significantly impact your estate planning needs.
+            <p className="mt-2 text-amber-400">
+              <strong>Estate Tax Sunset Provision:</strong> The federal estate tax exemption is scheduled to decrease by approximately 50% after 2025 
+              unless extended by Congress. This may significantly impact your estate planning needs.
             </p>
             {showTrustInfo && (
               <p className="mt-2 text-blue-400">
-                Trust strategies require careful legal structuring and ongoing maintenance. The effectiveness of various 
-                trust approaches varies based on individual circumstances, changing tax laws, and proper implementation.
+                <strong>Trust Implementation:</strong> Trust strategies require careful legal structuring and ongoing maintenance. 
+                The effectiveness of various trust approaches varies based on individual circumstances, changing tax laws, and proper implementation.
               </p>
             )}
+            <p className="mt-2 text-amber-400">
+              <strong>State Estate Taxes:</strong> This analysis focuses on federal estate taxes only. Some states impose 
+              their own estate or inheritance taxes, often with lower exemption amounts.
+            </p>
             <p className="mt-2 text-yellow-400">
               We strongly recommend consulting with a qualified estate planning attorney and tax advisor to implement 
               and maintain your estate plan based on your specific circumstances.
