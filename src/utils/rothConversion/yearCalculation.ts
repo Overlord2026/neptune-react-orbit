@@ -9,17 +9,25 @@ import { TaxInput, calculateTaxScenario } from '../taxCalculator';
 import { calculateRMD } from '../rmdCalculationUtils';
 import { determineConversionAmounts } from './conversionUtils';
 import { 
-  getCharitableContributionForYear, 
-  calculateCharitableImpact, 
-  calculateCharitableOpportunity,
-  getStandardDeduction 
-} from './charitableUtils';
-import { TaxTrapInput, checkTaxTraps } from '@/utils/taxTraps';
+  TaxTrapInput, checkTaxTraps
+} from '@/utils/taxTraps';
 
 // Import additional modular utilities for processing
 import { processCharitableContribution, checkForCharitableOpportunities } from './yearCalculation/charitableAdjustments';
 import { prepareTaxInput } from './yearCalculation/taxInputPreparation';
 import { checkForTaxTraps } from './yearCalculation/taxTrapUtils';
+import { 
+  getCharitableContributionForYear 
+} from './charitableContributionUtils';
+import { 
+  calculateCharitableImpact 
+} from './charitableImpactUtils';
+import { 
+  calculateCharitableOpportunity 
+} from './charitableOpportunityUtils';
+import { 
+  getStandardDeduction 
+} from './deductionUtils';
 
 interface YearCalculationInput {
   scenarioData: MultiYearScenarioData;

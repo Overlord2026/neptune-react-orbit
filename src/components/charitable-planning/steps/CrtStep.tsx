@@ -163,7 +163,7 @@ export const CrtStep: React.FC<CrtStepProps> = ({
                               onChange={(e) => field.onChange(Number(e.target.value))}
                             />
                           </FormControl>
-                          <InfoTooltip content="The amount of assets you plan to place into the CRT. Generally, larger amounts make more sense due to setup costs." />
+                          <InfoTooltip text="The amount of assets you plan to place into the CRT. Generally, larger amounts make more sense due to setup costs." />
                         </div>
                         <FormMessage />
                       </FormItem>
@@ -186,7 +186,7 @@ export const CrtStep: React.FC<CrtStepProps> = ({
                               onValueChange={(vals) => field.onChange(vals[0])}
                             />
                           </FormControl>
-                          <InfoTooltip content="The percentage of the trust's value paid annually to the beneficiary. IRS requires a minimum 5% payout rate." />
+                          <InfoTooltip text="The percentage of the trust's value paid annually to the beneficiary. IRS requires a minimum 5% payout rate." />
                         </div>
                         <FormMessage />
                       </FormItem>
@@ -218,7 +218,7 @@ export const CrtStep: React.FC<CrtStepProps> = ({
                               <SelectItem value="20">20 Years</SelectItem>
                             </SelectContent>
                           </Select>
-                          <InfoTooltip content="The period over which the trust will make payments before the remainder goes to charity. Lifetime terms are based on life expectancy." />
+                          <InfoTooltip text="The period over which the trust will make payments before the remainder goes to charity. Lifetime terms are based on life expectancy." />
                         </div>
                         <FormMessage />
                       </FormItem>
@@ -241,7 +241,7 @@ export const CrtStep: React.FC<CrtStepProps> = ({
                               onChange={(e) => field.onChange(Number(e.target.value))}
                             />
                           </FormControl>
-                          <InfoTooltip content="Age of the primary income beneficiary. For lifetime CRTs, this affects the charitable deduction calculation." />
+                          <InfoTooltip text="Age of the primary income beneficiary. For lifetime CRTs, this affects the charitable deduction calculation." />
                         </div>
                         <FormMessage />
                       </FormItem>
@@ -288,7 +288,7 @@ export const CrtStep: React.FC<CrtStepProps> = ({
                                 onChange={(e) => field.onChange(Number(e.target.value))}
                               />
                             </FormControl>
-                            <InfoTooltip content="Age of the spouse, used in the calculation of charitable deduction for lifetime CRTs." />
+                            <InfoTooltip text="Age of the spouse, used in the calculation of charitable deduction for lifetime CRTs." />
                           </div>
                           <FormMessage />
                         </FormItem>
