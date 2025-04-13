@@ -34,6 +34,7 @@ import RothConversionPage from './pages/RothConversionPage';
 import TaxTrapCheckerPage from './pages/TaxTrapCheckerPage';
 import TaxToolsPage from './pages/TaxToolsPage';
 import EstateGiftingPage from './pages/EstateGiftingPage';
+import CharitablePlanningPage from './pages/CharitablePlanningPage';
 import Layout from './components/Layout';
 
 const router = createBrowserRouter([
@@ -95,6 +96,10 @@ const router = createBrowserRouter([
       {
         path: "/tax-planning/estate-gifting",
         element: <EstateGiftingPage />,
+      },
+      {
+        path: "/tax-planning/charitable-planning",
+        element: <CharitablePlanningPage />,
       },
       {
         path: "/tax-planning/social-security",

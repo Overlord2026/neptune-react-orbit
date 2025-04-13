@@ -11,7 +11,8 @@ import {
   Lightbulb,
   FileCheck,
   AlertTriangle,
-  Gift
+  Gift,
+  HandCoins
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
@@ -70,6 +71,17 @@ const TaxToolsPage: React.FC = () => {
       ],
       icon: <Gift className="w-10 h-10 text-[#FFD700]" />,
       link: "/tax-planning/estate-gifting"
+    },
+    {
+      title: "Charitable Contribution Planning",
+      description: "Evaluate how donor-advised funds, QCDs, and other giving strategies impact taxes",
+      bullets: [
+        "Model itemized deductions vs. standard deduction",
+        "Calculate multi-year bunching strategies",
+        "Compare QCD from IRA after age 70½"
+      ],
+      icon: <HandCoins className="w-10 h-10 text-[#FFD700]" />,
+      link: "/tax-planning/charitable-planning"
     },
     {
       title: "Tax Trap Checker",

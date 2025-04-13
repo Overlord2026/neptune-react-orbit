@@ -22,8 +22,8 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   comingSoon, 
   link 
 }) => {
-  // Add bullets for estate and gifting and other tools as needed
-  const showBullets = id === "estate-gifting" || id === "roth-conversion";
+  // Add bullets for estate and gifting, charitable planning and roth tools
+  const showBullets = id === "estate-gifting" || id === "roth-conversion" || id === "charitable-planning";
   
   const getBullets = () => {
     if (id === "estate-gifting") {
@@ -38,6 +38,12 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
         "Compare single-year vs multi-year conversion strategies",
         "Visualize impact on IRMAA surcharges"
       ];
+    } else if (id === "charitable-planning") {
+      return [
+        "Model itemized deductions vs. standard deduction",
+        "Calculate multi-year bunching strategies",
+        "Compare QCD from IRA after age 70½"
+      ];
     }
     return [];
   };
@@ -47,6 +53,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
       case "estate-gifting": return "Start Estate & Gifting Analysis";
       case "roth-conversion": return "Start Roth Conversion Planning";
       case "tax-analyzer": return "Analyze My Tax Return";
+      case "charitable-planning": return "Start Charitable Analysis";
       default: return "Start Tool";
     }
   };

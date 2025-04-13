@@ -10,7 +10,8 @@ import {
   Lock, 
   AlertTriangle,
   FileCheck,
-  Gift
+  Gift,
+  HandCoins
 } from "lucide-react";
 import TaxToolCard from './TaxToolCard';
 
@@ -31,6 +32,14 @@ const TaxTools: React.FC = () => {
       description: "Analyze the impact of gifting during your lifetime vs. leaving assets at death, including potential estate tax calculations and trust planning considerations.",
       comingSoon: false,
       link: "/tax-planning/estate-gifting"
+    },
+    {
+      id: "charitable-planning",
+      title: "Charitable Contribution Planning",
+      icon: <HandCoins className="w-10 h-10 text-[#FFD700]" />,
+      description: "Evaluate how donor-advised funds, QCDs, and other giving strategies can reduce your taxable income and enhance your philanthropic impact.",
+      comingSoon: false,
+      link: "/tax-planning/charitable-planning"
     },
     {
       id: "tax-analyzer",
