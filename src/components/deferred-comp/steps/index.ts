@@ -7,4 +7,4 @@ export { default as MultiYearApproachStep } from './MultiYearApproachStep';
 export { default as TaxOutputStep } from './tax-output/TaxOutputStep';
 
 // Ensure LoadingState is also exported if it's being used elsewhere
-export { default as LoadingState } from './tax-output/LoadingState';
+export type { default as LoadingState } from './tax-output/LoadingState';

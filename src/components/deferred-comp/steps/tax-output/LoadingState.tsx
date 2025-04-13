@@ -1,10 +1,10 @@
 
 import React from "react";
 import { RefreshCw } from "lucide-react";
-import { LoadingState } from "@/types/LoadingState";
+import type { LoadingState as LoadingStateType } from "@/types/LoadingState";
 
 interface LoadingStateProps {
-  state?: LoadingState;
+  state?: LoadingStateType;
 }
 
 export const LoadingState: React.FC<LoadingStateProps> = ({ state = 'loading' }) => {

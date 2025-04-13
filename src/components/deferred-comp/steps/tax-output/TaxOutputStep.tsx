@@ -1,5 +1,6 @@
+
 import React from "react";
-import { LoadingState } from "@/types/LoadingState";
+import type { LoadingState } from "@/types/LoadingState";
 import { useEquityForm } from "../../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
@@ -14,6 +15,7 @@ import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
 import { toast } from "sonner";
 import { saveScenario, EquityScenario } from "@/utils/taxScenarioStorage";
 import { FilingStatusType } from "@/utils/taxBracketData";
+import LoadingState from "./LoadingState";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
@@ -23,6 +25,7 @@ interface TaxOutputStepProps {
 export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   const { formState, calculateAmtImpact, calculateDeferralBenefit, calculateMultiYearImpact } = useEquityForm();
   const [loadingState, setLoadingState] = React.useState<LoadingState>('loading');
+  const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -74,7 +77,7 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   };
 
   if (loadingState === 'loading') {
-    return <LoadingState />;
+    return <LoadingState state="loading" />;
   }
 
   const hasEquity = formState.equityType === "NSO" || formState.equityType === "ISO";
