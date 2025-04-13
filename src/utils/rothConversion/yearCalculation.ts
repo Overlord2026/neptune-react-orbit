@@ -12,7 +12,8 @@ import { determineConversionAmounts } from './conversionUtils';
 import { 
   getCharitableContributionForYear, 
   calculateCharitableImpact, 
-  calculateCharitableOpportunity 
+  calculateCharitableOpportunity,
+  getStandardDeduction 
 } from './charitableUtils';
 import { TaxTrapInput, checkTaxTraps } from '@/utils/taxTraps';
 

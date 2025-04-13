@@ -9,3 +9,9 @@ export { calculateMultiYearScenario } from './calculateMultiYearScenario';
 export { processSingleYearCalculation } from './yearCalculation';
 export { updateAccountBalances } from './accountBalanceUtils';
 export { determineConversionAmounts } from './conversionUtils';
+export {
+  getCharitableContributionForYear,
+  calculateCharitableImpact,
+  calculateCharitableOpportunity,
+  getStandardDeduction
+} from './charitableUtils';
