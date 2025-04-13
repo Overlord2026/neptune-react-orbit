@@ -1,4 +1,3 @@
-
 /**
  * Tax Utilities
  * 
@@ -36,6 +35,7 @@ export const calculateTaxableIncome = (
     const filingStatusMap: Record<FilingStatusType, keyof typeof STANDARD_DEDUCTION> = {
       "single": "single",
       "married": "marriedFilingJointly",
+      "married_separate": "marriedFilingSeparately",
       "head_of_household": "headOfHousehold"
     };
     standardDeduction = STANDARD_DEDUCTION[filingStatusMap[filingStatus]];
@@ -202,5 +202,4 @@ export const getDistanceToNextBracket = (
   };
 };
 
-// These functions are now imported from taxBracketData.ts, so we don't need to redefine them
 export { formatCurrency, formatPercent } from './taxBracketData';

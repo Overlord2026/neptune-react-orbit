@@ -1,363 +1,296 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { ChevronDown, ChevronUp, DollarSign, Calculator } from "lucide-react";
+import { AlertTriangle, Calculator, DollarSign, Info } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { MultiYearScenarioData } from '../types/ScenarioTypes';
 
 interface PartialBracketFillStepProps {
   scenarioData: MultiYearScenarioData;
-  onUpdateScenarioData: (data: MultiYearScenarioData) => void;
+  onUpdateScenarioData: (newData: Partial<MultiYearScenarioData>) => void;
 }
-
-// Form validation schema
-const formSchema = z.object({
-  startAge: z.number().min(0).max(100),
-  startYear: z.number().min(2023).max(2050),
-  numYears: z.number().min(1).max(50),
-  filingStatus: z.enum(['single', 'married', 'head_of_household']),
-  traditionalIRAStartBalance: z.number().min(0),
-  rothIRAStartBalance: z.number().min(0),
-  baseAnnualIncome: z.number().min(0),
-  expectedAnnualReturn: z.number().min(-0.5).max(0.5),
-  incomeGrowthRate: z.number().min(-0.1).max(0.2),
-  conversionStrategy: z.enum(['fixed', 'bracket_12', 'bracket_12_22']),
-  fixedConversionAmount: z.number().optional(),
-  taxInflationAdjustment: z.boolean(),
-});
 
 const PartialBracketFillStep: React.FC<PartialBracketFillStepProps> = ({ 
   scenarioData, 
   onUpdateScenarioData 
 }) => {
-  // Initialize form with current scenario data
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      startAge: scenarioData.startAge,
-      startYear: scenarioData.startYear,
-      numYears: scenarioData.numYears,
-      filingStatus: scenarioData.filingStatus,
-      traditionalIRAStartBalance: scenarioData.traditionalIRAStartBalance,
-      rothIRAStartBalance: scenarioData.rothIRAStartBalance,
-      baseAnnualIncome: scenarioData.baseAnnualIncome,
-      expectedAnnualReturn: scenarioData.expectedAnnualReturn,
-      incomeGrowthRate: scenarioData.incomeGrowthRate,
-      conversionStrategy: scenarioData.conversionStrategy,
-      fixedConversionAmount: scenarioData.fixedConversionAmount,
-      taxInflationAdjustment: scenarioData.taxInflationAdjustment,
-    },
-  });
-  
-  // Handle form changes
-  const handleFormChange = () => {
-    const values = form.getValues();
-    onUpdateScenarioData({
-      ...scenarioData,
-      ...values,
-    });
+  // Helper to format currency inputs
+  const formatCurrency = (value: number | undefined) => {
+    if (value === undefined) return '';
+    return value.toString();
   };
-  
-  // Format percentage for display
-  const formatPercent = (value: number) => `${(value * 100).toFixed(1)}%`;
-  
+
+  // Helper to format percentage inputs
+  const formatPercent = (value: number | undefined) => {
+    if (value === undefined) return '';
+    return (value * 100).toString();
+  };
+
+  // Helper to handle currency inputs
+  const handleCurrencyChange = (field: keyof MultiYearScenarioData, value: string) => {
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue)) {
+      onUpdateScenarioData({ [field]: numericValue });
+    } else {
+      onUpdateScenarioData({ [field]: 0 });
+    }
+  };
+
+  // Helper to handle percentage inputs
+  const handlePercentChange = (field: keyof MultiYearScenarioData, value: string) => {
+    const numericValue = parseFloat(value) / 100;
+    if (!isNaN(numericValue)) {
+      onUpdateScenarioData({ [field]: numericValue });
+    } else {
+      onUpdateScenarioData({ [field]: 0 });
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Step 1: Basic Information & Bracket Fill Strategy</CardTitle>
-        <CardDescription>
-          Set up your multi-year Roth conversion strategy based on tax brackets.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <div className="grid gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="startAge"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Current Age</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => {
-                          field.onChange(parseInt(e.target.value));
-                          handleFormChange();
-                        }}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="startYear"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Start Year</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => {
-                          field.onChange(parseInt(e.target.value));
-                          handleFormChange();
-                        }}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="numYears"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Number of Years</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => {
-                          field.onChange(parseInt(e.target.value));
-                          handleFormChange();
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Years to project
-                    </FormDescription>
-                  </FormItem>
-                )}
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Calculator className="h-5 w-5" />
+            Basic Information
+          </CardTitle>
+          <CardDescription>
+            Enter your age and retirement account information
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="startAge">Current Age</Label>
+              <Input 
+                id="startAge"
+                type="number"
+                min={0}
+                max={120}
+                value={scenarioData.startAge || ''}
+                onChange={(e) => {
+                  const age = parseInt(e.target.value);
+                  onUpdateScenarioData({ 
+                    startAge: isNaN(age) ? 0 : age,
+                    // Automatically set RMD age based on current age
+                    rmdStartAge: isNaN(age) || age < 73 ? 73 : age
+                  });
+                }}
               />
             </div>
-            
-            <FormField
-              control={form.control}
-              name="filingStatus"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Filing Status</FormLabel>
-                  <Select 
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      handleFormChange();
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select filing status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="single">Single</SelectItem>
-                      <SelectItem value="married">Married Filing Jointly</SelectItem>
-                      <SelectItem value="head_of_household">Head of Household</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="traditionalIRAStartBalance"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Traditional IRA Starting Balance</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => {
-                          field.onChange(parseFloat(e.target.value));
-                          handleFormChange();
-                        }}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="rothIRAStartBalance"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Roth IRA Starting Balance</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => {
-                          field.onChange(parseFloat(e.target.value));
-                          handleFormChange();
-                        }}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
+            <div className="space-y-2">
+              <Label htmlFor="startYear">Start Year</Label>
+              <Input 
+                id="startYear"
+                type="number"
+                min={2023}
+                max={2050}
+                value={scenarioData.startYear || ''}
+                onChange={(e) => {
+                  const year = parseInt(e.target.value);
+                  onUpdateScenarioData({ startYear: isNaN(year) ? new Date().getFullYear() : year });
+                }}
               />
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="baseAnnualIncome"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Base Annual Income</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => {
-                          field.onChange(parseFloat(e.target.value));
-                          handleFormChange();
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Not including IRA distributions
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="incomeGrowthRate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Income Growth Rate: {formatPercent(field.value)}</FormLabel>
-                    <FormControl>
-                      <Slider
-                        min={-0.05}
-                        max={0.15}
-                        step={0.005}
-                        value={[field.value]}
-                        onValueChange={(values) => {
-                          field.onChange(values[0]);
-                          handleFormChange();
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Annual income growth projection
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <FormField
-              control={form.control}
-              name="expectedAnnualReturn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Expected Annual Return: {formatPercent(field.value)}</FormLabel>
-                  <FormControl>
-                    <Slider
-                      min={-0.1}
-                      max={0.2}
-                      step={0.005}
-                      value={[field.value]}
-                      onValueChange={(values) => {
-                        field.onChange(values[0]);
-                        handleFormChange();
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Projected annual return on investments
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="conversionStrategy"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Conversion Strategy</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        handleFormChange();
-                      }}
-                      defaultValue={field.value}
-                      className="flex flex-col space-y-1"
-                    >
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="bracket_12" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Fill 12% Bracket Only
-                        </FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="bracket_12_22" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Fill 12% + 22% Brackets
-                        </FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="fixed" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Fixed Annual Amount
-                        </FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            
-            {form.watch("conversionStrategy") === "fixed" && (
-              <FormField
-                control={form.control}
-                name="fixedConversionAmount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fixed Conversion Amount</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        {...field} 
-                        onChange={(e) => {
-                          field.onChange(parseFloat(e.target.value) || 0);
-                          handleFormChange();
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Annual conversion amount
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-            )}
           </div>
-        </Form>
-      </CardContent>
-    </Card>
+
+          <div className="space-y-2">
+            <Label htmlFor="numYears">Projection Years</Label>
+            <Input 
+              id="numYears"
+              type="number"
+              min={1}
+              max={50}
+              value={scenarioData.numYears || ''}
+              onChange={(e) => {
+                const years = parseInt(e.target.value);
+                onUpdateScenarioData({ numYears: isNaN(years) ? 1 : years });
+              }}
+            />
+            <p className="text-sm text-muted-foreground">
+              Number of years to include in the projection
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="traditionalIRAStartBalance">Traditional IRA Balance</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+              <Input 
+                id="traditionalIRAStartBalance"
+                className="pl-7"
+                value={formatCurrency(scenarioData.traditionalIRAStartBalance)}
+                onChange={(e) => handleCurrencyChange('traditionalIRAStartBalance', e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="rothIRAStartBalance">Roth IRA Balance</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+              <Input 
+                id="rothIRAStartBalance"
+                className="pl-7"
+                value={formatCurrency(scenarioData.rothIRAStartBalance)}
+                onChange={(e) => handleCurrencyChange('rothIRAStartBalance', e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="expectedAnnualReturn">
+              Expected Annual Return
+              <Info className="inline-block ml-1 h-4 w-4 text-muted-foreground" />
+            </Label>
+            <div className="flex items-center gap-4">
+              <Slider 
+                id="expectedAnnualReturn"
+                min={0} 
+                max={20} 
+                step={0.25}
+                value={[scenarioData.expectedAnnualReturn * 100]} 
+                onValueChange={([value]) => {
+                  onUpdateScenarioData({ expectedAnnualReturn: value / 100 });
+                }}
+                className="flex-grow"
+              />
+              <span className="text-sm font-medium w-12 text-right">
+                {(scenarioData.expectedAnnualReturn * 100).toFixed(1)}%
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Estimated average annual return on investments
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <DollarSign className="h-5 w-5" />
+            Income Information
+          </CardTitle>
+          <CardDescription>
+            Enter your income details and conversion strategy
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="baseAnnualIncome">Annual Income</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+              <Input 
+                id="baseAnnualIncome"
+                className="pl-7"
+                value={formatCurrency(scenarioData.baseAnnualIncome)}
+                onChange={(e) => handleCurrencyChange('baseAnnualIncome', e.target.value)}
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Your current annual income from all sources (excluding retirement accounts)
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="incomeGrowthRate">
+              Income Growth Rate
+              <Info className="inline-block ml-1 h-4 w-4 text-muted-foreground" />
+            </Label>
+            <div className="flex items-center gap-4">
+              <Slider 
+                id="incomeGrowthRate"
+                min={0} 
+                max={10} 
+                step={0.1}
+                value={[scenarioData.incomeGrowthRate * 100]} 
+                onValueChange={([value]) => {
+                  onUpdateScenarioData({ incomeGrowthRate: value / 100 });
+                }}
+                className="flex-grow"
+              />
+              <span className="text-sm font-medium w-12 text-right">
+                {(scenarioData.incomeGrowthRate * 100).toFixed(1)}%
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Estimated annual growth rate of your income
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="conversionStrategy">
+              Conversion Strategy
+            </Label>
+            <RadioGroup 
+              id="conversionStrategy"
+              value={scenarioData.conversionStrategy}
+              onValueChange={(value: 'fixed' | 'bracket_12' | 'bracket_12_22') => {
+                onUpdateScenarioData({ conversionStrategy: value });
+              }}
+              className="pt-2"
+            >
+              <div className="flex items-center space-x-2 mb-2">
+                <RadioGroupItem value="fixed" id="fixed" />
+                <Label htmlFor="fixed" className="cursor-pointer">
+                  Fixed Amount
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2 mb-2">
+                <RadioGroupItem value="bracket_12" id="bracket_12" />
+                <Label htmlFor="bracket_12" className="cursor-pointer">
+                  Fill 12% Bracket
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="bracket_12_22" id="bracket_12_22" />
+                <Label htmlFor="bracket_12_22" className="cursor-pointer">
+                  Fill 22% Bracket
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {scenarioData.conversionStrategy === 'fixed' && (
+            <div className="space-y-2">
+              <Label htmlFor="fixedConversionAmount">Fixed Conversion Amount</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+                <Input 
+                  id="fixedConversionAmount"
+                  className="pl-7"
+                  value={formatCurrency(scenarioData.fixedConversionAmount)}
+                  onChange={(e) => handleCurrencyChange('fixedConversionAmount', e.target.value)}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Annual fixed amount to convert from Traditional to Roth IRA
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <div className="rounded-lg border border-amber-600/30 bg-amber-50/10 p-4 text-sm">
+        <div className="flex gap-2">
+          <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
+          <div>
+            <p className="font-medium text-amber-500">Important Tax Consideration</p>
+            <p className="text-muted-foreground">
+              For the most accurate results, consider your full tax situation, including other income sources
+              and potential deductions. The projections use a simplified tax model and should not be the sole basis
+              for financial decisions.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
