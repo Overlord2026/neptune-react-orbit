@@ -1,4 +1,3 @@
-
 /**
  * Tax Scenario Storage
  * 
@@ -6,14 +5,17 @@
  */
 
 import { TaxResult } from './taxCalculatorTypes';
+import { YearlyTaxImpact } from '../components/deferred-comp/types/EquityTypes';
 
 // Define interface for equity scenario data
 export interface EquityScenario extends TaxResult {
   type: string;
   formState?: any;
-  results?: any[];
+  results?: YearlyTaxImpact[];
   amtImpact?: number;
   deferralBenefit?: number;
+  scenario_name: string;  // Added to match TaxOutputStep usage
+  id?: string;  // Optional ID to match usage in TaxOutputStep
 }
 
 /**
