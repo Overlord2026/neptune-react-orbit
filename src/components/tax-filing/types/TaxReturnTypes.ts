@@ -64,6 +64,13 @@ export interface TaxReturnData {
   socialSecurityBenefits?: number;
   isOver65?: boolean;
   hasHealthInsurance?: boolean;
+  
+  // Spouse-related information
+  spouseFirstName?: string;
+  spouseLastName?: string;
+  spouseAge?: number;
+  spouseSsn?: string;
+  spouseIsOver65?: boolean;
 }
 
 // Define the steps of our filing flow
