@@ -4,124 +4,152 @@ import { useEquityForm } from "../context/EquityFormContext";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const TaxResultsSummary: React.FC = () => {
-  const { formState } = useEquityForm();
+  const { formState, calculateAmtImpact, calculateDeferralBenefit } = useEquityForm();
   const currentYear = new Date().getFullYear();
   
-  // Calculate simple tax impact for display purposes
+  // Calculate tax impact based on form data
   const calculateTaxImpact = () => {
-    let taxImpact = 0;
+    let totalTaxableIncome = 0;
+    let amtImpact = 0;
+    let deferralBenefit = 0;
     
-    // Very simplified tax calculations for demonstration
-    if (formState.equityType === "NSO") {
-      // NSO tax impact is (FMV - Strike) * Shares * Assumed Tax Rate
-      const spread = formState.fairMarketValue - formState.strikePrice;
-      const sharesExercised = formState.exerciseStrategy === "full" 
-        ? formState.vestedShares 
-        : formState.exerciseStrategy === "partial"
-          ? formState.partialShares
-          : Math.floor(formState.vestedShares / formState.splitYears);
-          
-      taxImpact = spread * sharesExercised * 0.37; // Assumed highest tax rate
-    } 
-    else if (formState.equityType === "ISO") {
-      // ISO has no regular tax but might have AMT
-      const spread = formState.fairMarketValue - formState.strikePrice;
-      const sharesExercised = formState.exerciseStrategy === "full" 
-        ? formState.vestedShares 
-        : formState.exerciseStrategy === "partial"
-          ? formState.partialShares
-          : Math.floor(formState.vestedShares / formState.splitYears);
-          
-      // Very simplified AMT calculation
-      if (spread * sharesExercised > 100000) {
-        taxImpact = spread * sharesExercised * 0.26; // AMT rate for demo
+    // If user has stock options
+    if (formState.equityType === "NSO" || formState.equityType === "ISO") {
+      const spreadPerShare = formState.fairMarketValue - formState.strikePrice;
+      let exercisedShares = 0;
+      
+      if (formState.exerciseStrategy === "full") {
+        exercisedShares = formState.vestedShares;
+      } else if (formState.exerciseStrategy === "partial") {
+        exercisedShares = formState.partialShares;
+      } else if (formState.exerciseStrategy === "split") {
+        exercisedShares = Math.floor(formState.vestedShares / formState.splitYears);
+      }
+      
+      const incomeFromExercise = spreadPerShare * exercisedShares;
+      
+      if (formState.equityType === "NSO") {
+        // NSOs generate immediate ordinary income
+        totalTaxableIncome += incomeFromExercise;
+      } else if (formState.equityType === "ISO") {
+        // ISOs have AMT implications
+        amtImpact = calculateAmtImpact();
       }
     }
     
-    // Reduce by deferred comp tax benefit
+    // If user has deferred comp
     if (formState.hasDeferredComp) {
-      const deferralTaxBenefit = formState.deferralAmount * 0.05; // Assumed tax rate diff
-      taxImpact -= deferralTaxBenefit;
+      totalTaxableIncome += (formState.bonusAmount - formState.deferralAmount);
+      deferralBenefit = calculateDeferralBenefit();
     }
     
-    return Math.max(0, taxImpact);
+    // Simple estimated tax calculation (very simplified for demo purposes)
+    const estimatedTaxRate = 0.35;
+    const estimatedTax = totalTaxableIncome * estimatedTaxRate;
+    
+    return {
+      totalTaxableIncome,
+      estimatedTax,
+      amtImpact,
+      deferralBenefit
+    };
   };
   
   const taxImpact = calculateTaxImpact();
   
+  const hasEquity = formState.equityType === "NSO" || formState.equityType === "ISO";
+  const hasDeferred = formState.hasDeferredComp && formState.deferralAmount > 0;
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Card className="bg-[#1D2433] border-[#2A2F3C]">
-        <CardContent className="p-4">
-          <div className="space-y-0.5">
-            <p className="text-sm font-medium text-muted-foreground">
-              {formState.planningApproach === "multi-year" ? "Year 1 Tax Impact" : "Estimated Tax Impact"}
-            </p>
-            <p className="text-2xl font-bold text-white">
-              ${taxImpact.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              For {currentYear} tax year
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-[#1D2433] border-[#2A2F3C]">
-        <CardContent className="p-4">
-          <div className="space-y-0.5">
-            <p className="text-sm font-medium text-muted-foreground">Strategy Type</p>
-            <p className="text-lg font-bold text-white">
-              {formState.equityType === "NSO" && "NSO Exercise"}
-              {formState.equityType === "ISO" && "ISO Exercise"}
-              {formState.equityType === "RSU" && "RSU Vesting"}
-              {formState.equityType === "ESPP" && "ESPP Purchase"}
-              {formState.equityType === "Other" && "Equity Analysis"}
-              {formState.hasDeferredComp && formState.equityType && " + "}
-              {formState.hasDeferredComp && "Deferred Comp"}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {formState.planningApproach === "multi-year" 
-                ? "Multi-year approach" 
-                : "Single-year approach"}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-[#1D2433] border-[#2A2F3C]">
-        <CardContent className="p-4">
-          <div className="space-y-0.5">
-            <p className="text-sm font-medium text-muted-foreground">
-              {formState.equityType && "Equity Value"}
-              {!formState.equityType && formState.hasDeferredComp && "Deferred Amount"}
-              {formState.equityType && formState.hasDeferredComp && " + Deferred"}
-            </p>
-            <p className="text-2xl font-bold text-white">
-              ${calculateTotalValue().toLocaleString(undefined, { maximumFractionDigits: 0 })}
-            </p>
-            <p className="text-xs text-muted-foreground">Total value managed</p>
+    <div className="mb-6">
+      <Card className="bg-gradient-to-br from-[#1D2433] to-[#1A1F2C] border-[#2A2F3C]">
+        <CardContent className="pt-6 pb-6">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-white">Tax Impact Summary</h3>
+              <p className="text-sm text-muted-foreground">
+                Based on your inputs, here's a summary of the potential tax implications.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {hasEquity && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Selected Equity Type</p>
+                  <p className="text-lg font-medium">
+                    {formState.equityType === "NSO" ? "Nonqualified Stock Options" : 
+                     formState.equityType === "ISO" ? "Incentive Stock Options" :
+                     formState.equityType === "RSU" ? "Restricted Stock Units" :
+                     formState.equityType === "ESPP" ? "Employee Stock Purchase Plan" : 
+                     formState.equityType}
+                  </p>
+                </div>
+              )}
+              
+              {hasDeferred && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Deferral Strategy</p>
+                  <p className="text-lg font-medium">
+                    {formState.deferralStrategy === "next-year" 
+                      ? `Defer to ${currentYear + 1}` 
+                      : `Stagger over ${formState.deferralYears} years`}
+                  </p>
+                </div>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {hasEquity && (formState.equityType === "NSO" || formState.equityType === "ISO") && (
+                <div className="p-4 bg-[#20273B] rounded-md">
+                  <div className="text-sm text-muted-foreground mb-1">Exercise Strategy</div>
+                  <div className="font-medium">
+                    {formState.exerciseStrategy === "full" && "Exercise all vested options"}
+                    {formState.exerciseStrategy === "partial" && `Exercise ${formState.partialShares} shares`}
+                    {formState.exerciseStrategy === "split" && `Split across ${formState.splitYears} years`}
+                  </div>
+                </div>
+              )}
+              
+              {hasDeferred && (
+                <div className="p-4 bg-[#20273B] rounded-md">
+                  <div className="text-sm text-muted-foreground mb-1">Deferred Amount</div>
+                  <div className="font-medium">${formState.deferralAmount.toLocaleString()}</div>
+                </div>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {taxImpact.totalTaxableIncome > 0 && (
+                <div className="p-4 bg-[#20273B] rounded-md">
+                  <div className="text-sm text-muted-foreground mb-1">Taxable Income</div>
+                  <div className="font-medium">${taxImpact.totalTaxableIncome.toLocaleString()}</div>
+                </div>
+              )}
+              
+              {taxImpact.estimatedTax > 0 && (
+                <div className="p-4 bg-[#20273B] rounded-md">
+                  <div className="text-sm text-muted-foreground mb-1">Est. Tax Impact</div>
+                  <div className="font-medium">${taxImpact.estimatedTax.toLocaleString()}</div>
+                </div>
+              )}
+              
+              {formState.equityType === "ISO" && taxImpact.amtImpact > 0 && (
+                <div className="p-4 bg-[#20273B] rounded-md">
+                  <div className="text-sm text-muted-foreground mb-1">Potential AMT</div>
+                  <div className="font-medium">${taxImpact.amtImpact.toLocaleString()}</div>
+                </div>
+              )}
+              
+              {hasDeferred && taxImpact.deferralBenefit > 0 && (
+                <div className="p-4 bg-[#20273B] rounded-md">
+                  <div className="text-sm text-muted-foreground mb-1">Est. Tax Savings</div>
+                  <div className="font-medium text-green-500">${taxImpact.deferralBenefit.toLocaleString()}</div>
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
     </div>
   );
-  
-  function calculateTotalValue() {
-    let totalValue = 0;
-    
-    // Calculate equity value
-    if (formState.equityType === "NSO" || formState.equityType === "ISO") {
-      totalValue += formState.vestedShares * formState.fairMarketValue;
-    } else if (formState.equityType === "RSU" || formState.equityType === "ESPP") {
-      totalValue += formState.shareCount * (formState.fairMarketValue || 100); // Default value if FMV not entered
-    }
-    
-    // Add deferred comp value
-    if (formState.hasDeferredComp) {
-      totalValue += formState.deferralAmount;
-    }
-    
-    return totalValue;
-  }
 };
