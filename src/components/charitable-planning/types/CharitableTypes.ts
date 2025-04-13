@@ -28,16 +28,19 @@ export interface CharitableRemainderTrust {
   spouseAge?: number;
 }
 
+export interface YearlyPlanItem {
+  year: number;
+  contribution: number;
+  isItemizing: boolean;
+  standardDeduction: number;
+  itemizedTotal: number;
+  taxSavings: number;
+  additionalNotes?: string[];
+}
+
 export interface MultiYearPlan {
   isIntegrated: boolean;
-  years: {
-    year: number;
-    contribution: number;
-    isItemizing: boolean;
-    standardDeduction: number;
-    itemizedTotal: number;
-    taxSavings: number;
-  }[];
+  years: YearlyPlanItem[];
 }
 
 export interface ResultsSummary {
@@ -53,6 +56,7 @@ export interface CharitableScenario {
   annualGiving: AnnualGiving;
   isItemizing: boolean;
   age: number;
+  advancedStrategies: boolean;
   dafStrategy: DafStrategy;
   qcd: QcdStrategy;
   crt: CharitableRemainderTrust;

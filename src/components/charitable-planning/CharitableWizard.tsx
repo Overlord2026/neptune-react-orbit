@@ -5,7 +5,7 @@ import WizardHeader from './WizardHeader';
 import WizardNavigation from './WizardNavigation';
 import { CharitableProvider, useCharitable } from './context/CharitableContext';
 import StepContentManager from './components/StepContentManager';
-import { getMutableSteps, shouldSkipQcdStep, shouldSkipCrtStep } from './config/wizardConfig';
+import { getMutableSteps, shouldSkipQcdStep, shouldSkipCrtStep, WizardStep } from './config/wizardConfig';
 import { MultiYearProvider } from '../tax/roth-conversion/multiYear/context/MultiYearContext';
 import { TaxTrapChecker } from '../tax/TaxTrapChecker';
 
@@ -36,6 +36,15 @@ const CharitableWizardContent: React.FC = () => {
     medicare_enrollment: scenario.age >= 65,
     aca_enrollment: false
   } : null;
+
+  // Determine which steps to hide in the navigation
+  const stepsToHide: WizardStep[] = [];
+  if (skipQcdStep && currentStep !== 'qcd') {
+    stepsToHide.push('qcd');
+  }
+  if (skipCrtStep && currentStep !== 'crt') {
+    stepsToHide.push('crt');
+  }
 
   return (
     <Card className="bg-card border-primary/20">
@@ -70,10 +79,7 @@ const CharitableWizardContent: React.FC = () => {
           steps={stepsForComponents}
           currentStep={currentStep}
           onStepChange={setCurrentStep}
-          hideSteps={[
-            ...(skipQcdStep && currentStep !== 'qcd' ? ['qcd'] : []),
-            ...(skipCrtStep && currentStep !== 'crt' ? ['crt'] : [])
-          ]}
+          hideSteps={stepsToHide}
         />
       </div>
     </Card>

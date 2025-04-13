@@ -1,22 +1,25 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormDescription 
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Card } from "@/components/ui/card";
+import { HeartHandshake } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { CharitableScenario } from '../types/CharitableTypes';
-import { AlertCircle } from 'lucide-react';
+import { useDebounce } from '@/hooks/useDebounce';
+import AdvancedStrategiesToggle from '../components/AdvancedStrategiesToggle';
 
 interface BasicGivingStepProps {
   scenario: CharitableScenario;
@@ -25,10 +28,10 @@ interface BasicGivingStepProps {
 }
 
 const formSchema = z.object({
-  givingType: z.enum(["fixed", "variable"]),
-  amount: z.number().min(0),
+  amount: z.number().min(0, "Amount must be positive"),
   isItemizing: z.boolean(),
-  age: z.number().min(0).max(120),
+  age: z.number().min(18, "Must be at least 18").max(120, "Please enter a valid age"),
+  advancedStrategies: z.boolean()
 });
 
 export const BasicGivingStep: React.FC<BasicGivingStepProps> = ({ 
@@ -39,85 +42,65 @@ export const BasicGivingStep: React.FC<BasicGivingStepProps> = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      givingType: scenario.annualGiving.type,
-      amount: scenario.annualGiving.amount,
-      isItemizing: scenario.isItemizing,
-      age: scenario.age,
-    },
+      amount: scenario.annualGiving.amount || 0,
+      isItemizing: scenario.isItemizing || false,
+      age: scenario.age || 65,
+      advancedStrategies: scenario.advancedStrategies || false
+    }
   });
 
+  // Update scenario when form changes (after debounce)
+  const debouncedWatch = useDebounce(form.watch(), 500);
+  
+  React.useEffect(() => {
+    const { amount, isItemizing, age, advancedStrategies } = debouncedWatch;
+    
+    if (amount !== undefined && isItemizing !== undefined && age !== undefined && advancedStrategies !== undefined) {
+      updateScenario({
+        annualGiving: {
+          ...scenario.annualGiving,
+          amount: amount
+        },
+        isItemizing,
+        age,
+        advancedStrategies
+      });
+    }
+  }, [debouncedWatch, updateScenario, scenario]);
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    updateScenario({
-      annualGiving: {
-        type: values.givingType,
-        amount: values.amount,
-      },
-      isItemizing: values.isItemizing,
-      age: values.age,
-    });
+    // Already updated via watch/useEffect, just proceed
     onNext();
   };
 
-  // Check if user is eligible for QCD
-  const isEligibleForQCD = form.watch("age") >= 70.5;
-
   return (
-    <div className="space-y-6">
-      <div className="bg-primary/10 border border-primary/20 rounded-md p-4">
-        <h3 className="font-medium text-lg mb-2">Basic Giving Profile</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Tell us about your charitable giving plans and tax situation.
-        </p>
+    <Card className="bg-primary/10 border border-primary/20">
+      <div className="p-6">
+        <div className="flex items-center space-x-3 mb-6">
+          <HeartHandshake className="text-[#FFD700]" size={24} />
+          <h3 className="font-medium text-lg">Your Charitable Giving Profile</h3>
+        </div>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="givingType"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>How do you plan to give?</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex flex-col space-y-1"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="fixed" id="fixed" />
-                        <FormLabel htmlFor="fixed" className="cursor-pointer">
-                          Fixed annual amount
-                        </FormLabel>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="variable" id="variable" />
-                        <FormLabel htmlFor="variable" className="cursor-pointer">
-                          Variable amount over time
-                        </FormLabel>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{form.watch("givingType") === "fixed" ? "Annual giving amount" : "First year giving amount"}</FormLabel>
+                  <FormLabel>Annual Charitable Giving</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-2 text-gray-400">$</span>
-                      <Input 
-                        type="number" 
-                        className="pl-7" 
-                        {...field}
-                        onChange={e => field.onChange(parseFloat(e.target.value) || 0)} 
-                      />
-                    </div>
+                    <Input 
+                      type="number" 
+                      {...field} 
+                      onChange={e => field.onChange(Number(e.target.value))}
+                      placeholder="0"
+                    />
                   </FormControl>
+                  <FormDescription>
+                    Enter the amount you typically donate to charity each year
+                  </FormDescription>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -126,19 +109,21 @@ export const BasicGivingStep: React.FC<BasicGivingStepProps> = ({
               control={form.control}
               name="isItemizing"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Itemize Tax Deductions
+                    </FormLabel>
+                    <FormDescription>
+                      Do you currently itemize your tax deductions?
+                    </FormDescription>
+                  </div>
                   <FormControl>
-                    <Checkbox
+                    <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>I typically itemize deductions on my tax return</FormLabel>
-                    <FormDescription className="text-xs">
-                      If you're not itemizing deductions, charitable contributions won't directly reduce your taxes unless they help you exceed the standard deduction.
-                    </FormDescription>
-                  </div>
                 </FormItem>
               )}
             />
@@ -148,36 +133,33 @@ export const BasicGivingStep: React.FC<BasicGivingStepProps> = ({
               name="age"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your age</FormLabel>
+                  <FormLabel>Your Age</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
-                      {...field}
-                      onChange={e => field.onChange(parseFloat(e.target.value) || 0)} 
+                      {...field} 
+                      onChange={e => field.onChange(Number(e.target.value))}
+                      placeholder="65"
                     />
                   </FormControl>
+                  <FormDescription>
+                    Used to determine eligibility for age-specific strategies
+                  </FormDescription>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             
-            {isEligibleForQCD && (
-              <div className="bg-[#242A38] p-4 rounded-md flex items-start space-x-3">
-                <AlertCircle className="text-[#FFD700] shrink-0 mt-0.5" size={18} />
-                <div className="text-sm">
-                  <p className="font-medium text-white">QCD Eligible</p>
-                  <p className="text-muted-foreground">
-                    At age {form.watch("age")}, you're eligible for Qualified Charitable Distributions (QCDs) directly from your IRA, which can reduce your Required Minimum Distributions and lower your Adjusted Gross Income.
-                  </p>
-                </div>
-              </div>
-            )}
+            <AdvancedStrategiesToggle control={form.control} />
             
-            <div className="flex justify-end">
-              <Button type="submit">Continue</Button>
+            <div className="pt-4">
+              <Button type="submit" className="w-full">Continue</Button>
             </div>
           </form>
         </Form>
       </div>
-    </div>
+    </Card>
   );
 };
+
+export default BasicGivingStep;

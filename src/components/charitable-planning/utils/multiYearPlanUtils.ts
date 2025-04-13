@@ -14,6 +14,8 @@ export const generateMultiYearPlan = (scenario: CharitableScenario, isIntegrated
   for (let i = 0; i < 5; i++) {
     const year = currentYear + i;
     let contribution = scenario.annualGiving.amount;
+    let itemizedTotal = contribution;
+    let additionalNotes = [];
     
     // If bunching strategy is selected, adjust contribution based on the cycle
     if (scenario.dafStrategy.useDaf && scenario.dafStrategy.approach === "bunching") {
@@ -29,9 +31,38 @@ export const generateMultiYearPlan = (scenario: CharitableScenario, isIntegrated
       }
     }
     
+    // Add CRT deduction in first year (if applicable)
+    let crtDeduction = 0;
+    if (scenario.crt?.useCrt && i === 0) {
+      // Approximate CRT deduction calculation (simplified)
+      const fundingAmount = scenario.crt.fundingAmount;
+      const payoutRate = scenario.crt.payoutRate / 100;
+      
+      // Very simplified deduction estimation
+      // In reality, this would use IRS discount rates and term calculations
+      const deductionFactor = scenario.crt.type === "CRAT" ? 0.4 : 0.45; // Simplified approximation
+      crtDeduction = fundingAmount * deductionFactor;
+      
+      itemizedTotal += crtDeduction;
+      additionalNotes.push(`CRT Established: $${fundingAmount.toLocaleString()} funding`);
+      additionalNotes.push(`CRT Tax Deduction: $${crtDeduction.toLocaleString()}`);
+    }
+    
+    // Add CRT income in all years (if applicable)
+    let crtIncome = 0;
+    if (scenario.crt?.useCrt && i > 0) {
+      crtIncome = scenario.crt.fundingAmount * (scenario.crt.payoutRate / 100);
+      additionalNotes.push(`CRT Annual Income: $${crtIncome.toLocaleString()}`);
+    }
+    
+    // Add QCD amount for eligible years
+    if (scenario.qcd.useQcd && scenario.age + i >= 70.5) {
+      additionalNotes.push(`QCD from IRA: $${scenario.qcd.amount.toLocaleString()}`);
+    }
+    
     // Calculate itemized deduction total (simplified)
     const otherItemizedDeductions = 5000; // Placeholder for other deductions
-    const itemizedTotal = contribution + otherItemizedDeductions;
+    itemizedTotal += otherItemizedDeductions;
     
     // Determine if itemizing makes sense for this year
     const isItemizing = itemizedTotal > standardDeduction;
@@ -46,7 +77,8 @@ export const generateMultiYearPlan = (scenario: CharitableScenario, isIntegrated
       isItemizing,
       standardDeduction,
       itemizedTotal,
-      taxSavings
+      taxSavings,
+      additionalNotes
     });
   }
   
