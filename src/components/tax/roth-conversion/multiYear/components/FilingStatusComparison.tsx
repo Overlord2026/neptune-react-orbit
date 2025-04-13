@@ -4,9 +4,10 @@ import {
   Card,
   CardContent, 
   CardHeader, 
-  CardTitle
+  CardTitle,
+  CardDescription
 } from "@/components/ui/card";
-import { Check, X } from "lucide-react";
+import { Check, X, AlertTriangle, TrendingDown, TrendingUp } from "lucide-react";
 import { YearlyResult } from '../../types/ScenarioTypes';
 
 interface FilingStatusComparisonProps {
@@ -65,28 +66,35 @@ const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({
   const totalMfsCost = combinedMfsTax + (combinedMfsIrmaa || 0);
   const isMfjBetterWithIrmaa = totalMfsCost > totalMfjCost;
   
+  // Calculate tax savings
+  const taxSavings = Math.abs(totalMfjCost - totalMfsCost);
+  const savingsPercent = taxSavings / Math.max(totalMfjCost, totalMfsCost);
+  
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">Filing Status Comparison: MFJ vs. MFS</CardTitle>
+        <CardDescription>
+          Analysis of tax implications for different filing status options
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className={`rounded-lg p-4 ${isMfjBetter ? 'bg-green-50/10 border border-green-500/30' : 'bg-slate-50/5'}`}>
+          <div className={`rounded-lg p-4 ${isMfjBetter ? 'bg-green-50/10 border border-green-500/30' : 'bg-slate-50/5 border border-border'}`}>
             <h3 className="text-md font-medium mb-2 flex items-center gap-2">
               Married Filing Jointly
               {isMfjBetter && <Check className="h-4 w-4 text-green-500" />}
             </h3>
             <div className="space-y-1">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Total Tax:</span>
+                <span className="text-muted-foreground">Total Income Tax:</span>
                 <span className="font-medium">{formatCurrency(mfjTotalTax)}</span>
               </div>
               
               {mfjIrmaa !== undefined && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">IRMAA Surcharge:</span>
-                  <span className="font-medium">{formatCurrency(mfjIrmaa)}</span>
+                  <span className="font-medium text-amber-500">{formatCurrency(mfjIrmaa)}</span>
                 </div>
               )}
               
@@ -96,10 +104,17 @@ const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({
                   <span className="font-medium">{formatCurrency(totalMfjCost)}</span>
                 </div>
               )}
+              
+              {isMfjBetter && (
+                <div className="mt-2 text-xs bg-green-500/10 p-2 rounded text-green-500 flex items-start gap-1">
+                  <TrendingDown className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                  <span>Saves {formatCurrency(taxSavings)} ({formatPercent(savingsPercent)} less) compared to MFS</span>
+                </div>
+              )}
             </div>
           </div>
           
-          <div className={`rounded-lg p-4 ${!isMfjBetter ? 'bg-green-50/10 border border-green-500/30' : 'bg-slate-50/5'}`}>
+          <div className={`rounded-lg p-4 ${!isMfjBetter ? 'bg-green-50/10 border border-green-500/30' : 'bg-slate-50/5 border border-border'}`}>
             <h3 className="text-md font-medium mb-2 flex items-center gap-2">
               Married Filing Separately
               {!isMfjBetter && <Check className="h-4 w-4 text-green-500" />}
@@ -122,11 +137,11 @@ const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({
                 <>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Spouse 1 IRMAA:</span>
-                    <span>{formatCurrency(spouse1Irmaa)}</span>
+                    <span className="text-amber-500">{formatCurrency(spouse1Irmaa)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Spouse 2 IRMAA:</span>
-                    <span>{formatCurrency(spouse2Irmaa)}</span>
+                    <span className="text-amber-500">{formatCurrency(spouse2Irmaa)}</span>
                   </div>
                   <div className="flex justify-between border-t border-muted pt-1 mt-1">
                     <span className="font-medium">Total Cost:</span>
@@ -134,19 +149,51 @@ const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({
                   </div>
                 </>
               )}
+              
+              {!isMfjBetter && (
+                <div className="mt-2 text-xs bg-green-500/10 p-2 rounded text-green-500 flex items-start gap-1">
+                  <TrendingDown className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                  <span>Saves {formatCurrency(taxSavings)} ({formatPercent(savingsPercent)} less) compared to MFJ</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
         
-        <div className={`mt-4 p-3 rounded-lg ${isMfjBetterWithIrmaa ? 'bg-amber-50/10 border border-amber-500/30' : 'bg-green-50/10 border border-green-500/30'}`}>
-          <p className="text-sm">
-            <span className="font-medium">Analysis:</span> Filing {isMfjBetterWithIrmaa ? 'jointly' : 'separately'} saves approximately {formatCurrency(Math.abs(totalMfjCost - totalMfsCost))} {isMfjBetterWithIrmaa ? '(including IRMAA surcharges)' : ''}.
-          </p>
-          {isMfjBetter !== isMfjBetterWithIrmaa && (
-            <p className="text-sm mt-1">
-              <span className="font-medium">Note:</span> While taxes are lower when filing {isMfjBetter ? 'jointly' : 'separately'}, IRMAA surcharges make filing {isMfjBetterWithIrmaa ? 'jointly' : 'separately'} more advantageous overall.
+        <div className={`mt-4 p-3 rounded-lg ${isMfjBetter !== isMfjBetterWithIrmaa ? 'bg-amber-50/10 border border-amber-500/30' : 'bg-slate-50/5 border border-border'}`}>
+          {isMfjBetter !== isMfjBetterWithIrmaa ? (
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+              <p className="text-sm">
+                <span className="font-medium">IRMAA Impact:</span> While taxes are lower when filing {isMfjBetter ? 'jointly' : 'separately'}, 
+                IRMAA surcharges make filing {isMfjBetterWithIrmaa ? 'jointly' : 'separately'} more advantageous overall when 
+                considering total costs.
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm">
+              <span className="font-medium">Analysis:</span> Filing {isMfjBetterWithIrmaa ? 'jointly' : 'separately'} saves approximately {formatCurrency(taxSavings)} 
+              {isMfjBetterWithIrmaa && mfjIrmaa !== undefined && combinedMfsIrmaa !== undefined ? ' (including IRMAA surcharges)' : ''}.
             </p>
           )}
+        </div>
+        
+        <div className="mt-4 p-3 rounded-lg bg-slate-50/5 border border-border">
+          <h4 className="text-sm font-medium mb-2">Other Considerations:</h4>
+          <ul className="text-sm list-inside space-y-1 text-muted-foreground">
+            <li className="flex gap-2 items-start">
+              <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+              <span>MFS filers cannot claim certain credits like the Earned Income Credit or education credits</span>
+            </li>
+            <li className="flex gap-2 items-start">
+              <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+              <span>If one spouse itemizes deductions, the other must also itemize (cannot take standard deduction)</span>
+            </li>
+            <li className="flex gap-2 items-start">
+              <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+              <span>MFS may have lower IRA contribution limits and Roth IRA income limits</span>
+            </li>
+          </ul>
         </div>
       </CardContent>
     </Card>

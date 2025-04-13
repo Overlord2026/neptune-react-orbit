@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calculator, ChevronRight, User, Clock, Users, DollarSign, ChartLine, BarChart4 } from "lucide-react";
 import TaxTrapWarningsPanel from '../TaxTrapWarningsPanel';
-import { TrapAlert } from '../TaxTrapAlerts';
 import PartialBracketFillStep from './multiYear/PartialBracketFillStep';
 import SpouseDetailsStep from './multiYear/SpouseDetailsStep';
 import RMDCalculationStep from './multiYear/RMDCalculationStep';
@@ -15,6 +14,7 @@ import ResultsStep from './multiYear/ResultsStep';
 import SummaryStep from './multiYear/SummaryStep';
 import { calculateMultiYearScenario } from '@/utils/taxCalculator';
 import { MultiYearScenarioData, YearlyResult } from './types/ScenarioTypes';
+import TaxConsiderationWarning from './multiYear/common/TaxConsiderationWarning';
 
 const MultiYearRothConversion: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<string>("bracket-fill");
@@ -52,7 +52,10 @@ const MultiYearRothConversion: React.FC = () => {
     splitCommunityIncome: false,
     
     // Compare MFJ vs MFS
-    compareMfjVsMfs: false
+    compareMfjVsMfs: false,
+    
+    // IRMAA surcharges
+    includeIrmaa: true
   });
   
   const [yearlyResults, setYearlyResults] = useState<YearlyResult[]>([]);
@@ -89,7 +92,10 @@ const MultiYearRothConversion: React.FC = () => {
   };
   
   const latestWarnings = yearlyResults.length > 0 
-    ? yearlyResults[yearlyResults.length - 1].warnings 
+    ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
+        ...warning,
+        trapType: warning.type, // Add trapType for compatibility with TaxTrapWarningsPanel
+      }))
     : [];
 
   const handleUpdateScenarioData = (newData: Partial<MultiYearScenarioData>) => {
@@ -288,11 +294,14 @@ const MultiYearRothConversion: React.FC = () => {
       </Tabs>
       
       {hasCalculated && yearlyResults.length > 0 && (
-        <TaxTrapWarningsPanel
-          alerts={latestWarnings}
-          scenarioName={`Multi-Year Roth Conversion (${scenarioData.startYear} - ${scenarioData.startYear + scenarioData.numYears - 1})`}
-          className="mt-6"
-        />
+        <>
+          <TaxConsiderationWarning />
+          <TaxTrapWarningsPanel
+            alerts={latestWarnings}
+            scenarioName={`Multi-Year Roth Conversion (${scenarioData.startYear} - ${scenarioData.startYear + scenarioData.numYears - 1})`}
+            className="mt-2"
+          />
+        </>
       )}
     </div>
   );

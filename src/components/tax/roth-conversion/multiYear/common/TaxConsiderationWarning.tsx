@@ -21,8 +21,9 @@ const TaxConsiderationWarning: React.FC = () => {
               how income is allocated between spouses for tax purposes.
             </p>
             <p>
-              IRMAA surcharges for Medicare may be triggered by higher income. Consult with a qualified tax
-              professional for personalized advice based on your specific situation.
+              IRMAA surcharges for Medicare may be triggered by higher income from Roth conversions. These surcharges
+              apply to Medicare Part B and Part D premiums and are based on your Modified Adjusted Gross Income (MAGI)
+              from two years prior. Consult with a qualified tax professional for personalized advice.
             </p>
           </div>
         </div>

@@ -36,6 +36,9 @@ export interface MultiYearScenarioData {
   
   // Compare MFJ vs MFS
   compareMfjVsMfs?: boolean;
+  
+  // IRMAA surcharges
+  includeIrmaa?: boolean;
 }
 
 export interface YearlyResult {
@@ -61,6 +64,7 @@ export interface YearlyResult {
     type: string;
     message: string;
     severity: 'low' | 'medium' | 'high';
+    trapType?: string;
   }[];
   
   // MFS comparison data
@@ -91,4 +95,5 @@ export type RuleWarning = {
   description: string;
   type: string;
   severity: 'low' | 'medium' | 'high';
+  trapType?: string;
 };
