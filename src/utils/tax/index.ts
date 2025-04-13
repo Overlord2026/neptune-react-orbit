@@ -9,4 +9,4 @@
 export { calculateTaxableIncome } from './taxableIncomeCalculator';
 export { calculateTotalTaxLiability } from './taxLiabilityCalculator';
 export { getDistanceToNextBracket } from './bracketAnalyzer';
-export { formatCurrency, formatPercent } from '../deferred-comp/utils/formatUtils';
+export { formatCurrency, formatPercent } from '../formatUtils';
