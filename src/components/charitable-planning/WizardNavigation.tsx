@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { WizardStep } from './CharitableWizard';
+import { WizardStep } from './config/wizardConfig';
 
 interface WizardNavigationProps {
   steps: { id: string; label: string }[];
