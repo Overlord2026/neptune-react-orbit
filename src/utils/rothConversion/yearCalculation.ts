@@ -235,6 +235,3 @@ export function processSingleYearCalculation({
     warnings
   };
 }
-
-// Get the standard deduction (already defined in charitableUtils.ts, imported here for direct use)
-import { getStandardDeduction } from './charitableUtils';

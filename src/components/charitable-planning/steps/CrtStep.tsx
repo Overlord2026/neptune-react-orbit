@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
-import { InfoTooltip } from '@/components/tax/InfoTooltip';
+import InfoTooltip from '@/components/tax/InfoTooltip';
 import StepNavButtons from '../components/StepNavButtons';
 import { calculateCrtBenefits } from '../utils/crtCalculationUtils';
 import { Separator } from '@/components/ui/separator';
