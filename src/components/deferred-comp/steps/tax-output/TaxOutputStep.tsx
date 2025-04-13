@@ -1,4 +1,3 @@
-
 import React from "react";
 import type { LoadingState as LoadingStateType } from "@/types/LoadingState";
 import { useEquityForm } from "../../context/EquityFormContext";
