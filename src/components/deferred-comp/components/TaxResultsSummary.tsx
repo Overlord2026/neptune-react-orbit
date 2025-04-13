@@ -3,8 +3,12 @@ import React, { useState } from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoIcon, AlertCircle } from "lucide-react";
+import { EquityTypeSummary } from "./tax-summary/EquityTypeSummary";
+import { ExerciseStrategySummary } from "./tax-summary/ExerciseStrategySummary";
+import { DeferredAmountSummary } from "./tax-summary/DeferredAmountSummary";
+import { YearlyTaxMetrics } from "./tax-summary/YearlyTaxMetrics";
+import { WarningBanner } from "./tax-summary/WarningBanner";
+import { formatCurrency } from "../utils/formatUtils";
 
 export const TaxResultsSummary: React.FC = () => {
   const { 
@@ -130,23 +134,11 @@ export const TaxResultsSummary: React.FC = () => {
   const hasDeferred = formState.hasDeferredComp && formState.deferralAmount > 0;
   const triggersAmt = formState.equityType === "ISO" && taxImpact.amtImpact > 0 && !formState.isDisqualifyingDisposition;
   const isDisqualifyingDisposition = formState.equityType === "ISO" && formState.isDisqualifyingDisposition;
-  const changesBracket = taxImpact.bracketImpact;
   
   // Get year-specific data based on active tab
   const yearlyData = taxImpact.multiYearImpact.find(
     impact => impact.year === (activeYear === "current" ? currentYear : currentYear + 1)
   );
-  
-  // Check if this scenario triggers IRMAA
-  const triggersIRMAA = yearlyData?.irmaaImpact;
-  
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
   
   return (
     <div className="mb-6">
@@ -177,234 +169,46 @@ export const TaxResultsSummary: React.FC = () => {
               </Tabs>
             )}
             
-            <div className="grid grid-cols-2 gap-4">
-              {hasEquity && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Selected Equity Type</p>
-                  <p className="text-lg font-medium">
-                    {formState.equityType === "NSO" ? "Nonqualified Stock Options" : 
-                     formState.equityType === "ISO" ? "Incentive Stock Options" :
-                     formState.equityType === "RSU" ? "Restricted Stock Units" :
-                     formState.equityType === "ESPP" ? "Employee Stock Purchase Plan" : 
-                     formState.equityType}
-                  </p>
-                </div>
-              )}
-              
-              {hasDeferred && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Deferral Strategy</p>
-                  <p className="text-lg font-medium">
-                    {formState.deferralStrategy === "next-year" 
-                      ? `Defer to ${currentYear + 1}` 
-                      : `Stagger over ${formState.deferralYears} years`}
-                  </p>
-                </div>
-              )}
-            </div>
+            <EquityTypeSummary />
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {hasEquity && (formState.equityType === "NSO" || formState.equityType === "ISO") && (
-                <div className="p-4 bg-[#20273B] rounded-md">
-                  <div className="flex items-center">
-                    <div className="text-sm text-muted-foreground mb-1">Exercise Strategy</div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <InfoIcon className="h-3 w-3 ml-1 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs">
-                            {formState.equityType === "NSO"
-                              ? "NSO exercises create immediate taxable income equal to the spread between FMV and strike price"
-                              : formState.isDisqualifyingDisposition
-                              ? "A disqualifying disposition of ISOs creates ordinary income like an NSO"
-                              : "ISO exercises don't create regular taxable income, but may trigger AMT"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <div className="font-medium">
-                    {formState.exerciseStrategy === "full" && "Exercise all vested options"}
-                    {formState.exerciseStrategy === "partial" && `Exercise ${formState.partialShares} shares`}
-                    {formState.exerciseStrategy === "split" && `Split across ${formState.splitYears} years`}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Spread per share: ${taxImpact.spreadPerShare.toFixed(2)}
-                  </div>
-                  {isDisqualifyingDisposition && (
-                    <div className="text-xs text-amber-400 mt-1">
-                      Disqualifying disposition: Treated as ordinary income
-                    </div>
-                  )}
-                </div>
-              )}
-              
-              {hasDeferred && (
-                <div className="p-4 bg-[#20273B] rounded-md">
-                  <div className="flex items-center">
-                    <div className="text-sm text-muted-foreground mb-1">Deferred Amount</div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <InfoIcon className="h-3 w-3 ml-1 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs">
-                            Deferring compensation shifts income recognition to future years
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <div className="font-medium">${formState.deferralAmount.toLocaleString()}</div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    ${taxImpact.nextYearIncome.toLocaleString()} added to {currentYear + 1} income
-                  </div>
-                </div>
-              )}
+              {hasEquity && <ExerciseStrategySummary spreadPerShare={taxImpact.spreadPerShare} />}
+              {hasDeferred && <DeferredAmountSummary nextYearIncome={taxImpact.nextYearIncome} />}
             </div>
             
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {yearlyData && (
-                <div className="p-4 bg-[#20273B] rounded-md">
-                  <div className="text-sm text-muted-foreground mb-1">
-                    {activeYear === "current" ? `${currentYear}` : `${currentYear + 1}`} Taxable
-                  </div>
-                  <div className="font-medium">{formatCurrency(yearlyData.ordinaryIncome)}</div>
-                  {yearlyData.incomeBracket && (
-                    <div className="text-xs mt-1">
-                      Tax bracket: <span className="font-medium">{yearlyData.incomeBracket}</span>
-                      {yearlyData.distanceToNextBracket > 0 && (
-                        <span className="text-xs text-muted-foreground"> 
-                          {" "}({formatCurrency(yearlyData.distanceToNextBracket)} to {yearlyData.nextBracket})
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-              
-              {yearlyData && (
-                <div className="p-4 bg-[#20273B] rounded-md">
-                  <div className="text-sm text-muted-foreground mb-1">Est. Tax Impact</div>
-                  <div className="font-medium">{formatCurrency(yearlyData.totalTax)}</div>
-                  {yearlyData.taxSavings !== 0 && (
-                    <div className={`text-xs mt-1 ${yearlyData.taxSavings > 0 ? 'text-green-400' : 'text-amber-400'}`}>
-                      {yearlyData.taxSavings > 0 ? 'Saving: ' : 'Additional: '}
-                      <span className="font-medium">{formatCurrency(Math.abs(yearlyData.taxSavings))}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-              
-              {yearlyData && triggersAmt && activeYear === "current" && (
-                <div className="p-4 bg-[#20273B] rounded-md">
-                  <div className="flex items-center">
-                    <div className="text-sm text-muted-foreground mb-1">Potential AMT</div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <InfoIcon className="h-3 w-3 ml-1 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs">
-                            Alternative Minimum Tax (AMT) is calculated separately from regular tax. 
-                            You pay whichever is higher. ISO exercises often trigger AMT.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <div className="font-medium">{formatCurrency(yearlyData.amtAdjustment)}</div>
-                  <div className="text-xs text-amber-400 mt-1">
-                    AMT income: {formatCurrency(yearlyData.amtIncome)}
-                  </div>
-                </div>
-              )}
-              
-              {hasDeferred && yearlyData && yearlyData.taxSavings > 0 && (
-                <div className="p-4 bg-[#20273B] rounded-md">
-                  <div className="flex items-center">
-                    <div className="text-sm text-muted-foreground mb-1">Est. Tax Savings</div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <InfoIcon className="h-3 w-3 ml-1 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs">
-                            Estimated tax savings assumes you'll be in a lower tax bracket 
-                            when deferred amounts are paid out.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <div className="font-medium text-green-500">{formatCurrency(yearlyData.taxSavings)}</div>
-                </div>
-              )}
-              
-              {triggersIRMAA && (
-                <div className="p-4 bg-[#20273B] rounded-md">
-                  <div className="flex items-center">
-                    <AlertCircle className="h-4 w-4 text-amber-400 mr-1" />
-                    <div className="text-sm text-amber-400 mb-1">IRMAA Alert</div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <InfoIcon className="h-3 w-3 ml-1 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs">
-                            Income-Related Monthly Adjustment Amount (IRMAA) increases your Medicare premiums
-                            when your income exceeds certain thresholds.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <div className="text-xs text-amber-400">
-                    This income level may trigger higher Medicare premiums
-                  </div>
-                </div>
+                <YearlyTaxMetrics 
+                  yearData={yearlyData}
+                  triggersAmt={triggersAmt}
+                  activeYear={activeYear}
+                />
               )}
             </div>
             
             {(triggersAmt || hasDeferred) && (
-              <div className="mt-2 p-3 bg-blue-900/20 border border-blue-800/30 rounded-md">
-                <div className="flex items-start space-x-3">
-                  <InfoIcon className="h-4 w-4 flex-shrink-0 mt-0.5 text-blue-400" />
-                  <div className="text-xs text-blue-300">
-                    {triggersAmt && (
-                      <>
-                        <span className="font-medium">ISO AMT Consideration:</span> Exercising ISOs may trigger Alternative Minimum Tax. 
-                        The actual AMT calculation is complex and depends on your full tax situation.
-                        {' '}
-                      </>
-                    )}
-                    {hasDeferred && (
-                      <>
-                        <span className="font-medium">Deferral Note:</span> Tax benefits from deferral depend on future tax rates 
-                        and your income level when deferred amounts are received.
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <WarningBanner variant="info">
+                {triggersAmt && (
+                  <>
+                    <span className="font-medium">ISO AMT Consideration:</span> Exercising ISOs may trigger Alternative Minimum Tax. 
+                    The actual AMT calculation is complex and depends on your full tax situation.
+                    {' '}
+                  </>
+                )}
+                {hasDeferred && (
+                  <>
+                    <span className="font-medium">Deferral Note:</span> Tax benefits from deferral depend on future tax rates 
+                    and your income level when deferred amounts are received.
+                  </>
+                )}
+              </WarningBanner>
             )}
             
             {isDisqualifyingDisposition && (
-              <div className="mt-2 p-3 bg-amber-900/20 border border-amber-800/30 rounded-md">
-                <div className="flex items-start space-x-3">
-                  <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5 text-amber-400" />
-                  <div className="text-xs text-amber-300">
-                    <span className="font-medium">Disqualifying Disposition:</span> Selling ISO shares less than 1 year after exercise 
-                    or within 2 years of grant creates a disqualifying disposition, causing the spread to be taxed as ordinary income.
-                  </div>
-                </div>
-              </div>
+              <WarningBanner variant="warning" title="Disqualifying Disposition: ">
+                Selling ISO shares less than 1 year after exercise 
+                or within 2 years of grant creates a disqualifying disposition, causing the spread to be taxed as ordinary income.
+              </WarningBanner>
             )}
           </div>
         </CardContent>
