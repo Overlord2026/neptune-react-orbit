@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -86,14 +85,15 @@ const MultiYearRothConversion: React.FC = () => {
     navigateToStep('results');
   };
   
-  const latestWarnings: TrapAlert[] = yearlyResults.length > 0 
+  const latestWarnings = yearlyResults.length > 0 
     ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
         title: warning.message || warning.type || '',
-        message: warning.message,
+        message: warning.message || '',
         type: warning.type || warning.trapType || '',
         trapType: warning.trapType || warning.type || '',
         severity: warning.severity === 'high' ? 'critical' : 
                  warning.severity === 'medium' ? 'warning' : 'info',
+        details: warning.message,
         description: warning.message
       }))
     : [];

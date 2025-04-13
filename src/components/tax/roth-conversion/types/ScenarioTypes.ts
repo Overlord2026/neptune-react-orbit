@@ -1,5 +1,3 @@
-
-
 export type ConversionStrategyType =
   | "fixed"
   | "bracket_12"
@@ -67,7 +65,7 @@ export interface YearlyResult {
   marginalRate: number;
   effectiveRate: number;
   traditionalScenarioBalance: number;
-  rothScenarioBalance?: number; // Added this property
+  rothScenarioBalance?: number;
   cumulativeTaxPaid: number;
   cumulativeTaxSaved: number;
   breakEvenYear?: boolean;
@@ -102,11 +100,12 @@ export interface YearlyResult {
 
 export interface TrapAlert {
   title: string;
-  message?: string; // Optional
+  message: string;
   description?: string;
   type: string;
   severity: "info" | "warning" | "critical";
   trapType: string;
+  details?: any;
 }
 
 export type RuleWarning = {
@@ -117,4 +116,3 @@ export type RuleWarning = {
   severity: 'low' | 'medium' | 'high';
   trapType?: string;
 };
-
