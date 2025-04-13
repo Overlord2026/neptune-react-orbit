@@ -1,13 +1,18 @@
-
 import React from 'react';
 import { useEquityForm } from '../../context/EquityFormContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '../../utils/formatUtils';
-import { AlertTriangle, Info } from 'lucide-react';
+import { AlertTriangle, Info, HelpCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { EquityCompEvent } from '../../types/EquityTypes';
 
 export const TaxSummaryCard = () => {
-  const { formState, getEquityEvents, getDeferralEvents, calculateMultiYearImpact } = useEquityForm();
+  const { 
+    formState, 
+    getEquityEvents, 
+    getDeferralEvents, 
+    calculateMultiYearImpact 
+  } = useEquityForm();
   
   const equityEvents = getEquityEvents();
   const deferralEvents = getDeferralEvents();
@@ -26,11 +31,36 @@ export const TaxSummaryCard = () => {
   const currentYearExercise = equityEvents.find(event => event.year === currentYear);
   const nextYearExercise = equityEvents.find(event => event.year === currentYear + 1);
   
-  // Calculate multi-year exercise benefit
+  // Enhanced tax strategy summary
+  const generateTaxStrategySummary = () => {
+    const summaries: string[] = [];
+    
+    // Equity exercise summary
+    if (currentYearExercise) {
+      const exerciseSummary = `Year ${currentYear}: ${currentYearExercise.sharesExercised.toLocaleString()} ${formState.equityType} shares exercised, total tax = ${formatCurrency(currentYearData?.totalTax || 0)}, bracket = ${currentYearData?.incomeBracket || 'N/A'}`;
+      summaries.push(exerciseSummary);
+    }
+    
+    // AMT consideration for ISOs
+    if (formState.equityType === 'ISO' && currentYearData?.amtAdjustment > 0) {
+      summaries.push(`Potential AMT: ${formatCurrency(currentYearData.amtAdjustment)}`);
+    }
+    
+    // Deferral strategy summary
+    if (formState.hasDeferredComp && totalDeferred > 0) {
+      const deferralSummary = formState.deferralStrategy === 'next-year'
+        ? `Deferring ${formatCurrency(totalDeferred)} from ${currentYear} to ${currentYear + 1}`
+        : `Staggering ${formatCurrency(totalDeferred)} across ${formState.deferralYears} years`;
+      summaries.push(deferralSummary);
+    }
+    
+    return summaries;
+  };
+  
+  // Calculate split exercise benefit
   const calculateSplitExerciseBenefit = () => {
     if (!nextYearExercise || formState.exerciseStrategy !== 'split') return 0;
     
-    // Simple calculation of benefit from splitting exercise across years
     const singleYearTax = currentYearExercise && nextYearExercise 
       ? (currentYearExercise.spread + nextYearExercise.spread) * 0.35 // Assume higher bracket
       : 0;
@@ -42,17 +72,7 @@ export const TaxSummaryCard = () => {
   };
   
   const splitBenefit = calculateSplitExerciseBenefit();
-  
-  // Check for IRMAA impacts
-  const currentYearIRMAA = currentYearData?.irmaaImpact;
-  const nextYearIRMAA = nextYearData?.irmaaImpact;
-  
-  // Get notable equity amount exercised
-  const getEquityExercised = (event?: EquityCompEvent) => {
-    if (!event) return '';
-    
-    return `${event.sharesExercised.toLocaleString()} ${formState.equityType} shares`;
-  };
+  const taxStrategySummaries = generateTaxStrategySummary();
   
   return (
     <Card className="bg-[#1D2433] border-[#2A2F3C] mb-4">
@@ -60,85 +80,52 @@ export const TaxSummaryCard = () => {
         <div className="space-y-5">
           <h3 className="text-xl font-semibold text-white">Tax Strategy Impact Summary</h3>
           
-          {/* Year 1 Summary */}
-          <div className="border-l-4 border-blue-500 pl-4 py-1">
-            <p className="text-white font-medium">
-              {currentYear}: {getEquityExercised(currentYearExercise)}
-              {currentYearExercise && formState.hasDeferredComp && " and "}
-              {formState.hasDeferredComp && `${formatCurrency(totalDeferred)} deferred compensation`}
-            </p>
-            {currentYearData && (
-              <div className="text-sm text-muted-foreground mt-1">
-                <span>Total taxable income: {formatCurrency(currentYearData.ordinaryIncome)}</span>
-                <span className="mx-2">•</span>
-                <span>Est. tax: {formatCurrency(currentYearData.totalTax)}</span>
-                <span className="mx-2">•</span>
-                <span>Tax bracket: {currentYearData.incomeBracket}</span>
-                
-                {currentYearIRMAA && (
-                  <div className="flex items-center text-amber-400 mt-1">
-                    <AlertTriangle className="h-4 w-4 mr-1" />
-                    <span>May trigger IRMAA Medicare premium surcharge</span>
-                  </div>
-                )}
-                
-                {formState.equityType === 'ISO' && currentYearData.amtAdjustment > 0 && (
-                  <div className="flex items-center text-amber-400 mt-1">
-                    <AlertTriangle className="h-4 w-4 mr-1" />
-                    <span>Potential AMT: {formatCurrency(currentYearData.amtAdjustment)}</span>
-                  </div>
-                )}
-              </div>
-            )}
+          {/* Strategy Summaries */}
+          <div className="bg-[#16192A] border border-[#2A2F3C] rounded-md p-4">
+            <div className="space-y-2">
+              {taxStrategySummaries.map((summary, index) => (
+                <div key={index} className="flex items-start space-x-2">
+                  <Info className="h-4 w-4 text-blue-400 flex-shrink-0 mt-1" />
+                  <p className="text-sm text-muted-foreground">{summary}</p>
+                </div>
+              ))}
+            </div>
           </div>
           
-          {/* Year 2 Summary - only show if there's next year activity */}
-          {(nextYearExercise || (formState.hasDeferredComp && formState.deferralStrategy !== "multi-year")) && (
-            <div className="border-l-4 border-indigo-400 pl-4 py-1">
-              <p className="text-white font-medium">
-                {currentYear + 1}: {getEquityExercised(nextYearExercise)}
-                {nextYearExercise && formState.hasDeferredComp && " and "}
-                {formState.hasDeferredComp && formState.deferralStrategy === "next-year" && 
-                  `${formatCurrency(formState.deferralAmount)} received from deferral`}
-              </p>
-              {nextYearData && (
-                <div className="text-sm text-muted-foreground mt-1">
-                  <span>Total taxable income: {formatCurrency(nextYearData.ordinaryIncome)}</span>
-                  <span className="mx-2">•</span>
-                  <span>Est. tax: {formatCurrency(nextYearData.totalTax)}</span>
-                  <span className="mx-2">•</span>
-                  <span>Tax bracket: {nextYearData.incomeBracket}</span>
-                  
-                  {nextYearIRMAA && (
-                    <div className="flex items-center text-amber-400 mt-1">
-                      <AlertTriangle className="h-4 w-4 mr-1" />
-                      <span>May trigger IRMAA Medicare premium surcharge</span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-          
           {/* Strategy Benefits */}
-          <div className="bg-[#16192A] border border-[#2A2F3C] rounded-md p-4 mt-4">
+          <div className="bg-[#16192A] border border-[#2A2F3C] rounded-md p-4">
             <div className="flex items-start space-x-3">
               <div className="bg-blue-900/30 text-blue-400 p-1.5 rounded-full">
                 <Info className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-white font-medium">Strategy Benefits</h4>
+                <h4 className="text-white font-medium">Strategic Insights</h4>
                 <div className="space-y-2 mt-2 text-sm">
+                  {formState.exerciseStrategy === 'split' && splitBenefit > 0 && (
+                    <div className="flex items-center space-x-2 text-green-400">
+                      <p>
+                        Exercising {nextYearExercise?.sharesExercised.toLocaleString()} {formState.equityType} shares 
+                        in {currentYear + 1} instead of {currentYear} saves an estimated {formatCurrency(splitBenefit)} in taxes.
+                      </p>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              This estimate assumes consistent tax rates. Actual savings may vary 
+                              due to market changes, share price fluctuations, and future tax law modifications.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )}
+                  
                   {formState.hasDeferredComp && totalTaxSavings > 0 && (
                     <p className="text-green-400">
                       Deferring {formatCurrency(totalDeferred)} from {currentYear} saves an estimated {formatCurrency(totalTaxSavings)} in taxes.
-                    </p>
-                  )}
-                  
-                  {formState.exerciseStrategy === 'split' && splitBenefit > 0 && (
-                    <p className="text-green-400">
-                      Exercising {nextYearExercise?.sharesExercised.toLocaleString()} {formState.equityType} shares in {currentYear + 1} 
-                      instead of {currentYear} saves an estimated {formatCurrency(splitBenefit)} in taxes.
                     </p>
                   )}
                   

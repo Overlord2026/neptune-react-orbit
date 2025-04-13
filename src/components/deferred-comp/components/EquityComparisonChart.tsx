@@ -12,22 +12,22 @@ export const EquityComparisonChart: React.FC = () => {
   // Get data directly from multi-year impact calculation
   const yearlyImpact = calculateMultiYearImpact();
   
-  // Transform data for chart
+  // Transform data for chart, ensuring numeric values
   const generateChartData = () => {
     const data = [];
     
     for (const yearData of yearlyImpact) {
       const dataPoint: any = {
         name: `${yearData.year}`,
-        actualIncome: yearData.ordinaryIncome,
-        noStrategyIncome: yearData.ordinaryIncome + yearData.taxSavings,
-        actualTax: yearData.totalTax,
-        noStrategyTax: yearData.taxWithoutStrategy,
-        taxSavings: yearData.taxSavings > 0 ? yearData.taxSavings : 0
+        actualIncome: Number(yearData.ordinaryIncome),
+        noStrategyIncome: Number(yearData.ordinaryIncome + yearData.taxSavings),
+        actualTax: Number(yearData.totalTax),
+        noStrategyTax: Number(yearData.taxWithoutStrategy),
+        taxSavings: yearData.taxSavings > 0 ? Number(yearData.taxSavings) : 0
       };
       
       if (formState.equityType === "ISO" && yearData.amtAdjustment > 0) {
-        dataPoint.amtImpact = yearData.amtAdjustment;
+        dataPoint.amtImpact = Number(yearData.amtAdjustment);
       }
       
       data.push(dataPoint);
@@ -88,3 +88,4 @@ export const EquityComparisonChart: React.FC = () => {
     </ChartContainer>
   );
 };
+
