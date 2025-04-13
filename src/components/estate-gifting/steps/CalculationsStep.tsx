@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { EstateGiftingData } from '../EstateGiftingWizard';
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Database } from "lucide-react";
 
 interface CalculationsStepProps {
   data: EstateGiftingData;
@@ -84,6 +84,19 @@ const CalculationsStep: React.FC<CalculationsStepProps> = ({ data }) => {
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-medium text-white mb-4">Preliminary Calculations</h3>
+
+      {data.multiYearPlanImported && (
+        <div className="bg-blue-900/30 border border-blue-700/40 rounded-md p-4 text-sm mb-4">
+          <h4 className="font-medium text-blue-300 flex items-center gap-2 mb-2">
+            <Database className="h-4 w-4" />
+            Based on Multi-Year Plan Projections
+          </h4>
+          <p className="text-[#B0B0B0]">
+            These calculations incorporate data from your Multi-Year Plan, using the projected final balance 
+            of {formatCurrency(data.finalMultiYearBalance || data.netWorth)} in year {data.yearOfPassing}.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border-[#353e52] bg-[#1A1F2C]">

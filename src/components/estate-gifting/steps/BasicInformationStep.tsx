@@ -5,7 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { EstateGiftingData } from '../EstateGiftingWizard';
-import { InfoIcon, Upload, Database } from "lucide-react";
+import { InfoIcon, Upload, Database, ArrowDownToLine } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 
 interface BasicInformationStepProps {
   data: EstateGiftingData;
@@ -58,7 +59,7 @@ const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
       {data.multiYearPlanImported && (
         <div className="bg-blue-900/30 border border-blue-700/40 rounded-md p-4 text-sm">
           <h4 className="font-medium text-blue-300 flex items-center gap-2 mb-2">
-            <Upload className="h-4 w-4" />
+            <ArrowDownToLine className="h-4 w-4" />
             Multi-Year Plan Data Imported
           </h4>
           <p className="text-[#B0B0B0]">
