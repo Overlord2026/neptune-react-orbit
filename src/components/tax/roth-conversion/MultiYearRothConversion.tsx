@@ -90,12 +90,12 @@ const MultiYearRothConversion: React.FC = () => {
   // Convert warnings to the format expected by TaxTrapWarningsPanel
   const latestWarnings: TrapAlert[] = yearlyResults.length > 0 
     ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
-        trapType: warning.trapType || warning.type,
+        title: warning.message || warning.type || '',
+        message: warning.message || '',
+        type: warning.type || warning.trapType || '',
+        trapType: warning.trapType || warning.type || '',
         severity: warning.severity === 'high' ? 'critical' : 
                  warning.severity === 'medium' ? 'warning' : 'info',
-        message: warning.message || '', // Use message or empty string if not available
-        title: warning.message || '', // Set title to the same as message for consistency
-        type: warning.type || warning.trapType || '', // Ensure type is set
       }))
     : [];
 
