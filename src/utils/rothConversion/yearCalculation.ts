@@ -6,13 +6,21 @@
  */
 
 import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
-import { calculateTaxScenario } from '../taxCalculator';
+import { TaxInput, calculateTaxScenario } from '../taxCalculator';
+import { calculateRMD } from '../rmdCalculationUtils';
 import { determineConversionAmounts } from './conversionUtils';
-import { calculateCharitableImpact } from './charitableImpactUtils';
-import { calculateYearlyIncome } from './yearCalculation/incomeCalculation';
+import { 
+  getCharitableContributionForYear, 
+  calculateCharitableImpact, 
+  calculateCharitableOpportunity,
+  getStandardDeduction 
+} from './charitableUtils';
+import { TaxTrapInput, checkTaxTraps } from '@/utils/taxTraps';
+
+// Import additional modular utilities for processing
 import { processCharitableContribution, checkForCharitableOpportunities } from './yearCalculation/charitableAdjustments';
-import { checkForTaxTraps } from './yearCalculation/taxTrapUtils';
 import { prepareTaxInput } from './yearCalculation/taxInputPreparation';
+import { checkForTaxTraps } from './yearCalculation/taxTrapUtils';
 
 interface YearCalculationInput {
   scenarioData: MultiYearScenarioData;
@@ -33,18 +41,31 @@ export function processSingleYearCalculation({
   spouseTraditionalIRABalance,
   i
 }: YearCalculationInput) {
-  // Step 1: Calculate income components
-  const { baseIncome, spouseBaseIncome, rmdAmount, spouseRmdAmount } = calculateYearlyIncome({
-    scenarioData,
-    currentYear,
-    currentAge,
-    spouseAge,
-    traditionalIRABalance,
-    spouseTraditionalIRABalance,
-    i
-  });
+  // Calculate projected income for this year with growth
+  const baseIncome = scenarioData.baseAnnualIncome * 
+    Math.pow(1 + scenarioData.incomeGrowthRate, i);
   
-  // Step 2: Process charitable contributions and adjust RMD if necessary
+  // Calculate spouse income if applicable
+  let spouseBaseIncome = 0;
+  if (scenarioData.includeSpouse && scenarioData.spouseBaseAnnualIncome) {
+    spouseBaseIncome = scenarioData.spouseBaseAnnualIncome *
+      Math.pow(1 + scenarioData.incomeGrowthRate, i);
+  }
+  
+  // Calculate RMD if applicable
+  let rmdAmount = 0;
+  if (scenarioData.includeRMDs && currentAge >= scenarioData.rmdStartAge) {
+    rmdAmount = calculateRMD(traditionalIRABalance, currentAge);
+  }
+  
+  // Calculate spouse RMD if applicable
+  let spouseRmdAmount = 0;
+  if (scenarioData.includeSpouse && scenarioData.includeRMDs && 
+      spouseAge && spouseAge >= (scenarioData.spouseRmdStartAge || scenarioData.rmdStartAge)) {
+    spouseRmdAmount = calculateRMD(spouseTraditionalIRABalance, spouseAge);
+  }
+  
+  // Process charitable contribution and adjust RMD if using QCD
   const { charitableContribution, adjustedRmdAmount } = processCharitableContribution(
     scenarioData,
     currentYear,
@@ -52,26 +73,26 @@ export function processSingleYearCalculation({
     rmdAmount
   );
   
-  // Step 3: Calculate total pre-conversion income
+  // Total income before conversion (using adjusted RMD if applicable)
   const totalPreConversionIncome = baseIncome + spouseBaseIncome + adjustedRmdAmount + spouseRmdAmount;
   
-  // Step 4: Determine conversion amounts
+  // Determine conversion amounts
   const { conversionAmount, spouseConversionAmount } = determineConversionAmounts({
     scenarioData,
     totalPreConversionIncome,
     currentYear,
     baseIncome,
-    rmdAmount: adjustedRmdAmount,
+    rmdAmount: adjustedRmdAmount, // Use the adjusted RMD amount
     spouseBaseIncome,
     spouseRmdAmount,
     traditionalIRABalance,
     spouseTraditionalIRABalance
   });
   
-  // Step 5: Calculate total AGI before any charitable impacts
+  // Calculate total AGI before any charitable impacts
   const baseAGI = totalPreConversionIncome + conversionAmount + (spouseConversionAmount || 0);
   
-  // Step 6: Check for tax traps
+  // Check for tax traps before charitable contributions
   const { trapResults: beforeCharitableTraps, warnings } = checkForTaxTraps({
     scenarioId: `year_${currentYear}_before`,
     year: currentYear,
@@ -82,7 +103,7 @@ export function processSingleYearCalculation({
     isMedicare: currentAge >= 65
   });
   
-  // Step 7: Prepare tax input and calculate initial charitable impact
+  // Prepare tax input with charitable impact
   const { yearTaxInput, charitableImpact } = prepareTaxInput({
     currentYear,
     baseIncome,
@@ -97,14 +118,14 @@ export function processSingleYearCalculation({
     beforeCharitableTraps
   });
   
-  // Step 8: Calculate tax on this scenario
+  // Calculate tax on this scenario
   const taxResult = calculateTaxScenario(
     yearTaxInput, 
     `Year ${currentYear} Roth Conversion`,
     "multi_year_analysis"
   );
   
-  // Step 9: Calculate tax on the same scenario without conversion
+  // Calculate tax on the same scenario without conversion
   const noConversionInput = { ...yearTaxInput, roth_conversion: 0, spouseRothConversion: 0 };
   const noConversionTaxResult = calculateTaxScenario(
     noConversionInput,
@@ -112,12 +133,12 @@ export function processSingleYearCalculation({
     "multi_year_analysis"
   );
 
-  // Step 10: Recalculate charitable impact with the actual marginal rate from tax result
-  let finalCharitableImpact = charitableImpact;
-  let warningsWithOpportunities = [...warnings];
+  // Recalculate charitable impact with the actual marginal rate from tax result
+  let updatedWarnings = [...warnings];
+  let updatedCharitableImpact = charitableImpact;
   
   if (scenarioData.useCharitablePlanning && charitableContribution.amount > 0) {
-    finalCharitableImpact = calculateCharitableImpact(
+    updatedCharitableImpact = calculateCharitableImpact(
       charitableContribution.amount,
       charitableContribution.useQcd,
       charitableContribution.isBunching,
@@ -130,7 +151,7 @@ export function processSingleYearCalculation({
     );
     
     // Check for additional charitable opportunities
-    const opportunity = checkForCharitableOpportunities(
+    const opportunityWarning = checkForCharitableOpportunities(
       beforeCharitableTraps,
       scenarioData.filingStatus,
       currentAge,
@@ -138,12 +159,11 @@ export function processSingleYearCalculation({
       currentYear
     );
     
-    if (opportunity) {
-      warningsWithOpportunities.push(opportunity);
+    if (opportunityWarning) {
+      updatedWarnings.push(opportunityWarning);
     }
   }
   
-  // Step 11: Return the final results
   return {
     baseIncome,
     spouseBaseIncome,
@@ -156,8 +176,8 @@ export function processSingleYearCalculation({
     noConversionTaxResult,
     charitableContribution: scenarioData.useCharitablePlanning ? {
       ...charitableContribution,
-      ...finalCharitableImpact
+      ...updatedCharitableImpact
     } : undefined,
-    warnings: warningsWithOpportunities
+    warnings: updatedWarnings
   };
 }

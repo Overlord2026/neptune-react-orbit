@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Gift, Info } from "lucide-react";
-import { InfoTooltip } from '@/components/tax/InfoTooltip';
+import InfoTooltip from '@/components/tax/InfoTooltip';
 import StepNavButtons from '../components/StepNavButtons';
 import { calculateCrtBenefits } from '../utils/crtCalculationUtils';
 
@@ -74,7 +74,10 @@ export const CrtStep: React.FC<CrtStepProps> = ({
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     updateScenario({
-      crt: values
+      crt: {
+        ...values,
+        useCrt: values.useCrt, // Ensure required property is included
+      }
     });
     onNext();
   };
@@ -86,7 +89,7 @@ export const CrtStep: React.FC<CrtStepProps> = ({
           <div className="flex items-center space-x-3 mb-4">
             <Gift className="text-[#FFD700]" size={20} />
             <h3 className="font-medium text-lg">Charitable Remainder Trust (CRT)</h3>
-            <InfoTooltip content="A CRT allows you to donate assets to charity while maintaining an income stream, providing immediate tax deductions and potential income tax savings." />
+            <InfoTooltip text="A CRT allows you to donate assets to charity while maintaining an income stream, providing immediate tax deductions and potential income tax savings." />
           </div>
           
           <Form {...form}>

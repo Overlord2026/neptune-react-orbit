@@ -33,11 +33,18 @@ export const analyzeTrapAvoidance = (
   };
   
   // Adjust IRMAA data for simulation if needed
-  if (originalTrapResults.irmaa_data && adjustedAGI < originalTrapResults.irmaa_data.threshold) {
-    afterCharitableTraps.irmaa_data = {
-      ...originalTrapResults.irmaa_data,
-      annual_impact: 0
-    };
+  if (originalTrapResults.irmaa_data) {
+    // Check if IRMAA is eliminated or reduced based on AGI
+    // Using simpler approach that doesn't rely on threshold property
+    const isIrmaaReduced = adjustedAGI < (originalTrapResults.irmaa_data.annual_impact > 0 ? 
+                           originalTrapResults.irmaa_data.partB_surcharge * 12 * 10 : Infinity);
+                           
+    if (isIrmaaReduced) {
+      afterCharitableTraps.irmaa_data = {
+        ...originalTrapResults.irmaa_data,
+        annual_impact: 0
+      };
+    }
   }
   
   // Check for IRMAA avoidance
