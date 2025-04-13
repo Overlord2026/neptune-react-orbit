@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -14,6 +15,7 @@ import SummaryStep from './multiYear/SummaryStep';
 import { calculateMultiYearScenario } from '@/utils/taxCalculator';
 import { MultiYearScenarioData, YearlyResult } from './types/ScenarioTypes';
 import TaxConsiderationWarning from './multiYear/common/TaxConsiderationWarning';
+import { TrapAlert } from '@/components/tax/TaxTrapAlerts';
 
 const MultiYearRothConversion: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<string>("bracket-fill");
@@ -85,15 +87,14 @@ const MultiYearRothConversion: React.FC = () => {
     navigateToStep('results');
   };
   
-  const latestWarnings = yearlyResults.length > 0 
+  // Convert warnings to the format expected by TaxTrapWarningsPanel
+  const latestWarnings: TrapAlert[] = yearlyResults.length > 0 
     ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
-        title: warning.message,
-        description: warning.message,
-        message: warning.message,
-        type: warning.type,
-        severity: warning.severity === 'high' ? 'critical' : 
-                  warning.severity === 'medium' ? 'warning' : 'info',
         trapType: warning.trapType || warning.type,
+        severity: warning.severity === 'high' ? 'critical' : 
+                 warning.severity === 'medium' ? 'warning' : 'info' as "critical" | "warning" | "info",
+        message: warning.message,
+        details: warning.description
       }))
     : [];
 
