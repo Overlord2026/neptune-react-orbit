@@ -1,18 +1,25 @@
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import { 
   EquityFormState, 
-  YearlyTaxImpact, 
-  EquityCompEvent, 
+  YearlyTaxImpact,
+  EquityCompEvent,
   DeferralEvent 
-} from "../types/EquityTypes";
-import { defaultFormState } from "../utils/defaultValues";
-import { calculateAmtImpact, getEquityEvents } from "../utils/equityCalculations";
-import { calculateDeferralBenefit, getDeferralEvents } from "../utils/deferralCalculations";
-import { calculateMultiYearImpact } from "../utils/multiYearCalculations";
-import { checkIrmaaImpact } from "../utils/taxBracketUtils";
+} from '../types/EquityTypes';
+import { defaultFormState } from '../utils/defaultValues';
+import { calculateAmtImpact } from '../utils/equityCalculations';
+import { 
+  calculateDeferralBenefit,
+  checkIrmaaImpact 
+} from '../utils/deferralCalculations';
+import { 
+  calculateMultiYearImpact,
+  getEquityEvents,
+  getDeferralEvents
+} from '../utils/multiYearCalculations';
+import { getTaxBracketRate, getDistanceToNextBracket } from '../utils/taxBracketUtils';
 
-type EquityFormContextType = {
+interface EquityFormContextType {
   formState: EquityFormState;
   updateForm: (updates: Partial<EquityFormState>) => void;
   calculateAmtImpact: () => number;
@@ -20,59 +27,52 @@ type EquityFormContextType = {
   calculateMultiYearImpact: () => YearlyTaxImpact[];
   getEquityEvents: () => EquityCompEvent[];
   getDeferralEvents: () => DeferralEvent[];
+  getTaxBracketRate: (income: number) => { rate: string; threshold: number };
+  getDistanceToNextBracket: (income: number) => { nextThreshold: number; distance: number };
   checkIrmaaImpact: (income: number) => boolean;
-};
+  resetForm: () => void;
+}
 
 const EquityFormContext = createContext<EquityFormContextType | undefined>(undefined);
 
 export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [formState, setFormState] = useState<EquityFormState>(defaultFormState);
-
-  const updateForm = (updates: Partial<EquityFormState>) => {
-    setFormState(prev => ({ ...prev, ...updates }));
-  };
-
-  // Wrapper methods that use the imported utility functions with the current form state
-  const calculateAmtImpactWrapper = () => {
-    return calculateAmtImpact(formState);
-  };
-
-  const calculateDeferralBenefitWrapper = () => {
-    return calculateDeferralBenefit(formState);
-  };
-
-  const calculateMultiYearImpactWrapper = () => {
-    return calculateMultiYearImpact(formState);
-  };
-
-  const getEquityEventsWrapper = () => {
-    return getEquityEvents(formState);
-  };
-
-  const getDeferralEventsWrapper = () => {
-    return getDeferralEvents(formState);
+  
+  const updateForm = useCallback((updates: Partial<EquityFormState>) => {
+    setFormState(current => ({ ...current, ...updates }));
+  }, []);
+  
+  const resetForm = useCallback(() => {
+    setFormState(defaultFormState);
+  }, []);
+  
+  // All calculation functions now import from utility files
+  
+  const value = {
+    formState,
+    updateForm,
+    calculateAmtImpact: () => calculateAmtImpact(formState),
+    calculateDeferralBenefit: () => calculateDeferralBenefit(formState),
+    calculateMultiYearImpact: () => calculateMultiYearImpact(formState),
+    getEquityEvents: () => getEquityEvents(formState),
+    getDeferralEvents: () => getDeferralEvents(formState),
+    getTaxBracketRate,
+    getDistanceToNextBracket,
+    checkIrmaaImpact,
+    resetForm
   };
   
   return (
-    <EquityFormContext.Provider value={{ 
-      formState, 
-      updateForm, 
-      calculateAmtImpact: calculateAmtImpactWrapper, 
-      calculateDeferralBenefit: calculateDeferralBenefitWrapper,
-      calculateMultiYearImpact: calculateMultiYearImpactWrapper,
-      getEquityEvents: getEquityEventsWrapper,
-      getDeferralEvents: getDeferralEventsWrapper,
-      checkIrmaaImpact
-    }}>
+    <EquityFormContext.Provider value={value}>
       {children}
     </EquityFormContext.Provider>
   );
 };
 
-export const useEquityForm = () => {
+export const useEquityForm = (): EquityFormContextType => {
   const context = useContext(EquityFormContext);
-  if (context === undefined) {
-    throw new Error("useEquityForm must be used within a EquityFormProvider");
+  if (!context) {
+    throw new Error('useEquityForm must be used within an EquityFormProvider');
   }
   return context;
 };

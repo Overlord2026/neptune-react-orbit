@@ -1,7 +1,7 @@
 
 import React from "react";
 import { MetricCard } from "./MetricCard";
-import { YearlyTaxImpact } from "../../context/EquityFormContext";
+import { YearlyTaxImpact } from "../../types/EquityTypes";
 import { formatCurrency } from "../../utils/formatUtils";
 import { AlertCircle } from "lucide-react";
 
