@@ -1,8 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { EstateGiftingData } from '../EstateGiftingWizard';
+import { EstateGiftingData } from '../types/EstateGiftingTypes';
 import { ArrowRight, Database } from "lucide-react";
+import { CURRENT_YEAR, ANNUAL_GIFT_EXCLUSION } from '../utils/constants';
 
 interface CalculationsStepProps {
   data: EstateGiftingData;
@@ -22,8 +22,6 @@ const CalculationsStep: React.FC<CalculationsStepProps> = ({ data }) => {
   const [totalGiftValue, setTotalGiftValue] = useState(0);
   const [estimatedFutureExemption, setEstimatedFutureExemption] = useState(0);
 
-  const CURRENT_YEAR = new Date().getFullYear();
-  const ANNUAL_GIFT_EXCLUSION = 17000;
   const TAX_RATE = 0.40;
 
   useEffect(() => {

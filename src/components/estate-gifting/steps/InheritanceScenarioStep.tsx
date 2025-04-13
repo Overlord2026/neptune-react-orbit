@@ -1,22 +1,21 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EstateGiftingData } from '../EstateGiftingWizard';
+import { EstateGiftingData } from '../types/EstateGiftingTypes';
 import { Slider } from "@/components/ui/slider";
 import { InfoIcon, AlertTriangle, HelpCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CURRENT_YEAR } from '../utils/constants';
 
 interface InheritanceScenarioStepProps {
   data: EstateGiftingData;
   onUpdateField: (field: keyof EstateGiftingData, value: any) => void;
 }
 
-const CURRENT_YEAR = new Date().getFullYear();
 const MAX_PROJECTION_YEARS = 50;
 
 const InheritanceScenarioStep: React.FC<InheritanceScenarioStepProps> = ({ data, onUpdateField }) => {

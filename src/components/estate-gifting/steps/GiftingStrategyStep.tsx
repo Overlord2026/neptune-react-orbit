@@ -1,18 +1,16 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EstateGiftingData } from '../EstateGiftingWizard';
+import { EstateGiftingData } from '../types/EstateGiftingTypes';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { InfoIcon } from "lucide-react";
+import { ANNUAL_GIFT_EXCLUSION } from '../utils/constants';
 
 interface GiftingStrategyStepProps {
   data: EstateGiftingData;
   onUpdateField: (field: keyof EstateGiftingData, value: any) => void;
 }
-
-const ANNUAL_GIFT_EXCLUSION = 17000;
 
 const GiftingStrategyStep: React.FC<GiftingStrategyStepProps> = ({ data, onUpdateField }) => {
   const calculateAnnualGiftTotal = () => {

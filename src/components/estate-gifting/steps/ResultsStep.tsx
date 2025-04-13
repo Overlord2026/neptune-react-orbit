@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { EstateGiftingData } from '../EstateGiftingWizard';
+import { EstateGiftingData } from '../types/EstateGiftingTypes';
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { Save, Download, Share2, Clock, Shield, AlertTriangle, FileText } from "lucide-react";

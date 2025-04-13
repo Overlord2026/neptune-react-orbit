@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 import TaxDisclaimerWithCheckbox from "@/components/tax/TaxDisclaimerWithCheckbox";
 import TaxProjectionDisclaimer from "@/components/tax/TaxProjectionDisclaimer";
 import BasicInformationStep from './steps/BasicInformationStep';
@@ -10,51 +9,12 @@ import GiftingStrategyStep from './steps/GiftingStrategyStep';
 import InheritanceScenarioStep from './steps/InheritanceScenarioStep';
 import CalculationsStep from './steps/CalculationsStep';
 import ResultsStep from './steps/ResultsStep';
-import { toast } from "sonner";
-
-export type EstateGiftingData = {
-  // Basic Information
-  netWorth: number;
-  estateExemption: number;
-  aboveThreshold: boolean;
-  
-  // Gifting Strategy
-  useAnnualGifts: boolean;
-  numberOfDonees: number;
-  lifetimeGiftsUsed: number;
-  giftingStrategy: 'lump-sum' | 'annual';
-  lumpSumAmount: number;
-  
-  // Inheritance Scenario
-  yearOfPassing: number;
-  growthRate: number;
-  useTrustApproach: boolean;
-  lifeCycleStage: 'young-adult' | 'mid-career' | 'pre-retirement' | 'retirement';
-  trustType?: 'none' | 'revocable' | 'ilit' | 'grat' | 'slat' | 'dynasty';
-  trustReductionFactor: number;
-  
-  // Calculations (will be computed)
-  noGiftingTax: number;
-  giftingTax: number;
-  taxSavings: number;
-  heirsBenefit: number;
-  
-  // Multi-year plan data
-  multiYearPlanImported: boolean;
-  finalMultiYearBalance?: number;
-};
-
-interface MultiYearPlanData {
-  finalBalance: number;
-  endYear: number;
-  annualGiftingAmount?: number;
-  numberOfRecipients?: number;
-  growthRate?: number;
-}
-
-const DEFAULT_ESTATE_EXEMPTION = 12.92 * 1000000; // $12.92 million in 2023
-const ANNUAL_GIFT_EXCLUSION = 17000; // $17,000 per donee in 2023
-const CURRENT_YEAR = new Date().getFullYear();
+import WizardHeader from './WizardHeader';
+import WizardNavigation from './WizardNavigation';
+import { EstateGiftingData } from './types/EstateGiftingTypes';
+import { calculateEstateValues } from './utils/calculationUtils';
+import { fetchMultiYearPlanData, MultiYearPlanData } from './utils/multiYearPlanUtils';
+import { DEFAULT_ESTATE_EXEMPTION, CURRENT_YEAR } from './utils/constants';
 
 const EstateGiftingWizard: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -101,111 +61,11 @@ const EstateGiftingWizard: React.FC = () => {
     toast.success("Multi-Year Plan data imported successfully!");
   };
 
-  const fetchMultiYearPlanData = (): MultiYearPlanData | null => {
-    // In a real implementation, this would fetch from a database or state store
-    // For now, we'll check localStorage for demo purposes
-    try {
-      const multiYearScenarios = JSON.parse(localStorage.getItem('multi_year_roth_scenarios') || '[]');
-      
-      if (multiYearScenarios.length === 0) {
-        toast.info("No Multi-Year Plan data found. Please create a plan first.");
-        return null;
-      }
-      
-      // Use the most recent scenario
-      const latestScenario = multiYearScenarios[multiYearScenarios.length - 1];
-      
-      // Get the last year's data from the scenario
-      const yearlyResults = latestScenario.results || [];
-      if (yearlyResults.length === 0) {
-        toast.warning("Multi-Year Plan has no results to import");
-        return null;
-      }
-      
-      const finalYearData = yearlyResults[yearlyResults.length - 1];
-      
-      return {
-        finalBalance: finalYearData.traditionalIRABalance + finalYearData.rothIRABalance,
-        endYear: finalYearData.year,
-        growthRate: latestScenario.expectedAnnualReturn || 0.05,
-        annualGiftingAmount: latestScenario.annualGift || 0,
-        numberOfRecipients: latestScenario.numberOfRecipients || 1
-      };
-    } catch (error) {
-      console.error("Error fetching multi-year plan data:", error);
-      toast.error("Could not load Multi-Year Plan data");
-      return null;
-    }
-  };
-
   const loadMultiYearPlan = () => {
     const planData = fetchMultiYearPlanData();
     if (planData) {
       importMultiYearPlanData(planData);
     }
-  };
-
-  const calculateEstateValues = () => {
-    // Calculate estate values based on current inputs
-    const yearsUntilPassing = wizardData.yearOfPassing - CURRENT_YEAR;
-    
-    // Calculate future estate value with no gifting
-    const futureEstateNoGifting = wizardData.netWorth * Math.pow(1 + wizardData.growthRate, yearsUntilPassing);
-    
-    // Calculate value of gifting
-    let totalGiftValue = 0;
-    
-    if (wizardData.giftingStrategy === 'annual') {
-      const annualGiftTotal = wizardData.useAnnualGifts ? 
-        ANNUAL_GIFT_EXCLUSION * wizardData.numberOfDonees : 0;
-        
-      // Compound value of annual gifts over years
-      for (let year = 0; year < yearsUntilPassing; year++) {
-        totalGiftValue += annualGiftTotal * Math.pow(1 + wizardData.growthRate, yearsUntilPassing - year);
-      }
-    } else {
-      // Lump sum gifting grows until passing
-      totalGiftValue = wizardData.lumpSumAmount * Math.pow(1 + wizardData.growthRate, yearsUntilPassing);
-    }
-    
-    // Future estate value with gifting
-    const futureEstateWithGifting = Math.max(0, futureEstateNoGifting - totalGiftValue);
-    
-    // Calculate potential estate taxes (simplified calculation)
-    // Assuming 40% tax rate on amounts exceeding exemption
-    const TAX_RATE = 0.40;
-    
-    // Adjust exemption for inflation (simplified)
-    const estimatedFutureExemption = wizardData.estateExemption * Math.pow(1.025, yearsUntilPassing);
-    
-    // Apply trust reduction factor if applicable
-    const trustReductionAmount = wizardData.useTrustApproach ? 
-      (futureEstateWithGifting * wizardData.trustReductionFactor) : 0;
-      
-    const adjustedFutureEstateWithGifting = Math.max(0, futureEstateWithGifting - trustReductionAmount);
-    
-    const taxableEstateNoGifting = Math.max(0, futureEstateNoGifting - estimatedFutureExemption - wizardData.lifetimeGiftsUsed);
-    const taxableEstateWithGifting = Math.max(0, adjustedFutureEstateWithGifting - estimatedFutureExemption - wizardData.lifetimeGiftsUsed);
-    
-    const noGiftingTax = taxableEstateNoGifting * TAX_RATE;
-    const giftingTax = taxableEstateWithGifting * TAX_RATE;
-    const taxSavings = noGiftingTax - giftingTax;
-    
-    // Calculate benefit to heirs - this includes both tax savings and the value of gifts
-    const heirsBenefit = wizardData.aboveThreshold ? 
-      taxSavings + totalGiftValue + trustReductionAmount : 
-      totalGiftValue / 2; // Reduced benefit if below threshold as tax savings less significant
-    
-    return {
-      noGiftingTax,
-      giftingTax,
-      taxSavings,
-      heirsBenefit,
-      futureEstateNoGifting,
-      futureEstateWithGifting,
-      adjustedFutureEstateWithGifting,
-      trustReductionAmount
-    };
   };
 
   const handleNext = () => {
@@ -216,7 +76,7 @@ const EstateGiftingWizard: React.FC = () => {
 
     if (currentStep === 3) {
       // Before moving to results, calculate the values
-      const calculatedValues = calculateEstateValues();
+      const calculatedValues = calculateEstateValues(wizardData);
       setWizardData({
         ...wizardData,
         noGiftingTax: calculatedValues.noGiftingTax,
@@ -257,6 +117,28 @@ const EstateGiftingWizard: React.FC = () => {
     localStorage.setItem('estate_gifting_scenarios', JSON.stringify([...existingScenarios, scenarioData]));
     
     toast.success("Scenario saved successfully!");
+  };
+
+  const getStepTitle = () => {
+    switch (currentStep) {
+      case 0: return "Basic Information";
+      case 1: return "Gifting Strategy";
+      case 2: return "Inheritance Scenario";
+      case 3: return "Calculations";
+      case 4: return "Results";
+      default: return "";
+    }
+  };
+
+  const getStepDescription = () => {
+    switch (currentStep) {
+      case 0: return "Enter your estate details";
+      case 1: return "Define your gifting approach";
+      case 2: return "Set inheritance timing and growth";
+      case 3: return "Review your scenario calculations";
+      case 4: return "Compare scenarios and save results";
+      default: return "";
+    }
   };
 
   const renderCurrentStep = () => {
@@ -320,32 +202,12 @@ const EstateGiftingWizard: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="bg-[#1A1F2C] border border-[#2A2F3C] rounded-lg p-4">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-[#FFD700] text-[#1A1F2C] font-bold flex items-center justify-center">
-              {currentStep + 1}
-            </div>
-            <div className="ml-3">
-              <h2 className="text-xl font-semibold text-white">
-                {currentStep === 0 && "Basic Information"}
-                {currentStep === 1 && "Gifting Strategy"}
-                {currentStep === 2 && "Inheritance Scenario"}
-                {currentStep === 3 && "Calculations"}
-                {currentStep === 4 && "Results"}
-              </h2>
-              <p className="text-[#B0B0B0] text-sm">
-                {currentStep === 0 && "Enter your estate details"}
-                {currentStep === 1 && "Define your gifting approach"}
-                {currentStep === 2 && "Set inheritance timing and growth"}
-                {currentStep === 3 && "Review your scenario calculations"}
-                {currentStep === 4 && "Compare scenarios and save results"}
-              </p>
-            </div>
-          </div>
-          <div>
-            <span className="text-[#B0B0B0]">Step {currentStep + 1} of 5</span>
-          </div>
-        </div>
+        <WizardHeader 
+          currentStep={currentStep}
+          stepTitle={getStepTitle()}
+          stepDescription={getStepDescription()}
+          totalSteps={5}
+        />
 
         <Card className="border-[#2A2F3C] bg-[#242A38]">
           <CardContent className="p-6">
@@ -353,18 +215,13 @@ const EstateGiftingWizard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <div className="flex justify-between mt-6">
-          <Button 
-            onClick={handleBack} 
-            disabled={currentStep === 0}
-            variant="outline"
-          >
-            <ChevronLeft className="mr-2 h-4 w-4" /> Back
-          </Button>
-          <Button onClick={handleNext} disabled={currentStep === 4}>
-            {currentStep < 4 ? "Next" : "Complete"} <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        <WizardNavigation 
+          currentStep={currentStep}
+          totalSteps={5}
+          onNext={handleNext}
+          onBack={handleBack}
+          disableNext={currentStep === 4}
+        />
       </div>
     </div>
   );

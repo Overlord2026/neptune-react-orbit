@@ -1,13 +1,13 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { EstateGiftingData } from '../EstateGiftingWizard';
+import { EstateGiftingData } from '../types/EstateGiftingTypes';
 import { InfoIcon, Upload, Database, ArrowDownToLine, Link } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Link as RouterLink } from "react-router-dom";
+import { DEFAULT_ESTATE_EXEMPTION } from '../utils/constants';
 
 interface BasicInformationStepProps {
   data: EstateGiftingData;
