@@ -12,9 +12,8 @@ import BeneficiaryStep from './multiYear/BeneficiaryStep';
 import ResultsStep from './multiYear/ResultsStep';
 import SummaryStep from './multiYear/SummaryStep';
 import { calculateMultiYearScenario } from '@/utils/taxCalculator';
-import { MultiYearScenarioData, YearlyResult } from './types/ScenarioTypes';
+import { MultiYearScenarioData, YearlyResult, TrapAlert } from './types/ScenarioTypes';
 import TaxConsiderationWarning from './multiYear/common/TaxConsiderationWarning';
-import { TrapAlert } from '@/components/tax/TaxTrapAlerts';
 
 const MultiYearRothConversion: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<string>("bracket-fill");

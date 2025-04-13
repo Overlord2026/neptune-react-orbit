@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DollarSign, Info } from "lucide-react";
-import { MultiYearScenarioData } from '../../types/ScenarioTypes';
+import { MultiYearScenarioData, ConversionStrategyType } from '../../types/ScenarioTypes';
 
 interface IncomeInformationCardProps {
   scenarioData: MultiYearScenarioData;
@@ -94,7 +94,7 @@ const IncomeInformationCard: React.FC<IncomeInformationCardProps> = ({
           <RadioGroup 
             id="conversionStrategy"
             value={scenarioData.conversionStrategy}
-            onValueChange={(value: 'fixed' | 'bracket_12' | 'bracket_22') => {
+            onValueChange={(value: ConversionStrategyType) => {
               onUpdateScenarioData({ conversionStrategy: value });
             }}
             className="pt-2"
@@ -111,10 +111,16 @@ const IncomeInformationCard: React.FC<IncomeInformationCardProps> = ({
                 Fill 12% Bracket
               </Label>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 mb-2">
               <RadioGroupItem value="bracket_22" id="bracket_22" />
               <Label htmlFor="bracket_22" className="cursor-pointer">
                 Fill 22% Bracket
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="bracket_12_22" id="bracket_12_22" />
+              <Label htmlFor="bracket_12_22" className="cursor-pointer">
+                Fill 12% + 22% Brackets
               </Label>
             </div>
           </RadioGroup>

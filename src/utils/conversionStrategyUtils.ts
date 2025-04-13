@@ -4,12 +4,13 @@
  */
 
 import { getBrackets } from './taxBracketData';
+import { ConversionStrategyType } from '../components/tax/roth-conversion/types/ScenarioTypes';
 
 /**
  * Get maximum conversion amount based on strategy
  */
 export const getMaxConversionAmount = (
-  strategy: 'fixed' | 'bracket_12' | 'bracket_22',
+  strategy: ConversionStrategyType,
   currentIncome: number,
   taxYear: number,
   filingStatus: 'single' | 'married' | 'head_of_household' | 'married_separate',
@@ -25,9 +26,14 @@ export const getMaxConversionAmount = (
   
   // Find the target bracket
   let targetBracket;
+  let bracket22;
+  
   if (strategy === 'bracket_12') {
     targetBracket = brackets.find(b => b.rate === 0.12);
   } else if (strategy === 'bracket_22') {
+    targetBracket = brackets.find(b => b.rate === 0.22);
+  } else if (strategy === 'bracket_12_22') {
+    // For the combined 12% + 22% strategy, we use the end of the 22% bracket
     targetBracket = brackets.find(b => b.rate === 0.22);
   }
   

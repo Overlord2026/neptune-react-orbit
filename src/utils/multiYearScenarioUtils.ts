@@ -4,7 +4,7 @@
  * Functions for calculating multi-year Roth conversion scenarios.
  */
 
-import { MultiYearScenarioData, YearlyResult } from '../components/tax/roth-conversion/types/ScenarioTypes';
+import { MultiYearScenarioData, YearlyResult, ConversionStrategyType } from '../components/tax/roth-conversion/types/ScenarioTypes';
 import { TaxInput, calculateTaxScenario } from './taxCalculator';
 import { calculateRMD } from './rmdCalculationUtils';
 import { getMaxConversionAmount } from './conversionStrategyUtils';

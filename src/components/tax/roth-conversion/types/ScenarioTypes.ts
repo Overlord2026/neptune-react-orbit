@@ -1,4 +1,10 @@
 
+export type ConversionStrategyType =
+  | "fixed"
+  | "bracket_12"
+  | "bracket_22"
+  | "bracket_12_22";
+
 export interface MultiYearScenarioData {
   startAge: number;
   startYear: number;
@@ -9,7 +15,7 @@ export interface MultiYearScenarioData {
   expectedAnnualReturn: number;
   baseAnnualIncome: number;
   incomeGrowthRate: number;
-  conversionStrategy: 'fixed' | 'bracket_12' | 'bracket_22';
+  conversionStrategy: ConversionStrategyType;
   fixedConversionAmount?: number;
   includeRMDs: boolean;
   rmdStartAge: number;
