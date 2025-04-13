@@ -1,15 +1,16 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BasicInfoStep } from "./steps/BasicInfoStep";
-import { OptionDetailsStep } from "./steps/OptionDetailsStep";
-import { DeferralStrategyStep } from "./steps/DeferralStrategyStep";
-import { MultiYearApproachStep } from "./steps/MultiYearApproachStep";
-import { TaxOutputStep } from "./steps/TaxOutputStep";
+import { 
+  BasicInfoStep, 
+  OptionDetailsStep,
+  HoldingPeriodStep,
+  DeferralStrategyStep,
+  MultiYearApproachStep,
+  TaxOutputStep
+} from "./steps";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { EquityFormProvider, useEquityForm } from "./context/EquityFormContext";
-import { HoldingPeriodStep } from "./steps/HoldingPeriodStep";
 
 export const EquityCompWizard = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -27,17 +28,14 @@ export const EquityCompWizard = () => {
     }
   };
 
-  // Step visibility controller based on form data
   const StepController = ({ children }: { children: React.ReactNode }) => {
     const { formState } = useEquityForm();
     
-    // Skip holding period step if not ISO
     if (activeStep === 2 && formState.equityType !== "ISO") {
       handleNext();
       return null;
     }
     
-    // Skip deferral strategy step if no deferred comp
     if (activeStep === 3 && !formState.hasDeferredComp) {
       handleNext();
       return null;
