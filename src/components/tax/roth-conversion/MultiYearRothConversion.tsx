@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -93,7 +92,7 @@ const MultiYearRothConversion: React.FC = () => {
         trapType: warning.trapType || warning.type,
         severity: warning.severity === 'high' ? 'critical' : 
                  warning.severity === 'medium' ? 'warning' : 'info',
-        message: warning.message // Use message directly
+        message: warning.message || warning.title || '', // Use message or fallback to title if message is not available
       }))
     : [];
 
