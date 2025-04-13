@@ -90,7 +90,7 @@ const CharitableContributionImpact: React.FC<CharitableContributionImpactProps> 
             <div className="space-y-3">
               {trapAvoidances.map((year, idx) => 
                 year.charitableContribution?.trapAvoidance?.map((avoidance, avoidanceIdx) => (
-                  <Alert key={`${idx}-${avoidanceIdx}`} variant="success" className="bg-green-950/20 border-green-800/30">
+                  <Alert key={`${idx}-${avoidanceIdx}`} className="bg-green-950/20 border-green-800/30">
                     <ShieldCheck className="h-4 w-4 text-green-500" />
                     <AlertTitle>Year {year.year}: {avoidance.title}</AlertTitle>
                     <AlertDescription className="text-sm">

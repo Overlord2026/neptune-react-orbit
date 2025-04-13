@@ -19,7 +19,7 @@ export interface TaxTrapInput {
 }
 
 export interface TaxTrapWarning {
-  type: 'irmaa' | 'capital_gains' | 'social_security' | 'aca';
+  type: 'irmaa' | 'capital_gains' | 'social_security' | 'aca' | 'charitable_opportunity' | string;
   severity: 'info' | 'warning' | 'alert';
   title: string;
   description: string;

@@ -108,6 +108,22 @@ export function processSingleYearCalculation({
     aca_enrollment: false
   });
   
+  // Collect warnings from trap detection
+  const warnings = beforeCharitableTraps.warnings.map(warning => ({
+    type: warning.type,
+    message: warning.description,
+    severity: warning.severity === 'alert' ? 'high' as const : 
+             warning.severity === 'warning' ? 'medium' as const : 'low' as const,
+    trapType: warning.type
+  }));
+  
+  let charitableImpact = {
+    standardDeduction: 0,
+    itemizedDeduction: 0,
+    isItemizing: false,
+    taxSavings: 0
+  };
+  
   // Calculate tax on this year's income and conversion
   const yearTaxInput: TaxInput = {
     year: currentYear,
@@ -129,22 +145,6 @@ export function processSingleYearCalculation({
     // Community property settings
     isInCommunityPropertyState: scenarioData.isInCommunityPropertyState,
     splitCommunityIncome: scenarioData.splitCommunityIncome,
-  };
-  
-  // Collect warnings from trap detection
-  const warnings = [...beforeCharitableTraps.warnings.map(warning => ({
-    type: warning.type,
-    message: warning.description,
-    severity: warning.severity === 'alert' ? 'high' : 
-             warning.severity === 'warning' ? 'medium' : 'low',
-    trapType: warning.type
-  }))];
-  
-  let charitableImpact = {
-    standardDeduction: 0,
-    itemizedDeduction: 0,
-    isItemizing: false,
-    taxSavings: 0
   };
   
   // If charitable planning is enabled, adjust the tax input
@@ -209,7 +209,7 @@ export function processSingleYearCalculation({
     
     if (opportunity) {
       warnings.push({
-        type: opportunity.trapType,
+        type: 'charitable_opportunity',
         message: opportunity.description,
         severity: opportunity.severity,
         trapType: 'charitable_opportunity'
