@@ -9,11 +9,12 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/hooks/useDebounce';
+import { FilingStatusType } from '@/utils/taxBracketData';
 
 interface RealTimeBracketPreviewProps {
   baseIncome: number;
   year: number;
-  filingStatus: 'single' | 'married' | 'head_of_household';
+  filingStatus: FilingStatusType;
   capitalGains?: number;
   maxConversion?: number;
   onChange?: (amount: number) => void;

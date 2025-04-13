@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from '@/hooks/use-toast';
 import { TaxTrapAdapter } from '@/components/tax/TaxTrapAdapter';
 import RothConversionSlider from '@/components/tax/RothConversionSlider';
-import { TaxInput, calculateTaxScenario, TaxResult } from '@/utils/taxCalculator';
+import { TaxInput, calculateTaxScenario, TaxResult, FilingStatusType } from '@/utils/taxCalculator';
 import { Shield } from 'lucide-react';
 import BracketSummary from '@/components/tax/BracketSummary';
 import { Link } from 'react-router-dom';
