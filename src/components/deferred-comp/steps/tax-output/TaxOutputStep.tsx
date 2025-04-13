@@ -1,6 +1,5 @@
-
 import React from "react";
-import { LoadingStateEnum, LoadingState } from "@/types/LoadingState";
+import { LoadingState } from "@/types/LoadingState";
 import { useEquityForm } from "../../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
@@ -24,12 +23,12 @@ interface TaxOutputStepProps {
 
 export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   const { formState, calculateAmtImpact, calculateDeferralBenefit, calculateMultiYearImpact } = useEquityForm();
-  const [loadingState, setLoadingState] = React.useState<LoadingState>('loading');
+  const [loadingState, setLoadingState] = React.useState<LoadingState>(LoadingState.Loading);
   const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      setLoadingState('success');
+      setLoadingState(LoadingState.Success);
     }, 800);
     return () => clearTimeout(timer);
   }, []);
@@ -76,8 +75,8 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
     }
   };
 
-  if (loadingState === 'loading') {
-    return <LoadingStateComponent state='loading' />;
+  if (loadingState === LoadingState.Loading) {
+    return <LoadingStateComponent state={LoadingState.Loading} />;
   }
 
   const hasEquity = formState.equityType === "NSO" || formState.equityType === "ISO";
