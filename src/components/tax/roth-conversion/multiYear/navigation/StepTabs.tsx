@@ -1,19 +1,20 @@
 
 import React from 'react';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calculator, ChevronRight, User, Clock, Users, ChartLine, BarChart4 } from "lucide-react";
+import { useMultiYearContext } from '../context/MultiYearContext';
 
 interface StepTabsProps {
   currentStep: string;
   onStepChange: (step: string) => void;
-  hasCalculated: boolean;
 }
 
 const StepTabs: React.FC<StepTabsProps> = ({
   currentStep, 
-  onStepChange,
-  hasCalculated
+  onStepChange
 }) => {
+  const { hasCalculated } = useMultiYearContext();
+  
   return (
     <TabsList className="grid grid-cols-6 mb-6">
       <TabsTrigger 
