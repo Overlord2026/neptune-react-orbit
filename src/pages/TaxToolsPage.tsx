@@ -10,7 +10,8 @@ import {
   Lock, 
   Lightbulb,
   FileCheck,
-  AlertTriangle
+  AlertTriangle,
+  Gift
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
@@ -58,6 +59,17 @@ const TaxToolsPage: React.FC = () => {
       ],
       icon: <Banknote className="w-10 h-10 text-[#FFD700]" />,
       link: "/tax-planning/roth"
+    },
+    {
+      title: "Estate & Gifting Scenarios",
+      description: "Analyze lifetime gifting vs inheritance tax implications",
+      bullets: [
+        "Compare annual gifting vs. lump sum strategies",
+        "Project estate tax calculations with various strategies",
+        "Evaluate trust structures and their tax benefits"
+      ],
+      icon: <Gift className="w-10 h-10 text-[#FFD700]" />,
+      link: "/tax-planning/estate-gifting"
     },
     {
       title: "Tax Trap Checker",
