@@ -1,3 +1,4 @@
+
 /**
  * Tax Calculation Utilities
  * 
@@ -12,7 +13,7 @@ import {
 import {
   calculateTaxableIncome,
   calculateTotalTaxLiability
-} from './taxUtils';
+} from './tax';
 import { 
   checkTaxDataCurrency, 
   markTaxDataAsCurrent
