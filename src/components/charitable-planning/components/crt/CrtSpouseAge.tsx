@@ -7,9 +7,10 @@ import { Control } from 'react-hook-form';
 
 interface CrtSpouseAgeProps {
   control: Control<any>;
+  disabled?: boolean;
 }
 
-const CrtSpouseAge: React.FC<CrtSpouseAgeProps> = ({ control }) => {
+const CrtSpouseAge: React.FC<CrtSpouseAgeProps> = ({ control, disabled = false }) => {
   return (
     <FormField
       control={control}
@@ -25,6 +26,8 @@ const CrtSpouseAge: React.FC<CrtSpouseAgeProps> = ({ control }) => {
                 max={120}
                 {...field}
                 onChange={(e) => field.onChange(Number(e.target.value))}
+                disabled={disabled}
+                placeholder={disabled ? "N/A" : "Age"}
               />
             </FormControl>
             <InfoTooltip text="Age of the spouse, used in the calculation of charitable deduction for lifetime CRTs." />
