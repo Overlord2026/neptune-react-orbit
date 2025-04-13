@@ -35,8 +35,7 @@ import TaxToolsPage from './pages/TaxToolsPage';
 import EstateGiftingPage from './pages/EstateGiftingPage';
 import CharitablePlanningPage from './pages/CharitablePlanningPage';
 import Layout from './components/Layout';
-// We would need to create this page in the future
-// import DeferredCompPage from './pages/DeferredCompPage';
+import DeferredCompPage from './pages/DeferredCompPage';
 
 const router = createBrowserRouter([
   {
@@ -80,12 +79,10 @@ const router = createBrowserRouter([
         path: "/tax-planning/aggregator",
         element: <TaxDocumentAggregatorPage />,
       },
-      // Consolidated Roth conversion routes
       {
         path: "/tax-planning/roth",
         element: <RothConversionPage />,
       },
-      // Redirects for old Roth conversion routes
       {
         path: "/tax-planning/roth-conversion",
         element: <Navigate to="/tax-planning/roth" replace />,
@@ -101,6 +98,10 @@ const router = createBrowserRouter([
       {
         path: "/tax-planning/charitable-planning",
         element: <CharitablePlanningPage />,
+      },
+      {
+        path: "/tax-planning/deferred-comp",
+        element: <DeferredCompPage />,
       },
       {
         path: "/tax-planning/social-security",
@@ -165,10 +166,6 @@ const router = createBrowserRouter([
       {
         path: "/tax-planning/roth-comparison",
         element: <CompareRothScenariosPage />,
-      },
-      {
-        path: "/tax-planning/deferred-comp",
-        element: <Navigate to="/tax-planning" replace />,
       }
     ]
   },
