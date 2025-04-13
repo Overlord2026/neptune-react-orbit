@@ -3,12 +3,14 @@ import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { EstateGiftingData } from '../EstateGiftingWizard';
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, Upload, Database } from "lucide-react";
 
 interface BasicInformationStepProps {
   data: EstateGiftingData;
   onUpdateField: (field: keyof EstateGiftingData, value: any) => void;
+  onImportMultiYearPlan: () => void;
 }
 
 const formatCurrency = (value: number): string => {
@@ -19,7 +21,11 @@ const formatCurrency = (value: number): string => {
   }).format(value);
 };
 
-const BasicInformationStep: React.FC<BasicInformationStepProps> = ({ data, onUpdateField }) => {
+const BasicInformationStep: React.FC<BasicInformationStepProps> = ({ 
+  data, 
+  onUpdateField,
+  onImportMultiYearPlan
+}) => {
   const handleExemptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
     onUpdateField('estateExemption', isNaN(value) ? 0 : value * 1000000); // Convert millions to actual value
@@ -36,7 +42,32 @@ const BasicInformationStep: React.FC<BasicInformationStepProps> = ({ data, onUpd
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-medium text-white">Estate Information</h3>
+      <div className="flex justify-between items-start">
+        <h3 className="text-lg font-medium text-white">Estate Information</h3>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="flex items-center gap-2 bg-blue-900/30 border-blue-700/40 hover:bg-blue-800/40"
+          onClick={onImportMultiYearPlan}
+        >
+          <Database className="h-4 w-4" />
+          Use My Multi-Year Plan Data
+        </Button>
+      </div>
+
+      {data.multiYearPlanImported && (
+        <div className="bg-blue-900/30 border border-blue-700/40 rounded-md p-4 text-sm">
+          <h4 className="font-medium text-blue-300 flex items-center gap-2 mb-2">
+            <Upload className="h-4 w-4" />
+            Multi-Year Plan Data Imported
+          </h4>
+          <p className="text-[#B0B0B0]">
+            Your estate value has been set based on your Multi-Year Plan's projected final balance.
+            You can still adjust any values manually if needed.
+          </p>
+        </div>
+      )}
+
       <div className="space-y-4">
         <div>
           <Label htmlFor="netWorth" className="text-white">

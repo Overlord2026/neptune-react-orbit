@@ -38,7 +38,19 @@ export type EstateGiftingData = {
   giftingTax: number;
   taxSavings: number;
   heirsBenefit: number;
+  
+  // Multi-year plan data
+  multiYearPlanImported: boolean;
+  finalMultiYearBalance?: number;
 };
+
+interface MultiYearPlanData {
+  finalBalance: number;
+  endYear: number;
+  annualGiftingAmount?: number;
+  numberOfRecipients?: number;
+  growthRate?: number;
+}
 
 const DEFAULT_ESTATE_EXEMPTION = 12.92 * 1000000; // $12.92 million in 2023
 const ANNUAL_GIFT_EXCLUSION = 17000; // $17,000 per donee in 2023
@@ -65,8 +77,71 @@ const EstateGiftingWizard: React.FC = () => {
     noGiftingTax: 0,
     giftingTax: 0,
     taxSavings: 0,
-    heirsBenefit: 0
+    heirsBenefit: 0,
+    multiYearPlanImported: false
   });
+
+  // Function to import multi-year plan data
+  const importMultiYearPlanData = (planData: MultiYearPlanData) => {
+    // Update the wizard data with the imported values
+    setWizardData(prevData => ({
+      ...prevData,
+      netWorth: planData.finalBalance,
+      yearOfPassing: planData.endYear,
+      growthRate: planData.growthRate || prevData.growthRate,
+      useAnnualGifts: !!planData.annualGiftingAmount && planData.annualGiftingAmount > 0,
+      numberOfDonees: planData.numberOfRecipients || prevData.numberOfDonees,
+      giftingStrategy: 'annual',
+      multiYearPlanImported: true,
+      finalMultiYearBalance: planData.finalBalance
+    }));
+
+    toast.success("Multi-Year Plan data imported successfully!");
+  };
+
+  const fetchMultiYearPlanData = (): MultiYearPlanData | null => {
+    // In a real implementation, this would fetch from a database or state store
+    // For now, we'll check localStorage for demo purposes
+    try {
+      const multiYearScenarios = JSON.parse(localStorage.getItem('multi_year_roth_scenarios') || '[]');
+      
+      if (multiYearScenarios.length === 0) {
+        toast.info("No Multi-Year Plan data found. Please create a plan first.");
+        return null;
+      }
+      
+      // Use the most recent scenario
+      const latestScenario = multiYearScenarios[multiYearScenarios.length - 1];
+      
+      // Get the last year's data from the scenario
+      const yearlyResults = latestScenario.results || [];
+      if (yearlyResults.length === 0) {
+        toast.warning("Multi-Year Plan has no results to import");
+        return null;
+      }
+      
+      const finalYearData = yearlyResults[yearlyResults.length - 1];
+      
+      return {
+        finalBalance: finalYearData.traditionalIRABalance + finalYearData.rothIRABalance,
+        endYear: finalYearData.year,
+        growthRate: latestScenario.expectedAnnualReturn || 0.05,
+        annualGiftingAmount: latestScenario.annualGift || 0,
+        numberOfRecipients: latestScenario.numberOfRecipients || 1
+      };
+    } catch (error) {
+      console.error("Error fetching multi-year plan data:", error);
+      toast.error("Could not load Multi-Year Plan data");
+      return null;
+    }
+  };
+
+  const loadMultiYearPlan = () => {
+    const planData = fetchMultiYearPlanData();
+    if (planData) {
+      importMultiYearPlanData(planData);
+    }
+  };
 
   const calculateEstateValues = () => {
     // Calculate estate values based on current inputs
@@ -205,6 +280,7 @@ const EstateGiftingWizard: React.FC = () => {
             <BasicInformationStep 
               data={wizardData} 
               onUpdateField={handleUpdateField}
+              onImportMultiYearPlan={loadMultiYearPlan}
             />
           </>
         );
