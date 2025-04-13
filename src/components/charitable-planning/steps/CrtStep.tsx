@@ -1,17 +1,16 @@
-
 import React from 'react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription, FormMessage } from "@/components/ui/form";
 import { useCharitable } from '../context/CharitableContext';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { CharitableScenario } from '../types/CharitableTypes';
+import { CharitableScenario, CharitableRemainderTrust } from '../types/CharitableTypes';
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Gift, Info } from "lucide-react";
+import { Gift } from "lucide-react";
 import InfoTooltip from '@/components/tax/InfoTooltip';
 import StepNavButtons from '../components/StepNavButtons';
 import { calculateCrtBenefits } from '../utils/crtCalculationUtils';
@@ -73,12 +72,18 @@ export const CrtStep: React.FC<CrtStepProps> = ({
   }) : { immediateDeduction: 0, annualPayout: 0 };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    updateScenario({
-      crt: {
-        ...values,
-        useCrt: values.useCrt, // Ensure required property is included
-      }
-    });
+    const crtData: CharitableRemainderTrust = {
+      useCrt: values.useCrt,
+      type: values.type,
+      fundingAmount: values.fundingAmount,
+      payoutRate: values.payoutRate,
+      trustTerm: values.trustTerm,
+      beneficiaryAge: values.beneficiaryAge,
+      spouseBeneficiary: values.spouseBeneficiary,
+      spouseAge: values.spouseAge
+    };
+
+    updateScenario({ crt: crtData });
     onNext();
   };
 
@@ -137,7 +142,7 @@ export const CrtStep: React.FC<CrtStepProps> = ({
                               <SelectItem value="CRUT">CRUT - Variable Payment Based on Trust Value</SelectItem>
                             </SelectContent>
                           </Select>
-                          <InfoTooltip content="CRAT provides fixed annual payments while CRUT payments vary based on the trust's value each year." />
+                          <InfoTooltip text="CRAT provides fixed annual payments while CRUT payments vary based on the trust's value each year." />
                         </div>
                       </FormItem>
                     )}
