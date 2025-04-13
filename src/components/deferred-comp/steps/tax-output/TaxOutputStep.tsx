@@ -1,5 +1,6 @@
+
 import React from "react";
-import { LoadingStateEnum } from "@/types/LoadingState";
+import { LoadingStateEnum, LoadingState } from "@/types/LoadingState";
 import { useEquityForm } from "../../context/EquityFormContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
@@ -14,21 +15,21 @@ import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
 import { toast } from "sonner";
 import { saveScenario, EquityScenario } from "@/utils/taxScenarioStorage";
 import { FilingStatusType } from "@/utils/taxBracketData";
-import { LoadingState } from "./LoadingState";
+import { LoadingState as LoadingStateComponent } from "./LoadingState";
 
 interface TaxOutputStepProps {
   onPrevious: () => void;
-  loadingState?: LoadingStateEnum;
+  loadingState?: LoadingState;
 }
 
 export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
   const { formState, calculateAmtImpact, calculateDeferralBenefit, calculateMultiYearImpact } = useEquityForm();
-  const [loadingState, setLoadingState] = React.useState<LoadingStateEnum>(LoadingStateEnum.Loading);
+  const [loadingState, setLoadingState] = React.useState<LoadingState>('loading');
   const [disclaimerAcknowledged, setDisclaimerAcknowledged] = React.useState(false);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      setLoadingState(LoadingStateEnum.Success);
+      setLoadingState('success');
     }, 800);
     return () => clearTimeout(timer);
   }, []);
@@ -75,8 +76,8 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
     }
   };
 
-  if (loadingState === LoadingStateEnum.Loading) {
-    return <LoadingState state={LoadingStateEnum.Loading} />;
+  if (loadingState === 'loading') {
+    return <LoadingStateComponent state='loading' />;
   }
 
   const hasEquity = formState.equityType === "NSO" || formState.equityType === "ISO";

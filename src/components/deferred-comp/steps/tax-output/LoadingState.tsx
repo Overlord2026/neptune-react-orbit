@@ -4,7 +4,7 @@ import { RefreshCw } from "lucide-react";
 import { LoadingStateEnum } from "@/types/LoadingState";
 
 interface LoadingStateProps {
-  state?: LoadingStateEnum;
+  state?: LoadingStateEnum | 'idle' | 'loading' | 'success' | 'error';
 }
 
 export const LoadingState: React.FC<LoadingStateProps> = ({ state = LoadingStateEnum.Loading }) => {
@@ -12,8 +12,8 @@ export const LoadingState: React.FC<LoadingStateProps> = ({ state = LoadingState
     <div className="flex flex-col items-center justify-center py-12">
       <RefreshCw className="h-12 w-12 animate-spin text-primary mb-4" />
       <p className="text-lg text-muted-foreground">
-        {state === LoadingStateEnum.Loading && 'Calculating tax implications...'}
-        {state === LoadingStateEnum.Error && 'An error occurred while calculating tax implications.'}
+        {(state === LoadingStateEnum.Loading || state === 'loading') && 'Calculating tax implications...'}
+        {(state === LoadingStateEnum.Error || state === 'error') && 'An error occurred while calculating tax implications.'}
       </p>
     </div>
   );
