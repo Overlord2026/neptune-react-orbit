@@ -2,49 +2,23 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { EstateGiftingData } from '../types/EstateGiftingTypes';
-import { Button } from "@/components/ui/button";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { Save, Download, Share2, Clock, Shield, AlertTriangle, FileText } from "lucide-react";
 import TaxDisclaimerWithCheckbox from "@/components/tax/TaxDisclaimerWithCheckbox";
+import ScenarioSummary from '../components/ScenarioSummary';
+import EstateDistributionPieChart from '../components/EstateDistributionPieChart';
+import StrategyBenefitCard from '../components/StrategyBenefitCard';
+import LegislativeWarningBanner from '../components/LegislativeWarningBanner';
+import ActionButtons from '../components/ActionButtons';
+import EstateDisclaimerContent from '../components/EstateDisclaimerContent';
+import { formatCurrency } from '../utils/formatUtils';
+import { CURRENT_YEAR } from '../utils/constants';
 
 interface ResultsStepProps {
   data: EstateGiftingData;
   onSave: () => void;
 }
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0
-  }).format(value);
-};
-
-const getLifeCycleStageLabel = (stage: string): string => {
-  switch(stage) {
-    case 'young-adult': return 'Young Adult (20-40)';
-    case 'mid-career': return 'Mid-Career (40-55)';
-    case 'pre-retirement': return 'Pre-Retirement (55-65)';
-    case 'retirement': return 'Retirement (65+)';
-    default: return 'Not specified';
-  }
-};
-
-const getTrustTypeLabel = (type?: string): string => {
-  switch(type) {
-    case 'revocable': return 'Revocable Living Trust';
-    case 'ilit': return 'Irrevocable Life Insurance Trust (ILIT)';
-    case 'grat': return 'Grantor Retained Annuity Trust (GRAT)';
-    case 'slat': return 'Spousal Lifetime Access Trust (SLAT)';
-    case 'dynasty': return 'Dynasty Trust';
-    default: return 'No specific trust';
-  }
-};
-
 const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
-  const CURRENT_YEAR = new Date().getFullYear();
   const [disclaimerAcknowledged, setDisclaimerAcknowledged] = useState(false);
-  const [showPdfPreview, setShowPdfPreview] = useState(false);
   
   // Calculate net to heirs for each scenario
   const netToHeirsNoGifting = data.netWorth - data.noGiftingTax;
@@ -61,8 +35,6 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
     { name: "Estate Tax", value: data.giftingTax }
   ];
   
-  const COLORS = ['#00C47C', '#FF4D4F'];
-  
   // Estimated years of gifting
   const yearsOfGifting = data.yearOfPassing - CURRENT_YEAR;
   
@@ -70,253 +42,69 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
   const showTrustInfo = data.useTrustApproach && data.trustType && data.trustType !== 'none';
   const trustReductionValue = data.useTrustApproach ? data.trustReductionFactor * 100 : 0;
 
-  const handleDownloadPDF = () => {
-    setShowPdfPreview(true);
-    // In a real app, this would generate a PDF document
-    setTimeout(() => {
-      setShowPdfPreview(false);
-    }, 1500);
-  };
+  // Footer data for charts
+  const noGiftingFooterData = [
+    { label: "Projected Estate Value:", value: formatCurrency(data.netWorth) },
+    { label: "Estate Tax:", value: formatCurrency(data.noGiftingTax), className: "text-red-400" },
+    { label: "Net to Heirs:", value: formatCurrency(netToHeirsNoGifting), className: "font-medium" }
+  ];
+
+  const giftingFooterData = [
+    { 
+      label: data.giftingStrategy === 'annual' 
+        ? `Annual Gifts (over ${yearsOfGifting} years):` 
+        : 'One-time Gift:', 
+      value: formatCurrency(data.heirsBenefit - data.taxSavings), 
+      className: "text-green-400" 
+    },
+    ...(showTrustInfo ? [{ 
+      label: "Trust Benefit:", 
+      value: `~${trustReductionValue.toFixed(0)}% reduction`, 
+      className: "text-blue-400" 
+    }] : []),
+    { label: "Estate Tax:", value: formatCurrency(data.giftingTax), className: "text-red-400" },
+    { label: "Net to Heirs:", value: formatCurrency(netToHeirsWithGifting), className: "font-medium" }
+  ];
 
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-medium text-white mb-4">Results Summary</h3>
 
-      <div className="bg-[#1A1F2C] p-4 rounded-lg border border-[#353e52] mb-6">
-        <div className="flex items-center gap-2 text-[#B0B0B0] mb-2">
-          <Clock className="w-4 h-4" />
-          <span>Life Cycle Stage:</span>
-          <span className="text-white font-medium">{getLifeCycleStageLabel(data.lifeCycleStage)}</span>
-        </div>
-        <div className="flex gap-2 text-[#B0B0B0]">
-          <span>Planning Timeframe:</span>
-          <span className="text-white font-medium">{yearsOfGifting} years</span>
-          <span>(until {data.yearOfPassing})</span>
-        </div>
-        {showTrustInfo && (
-          <div className="flex items-center gap-2 text-[#B0B0B0] mt-2">
-            <Shield className="w-4 h-4" />
-            <span>Trust Strategy:</span>
-            <span className="text-white font-medium">{getTrustTypeLabel(data.trustType)}</span>
-          </div>
-        )}
-      </div>
+      <ScenarioSummary data={data} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border-[#353e52] bg-[#1A1F2C]">
           <CardContent className="p-4">
-            <h4 className="text-white font-medium mb-2">Scenario A: No Gifting</h4>
-            <div className="h-[180px] mt-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={noGiftingData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={70}
-                    fill="#8884d8"
-                    paddingAngle={3}
-                    dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {noGiftingData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                  <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <div className="space-y-2 text-sm mt-4">
-              <div className="flex justify-between">
-                <span className="text-[#B0B0B0]">Projected Estate Value:</span>
-                <span className="text-white">{formatCurrency(data.netWorth)}</span>
-              </div>
-              <div className="flex justify-between text-red-400">
-                <span>Estate Tax:</span>
-                <span>{formatCurrency(data.noGiftingTax)}</span>
-              </div>
-              <div className="flex justify-between font-medium">
-                <span className="text-[#B0B0B0]">Net to Heirs:</span>
-                <span className="text-white">{formatCurrency(netToHeirsNoGifting)}</span>
-              </div>
-            </div>
+            <EstateDistributionPieChart
+              title="Scenario A: No Gifting"
+              data={noGiftingData}
+              footerData={noGiftingFooterData}
+            />
           </CardContent>
         </Card>
 
         <Card className="border-[#353e52] bg-[#1A1F2C]">
           <CardContent className="p-4">
-            <h4 className="text-white font-medium mb-2">Scenario B: With Gifting</h4>
-            <div className="h-[180px] mt-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={giftingData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={70}
-                    fill="#8884d8"
-                    paddingAngle={3}
-                    dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {giftingData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                  <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <div className="space-y-2 text-sm mt-4">
-              <div className="flex justify-between">
-                <span className="text-[#B0B0B0]">
-                  {data.giftingStrategy === 'annual' 
-                    ? `Annual Gifts (over ${yearsOfGifting} years):` 
-                    : 'One-time Gift:'}
-                </span>
-                <span className="text-green-400">{formatCurrency(data.heirsBenefit - data.taxSavings)}</span>
-              </div>
-              {showTrustInfo && (
-                <div className="flex justify-between">
-                  <span className="text-[#B0B0B0]">Trust Benefit:</span>
-                  <span className="text-blue-400">~{trustReductionValue.toFixed(0)}% reduction</span>
-                </div>
-              )}
-              <div className="flex justify-between text-red-400">
-                <span>Estate Tax:</span>
-                <span>{formatCurrency(data.giftingTax)}</span>
-              </div>
-              <div className="flex justify-between font-medium">
-                <span className="text-[#B0B0B0]">Net to Heirs:</span>
-                <span className="text-white">{formatCurrency(netToHeirsWithGifting)}</span>
-              </div>
-            </div>
+            <EstateDistributionPieChart
+              title="Scenario B: With Gifting"
+              data={giftingData}
+              footerData={giftingFooterData}
+            />
           </CardContent>
         </Card>
       </div>
 
-      <div className="bg-gradient-to-r from-[#242A38] to-[#1A1F2C] p-6 rounded-lg border border-green-800/30">
-        <h4 className="text-white font-medium text-lg mb-4">Your Gifting Strategy Benefit</h4>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div>
-            <p className="text-[#B0B0B0] mb-1">Tax Savings from Gifting:</p>
-            <p className="text-green-400 text-2xl font-bold">{formatCurrency(data.taxSavings)}</p>
-          </div>
-          <div>
-            <p className="text-[#B0B0B0] mb-1">Additional Amount to Heirs:</p>
-            <p className="text-green-400 text-2xl font-bold">{formatCurrency(data.heirsBenefit)}</p>
-          </div>
-        </div>
-        
-        <div className="bg-[#1A1F2C] p-4 rounded-lg text-sm">
-          <p className="text-white">
-            By implementing your gifting strategy, your heirs could potentially receive an additional <strong className="text-green-400">{formatCurrency(data.heirsBenefit)}</strong> compared 
-            to taking no action, based on your current assumptions and tax laws as of {CURRENT_YEAR}.
-          </p>
-          
-          {showTrustInfo && (
-            <p className="text-blue-300 mt-2">
-              Your selected {getTrustTypeLabel(data.trustType)} may provide additional benefits beyond 
-              direct tax savings, such as asset protection, avoiding probate, or maintaining privacy.
-            </p>
-          )}
-          
-          {data.aboveThreshold && (
-            <p className="text-[#B0B0B0] mt-2">
-              Since your estate may exceed the federal exemption threshold, this gifting strategy could significantly reduce your potential estate tax liability.
-            </p>
-          )}
-          {!data.aboveThreshold && (
-            <p className="text-[#B0B0B0] mt-2">
-              Even though your estate is currently below the federal exemption threshold, this gifting strategy provides benefits due to removing future asset growth from your taxable estate and 
-              potential protection against future reductions in the estate tax exemption.
-            </p>
-          )}
-        </div>
-      </div>
+      <StrategyBenefitCard data={data} />
       
-      {/* Legislative Change Warning Banner */}
-      <div className="bg-amber-950/30 border border-amber-700/30 rounded-lg p-4 flex gap-3">
-        <div className="flex-shrink-0">
-          <AlertTriangle className="w-5 h-5 text-amber-500" />
-        </div>
-        <div className="text-sm">
-          <h5 className="text-amber-400 font-medium mb-1">Legislative Change Warning</h5>
-          <p className="text-[#B0B0B0]">
-            The federal estate tax exemption is scheduled to be reduced after 2025 unless extended by Congress. 
-            This could significantly impact estate tax liabilities. Consider reviewing your plan yearly and 
-            before any major legislative changes.
-          </p>
-        </div>
-      </div>
+      <LegislativeWarningBanner />
     
-      <div className="flex flex-wrap gap-2 mt-8">
-        <Button onClick={onSave} className="flex items-center gap-2">
-          <Save className="w-4 h-4" /> Save Scenario
-        </Button>
-        <Button 
-          variant="outline" 
-          className="flex items-center gap-2"
-          onClick={handleDownloadPDF}
-        >
-          <FileText className="w-4 h-4" /> Download PDF Report
-        </Button>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Share2 className="w-4 h-4" /> Share Results
-        </Button>
-      </div>
-      
-      {/* PDF Preview Toast */}
-      {showPdfPreview && (
-        <div className="fixed bottom-4 right-4 bg-[#1A1F2C] border border-[#353e52] p-4 rounded-lg shadow-lg z-50 animate-in fade-in slide-in-from-bottom-5">
-          <div className="flex items-center gap-3">
-            <FileText className="w-6 h-6 text-[#FFD700]" />
-            <div>
-              <h4 className="font-medium text-white">Preparing PDF Report</h4>
-              <p className="text-sm text-[#B0B0B0]">Your Estate & Gifting analysis report is being generated...</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <ActionButtons onSave={onSave} />
       
       <TaxDisclaimerWithCheckbox
         acknowledged={disclaimerAcknowledged}
         onAcknowledgeChange={setDisclaimerAcknowledged}
         title="Important Information"
-        content={
-          <>
-            <p>
-              This analysis is based on current tax laws as of {CURRENT_YEAR} and the assumptions you provided. 
-              Actual results may differ due to changes in tax laws, investment performance, or other factors.
-            </p>
-            <p className="mt-2 text-amber-400">
-              <strong>Estate Tax Sunset Provision:</strong> The federal estate tax exemption is scheduled to decrease by approximately 50% after 2025 
-              unless extended by Congress. This may significantly impact your estate planning needs.
-            </p>
-            {showTrustInfo && (
-              <p className="mt-2 text-blue-400">
-                <strong>Trust Implementation:</strong> Trust strategies require careful legal structuring and ongoing maintenance. 
-                The effectiveness of various trust approaches varies based on individual circumstances, changing tax laws, and proper implementation.
-              </p>
-            )}
-            <p className="mt-2 text-amber-400">
-              <strong>State Estate Taxes:</strong> This analysis focuses on federal estate taxes only. Some states impose 
-              their own estate or inheritance taxes, often with lower exemption amounts.
-            </p>
-            <p className="mt-2 text-yellow-400">
-              We strongly recommend consulting with a qualified estate planning attorney and tax advisor to implement 
-              and maintain your estate plan based on your specific circumstances.
-            </p>
-          </>
-        }
+        content={<EstateDisclaimerContent showTrustInfo={showTrustInfo} />}
         checkboxLabel="I understand these results are estimates and will consult with professional advisors"
       />
     </div>
