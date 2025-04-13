@@ -30,6 +30,8 @@ export type EstateGiftingData = {
   growthRate: number;
   useTrustApproach: boolean;
   lifeCycleStage: 'young-adult' | 'mid-career' | 'pre-retirement' | 'retirement';
+  trustType?: 'none' | 'revocable' | 'ilit' | 'grat' | 'slat' | 'dynasty';
+  trustReductionFactor: number;
   
   // Calculations (will be computed)
   noGiftingTax: number;
@@ -58,6 +60,8 @@ const EstateGiftingWizard: React.FC = () => {
     growthRate: 0.05, // 5% annual growth
     useTrustApproach: false,
     lifeCycleStage: 'mid-career',
+    trustType: 'none',
+    trustReductionFactor: 0,
     noGiftingTax: 0,
     giftingTax: 0,
     taxSavings: 0,
@@ -97,13 +101,19 @@ const EstateGiftingWizard: React.FC = () => {
     // Adjust exemption for inflation (simplified)
     const estimatedFutureExemption = wizardData.estateExemption * Math.pow(1.025, yearsUntilPassing);
     
+    // Apply trust reduction factor if applicable
+    const trustReductionAmount = wizardData.useTrustApproach ? 
+      (futureEstateWithGifting * wizardData.trustReductionFactor) : 0;
+      
+    const adjustedFutureEstateWithGifting = Math.max(0, futureEstateWithGifting - trustReductionAmount);
+    
     const taxableEstateNoGifting = Math.max(0, futureEstateNoGifting - estimatedFutureExemption - wizardData.lifetimeGiftsUsed);
-    const taxableEstateWithGifting = Math.max(0, futureEstateWithGifting - estimatedFutureExemption - wizardData.lifetimeGiftsUsed);
+    const taxableEstateWithGifting = Math.max(0, adjustedFutureEstateWithGifting - estimatedFutureExemption - wizardData.lifetimeGiftsUsed);
     
     const noGiftingTax = taxableEstateNoGifting * TAX_RATE;
     const giftingTax = taxableEstateWithGifting * TAX_RATE;
     const taxSavings = noGiftingTax - giftingTax;
-    const heirsBenefit = taxSavings + totalGiftValue;
+    const heirsBenefit = taxSavings + totalGiftValue + trustReductionAmount;
     
     return {
       noGiftingTax,
@@ -111,7 +121,9 @@ const EstateGiftingWizard: React.FC = () => {
       taxSavings,
       heirsBenefit,
       futureEstateNoGifting,
-      futureEstateWithGifting
+      futureEstateWithGifting,
+      adjustedFutureEstateWithGifting,
+      trustReductionAmount
     };
   };
 

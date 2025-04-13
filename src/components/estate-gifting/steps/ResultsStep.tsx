@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EstateGiftingData } from '../EstateGiftingWizard';
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { Save, Download, Share2, Clock } from "lucide-react";
+import { Save, Download, Share2, Clock, Shield } from "lucide-react";
 import TaxDisclaimerWithCheckbox from "@/components/tax/TaxDisclaimerWithCheckbox";
 
 interface ResultsStepProps {
@@ -30,6 +30,17 @@ const getLifeCycleStageLabel = (stage: string): string => {
   }
 };
 
+const getTrustTypeLabel = (type?: string): string => {
+  switch(type) {
+    case 'revocable': return 'Revocable Living Trust';
+    case 'ilit': return 'Irrevocable Life Insurance Trust (ILIT)';
+    case 'grat': return 'Grantor Retained Annuity Trust (GRAT)';
+    case 'slat': return 'Spousal Lifetime Access Trust (SLAT)';
+    case 'dynasty': return 'Dynasty Trust';
+    default: return 'No specific trust';
+  }
+};
+
 const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
   const CURRENT_YEAR = new Date().getFullYear();
   
@@ -52,6 +63,10 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
   
   // Estimated years of gifting
   const yearsOfGifting = data.yearOfPassing - CURRENT_YEAR;
+  
+  // Trust-related information
+  const showTrustInfo = data.useTrustApproach && data.trustType && data.trustType !== 'none';
+  const trustReductionValue = data.useTrustApproach ? data.trustReductionFactor * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -68,6 +83,13 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
           <span className="text-white font-medium">{yearsOfGifting} years</span>
           <span>(until {data.yearOfPassing})</span>
         </div>
+        {showTrustInfo && (
+          <div className="flex items-center gap-2 text-[#B0B0B0] mt-2">
+            <Shield className="w-4 h-4" />
+            <span>Trust Strategy:</span>
+            <span className="text-white font-medium">{getTrustTypeLabel(data.trustType)}</span>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -151,6 +173,12 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
                 </span>
                 <span className="text-green-400">{formatCurrency(data.heirsBenefit - data.taxSavings)}</span>
               </div>
+              {showTrustInfo && (
+                <div className="flex justify-between">
+                  <span className="text-[#B0B0B0]">Trust Benefit:</span>
+                  <span className="text-blue-400">~{trustReductionValue.toFixed(0)}% reduction</span>
+                </div>
+              )}
               <div className="flex justify-between text-red-400">
                 <span>Estate Tax:</span>
                 <span>{formatCurrency(data.giftingTax)}</span>
@@ -183,6 +211,14 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
             By implementing your gifting strategy, your heirs could potentially receive an additional <strong className="text-green-400">{formatCurrency(data.heirsBenefit)}</strong> compared 
             to taking no action, based on your current assumptions and tax laws as of {CURRENT_YEAR}.
           </p>
+          
+          {showTrustInfo && (
+            <p className="text-blue-300 mt-2">
+              Your selected {getTrustTypeLabel(data.trustType)} may provide additional benefits beyond 
+              direct tax savings, such as asset protection, avoiding probate, or maintaining privacy.
+            </p>
+          )}
+          
           {data.aboveThreshold && (
             <p className="text-[#B0B0B0] mt-2">
               Since your estate may exceed the federal exemption threshold, this gifting strategy could significantly reduce your potential estate tax liability.
@@ -223,6 +259,12 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
               The federal estate tax exemption is scheduled to decrease after 2025 unless extended by Congress. 
               This may significantly impact your estate planning needs.
             </p>
+            {showTrustInfo && (
+              <p className="mt-2 text-blue-400">
+                Trust strategies require careful legal structuring and ongoing maintenance. The effectiveness of various 
+                trust approaches varies based on individual circumstances, changing tax laws, and proper implementation.
+              </p>
+            )}
             <p className="mt-2 text-yellow-400">
               We strongly recommend consulting with a qualified estate planning attorney and tax advisor to implement 
               and maintain your estate plan based on your specific circumstances.

@@ -5,9 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EstateGiftingData } from '../EstateGiftingWizard';
 import { Slider } from "@/components/ui/slider";
-import { InfoIcon, AlertTriangle } from "lucide-react";
+import { InfoIcon, AlertTriangle, HelpCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface InheritanceScenarioStepProps {
   data: EstateGiftingData;
@@ -159,6 +161,94 @@ const InheritanceScenarioStep: React.FC<InheritanceScenarioStepProps> = ({ data,
         </div>
         
         {data.useTrustApproach && (
+          <>
+            <div className="ml-8 mt-2 space-y-4">
+              <div>
+                <Label htmlFor="trustType" className="text-white flex items-center gap-2">
+                  Anticipated Trust Approach
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-[#FFD700] cursor-pointer" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs bg-slate-900 text-white border-slate-800">
+                        <p>This is for estimation purposes only. Actual effectiveness varies by personal circumstances.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </Label>
+                <Select 
+                  value={data.trustType || "none"} 
+                  onValueChange={(value) => {
+                    onUpdateField('trustType', value);
+                    
+                    // Update the estate tax reduction factor based on trust type
+                    let reductionFactor = 0;
+                    switch(value) {
+                      case "revocable":
+                        reductionFactor = 0.05; // 5% reduction
+                        break;
+                      case "ilit":
+                        reductionFactor = 0.15; // 15% reduction
+                        break;
+                      case "grat":
+                        reductionFactor = 0.25; // 25% reduction
+                        break;
+                      case "slat":
+                        reductionFactor = 0.20; // 20% reduction
+                        break;
+                      case "dynasty":
+                        reductionFactor = 0.30; // 30% reduction
+                        break;
+                      default:
+                        reductionFactor = 0;
+                    }
+                    onUpdateField('trustReductionFactor', reductionFactor);
+                  }}
+                >
+                  <SelectTrigger className="w-full bg-[#1A1F2C] border-[#353e52] text-white">
+                    <SelectValue placeholder="Select trust type" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1A1F2C] border-[#353e52] text-white">
+                    <SelectItem value="none">No specific trust selected</SelectItem>
+                    <SelectItem value="revocable">Revocable Living Trust</SelectItem>
+                    <SelectItem value="ilit">Irrevocable Life Insurance Trust (ILIT)</SelectItem>
+                    <SelectItem value="grat">Grantor Retained Annuity Trust (GRAT)</SelectItem>
+                    <SelectItem value="slat">Spousal Lifetime Access Trust (SLAT)</SelectItem>
+                    <SelectItem value="dynasty">Dynasty Trust</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-[#B0B0B0] mt-1">
+                  Select a trust type to see how it might affect your estate tax projection
+                </p>
+              </div>
+
+              <Alert className="bg-blue-950/20 border-blue-800/30">
+                <InfoIcon className="h-4 w-4 text-blue-500" />
+                <AlertDescription className="text-blue-300">
+                  <p className="font-medium mb-1">Advanced Estate Planning Techniques</p>
+                  <p className="text-sm">
+                    GRATs, ILITs, dynasty trusts, and spousal lifetime access trusts may further reduce estate taxes. 
+                    This tool provides high-level estimates only—consult an estate attorney for specifics.
+                  </p>
+                </AlertDescription>
+              </Alert>
+              
+              <Alert className="bg-amber-950/20 border-amber-800/30">
+                <AlertTriangle className="h-4 w-4 text-amber-500" />
+                <AlertDescription className="text-amber-300">
+                  <p className="font-medium mb-1">Legal Disclaimer</p>
+                  <p className="text-sm">
+                    We do not practice law or provide individualized legal advice. This module's numbers are 
+                    approximate for your reference only. Trust strategies require legal expertise.
+                  </p>
+                </AlertDescription>
+              </Alert>
+            </div>
+          </>
+        )}
+        
+        {!data.useTrustApproach && (
           <Alert className="bg-blue-950/20 border-blue-800/30">
             <InfoIcon className="h-4 w-4 text-blue-500" />
             <AlertDescription className="text-blue-300">
