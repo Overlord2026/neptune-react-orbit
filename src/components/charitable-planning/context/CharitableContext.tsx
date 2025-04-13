@@ -19,6 +19,7 @@ const initialScenario: CharitableScenario = {
   },
   isItemizing: false,
   age: 65,
+  advancedStrategies: false,
   dafStrategy: {
     useDaf: false,
     bunchingYears: 1,
@@ -65,12 +66,26 @@ export const CharitableProvider: React.FC<{ children: ReactNode }> = ({ children
     const currentIndex = steps.indexOf(currentStep);
     
     if (currentIndex < steps.length - 1) {
+      // Skip steps based on scenario configuration
+      let nextIndex = currentIndex + 1;
+      const nextStepId = steps[nextIndex];
+      
       // Skip QCD step if user is under 70.5
-      if (steps[currentIndex + 1] === 'qcd' && scenario.age < 70.5) {
-        setCurrentStep(steps[currentIndex + 2]);
-      } else {
-        setCurrentStep(steps[currentIndex + 1]);
+      if (nextStepId === 'qcd' && scenario.age < 70.5) {
+        nextIndex += 1;
       }
+      
+      // Skip CRT step if user is not interested in advanced strategies
+      if (nextStepId === 'crt' && scenario.advancedStrategies === false) {
+        nextIndex += 1;
+      }
+      
+      // Skip QCD again if we landed on it after skipping CRT
+      if (steps[nextIndex] === 'qcd' && scenario.age < 70.5) {
+        nextIndex += 1;
+      }
+      
+      setCurrentStep(steps[nextIndex]);
     }
   };
 
@@ -80,12 +95,26 @@ export const CharitableProvider: React.FC<{ children: ReactNode }> = ({ children
     const currentIndex = steps.indexOf(currentStep);
     
     if (currentIndex > 0) {
-      // Skip QCD step if user is under 70.5 when going backwards
-      if (steps[currentIndex - 1] === 'qcd' && scenario.age < 70.5) {
-        setCurrentStep(steps[currentIndex - 2]);
-      } else {
-        setCurrentStep(steps[currentIndex - 1]);
+      // Skip steps based on scenario configuration when going backwards
+      let prevIndex = currentIndex - 1;
+      const prevStepId = steps[prevIndex];
+      
+      // Skip QCD step if user is under 70.5
+      if (prevStepId === 'qcd' && scenario.age < 70.5) {
+        prevIndex -= 1;
       }
+      
+      // Skip CRT step if user is not interested in advanced strategies
+      if (prevStepId === 'crt' && scenario.advancedStrategies === false) {
+        prevIndex -= 1;
+      }
+      
+      // Skip QCD again if we landed on it after skipping CRT
+      if (steps[prevIndex] === 'qcd' && scenario.age < 70.5) {
+        prevIndex -= 1;
+      }
+      
+      setCurrentStep(steps[prevIndex]);
     }
   };
 

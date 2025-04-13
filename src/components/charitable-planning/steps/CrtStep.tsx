@@ -34,6 +34,19 @@ const CrtStep: React.FC<CrtStepProps> = ({
         </div>
       </div>
       
+      <div className="bg-primary/10 border border-primary/20 p-4 rounded-md mb-4">
+        <div className="flex items-start gap-2">
+          <div>
+            <h5 className="text-primary font-medium mb-1">CRT Disclaimers</h5>
+            <ul className="text-xs text-muted-foreground space-y-2">
+              <li>Charitable Remainder Trust calculations require precise IRS tables & discount rates. This tool uses approximate factors. Consult an attorney or specialized planning software to finalize any CRT plan.</li>
+              <li>CRTs must pass the 10% remainder test and follow specific IRS rules. Additional constraints apply for CRAT vs. CRUT regarding payout rates.</li>
+              <li>Advanced variations like NIMCRUTs or Flip CRUTs require more complex calculations and specialized legal guidance.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
       <CrtForm 
         scenario={scenario}
         updateScenario={updateScenario}

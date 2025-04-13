@@ -23,3 +23,8 @@ export const getMutableSteps = () => {
 export const shouldSkipQcdStep = (age: number): boolean => {
   return age < 70.5;
 };
+
+// Check if CRT step should be skipped based on user preference
+export const shouldSkipCrtStep = (useAdvancedStrategies: boolean | undefined): boolean => {
+  return useAdvancedStrategies === false;
+};

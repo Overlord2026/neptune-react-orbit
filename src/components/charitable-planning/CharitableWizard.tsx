@@ -5,7 +5,7 @@ import WizardHeader from './WizardHeader';
 import WizardNavigation from './WizardNavigation';
 import { CharitableProvider, useCharitable } from './context/CharitableContext';
 import StepContentManager from './components/StepContentManager';
-import { getMutableSteps, shouldSkipQcdStep } from './config/wizardConfig';
+import { getMutableSteps, shouldSkipQcdStep, shouldSkipCrtStep } from './config/wizardConfig';
 import { MultiYearProvider } from '../tax/roth-conversion/multiYear/context/MultiYearContext';
 import { TaxTrapChecker } from '../tax/TaxTrapChecker';
 
@@ -13,8 +13,9 @@ import { TaxTrapChecker } from '../tax/TaxTrapChecker';
 const CharitableWizardContent: React.FC = () => {
   const { currentStep, setCurrentStep, scenario, updateScenario, nextStep, prevStep } = useCharitable();
   
-  // Determine if QCD step should be skipped
+  // Determine if steps should be skipped
   const skipQcdStep = shouldSkipQcdStep(scenario.age);
+  const skipCrtStep = shouldSkipCrtStep(scenario.advancedStrategies);
   
   // Get mutable steps for components
   const stepsForComponents = getMutableSteps();
@@ -52,6 +53,7 @@ const CharitableWizardContent: React.FC = () => {
           nextStep={nextStep}
           prevStep={prevStep}
           shouldSkipQcdStep={skipQcdStep}
+          shouldSkipCrtStep={skipCrtStep}
         />
         
         {showTaxTraps && trapCheckerData && (
@@ -68,7 +70,10 @@ const CharitableWizardContent: React.FC = () => {
           steps={stepsForComponents}
           currentStep={currentStep}
           onStepChange={setCurrentStep}
-          hideSteps={skipQcdStep && currentStep !== 'qcd' ? ['qcd'] : []}
+          hideSteps={[
+            ...(skipQcdStep && currentStep !== 'qcd' ? ['qcd'] : []),
+            ...(skipCrtStep && currentStep !== 'crt' ? ['crt'] : [])
+          ]}
         />
       </div>
     </Card>

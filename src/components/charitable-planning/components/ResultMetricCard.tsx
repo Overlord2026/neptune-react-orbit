@@ -22,12 +22,13 @@ const ResultMetricCard: React.FC<ResultMetricCardProps> = ({
   
   const bgColor = highlight ? "bg-primary/20" : "bg-[#1A1F2C]";
   const borderColor = highlight ? "border-primary/30" : "border-slate-700";
-  const titleColor = highlight ? "text-white" : "text-muted-foreground";
+  const titleColor = highlight ? "text-white font-medium" : "text-muted-foreground";
+  const valueColor = highlight ? "text-primary" : "text-white";
   
   return (
-    <div className={`${bgColor} ${borderColor} border rounded-lg p-4`}>
-      <h5 className={`${titleColor} text-sm font-medium`}>{title}</h5>
-      <div className="text-xl font-bold text-white mt-1">{formattedValue}</div>
+    <div className={`${bgColor} ${borderColor} border rounded-lg p-4 transition-all hover:border-primary/40`}>
+      <h5 className={`${titleColor} text-sm`}>{title}</h5>
+      <div className={`text-xl font-bold ${valueColor} mt-1`}>{formattedValue}</div>
       <p className="text-xs text-muted-foreground mt-1">{description}</p>
     </div>
   );

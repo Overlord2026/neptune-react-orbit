@@ -17,6 +17,7 @@ interface StepContentManagerProps {
   nextStep: () => void;
   prevStep: () => void;
   shouldSkipQcdStep: boolean;
+  shouldSkipCrtStep?: boolean;
 }
 
 const StepContentManager: React.FC<StepContentManagerProps> = ({ 
@@ -25,7 +26,8 @@ const StepContentManager: React.FC<StepContentManagerProps> = ({
   updateScenario, 
   nextStep, 
   prevStep,
-  shouldSkipQcdStep
+  shouldSkipQcdStep,
+  shouldSkipCrtStep
 }) => {
   switch (currentStep) {
     case 'basic-giving':
