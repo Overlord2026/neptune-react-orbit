@@ -1,7 +1,7 @@
 
 import React from "react";
 import { MetricCard } from "./MetricCard";
-import { YearlyTaxImpact } from "../../types/EquityTypes";
+import { YearlyTaxImpact } from "../../types/EquityTypes"; // Corrected import path
 import { formatCurrency } from "../../utils/formatUtils";
 import { AlertCircle } from "lucide-react";
 
