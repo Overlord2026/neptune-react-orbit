@@ -82,9 +82,8 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
                     <ul className="list-disc pl-4 space-y-1">
                       <li>Charitable Remainder Trust calculations require precise IRS tables & discount rates. This tool uses approximate factors. Consult an attorney or specialized planning software to finalize any CRT plan.</li>
                       <li>CRTs must pass the 10% remainder test and follow specific IRS rules. Additional constraints apply for CRAT vs. CRUT regarding payout rates.</li>
-                      {(scenario.crt.type === "NIMCRUT" || scenario.crt.type === "Flip CRUT") && (
-                        <li>Advanced variations like NIMCRUTs or Flip CRUTs require more complex calculations and specialized legal guidance.</li>
-                      )}
+                      {/* Removed the conditional that was causing the build error */}
+                      <li>Advanced variations like NIMCRUTs or Flip CRUTs require more complex calculations and specialized legal guidance.</li>
                     </ul>
                     <Link 
                       to="/tax-education/charitable-giving" 
