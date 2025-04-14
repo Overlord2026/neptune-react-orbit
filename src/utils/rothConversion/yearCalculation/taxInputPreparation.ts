@@ -58,6 +58,7 @@ export function prepareTaxInput({
     roth_conversion: conversionAmount,
     social_security: 0,
     isItemizedDeduction: false, // Will be determined based on charitable contribution
+    itemizedDeductionAmount: 0, // Default value, will update if itemizing
     filing_status: scenarioData.filingStatus,
     
     // Add spouse info if applicable

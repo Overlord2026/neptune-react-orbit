@@ -1,59 +1,109 @@
-
 /**
  * Tax Data Utilities
  * 
- * Functions for managing tax data currency, versioning, and updates
+ * Functions for managing and checking the currency of tax data.
  */
-
-import { 
-  checkTaxDataCurrency, 
-  markTaxDataAsCurrent
-} from './dataFeedUtils';
-
-import { 
-  getTaxDataVersionForScenario,
-  hasMidYearUpdates,
-  getMidYearUpdateWarning
-} from './taxDataVersioning';
 
 import { TaxDataCacheInfo } from './taxCalculatorTypes';
-import { EquityScenario, fetchEquityScenarios } from './taxScenarioStorage';
+
+// Tax data version and update information stored in local storage
+const TAX_DATA_STORAGE_KEY = 'tax_data_info';
+
+// Tax data version to compare against
+const CURRENT_TAX_DATA_VERSION = '2024.01.01';
+
+// Years with mid-year tax law updates
+const YEARS_WITH_MID_YEAR_UPDATES = [2018];
 
 /**
- * Pre-check if tax data is current before calculation
- * Returns information about data currency and when it was last updated
+ * Get tax data information from local storage
  */
-export function checkTaxDataBeforeCalculation(
-  sessionId: string = "default",
-  cacheTimeoutMinutes: number = 15
-): TaxDataCacheInfo {
-  return checkTaxDataCurrency(sessionId, cacheTimeoutMinutes);
-}
-
-/**
- * Mark the user's session tax data as current (after they choose to refresh)
- */
-export function refreshTaxData(sessionId: string = "default"): void {
-  markTaxDataAsCurrent(sessionId);
-}
-
-/**
- * Get equity scenarios for integration with other tax planning tools
- */
-export async function getEquityScenariosForTaxYear(taxYear: number): Promise<EquityScenario[]> {
-  const scenarios = await fetchEquityScenarios();
-  return scenarios.filter(scenario => {
-    // Find scenarios relevant to the requested tax year
-    if (scenario.results && Array.isArray(scenario.results)) {
-      return scenario.results.some(result => result.year === taxYear);
+const getTaxDataInformationFromStorage = (sessionId: string = "default") => {
+  try {
+    const storedData = localStorage.getItem(`${TAX_DATA_STORAGE_KEY}-${sessionId}`);
+    if (storedData) {
+      return JSON.parse(storedData);
     }
-    return false;
-  });
-}
+  } catch (error) {
+    console.error("Error getting tax data info from local storage:", error);
+  }
+  
+  return {
+    dataUpdatedAt: new Date(0),
+    isCurrent: false,
+    version: null
+  };
+};
 
-// Re-export for internal use
-export { 
-  getTaxDataVersionForScenario,
-  hasMidYearUpdates,
-  getMidYearUpdateWarning
+/**
+ * Save tax data information to local storage
+ */
+const saveTaxDataInformationToStorage = (
+  dataUpdatedAt: Date, 
+  isCurrent: boolean, 
+  version: string,
+  sessionId: string = "default"
+) => {
+  try {
+    const data = {
+      dataUpdatedAt: dataUpdatedAt.toISOString(),
+      isCurrent,
+      version
+    };
+    localStorage.setItem(`${TAX_DATA_STORAGE_KEY}-${sessionId}`, JSON.stringify(data));
+  } catch (error) {
+    console.error("Error saving tax data info to local storage:", error);
+  }
+};
+
+/**
+ * Check if tax data is current and refresh if needed
+ */
+export const checkTaxDataBeforeCalculation = (sessionId: string = "default"): TaxDataCacheInfo => {
+  // Convert string date to Date object to match the interface
+  const infoFromStorage = getTaxDataInformationFromStorage(sessionId);
+  
+  return {
+    dataUpdatedAt: new Date(infoFromStorage.dataUpdatedAt),
+    isCurrent: infoFromStorage.isCurrent
+  };
+};
+
+/**
+ * Refresh tax data by updating the timestamp and version
+ */
+export const refreshTaxData = (sessionId: string = "default") => {
+  const now = new Date();
+  saveTaxDataInformationToStorage(now, true, CURRENT_TAX_DATA_VERSION, sessionId);
+  
+  return {
+    dataUpdatedAt: now,
+    isCurrent: true
+  };
+};
+
+/**
+ * Get tax data version for a specific year
+ */
+export const getTaxDataVersionForScenario = (year: number, scenarioDate?: Date) => {
+  // For simplicity, we're using a single version for all years
+  // In a real application, you might have different versions for different years
+  return {
+    year,
+    version: CURRENT_TAX_DATA_VERSION
+  };
+};
+
+/**
+ * Check if a tax year has mid-year updates
+ */
+export const hasMidYearUpdates = (year: number): boolean => {
+  return YEARS_WITH_MID_YEAR_UPDATES.includes(year);
+};
+
+/**
+ * Get a warning message for tax years with mid-year updates
+ */
+export const getMidYearUpdateWarning = (year: number): string => {
+  return `Tax year ${year} had mid-year updates that may affect your calculation.`;
 };

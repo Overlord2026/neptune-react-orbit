@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -59,7 +58,8 @@ const RealTimeBracketPreview: React.FC<RealTimeBracketPreviewProps> = ({
       ira_distributions: 0,
       roth_conversion: debouncedConversion,
       social_security: 0,
-      isItemizedDeduction: false
+      isItemizedDeduction: false,
+      itemizedDeductionAmount: 0
     };
 
     const result = calculateTaxScenario(taxInput, "Real-time Preview");

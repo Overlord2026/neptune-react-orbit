@@ -22,6 +22,7 @@ const INITIAL_TAX_INPUT: TaxInput = {
   roth_conversion: 0,
   social_security: 30000,
   isItemizedDeduction: false,
+  itemizedDeductionAmount: 0,
   filing_status: 'married',
 };
 

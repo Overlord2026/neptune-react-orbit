@@ -1,4 +1,3 @@
-
 export type ConversionStrategyType =
   | "fixed"
   | "bracket_12"
@@ -71,6 +70,12 @@ export interface MultiYearScenarioData {
     bunchingYears: number;
     bunchingAmount: number;
   };
+  
+  // Add state tax properties
+  includeStateTax?: boolean;
+  residentState?: string;
+  stateRelocationYear?: number;
+  futureResidentState?: string;
 }
 
 export interface YearlyResult {

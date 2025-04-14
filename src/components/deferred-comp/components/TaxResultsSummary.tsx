@@ -65,18 +65,18 @@ export const TaxResultsSummary: React.FC = () => {
             />
             
             <TaxBreakdownSection
+              yearData={yearlyData}
+              activeYear={activeYear}
               hasEquity={hasEquity}
               hasDeferred={hasDeferred}
               triggersAmt={triggersAmt}
-              yearlyData={yearlyData}
-              activeYear={activeYear}
               spreadPerShare={taxImpact.spreadPerShare}
               nextYearIncome={taxImpact.nextYearIncome}
               hasStateTax={hasStateTax}
-              stateTaxInfo={hasStateTax ? {
+              stateTaxInfo={hasStateTax && yearlyData?.stateTax ? {
                 stateCode: formState.residentState,
-                stateTax: yearlyData?.stateTax || 0,
-                federalTax: yearlyData?.federalTax || 0
+                stateTax: yearlyData.stateTax || 0,
+                federalTax: yearlyData.federalTax || 0
               } : undefined}
             />
             
@@ -91,4 +91,3 @@ export const TaxResultsSummary: React.FC = () => {
     </div>
   );
 };
-

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -21,7 +20,10 @@ const StateTaxSelector: React.FC<StateTaxSelectorProps> = ({
   onStateChange,
 }) => {
   // Get the popular states first, then alphabetically sort the rest
-  const popularStates: StateCode[] = ['CA', 'NY', 'TX', 'FL', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI'];
+  const popularStates: StateCode[] = ['CA', 'NY', 'TX', 'FL', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI'].filter(
+    // Filter to only include states that are valid StateCode values
+    state => Object.keys(stateTaxData).includes(state)
+  ) as StateCode[];
   
   // Create a list of all available states for the dropdown
   const stateOptions = Object.keys(stateTaxData) as StateCode[];

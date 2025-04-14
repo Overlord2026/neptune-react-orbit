@@ -25,6 +25,20 @@ export interface ItemizedDeductions {
   otherDeductions: number;
 }
 
+// Define filing steps type
+export type FilingStep = 'eligibility' | 'personal' | 'income' | 'deductions' | 'review' | 'file' | 'confirmation';
+
+// Define filing steps for navigation
+export const FILING_STEPS = [
+  { id: 'eligibility', label: 'Eligibility' },
+  { id: 'personal', label: 'Personal Info' },
+  { id: 'income', label: 'Income' },
+  { id: 'deductions', label: 'Deductions' },
+  { id: 'review', label: 'Review' },
+  { id: 'file', label: 'File Return' },
+  { id: 'confirmation', label: 'Confirmation' }
+];
+
 export interface TaxReturnData {
   // Personal Information
   firstName: string;
@@ -74,4 +88,16 @@ export interface TaxReturnData {
   includeStateTax?: boolean;
   residentState?: StateCode;
   stateTax?: number;
+  
+  // Additional fields needed for components
+  hasOnlyW2Income?: boolean;
+  hasSelfEmploymentIncome?: boolean;
+  hasDependents?: boolean;
+  isOver65?: boolean;
+  hasHealthInsurance?: boolean;
+  investmentIncome?: number;
+  socialSecurityBenefits?: number;
+  disclaimerAcknowledged?: boolean;
+  referenceNumber?: string;
+  bankInfo?: any;
 }

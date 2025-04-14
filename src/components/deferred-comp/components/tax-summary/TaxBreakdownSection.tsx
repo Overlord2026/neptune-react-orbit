@@ -1,82 +1,68 @@
-
 import React from 'react';
 import { YearlyTaxImpact } from '../../types';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { InfoCircle } from "lucide-react";
 import { YearlyTaxMetrics } from './YearlyTaxMetrics';
-import { StateCode } from '@/utils/stateTaxData';
-import { formatCurrency } from '@/utils/formatUtils';
-
-interface StateTaxInfo {
-  stateCode?: StateCode;
-  stateTax: number;
-  federalTax: number;
-}
 
 interface TaxBreakdownSectionProps {
+  yearData: YearlyTaxImpact | undefined;
+  activeYear: "current" | "next";
   hasEquity: boolean;
   hasDeferred: boolean;
   triggersAmt: boolean;
-  yearlyData?: YearlyTaxImpact;
-  activeYear: "current" | "next";
   spreadPerShare: number;
   nextYearIncome: number;
-  hasStateTax?: boolean;
-  stateTaxInfo?: StateTaxInfo;
+  hasStateTax: boolean;
+  stateTaxInfo?: {
+    stateCode: string;
+    stateTax: number;
+    federalTax: number;
+  };
 }
 
 export const TaxBreakdownSection: React.FC<TaxBreakdownSectionProps> = ({
+  yearData,
+  activeYear,
   hasEquity,
   hasDeferred,
   triggersAmt,
-  yearlyData,
-  activeYear,
   spreadPerShare,
   nextYearIncome,
   hasStateTax,
   stateTaxInfo
 }) => {
-  if (!yearlyData) {
-    return <div className="text-muted-foreground">No tax data available for this year.</div>;
-  }
+  if (!yearData) return null;
+
+  const { ordinaryIncome, totalTax, marginalRate } = yearData;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h4 className="font-medium text-gray-300 mb-2">Tax Breakdown</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <YearlyTaxMetrics
-            yearlyData={yearlyData}
-            activeYear={activeYear}
-            hasEquity={hasEquity}
-            hasDeferred={hasDeferred}
-            triggersAmt={triggersAmt}
-            spreadPerShare={spreadPerShare}
-            nextYearIncome={nextYearIncome}
-          />
-        </div>
-      </div>
-
-      {/* Add State Tax Information if applicable */}
-      {hasStateTax && stateTaxInfo && (
-        <div className="bg-primary/10 p-4 rounded-md border border-primary/20">
-          <h4 className="font-medium text-gray-200 mb-2">
-            State Tax Impact ({stateTaxInfo.stateCode})
+    <div className="space-y-4 text-white">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h4 className="text-sm font-semibold">
+            {activeYear === "current" ? "This Year's" : "Next Year's"} Income
           </h4>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div>Federal Tax:</div>
-            <div className="text-right font-medium">{formatCurrency(stateTaxInfo.federalTax)}</div>
-            
-            <div>State Tax:</div>
-            <div className="text-right font-medium">{formatCurrency(stateTaxInfo.stateTax)}</div>
-            
-            <div className="font-medium">Total Tax:</div>
-            <div className="text-right font-medium">{formatCurrency(stateTaxInfo.federalTax + stateTaxInfo.stateTax)}</div>
-          </div>
+          <p className="text-3xl font-bold">${ordinaryIncome.toLocaleString()}</p>
         </div>
-      )}
-
-      <div className="text-xs text-gray-400">
-        Note: Tax calculations are estimates based on provided information and may not include all applicable deductions, credits, or special circumstances. Please consult a tax professional for advice specific to your situation.
+        <Badge variant="secondary">
+          {marginalRate.toFixed(0)}% Tax Bracket
+        </Badge>
       </div>
+
+      <Separator className="bg-zinc-700" />
+
+      <YearlyTaxMetrics
+        yearData={yearData}
+        activeYear={activeYear}
+        hasEquity={hasEquity}
+        hasDeferred={hasDeferred}
+        triggersAmt={triggersAmt}
+        spreadPerShare={spreadPerShare}
+        nextYearIncome={nextYearIncome}
+        hasStateTax={hasStateTax}
+        stateTaxInfo={stateTaxInfo}
+      />
     </div>
   );
 };

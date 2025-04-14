@@ -16,6 +16,13 @@ export interface EquityScenario extends TaxResult {
   deferralBenefit?: number;
   scenario_name: string;  // Added to match TaxOutputStep usage
   id?: string;  // Optional ID to match usage in TaxOutputStep
+  brackets_breakdown: {
+    ordinary: { bracket: number; amount: number; tax: number }[];
+    capitalGains: { bracket: number; amount: number; tax: number }[];
+  };
+  tax_data_updated_at: Date;
+  tax_data_is_current: boolean;
+  tax_data_version?: string;
 }
 
 /**
