@@ -43,8 +43,8 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
   };
   
   // Get the state code safely, ensuring it's a valid StateCode or undefined
-  const safeResidentState = data.residentState && data.residentState !== '' ? 
-    (data.residentState as StateCode) : 
+  const safeResidentState = data.residentState && data.residentState !== "" ? 
+    data.residentState as StateCode : 
     undefined;
   
   return (

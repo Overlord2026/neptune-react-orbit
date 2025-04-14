@@ -88,7 +88,7 @@ export interface TaxReturnData {
   
   // State tax information
   includeStateTax?: boolean;
-  residentState?: StateCode | ''; // Allow empty string
+  residentState?: StateCode | string; // Allow empty string
   stateTax?: number;
   
   // Additional fields needed for components
