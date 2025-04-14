@@ -2,19 +2,19 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, ArrowRight, HelpCircle } from 'lucide-react';
 import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableRow, 
+  TableHead, 
+  TableCell 
+} from '@/components/ui/table';
 import { BusinessIncomeInput, BusinessTaxResult, calculateSmallBusinessTax } from '@/utils/tax/businessTaxCalculator';
 import { formatCurrency, formatPercent } from '@/utils/formatUtils';
+import { ArrowLeft, ArrowRight, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface EntityComparisonStepProps {
   businessInput: BusinessIncomeInput;
@@ -24,253 +24,254 @@ interface EntityComparisonStepProps {
   onPrev: () => void;
 }
 
-const EntityComparisonStep: React.FC<EntityComparisonStepProps> = ({ 
-  businessInput, 
+const EntityComparisonStep: React.FC<EntityComparisonStepProps> = ({
+  businessInput,
   updateBusinessInput,
   taxResult,
   onNext,
   onPrev
 }) => {
-  const [sCorpWagePct, setSCorpWagePct] = useState(60);
+  const [sCorpWages, setSCorpWages] = useState(businessInput.sCorpWages || businessInput.income * 0.5);
+  const [sCorpDistributions, setSCorpDistributions] = useState(
+    businessInput.sCorpDistributions || 
+    (businessInput.income - (businessInput.sCorpWages || businessInput.income * 0.5))
+  );
   const [sCorpResult, setSCorpResult] = useState<BusinessTaxResult | null>(null);
-  const [soleProprietorshipResult, setSoleProprietorshipResult] = useState<BusinessTaxResult | null>(null);
-  const netProfit = taxResult?.netProfit || businessInput.income - Object.values(businessInput.expenses || {}).reduce((sum, exp) => sum + exp, 0);
-  
-  // Calculate results for comparison
+  const [showDetails, setShowDetails] = useState(false);
+
+  // Calculate S-Corp tax results when inputs change
   useEffect(() => {
-    // Calculate sole proprietorship scenario
-    const soleProprietorshipTax = calculateSmallBusinessTax({
-      ...businessInput,
-      businessType: 'sole_proprietorship',
-    });
-    setSoleProprietorshipResult(soleProprietorshipTax);
-    
-    // Calculate S-Corp scenario
-    const wageAmount = (netProfit * sCorpWagePct) / 100;
-    const distributionAmount = netProfit - wageAmount;
-    
-    const sCorpTax = calculateSmallBusinessTax({
-      ...businessInput,
-      businessType: 's_corp',
-      sCorpWages: wageAmount,
-      sCorpDistributions: distributionAmount,
-    });
-    setSCorpResult(sCorpTax);
-    
-  }, [businessInput, sCorpWagePct, netProfit]);
-  
-  // Calculate tax savings
-  const calculateSavings = () => {
-    if (!soleProprietorshipResult || !sCorpResult) return 0;
-    
-    // For a simple comparison, look at total taxes paid
-    const solePropTax = soleProprietorshipResult.selfEmploymentTax;
-    const sCorpTax = sCorpResult.payrollTaxes;
-    
-    return solePropTax - sCorpTax;
-  };
-  
-  const savings = calculateSavings();
-  const savingsPct = (savings / (soleProprietorshipResult?.selfEmploymentTax || 1)) * 100;
-  
-  // Update the main business input with the S-Corp allocation when continuing
-  const handleContinue = () => {
-    const wageAmount = (netProfit * sCorpWagePct) / 100;
-    const distributionAmount = netProfit - wageAmount;
-    
+    if (businessInput.income > 0) {
+      const sCorpInput: BusinessIncomeInput = {
+        ...businessInput,
+        businessType: 's_corp',
+        sCorpWages,
+        sCorpDistributions
+      };
+      
+      const result = calculateSmallBusinessTax(sCorpInput);
+      setSCorpResult(result);
+    }
+  }, [businessInput, sCorpWages, sCorpDistributions]);
+
+  // Update parent state before proceeding
+  const handleNext = () => {
     updateBusinessInput({
-      sCorpWages: wageAmount,
-      sCorpDistributions: distributionAmount
+      sCorpWages,
+      sCorpDistributions
     });
-    
     onNext();
   };
-  
-  // Get reasonable compensation warning
-  const getWarningBadge = () => {
-    if (!sCorpResult) return null;
-    
-    const reasonableCompWarning = sCorpResult.warnings.find(w => w.type === 'reasonable_compensation');
-    
-    if (!reasonableCompWarning) return (
-      <Badge className="bg-green-600/20 text-green-500 hover:bg-green-600/30">Reasonable Compensation</Badge>
-    );
-    
-    if (reasonableCompWarning.severity === 'error') {
-      return <Badge variant="destructive">Unreasonably Low Salary</Badge>;
-    } else {
-      return <Badge variant="warning" className="bg-yellow-600/20 text-yellow-500 hover:bg-yellow-600/30">Questionable Compensation</Badge>;
-    }
+
+  // Toggle detailed comparison
+  const toggleDetails = () => {
+    setShowDetails(!showDetails);
   };
+
+  // Update wages and ensure distributions also update
+  const handleWageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const wages = Number(event.target.value);
+    setSCorpWages(wages);
+    // Ensure wages + distributions = net profit
+    setSCorpDistributions(Math.max(0, businessInput.income - wages));
+  };
+
+  // Update distributions and ensure wages also update
+  const handleDistributionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const distributions = Number(event.target.value);
+    setSCorpDistributions(distributions);
+    // Ensure wages + distributions = net profit
+    setSCorpWages(Math.max(0, businessInput.income - distributions));
+  };
+
+  // Calculate tax savings
+  const calculateSavings = () => {
+    if (!taxResult || !sCorpResult) return 0;
+    return taxResult.selfEmploymentTax - sCorpResult.payrollTaxes;
+  };
+
+  const taxSavings = calculateSavings();
+  const isLowWage = sCorpWages / businessInput.income < 0.4;
   
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold text-white">Entity Structure Comparison</h3>
-        <p className="text-muted-foreground">Compare different business structures to optimize your tax situation</p>
-      </div>
+      <h3 className="text-xl font-bold text-white">Entity Structure Comparison</h3>
       
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* Sole Proprietorship Card */}
+      <p className="text-muted-foreground">
+        Compare your current structure with an S-Corporation to see potential tax savings. Adjust the wage and distribution amounts below.
+      </p>
+      
+      {isLowWage && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Reasonable Compensation Warning</AlertTitle>
+          <AlertDescription>
+            Your S-Corp wages may be too low compared to industry standards. The IRS requires S-Corp owners to pay themselves "reasonable compensation" before taking distributions.
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Current Structure Card */}
         <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Sole Proprietorship</CardTitle>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Current Structure</CardTitle>
+              <Badge variant="outline" className="bg-blue-600/20 text-blue-400">
+                {businessInput.businessType === 'sole_proprietorship' ? 'Sole Prop' : 
+                 businessInput.businessType === 'single_member_llc' ? 'LLC' : 
+                 businessInput.businessType === 'partnership' ? 'Partnership' : 'Other'}
+              </Badge>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <p className="text-muted-foreground">Net Profit:</p>
-                <p className="font-semibold text-white">{formatCurrency(soleProprietorshipResult?.netProfit || 0)}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">SE Tax:</p>
-                <p className="font-semibold text-white">{formatCurrency(soleProprietorshipResult?.selfEmploymentTax || 0)}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">QBI Deduction:</p>
-                <p className="font-semibold text-white">
-                  {soleProprietorshipResult?.qbiDeduction 
-                    ? formatCurrency(soleProprietorshipResult.qbiDeduction)
-                    : "Not Applicable"}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Net Taxable Income:</p>
-                <p className="font-semibold text-white">{formatCurrency(soleProprietorshipResult?.netTaxableIncome || 0)}</p>
-              </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Net Profit</p>
+              <p className="text-xl font-semibold">{formatCurrency(businessInput.income)}</p>
             </div>
-            
-            {/* QBI Warning */}
-            {soleProprietorshipResult?.warnings.find(w => w.type === 'qbi_limitation') && (
-              <Alert variant="warning" className="bg-yellow-600/10 text-yellow-500 border-yellow-600/20">
-                <HelpCircle className="h-4 w-4" />
-                <AlertTitle>QBI Limitation</AlertTitle>
-                <AlertDescription className="text-xs">
-                  Your income may exceed thresholds for full QBI deduction.
-                </AlertDescription>
-              </Alert>
-            )}
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">
+                {businessInput.businessType === 'sole_proprietorship' || businessInput.businessType === 'single_member_llc' ? 
+                  'Self-Employment Tax' : 'Tax Burden'}
+              </p>
+              <p className="text-xl font-semibold">{formatCurrency(taxResult?.selfEmploymentTax || 0)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Effective SE Tax Rate</p>
+              <p className="text-xl font-semibold">{formatPercent((taxResult?.selfEmploymentTax || 0) / businessInput.income)}</p>
+            </div>
           </CardContent>
         </Card>
         
-        {/* S-Corporation Card */}
+        {/* S-Corp Structure Card */}
         <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">S-Corporation</CardTitle>
-            {getWarningBadge()}
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">S-Corporation Structure</CardTitle>
+              {taxSavings > 0 ? (
+                <Badge className="bg-green-600/20 text-green-500">
+                  Save {formatCurrency(taxSavings)}
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="bg-yellow-600/20 text-yellow-500">
+                  No Savings
+                </Badge>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-muted-foreground">Owner's Salary:</p>
-                <p className="font-semibold text-white">
-                  {formatCurrency((netProfit * sCorpWagePct) / 100)} 
-                  <span className="text-xs text-muted-foreground ml-1">({sCorpWagePct}%)</span>
-                </p>
+                <label htmlFor="wages" className="text-sm text-muted-foreground mb-1 block">Owner's Wages</label>
+                <input
+                  id="wages"
+                  type="number"
+                  value={sCorpWages}
+                  onChange={handleWageChange}
+                  className="w-full px-3 py-2 bg-[#2A2F3C] border border-[#3A3F4C] rounded-md text-white"
+                />
               </div>
               <div>
-                <p className="text-muted-foreground">Distributions:</p>
-                <p className="font-semibold text-white">
-                  {formatCurrency(netProfit - ((netProfit * sCorpWagePct) / 100))}
-                  <span className="text-xs text-muted-foreground ml-1">({100 - sCorpWagePct}%)</span>
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Payroll Taxes:</p>
-                <p className="font-semibold text-white">{formatCurrency(sCorpResult?.payrollTaxes || 0)}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">QBI Deduction:</p>
-                <p className="font-semibold text-white">
-                  {sCorpResult?.qbiDeduction 
-                    ? formatCurrency(sCorpResult.qbiDeduction)
-                    : "Not Applicable"}
-                </p>
+                <label htmlFor="distributions" className="text-sm text-muted-foreground mb-1 block">Distributions</label>
+                <input
+                  id="distributions"
+                  type="number"
+                  value={sCorpDistributions}
+                  onChange={handleDistributionChange}
+                  className="w-full px-3 py-2 bg-[#2A2F3C] border border-[#3A3F4C] rounded-md text-white"
+                />
               </div>
             </div>
             
             <div>
-              <div className="flex justify-between mb-2">
-                <Label>Salary Percentage: {sCorpWagePct}%</Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs">The IRS requires S-Corp owners to pay themselves a "reasonable salary" before taking distributions. A very low salary percentage may trigger IRS scrutiny.</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <Slider
-                value={[sCorpWagePct]}
-                min={20}
-                max={100}
-                step={5}
-                onValueChange={(values) => setSCorpWagePct(values[0])}
-                className="py-4"
-              />
+              <p className="text-sm text-muted-foreground mb-1">Payroll Taxes</p>
+              <p className="text-xl font-semibold">{formatCurrency(sCorpResult?.payrollTaxes || 0)}</p>
+            </div>
+            
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Effective Tax Rate</p>
+              <p className="text-xl font-semibold">{formatPercent((sCorpResult?.payrollTaxes || 0) / businessInput.income)}</p>
             </div>
           </CardContent>
         </Card>
       </div>
       
-      {/* Comparison Results */}
-      {soleProprietorshipResult && sCorpResult && (
-        <Card className="border-[#2A2F3C] bg-[#1A1F2C]/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Comparison Summary</CardTitle>
+      <div className="flex items-center justify-center">
+        <Button variant="link" onClick={toggleDetails} className="flex items-center gap-1">
+          {showDetails ? "Hide Detailed Comparison" : "Show Detailed Comparison"}
+          {showDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </Button>
+      </div>
+      
+      {showDetails && (
+        <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70">
+          <CardHeader>
+            <CardTitle className="text-lg">Detailed Comparison</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <p className="text-muted-foreground text-sm">Total Tax with Sole Proprietorship:</p>
-                  <p className="font-semibold text-white text-lg">{formatCurrency(soleProprietorshipResult.selfEmploymentTax)}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-sm">Total Tax with S-Corporation:</p>
-                  <p className="font-semibold text-white text-lg">{formatCurrency(sCorpResult.payrollTaxes)}</p>
-                </div>
-              </div>
-              
-              <div className="border-t border-[#2A2F3C] pt-4">
-                <p className="text-muted-foreground text-sm">Potential Tax Savings with S-Corporation:</p>
-                <div className="flex items-end gap-2">
-                  <p className={`font-bold text-xl ${savings > 0 ? 'text-green-500' : 'text-white'}`}>
-                    {formatCurrency(savings)}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    ({savings > 0 ? '-' : ''}{Math.abs(savingsPct).toFixed(1)}%)
-                  </p>
-                </div>
-              </div>
-              
-              {/* Disclaimer */}
-              <Alert className="bg-blue-600/10 text-blue-500 border-blue-600/20">
-                <HelpCircle className="h-4 w-4" />
-                <AlertTitle>Important Consideration</AlertTitle>
-                <AlertDescription className="text-xs">
-                  S-Corps require more administrative work, including payroll processing, additional tax filings, and separate accounting. These costs may offset some tax savings.
-                </AlertDescription>
-              </Alert>
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Metric</TableHead>
+                  <TableHead>Current Structure</TableHead>
+                  <TableHead>S-Corporation</TableHead>
+                  <TableHead>Difference</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Net Profit</TableCell>
+                  <TableCell>{formatCurrency(businessInput.income)}</TableCell>
+                  <TableCell>{formatCurrency(businessInput.income)}</TableCell>
+                  <TableCell>$0</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Owner's Wages</TableCell>
+                  <TableCell>N/A</TableCell>
+                  <TableCell>{formatCurrency(sCorpWages)}</TableCell>
+                  <TableCell>N/A</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Distributions</TableCell>
+                  <TableCell>N/A</TableCell>
+                  <TableCell>{formatCurrency(sCorpDistributions)}</TableCell>
+                  <TableCell>N/A</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>SE Tax / Payroll Tax</TableCell>
+                  <TableCell>{formatCurrency(taxResult?.selfEmploymentTax || 0)}</TableCell>
+                  <TableCell>{formatCurrency(sCorpResult?.payrollTaxes || 0)}</TableCell>
+                  <TableCell className={taxSavings > 0 ? "text-green-500" : "text-red-500"}>
+                    {taxSavings > 0 ? "-" : ""}{formatCurrency(Math.abs(taxSavings))}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>QBI Deduction</TableCell>
+                  <TableCell>{formatCurrency(taxResult?.qbiDeduction || 0)}</TableCell>
+                  <TableCell>{formatCurrency(sCorpResult?.qbiDeduction || 0)}</TableCell>
+                  <TableCell>{formatCurrency((sCorpResult?.qbiDeduction || 0) - (taxResult?.qbiDeduction || 0))}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       )}
       
-      {/* Navigation buttons */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onPrev}
-        >
+      <Alert variant="default" className="bg-amber-50/10 border-amber-600/20">
+        <AlertTriangle className="h-4 w-4 text-amber-600" />
+        <AlertTitle>S-Corporation Considerations</AlertTitle>
+        <AlertDescription className="text-sm text-muted-foreground">
+          S-Corporations require additional administrative overhead, including payroll filings, separate tax returns, and potentially higher accounting fees.
+          Many states also charge minimum franchise taxes or fees for corporations. Consult with a tax professional before making any entity changes.
+        </AlertDescription>
+      </Alert>
+      
+      <div className="flex justify-between">
+        <Button variant="outline" onClick={onPrev} className="flex items-center">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
-        <Button onClick={handleContinue}>
-          Continue <ArrowRight className="ml-2 h-4 w-4" />
+        <Button onClick={handleNext} className="flex items-center">
+          Next <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>
