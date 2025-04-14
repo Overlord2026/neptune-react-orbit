@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { EstateGiftingData } from '../types/EstateGiftingTypes';
@@ -11,6 +12,7 @@ import EstateDisclaimerContent from '../components/EstateDisclaimerContent';
 import { formatCurrency } from '../utils/formatUtils';
 import { CURRENT_YEAR } from '../utils/constants';
 import ShareScenarioCard from '@/components/tax-planning/collaboration/ShareScenarioCard';
+import ExportScenarioToPDF from '@/components/tax-planning/ExportScenarioToPDF';
 
 interface ResultsStepProps {
   data: EstateGiftingData;
@@ -73,6 +75,18 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
     { id: '3', name: 'Estate Inventory.xlsx', type: 'spreadsheet' }
   ];
 
+  // Prepare data for PDF export
+  const scenarioData = {
+    ...data,
+    netToHeirsNoGifting,
+    netToHeirsWithGifting,
+    noGiftingData,
+    giftingData,
+    yearsOfGifting,
+    showTrustInfo,
+    trustReductionValue
+  };
+
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-medium text-white mb-4">Results Summary</h3>
@@ -105,12 +119,23 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
       
       <LegislativeWarningBanner />
       
-      <ShareScenarioCard
-        scenarioId={`estate-${CURRENT_YEAR}-${data.yearOfPassing}`}
-        scenarioType="estate"
-        scenarioName={`Estate & Gifting Strategy (${CURRENT_YEAR}-${data.yearOfPassing})`}
-        documents={taxVaultDocuments}
-      />
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <ShareScenarioCard
+          scenarioId={`estate-${CURRENT_YEAR}-${data.yearOfPassing}`}
+          scenarioType="estate"
+          scenarioName={`Estate & Gifting Strategy (${CURRENT_YEAR}-${data.yearOfPassing})`}
+          documents={taxVaultDocuments}
+        />
+        
+        <div className="self-end">
+          <ExportScenarioToPDF
+            scenarioId={`estate-${CURRENT_YEAR}-${data.yearOfPassing}`}
+            scenarioName={`Estate & Gifting Strategy (${CURRENT_YEAR}-${data.yearOfPassing})`}
+            scenarioType="Estate"
+            scenarioData={scenarioData}
+          />
+        </div>
+      </div>
     
       <ActionButtons onSave={onSave} />
       

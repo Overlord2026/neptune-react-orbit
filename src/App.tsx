@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   BrowserRouter as Router,
@@ -5,20 +6,21 @@ import {
   Route,
 } from "react-router-dom";
 import Layout from "./components/Layout";
-import HomePage from "./pages/HomePage";
-import TaxPlanningPage from "./pages/TaxPlanningPage";
-import TaxFilingPage from "./pages/TaxFilingPage";
+import HomePage from "./pages/Index"; // Fixed import
+import TaxPlanningPage from "./pages/TaxPlanningLandingPage"; // Fixed import
+import TaxFilingPage from "./pages/FileMyTaxesPage"; // Fixed import
 import TaxVaultPage from "./pages/TaxVaultPage";
 import TaxToolsPage from "./pages/TaxToolsPage";
 import RothConversionPage from "./pages/RothConversionPage";
 import EstateGiftingPage from "./pages/EstateGiftingPage";
-import CharitableGivingPage from "./pages/CharitableGivingPage";
-import TaxReturnPage from "./pages/TaxReturnPage";
+import CharitableGivingPage from "./pages/CharitablePlanningPage"; // Fixed import
+import TaxReturnPage from "./pages/TaxReturnAnalyzerPage"; // Fixed import
 import Scenario2025Return from "./pages/Scenario2025Return";
-import BusinessIncomePage from "./pages/BusinessIncomePage";
-import DeferredCompensationPage from "./pages/DeferredCompensationPage";
-import TaxEducationPage from "./pages/TaxEducationPage";
+import BusinessIncomePage from "./pages/SmallBusinessPage"; // Fixed import
+import DeferredCompensationPage from "./pages/DeferredCompPage"; // Fixed import
+import TaxEducationPage from "./pages/BasicTaxEducationPage"; // Fixed import
 import CollaborationCenterPage from "./pages/CollaborationCenterPage";
+import TaxDocumentAggregatorPage from "./pages/TaxDocumentAggregatorPage";
 
 function App() {
   return (
@@ -90,13 +92,17 @@ function App() {
           </Layout>
         } />
         
-        {/* Add Collaboration Center route */}
         <Route path="/tax-planning/collaboration" element={
           <Layout>
             <CollaborationCenterPage />
           </Layout>
         } />
         
+        <Route path="/tax-planning/aggregator" element={
+          <Layout>
+            <TaxDocumentAggregatorPage />
+          </Layout>
+        } />
       </Routes>
     </div>
   );
