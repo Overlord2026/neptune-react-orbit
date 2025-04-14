@@ -12,7 +12,6 @@ export const TaxResultsSummary: React.FC = () => {
   const { 
     formState, 
     calculateAmtImpact, 
-    calculateDeferralBenefit,
     calculateMultiYearImpact,
     getEquityEvents,
     getDeferralEvents,
