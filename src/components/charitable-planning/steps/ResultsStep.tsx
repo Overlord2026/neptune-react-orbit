@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { CharitableScenario } from '../types/CharitableTypes';
 import ResultHeader from '../components/ResultHeader';
@@ -13,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import ShareScenarioCard from '@/components/tax-planning/collaboration/ShareScenarioCard';
 
 interface ResultsStepProps {
   scenario: CharitableScenario;
@@ -90,6 +90,13 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
   };
 
   const strategyMetrics = generateStrategyMetrics();
+
+  // Mock tax vault documents
+  const taxVaultDocuments = [
+    { id: '1', name: 'Charitable Contributions.pdf', type: 'pdf' },
+    { id: '2', name: 'Donor Letter.pdf', type: 'pdf' },
+    { id: '3', name: 'Gift Receipt.pdf', type: 'pdf' }
+  ];
 
   return (
     <div className="space-y-6">
@@ -210,6 +217,14 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
           <YearlyPlanTable scenario={scenario} />
           
           <ResultDisclaimer scenario={scenario} />
+
+          {/* Share with Advisor Card */}
+          <ShareScenarioCard
+            scenarioId={`charitable-${new Date().getTime()}`}
+            scenarioType="charitable"
+            scenarioName="Charitable Giving Strategy"
+            documents={taxVaultDocuments}
+          />
         </div>
         
         <ResultActions 
@@ -222,4 +237,3 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
 };
 
 export default ResultsStep;
-

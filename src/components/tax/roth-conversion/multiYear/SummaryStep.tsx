@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card,
@@ -14,6 +13,7 @@ import { MultiYearScenarioData, YearlyResult } from '../types/ScenarioTypes';
 import FilingStatusComparison from './components/FilingStatusComparison';
 import CommunityPropertyInfo from './components/CommunityPropertyInfo';
 import RmdScheduleDisplay from './components/RmdScheduleDisplay';
+import ShareScenarioCard from '@/components/tax-planning/collaboration/ShareScenarioCard';
 
 // Format currency values
 const formatCurrency = (amount: number): string => {
@@ -73,6 +73,13 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
   const finalSpouseBalance = finalResult.spouseTraditionalIRABalance || 0 + finalResult.spouseRothIRABalance || 0;
   const totalInitialBalance = initialTotalBalance + initialSpouseBalance;
   const totalFinalBalance = finalTotalBalance + finalSpouseBalance;
+  
+  // Mock tax vault documents
+  const taxVaultDocuments = [
+    { id: '1', name: 'Last Year Tax Return.pdf', type: 'pdf' },
+    { id: '2', name: 'W-2 Statement.pdf', type: 'pdf' },
+    { id: '3', name: 'IRA Statement.pdf', type: 'pdf' }
+  ];
   
   return (
     <div className="space-y-6">
@@ -307,6 +314,14 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
           </div>
         </CardFooter>
       </Card>
+
+      {/* Share with Advisor Card */}
+      <ShareScenarioCard
+        scenarioId={`roth-${scenarioData.startYear}-${new Date().getTime()}`}
+        scenarioType="roth"
+        scenarioName={`${scenarioData.startYear}-${scenarioData.startYear + scenarioData.numYears - 1} Roth Conversion`}
+        documents={taxVaultDocuments}
+      />
     </div>
   );
 };

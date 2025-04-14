@@ -1,192 +1,104 @@
-
 import React from 'react';
 import {
-  createBrowserRouter,
-  RouterProvider,
-  Outlet,
-  Navigate
+  BrowserRouter as Router,
+  Routes,
+  Route,
 } from "react-router-dom";
-import TaxPlanningLandingPage from './pages/TaxPlanningLandingPage';
-import DataFeedsAndUpdatesPage from './pages/DataFeedsAndUpdatesPage';
-import AdminDashboardPage from './pages/AdminDashboardPage';
-import TaxUpdatesHistoryPage from './pages/TaxUpdatesHistoryPage';
-import TaxDataHistoryPage from './pages/TaxDataHistoryPage';
-import AdminAuditLogPage from './pages/AdminAuditLogPage';
-import AdvancedTaxEducationPage from './pages/AdvancedTaxEducationPage';
-import BasicTaxEducationPage from './pages/BasicTaxEducationPage';
-import TaxGlossaryPage from './pages/TaxGlossaryPage';
-import MyCoursesPage from './pages/MyCoursesPage';
-import PaymentSuccessPage from './pages/PaymentSuccessPage';
-import PaymentErrorPage from './pages/PaymentErrorPage';
-import FileMyTaxesPage from './pages/FileMyTaxesPage';
-import TaxFilingOptionsPage from './pages/TaxFilingOptionsPage';
-import TaxPlanningPricingPage from './pages/TaxPlanningPricingPage';
-import CompareRothScenariosPage from './pages/CompareRothScenariosPage';
-import My404Fallback from './components/My404Fallback';
-import { Toaster } from "./components/ui/sonner";
-import TaxReturnAnalyzerPage from './pages/TaxReturnAnalyzerPage';
-import DynamicBracketManagerPage from './pages/DynamicBracketManagerPage';
-import AdvancedTaxStrategiesPage from './pages/AdvancedTaxStrategiesPage';
-import TaxDocumentAggregatorPage from './pages/TaxDocumentAggregatorPage';
-import TaxVaultPage from './pages/TaxVaultPage';
-import SocialSecurityCalculatorPage from './pages/SocialSecurityCalculatorPage';
-import RothConversionPage from './pages/RothConversionPage';
-import TaxTrapCheckerPage from './pages/TaxTrapCheckerPage';
-import TaxToolsPage from './pages/TaxToolsPage';
-import EstateGiftingPage from './pages/EstateGiftingPage';
-import CharitablePlanningPage from './pages/CharitablePlanningPage';
-import Layout from './components/Layout';
-import DeferredCompPage from './pages/DeferredCompPage';
-import SmallBusinessPage from './pages/SmallBusinessPage';
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    errorElement: <My404Fallback />,
-    children: [
-      {
-        path: "/",
-        element: <TaxPlanningLandingPage />,
-      },
-      {
-        path: "/tax-planning",
-        element: <TaxPlanningLandingPage />,
-      },
-      {
-        path: "/pricing",
-        element: <TaxPlanningPricingPage />,
-      },
-      {
-        path: "/tax-planning/advanced-tax-education",
-        element: <AdvancedTaxEducationPage />,
-      },
-      {
-        path: "/tax-planning/basic-education",
-        element: <BasicTaxEducationPage />,
-      },
-      {
-        path: "/tax-planning/glossary",
-        element: <TaxGlossaryPage />,
-      },
-      {
-        path: "/tax-planning/filing-options",
-        element: <TaxFilingOptionsPage />,
-      },
-      {
-        path: "/tax-planning/analyzer",
-        element: <TaxReturnAnalyzerPage />,
-      },
-      {
-        path: "/tax-planning/aggregator",
-        element: <TaxDocumentAggregatorPage />,
-      },
-      {
-        path: "/tax-planning/roth",
-        element: <RothConversionPage />,
-      },
-      {
-        path: "/tax-planning/roth-conversion",
-        element: <Navigate to="/tax-planning/roth" replace />,
-      },
-      {
-        path: "/tax-planning/roth-analysis",
-        element: <Navigate to="/tax-planning/roth" replace />,
-      },
-      {
-        path: "/tax-planning/estate-gifting",
-        element: <EstateGiftingPage />,
-      },
-      {
-        path: "/tax-planning/charitable-planning",
-        element: <CharitablePlanningPage />,
-      },
-      {
-        path: "/tax-planning/small-business",
-        element: <SmallBusinessPage />,
-      },
-      {
-        path: "/tax-planning/deferred-comp",
-        element: <DeferredCompPage />,
-      },
-      {
-        path: "/tax-planning/social-security",
-        element: <SocialSecurityCalculatorPage />,
-      },
-      {
-        path: "/tax-planning/bracket-manager",
-        element: <DynamicBracketManagerPage />,
-      },
-      {
-        path: "/tax-planning/tax-vault",
-        element: <TaxVaultPage />,
-      },
-      {
-        path: "/tax-planning/advanced-strategies",
-        element: <AdvancedTaxStrategiesPage />,
-      },
-      {
-        path: "/tax-planning/tax-traps",
-        element: <TaxTrapCheckerPage />,
-      },
-      {
-        path: "/tax-planning/tax-tools",
-        element: <TaxToolsPage />,
-      },
-      {
-        path: "/my-courses",
-        element: <MyCoursesPage />,
-      },
-      {
-        path: "/payment-success",
-        element: <PaymentSuccessPage />,
-      },
-      {
-        path: "/payment-error",
-        element: <PaymentErrorPage />,
-      },
-      {
-        path: "/file-my-taxes",
-        element: <FileMyTaxesPage />,
-      },
-      {
-        path: "/admin/data-feeds",
-        element: <DataFeedsAndUpdatesPage />,
-      },
-      {
-        path: "/admin/dashboard",
-        element: <AdminDashboardPage />,
-      },
-      {
-        path: "/tax-updates-history",
-        element: <TaxUpdatesHistoryPage />,
-      },
-      {
-        path: "/admin/tax-data-history",
-        element: <TaxDataHistoryPage />,
-      },
-      {
-        path: "/admin/audit-log",
-        element: <AdminAuditLogPage />,
-      },
-      {
-        path: "/tax-planning/roth-comparison",
-        element: <CompareRothScenariosPage />,
-      }
-    ]
-  },
-  {
-    path: "*",
-    element: <My404Fallback />,
-  }
-]);
+import Layout from "./components/Layout";
+import HomePage from "./pages/HomePage";
+import TaxPlanningPage from "./pages/TaxPlanningPage";
+import TaxFilingPage from "./pages/TaxFilingPage";
+import TaxVaultPage from "./pages/TaxVaultPage";
+import TaxToolsPage from "./pages/TaxToolsPage";
+import RothConversionPage from "./pages/RothConversionPage";
+import EstateGiftingPage from "./pages/EstateGiftingPage";
+import CharitableGivingPage from "./pages/CharitableGivingPage";
+import TaxReturnPage from "./pages/TaxReturnPage";
+import Scenario2025Return from "./pages/Scenario2025Return";
+import BusinessIncomePage from "./pages/BusinessIncomePage";
+import DeferredCompensationPage from "./pages/DeferredCompensationPage";
+import TaxEducationPage from "./pages/TaxEducationPage";
+import CollaborationCenterPage from "./pages/CollaborationCenterPage";
 
 function App() {
   return (
-    <React.StrictMode>
-      <RouterProvider router={router} />
-      <Toaster position="top-right" />
-    </React.StrictMode>
+    <div className="App">
+      <Routes>
+        <Route path="/" element={
+          <Layout>
+            <HomePage />
+          </Layout>
+        } />
+        <Route path="/tax-planning" element={
+          <Layout>
+            <TaxPlanningPage />
+          </Layout>
+        } />
+        <Route path="/tax-filing" element={
+          <Layout>
+            <TaxFilingPage />
+          </Layout>
+        } />
+        <Route path="/tax-vault" element={
+          <Layout>
+            <TaxVaultPage />
+          </Layout>
+        } />
+        <Route path="/tax-planning/tax-tools" element={
+          <Layout>
+            <TaxToolsPage />
+          </Layout>
+        } />
+        <Route path="/tax-planning/roth-conversion" element={
+          <Layout>
+            <RothConversionPage />
+          </Layout>
+        } />
+        <Route path="/tax-planning/estate-gifting" element={
+          <Layout>
+            <EstateGiftingPage />
+          </Layout>
+        } />
+        <Route path="/tax-planning/charitable-giving" element={
+          <Layout>
+            <CharitableGivingPage />
+          </Layout>
+        } />
+        <Route path="/tax-filing/tax-return" element={
+          <Layout>
+            <TaxReturnPage />
+          </Layout>
+        } />
+        <Route path="/tax-planning/scenario-2025" element={
+          <Layout>
+            <Scenario2025Return />
+          </Layout>
+        } />
+        <Route path="/tax-planning/small-business" element={
+          <Layout>
+            <BusinessIncomePage />
+          </Layout>
+        } />
+        <Route path="/tax-planning/deferred-comp" element={
+          <Layout>
+            <DeferredCompensationPage />
+          </Layout>
+        } />
+        <Route path="/tax-education/:topic" element={
+          <Layout>
+            <TaxEducationPage />
+          </Layout>
+        } />
+        
+        {/* Add Collaboration Center route */}
+        <Route path="/tax-planning/collaboration" element={
+          <Layout>
+            <CollaborationCenterPage />
+          </Layout>
+        } />
+        
+      </Routes>
+    </div>
   );
 }
 

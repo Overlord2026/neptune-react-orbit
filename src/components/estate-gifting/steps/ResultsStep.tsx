@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { EstateGiftingData } from '../types/EstateGiftingTypes';
@@ -11,6 +10,7 @@ import ActionButtons from '../components/ActionButtons';
 import EstateDisclaimerContent from '../components/EstateDisclaimerContent';
 import { formatCurrency } from '../utils/formatUtils';
 import { CURRENT_YEAR } from '../utils/constants';
+import ShareScenarioCard from '@/components/tax-planning/collaboration/ShareScenarioCard';
 
 interface ResultsStepProps {
   data: EstateGiftingData;
@@ -66,6 +66,13 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
     { label: "Net to Heirs:", value: formatCurrency(netToHeirsWithGifting), className: "font-medium" }
   ];
 
+  // Mock tax vault documents
+  const taxVaultDocuments = [
+    { id: '1', name: 'Will.pdf', type: 'pdf' },
+    { id: '2', name: 'Trust Document.pdf', type: 'pdf' },
+    { id: '3', name: 'Estate Inventory.xlsx', type: 'spreadsheet' }
+  ];
+
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-medium text-white mb-4">Results Summary</h3>
@@ -97,6 +104,13 @@ const ResultsStep: React.FC<ResultsStepProps> = ({ data, onSave }) => {
       <StrategyBenefitCard data={data} />
       
       <LegislativeWarningBanner />
+      
+      <ShareScenarioCard
+        scenarioId={`estate-${CURRENT_YEAR}-${data.yearOfPassing}`}
+        scenarioType="estate"
+        scenarioName={`Estate & Gifting Strategy (${CURRENT_YEAR}-${data.yearOfPassing})`}
+        documents={taxVaultDocuments}
+      />
     
       <ActionButtons onSave={onSave} />
       

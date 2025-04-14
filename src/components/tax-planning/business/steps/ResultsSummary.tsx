@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -30,6 +29,7 @@ import { checkTaxTraps, TaxTrapResult } from '@/utils/taxTraps';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
 import { saveScenario } from '@/utils/taxScenarioStorage';
 import { useToast } from '@/hooks/use-toast';
+import ShareScenarioCard from '@/components/tax-planning/collaboration/ShareScenarioCard';
 
 interface ResultsSummaryProps {
   businessInput: BusinessIncomeInput;
@@ -48,16 +48,19 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
   const [activeTab, setActiveTab] = useState<string>('summary');
   const [sCorpComparison, setSCorpComparison] = useState<BusinessTaxResult | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const taxVaultDocuments = [
+    { id: '1', name: 'Schedule C.pdf', type: 'pdf' },
+    { id: '2', name: 'Business Expenses.xlsx', type: 'spreadsheet' },
+    { id: '3', name: 'Business Tax Return.pdf', type: 'pdf' }
+  ];
 
-  // Initialize S-Corp comparison when component mounts
   React.useEffect(() => {
     if (businessInput.businessType !== 's_corp' && taxResult) {
-      // Create a simulated S-Corp scenario with 60% wages, 40% distributions
       const sCorpInput: BusinessIncomeInput = {
         ...businessInput,
         businessType: 's_corp',
-        sCorpWages: businessInput.income * 0.6, // 60% as wages (reasonable compensation)
-        sCorpDistributions: businessInput.income * 0.4 // 40% as distributions
+        sCorpWages: businessInput.income * 0.6,
+        sCorpDistributions: businessInput.income * 0.4
       };
       
       const result = calculateSmallBusinessTax(sCorpInput);
@@ -65,7 +68,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
     }
   }, [businessInput, taxResult]);
 
-  // Save scenario to storage for integration with other tools
   const handleSaveScenario = async () => {
     if (!taxResult) return;
     
@@ -73,16 +75,16 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
       const scenarioToSave = {
         scenario_name: `${getBusinessTypeText()} Income (${getCurrentYear()})`,
         year: getCurrentYear(),
-        filing_status: 'single' as const, // Explicitly typed as const
+        filing_status: 'single' as const,
         total_income: taxResult.netProfit,
         taxable_income: taxResult.netTaxableIncome,
         agi: taxResult.netProfit - (taxResult.selfEmploymentTaxDeduction || 0),
         total_tax: taxResult.selfEmploymentTax,
-        ordinary_tax: taxResult.selfEmploymentTax, // Add missing field
-        capital_gains_tax: 0, // Add missing field
-        marginal_rate: 0.15, // Add approximate marginal rate
-        marginal_capital_gains_rate: 0, // Add missing field
-        effective_rate: taxResult.effectiveTaxRate, // Use existing effective rate
+        ordinary_tax: taxResult.selfEmploymentTax,
+        capital_gains_tax: 0,
+        marginal_rate: 0.15,
+        marginal_capital_gains_rate: 0,
+        effective_rate: taxResult.effectiveTaxRate,
         business_income: taxResult.netProfit,
         business_tax_details: taxResult,
         business_input: businessInput,
@@ -106,19 +108,16 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
     }
   };
 
-  // Export results as CSV
   const exportResults = () => {
     if (!taxResult) return;
     
     setIsExporting(true);
     
     try {
-      // Basic business info
       let csv = "Business Income Tax Summary\n";
       csv += `Business Type,${getBusinessTypeText()}\n`;
       csv += `Tax Year,${getCurrentYear()}\n\n`;
       
-      // Income details
       csv += "INCOME DETAILS\n";
       csv += `Net Profit,${formatCurrency(taxResult.netProfit)}\n`;
       
@@ -127,7 +126,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         csv += `Distributions,${formatCurrency(businessInput.sCorpDistributions || 0)}\n`;
       }
       
-      // Tax details
       csv += "\nTAX DETAILS\n";
       if (businessInput.businessType === 's_corp') {
         csv += `Payroll Taxes,${formatCurrency(taxResult.payrollTaxes)}\n`;
@@ -139,7 +137,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
       csv += `Net Taxable Income,${formatCurrency(taxResult.netTaxableIncome)}\n`;
       csv += `Effective Tax Rate,${formatPercent(taxResult.effectiveTaxRate)}\n`;
       
-      // Warnings & considerations
       if (taxResult.warnings.length > 0) {
         csv += "\nCONSIDERATIONS & WARNINGS\n";
         taxResult.warnings.forEach(warning => {
@@ -147,7 +144,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         });
       }
       
-      // Comparison (if applicable)
       if (sCorpComparison && businessInput.businessType !== 's_corp') {
         csv += "\nS-CORPORATION COMPARISON\n";
         csv += `Potential SE Tax as Sole Prop/LLC,${formatCurrency(taxResult.selfEmploymentTax)}\n`;
@@ -156,11 +152,9 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         csv += "DISCLAIMER: S-Corps have additional costs including state fees, additional tax returns, and payroll administration.\n";
       }
       
-      // General disclaimer
       csv += "\nDISCLAIMER\n";
       csv += "This summary approximates federal self-employment taxes and QBI deductions; states vary widely. Consult with a tax professional for personalized advice.\n";
       
-      // Create downloadable file
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -227,11 +221,10 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
     return <Badge variant="outline" className="bg-gray-600/20 text-gray-400">No QBI</Badge>;
   };
 
-  // Generate data for multi-year chart if projectedGrowth is available
   const generateMultiYearData = () => {
     if (!businessInput.projectedGrowth || !taxResult) return [];
     
-    const years = 5; // Show 5 year projection
+    const years = 5;
     const data = [];
     let currentProfit = taxResult.netProfit;
     let currentTax = businessInput.businessType === 's_corp' ? 
@@ -245,7 +238,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         taxes: currentTax,
       });
       
-      // Increase profit and taxes based on growth rate
       currentProfit *= (1 + businessInput.projectedGrowth);
       currentTax *= (1 + businessInput.projectedGrowth);
     }
@@ -253,7 +245,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
     return data;
   };
   
-  // Calculate tax savings from S-Corp (if applicable)
   const calculateSCorpSavings = () => {
     if (businessInput.businessType === 's_corp' || !sCorpComparison || !taxResult) {
       return 0;
@@ -262,13 +253,10 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
     return taxResult.selfEmploymentTax - sCorpComparison.payrollTaxes;
   };
 
-  // Create tax trap scenario data
   const createTaxTrapScenario = () => {
-    // This is a simplified version for demonstration - in a real app
-    // you would need more complete tax information
     return {
       year: getCurrentYear(),
-      filing_status: 'single' as const, // Explicitly typed as const
+      filing_status: 'single' as const,
       agi: taxResult.netProfit - taxResult.selfEmploymentTaxDeduction,
       total_income: taxResult.netProfit,
       taxable_income: taxResult.netTaxableIncome,
@@ -276,7 +264,7 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
       capital_gains_short: 0,
       social_security_amount: 0,
       household_size: 1,
-      medicare_enrollment: taxResult.netProfit > 150000, // Assume Medicare enrollment for high income
+      medicare_enrollment: taxResult.netProfit > 150000,
       aca_enrollment: false
     };
   };
@@ -287,7 +275,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
   
   return (
     <div className="space-y-6">
-      {/* Header Section */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Briefcase className="h-6 w-6 text-[#FFD700]" />
@@ -302,7 +289,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         </div>
       </div>
       
-      {/* Main Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="summary">Summary</TabsTrigger>
@@ -314,9 +300,7 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           )}
         </TabsList>
 
-        {/* Summary Tab Content */}
         <TabsContent value="summary" className="space-y-4 pt-4">
-          {/* Business Income Summary Card */}
           <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -379,7 +363,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
             </CardContent>
           </Card>
           
-          {/* Warnings Section */}
           {taxResult.warnings.length > 0 && (
             <div className="space-y-4">
               <h4 className="font-medium text-white flex items-center gap-1">
@@ -412,7 +395,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           )}
         </TabsContent>
         
-        {/* Entity Comparison Tab Content */}
         <TabsContent value="comparison" className="space-y-4 pt-4">
           {businessInput.businessType === 's_corp' ? (
             <div className="p-6 text-center">
@@ -428,7 +410,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
               <h4 className="font-medium text-white">S-Corporation vs. {getBusinessTypeText()} Comparison</h4>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Current Structure Card */}
                 <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">Current: {getBusinessTypeText()}</CardTitle>
@@ -455,7 +436,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
                   </CardContent>
                 </Card>
                 
-                {/* S-Corp Structure Card */}
                 <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70">
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
@@ -514,7 +494,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           )}
         </TabsContent>
         
-        {/* Multi-Year Projection Tab Content */}
         <TabsContent value="projection" className="space-y-4 pt-4">
           {businessInput.projectedGrowth && multiYearData.length > 0 ? (
             <>
@@ -592,7 +571,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           )}
         </TabsContent>
         
-        {/* Tax Trap Analysis Tab Content */}
         <TabsContent value="tax-traps" className="space-y-4 pt-4">
           <h4 className="font-medium text-white flex items-center gap-1">
             <AlertTriangle className="h-4 w-4 text-yellow-500" />
@@ -614,7 +592,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         </TabsContent>
       </Tabs>
       
-      {/* Integration & Disclaimer Section */}
       <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -662,7 +639,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         </CardContent>
       </Card>
       
-      {/* Action Buttons */}
       <div className="flex flex-col gap-4 sm:flex-row">
         <Dialog>
           <DialogTrigger asChild>
@@ -720,7 +696,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
                 </div>
               </div>
               
-              {/* Tax Considerations */}
               <div className="space-y-2">
                 <h4 className="font-medium text-white">Tax Considerations</h4>
                 {taxResult.warnings.length > 0 ? (
@@ -736,7 +711,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
                 )}
               </div>
               
-              {/* Recommendations */}
               <div className="space-y-2">
                 <h4 className="font-medium text-white">Recommendations</h4>
                 <ul className="list-disc pl-5 space-y-2 text-sm">
@@ -810,7 +784,6 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         </Button>
       </div>
       
-      {/* Enhanced Disclaimer */}
       <div className="border border-[#2A2F3C] bg-[#1A1F2C]/30 p-4 rounded-md">
         <p className="text-xs text-muted-foreground">
           <span className="font-medium">Disclaimer:</span> This tool provides estimates only and is not a substitute for professional tax advice. 
@@ -819,6 +792,13 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           Always consult with a tax professional for advice specific to your situation.
         </p>
       </div>
+      
+      <ShareScenarioCard
+        scenarioId={`business-${businessInput.year}-${new Date().getTime()}`}
+        scenarioType="business"
+        scenarioName={`${businessInput.businessType} Tax Analysis for ${businessInput.year}`}
+        documents={taxVaultDocuments}
+      />
     </div>
   );
 };
