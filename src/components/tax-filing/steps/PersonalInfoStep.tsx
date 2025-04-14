@@ -160,8 +160,10 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="single">Single</SelectItem>
-                      <SelectItem value="married">Married Filing Jointly</SelectItem>
+                      <SelectItem value="married_joint">Married Filing Jointly</SelectItem>
+                      <SelectItem value="married_separate">Married Filing Separately</SelectItem>
                       <SelectItem value="head_of_household">Head of Household</SelectItem>
+                      <SelectItem value="qualifying_widow">Qualifying Widow(er)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -216,7 +218,7 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
               />
               <FormField
                 control={form.control}
-                name="address.zipCode"
+                name="address.zip"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>ZIP Code</FormLabel>

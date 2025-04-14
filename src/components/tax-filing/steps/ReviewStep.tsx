@@ -9,6 +9,7 @@ import IncomeReview from './review/IncomeReview';
 import DeductionsReview from './review/DeductionsReview';
 import TaxTrapSection from './review/TaxTrapSection';
 import { calculateTaxValues } from './review/TaxCalculationLogic';
+import { StateCode } from '@/utils/stateTaxData';
 
 interface ReviewStepProps {
   data: TaxReturnData;
@@ -41,6 +42,11 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
     });
   };
   
+  // Get the state code safely, ensuring it's a valid StateCode or undefined
+  const safeResidentState = data.residentState && data.residentState !== '' ? 
+    (data.residentState as StateCode) : 
+    undefined;
+  
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -55,7 +61,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
         refund={calculatedRefund} 
         owed={calculatedOwed} 
         stateTax={data.includeStateTax ? stateTax : undefined}
-        residentState={data.residentState}
+        residentState={safeResidentState}
       />
       
       {/* Tax Traps Section */}

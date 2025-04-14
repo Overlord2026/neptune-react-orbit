@@ -12,9 +12,9 @@ interface IncomeStepProps {
 }
 
 const IncomeStep: React.FC<IncomeStepProps> = ({ data, onComplete }) => {
-  const [w2Forms, setW2Forms] = React.useState(data.w2Forms);
-  const [interestIncome, setInterestIncome] = React.useState(data.interestIncome);
-  const [dividendIncome, setDividendIncome] = React.useState(data.dividendIncome);
+  const [w2Forms, setW2Forms] = React.useState<W2Form[]>(data.w2Forms);
+  const [interestIncome, setInterestIncome] = React.useState<number>(data.interestIncome);
+  const [dividendIncome, setDividendIncome] = React.useState<number>(data.dividendIncome);
 
   const handleAddW2 = () => {
     setW2Forms([...w2Forms, { 

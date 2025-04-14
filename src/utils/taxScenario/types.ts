@@ -8,6 +8,7 @@ import { YearlyTaxImpact } from '../../components/deferred-comp/types';
 
 // Define interface for equity scenario data
 export interface EquityScenario extends TaxResult {
+  id?: string; // Add the optional id property
   type: string;
   formState?: any;
   results?: YearlyTaxImpact[];
