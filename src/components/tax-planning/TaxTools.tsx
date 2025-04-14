@@ -13,7 +13,8 @@ import {
   Gift,
   HandCoins,
   BarChart,
-  Briefcase
+  Briefcase,
+  Vault
 } from "lucide-react";
 import TaxToolCard from './TaxToolCard';
 
@@ -26,6 +27,16 @@ const TaxTools: React.FC = () => {
       description: "Plan single-year or long-term Roth conversion strategies. Model RMDs, bracket filling, and tax implications.",
       comingSoon: false,
       link: "/tax-planning/roth"
+    },
+    {
+      id: "tax-vault",
+      title: "Tax Vault & Documents",
+      icon: <Lock className="w-10 h-10 text-[#FFD700]" />,
+      description: "Securely store your tax documents and share them with your accountant, advisors, or family members.",
+      comingSoon: false,
+      link: "/tax-planning/aggregator",
+      documentCount: 8,
+      lastUpdated: "Apr 2, 2025"
     },
     {
       id: "estate-gifting",
@@ -100,14 +111,6 @@ const TaxTools: React.FC = () => {
       link: "/tax-planning/bracket-manager"
     },
     {
-      id: "tax-vault",
-      title: "Tax Vault",
-      icon: <Lock className="w-10 h-10 text-[#FFD700]" />,
-      description: "Securely store all your tax documents with bank-level encryption and easy retrieval.",
-      comingSoon: false,
-      link: "/tax-planning/tax-vault"
-    },
-    {
       id: "filing-options",
       title: "File My Taxes",
       icon: <FileCheck className="w-10 h-10 text-[#FFD700]" />,
@@ -128,6 +131,8 @@ const TaxTools: React.FC = () => {
           description={tool.description}
           comingSoon={tool.comingSoon}
           link={tool.link}
+          documentCount={tool.documentCount}
+          lastUpdated={tool.lastUpdated}
         />
       ))}
     </div>

@@ -12,6 +12,8 @@ interface TaxToolProps {
   description: string;
   comingSoon: boolean;
   link: string;
+  documentCount?: number;
+  lastUpdated?: string;
 }
 
 const TaxToolCard: React.FC<TaxToolProps> = ({ 
@@ -20,7 +22,9 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   icon, 
   description, 
   comingSoon, 
-  link 
+  link,
+  documentCount,
+  lastUpdated
 }) => {
   // Add bullets for estate and gifting, charitable planning, roth tools, and deferred comp tools
   const showBullets = id === "estate-gifting" || id === "roth-conversion" || id === "charitable-planning" || id === "deferred-comp" || id === "small-business";
@@ -68,6 +72,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
       case "charitable-planning": return "Start Charitable Analysis";
       case "deferred-comp": return "Start Equity Compensation Analysis";
       case "small-business": return "Start Business Income Analysis";
+      case "tax-vault": return "Open Tax Vault";
       default: return "Start Tool";
     }
   };
@@ -93,6 +98,15 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
                 <li key={idx}>{bullet}</li>
               ))}
             </ul>
+          )}
+          
+          {id === "tax-vault" && documentCount !== undefined && lastUpdated && (
+            <div className="text-sm text-[#B0B0B0] bg-[#2A2F3C]/50 p-3 rounded-md">
+              <div className="flex justify-between items-center">
+                <span>{documentCount} documents stored</span>
+                <span>Last updated: {lastUpdated}</span>
+              </div>
+            </div>
           )}
           
           <Button 

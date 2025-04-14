@@ -19,7 +19,8 @@ import {
   LayoutGrid,
   Gift,
   HandCoins,
-  BarChart
+  BarChart,
+  Lock
 } from 'lucide-react';
 
 const SidebarContent = () => {
@@ -82,6 +83,12 @@ const SidebarContent = () => {
           label="Tax Document Hub" 
           href="/tax-planning/aggregator" 
           isActive={location.pathname === '/tax-planning/aggregator'} 
+        />
+        <SidebarItem 
+          icon={<Lock className="h-5 w-5" />} 
+          label="Tax Vault" 
+          href="/tax-planning/tax-vault" 
+          isActive={location.pathname === '/tax-planning/tax-vault'} 
         />
         <SidebarItem 
           icon={<BarChart3 className="h-5 w-5" />} 
