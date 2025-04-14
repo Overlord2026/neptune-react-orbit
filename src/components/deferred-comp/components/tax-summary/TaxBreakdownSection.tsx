@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { YearlyTaxImpact } from '../../types';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { YearlyTaxMetrics } from './YearlyTaxMetrics';
 
 interface TaxBreakdownSectionProps {

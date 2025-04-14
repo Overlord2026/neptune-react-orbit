@@ -1,3 +1,4 @@
+
 export interface EquityFormState {
   equityType: "NSO" | "ISO" | "NONE";
   vestedShares: number;
@@ -41,6 +42,10 @@ export interface YearlyTaxImpact {
   capitalGains: number;
   totalTax: number;
   marginalRate: number;
+  effectiveRate: number;
+  equityIncome?: number;
+  taxableIncome: number;
+  amtImpact?: number;
   
   // Add state tax properties
   stateTax?: number;

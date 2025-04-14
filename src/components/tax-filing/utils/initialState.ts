@@ -29,7 +29,8 @@ export const getInitialTaxData = (): TaxReturnData => {
       employerName: '',
       employerEIN: '',
       wages: 0,
-      federalWithholding: 0
+      federalWithholding: 0,
+      stateWithholding: 0
     }],
     interestIncome: 0,
     dividendIncome: 0,
@@ -53,6 +54,18 @@ export const getInitialTaxData = (): TaxReturnData => {
     directDeposit: false,
     
     // State tax options
-    includeStateTax: false
+    includeStateTax: false,
+    residentState: '',
+    
+    // Eligibility questions
+    hasOnlyW2Income: null,
+    hasDependents: null,
+    hasSelfEmploymentIncome: null,
+    isEligible: null,
+    
+    // Calculation results
+    calculatedRefund: 0,
+    calculatedOwed: 0,
+    stateTax: 0
   };
 };

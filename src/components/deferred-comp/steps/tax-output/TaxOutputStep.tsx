@@ -61,6 +61,15 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
         effective_rate: yearData.totalTax / yearData.ordinaryIncome,
         updated_at: new Date(),
         id: `equity-${Date.now()}`,
+        brackets_breakdown: {
+          ordinary: [
+            { bracket: 10, amount: 10000, tax: 1000 },
+            { bracket: 22, amount: yearData.ordinaryIncome - 10000, tax: (yearData.ordinaryIncome - 10000) * 0.22 }
+          ],
+          capitalGains: []
+        },
+        tax_data_updated_at: new Date(),
+        tax_data_is_current: true,
         
         formState,
         results: calculateMultiYearImpact(),

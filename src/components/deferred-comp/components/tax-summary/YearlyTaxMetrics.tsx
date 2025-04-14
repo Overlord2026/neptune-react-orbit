@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { YearlyTaxImpact } from '../../types';
 
@@ -61,7 +62,7 @@ export const YearlyTaxMetrics: React.FC<YearlyTaxMetricsProps> = ({
         )}
         
         <div className="text-gray-300">Total Taxable Income:</div>
-        <div className="text-right font-medium">{formatCurrency(yearData.taxableIncome)}</div>
+        <div className="text-right font-medium">{formatCurrency(yearData.ordinaryIncome)}</div>
         
         <div className="text-gray-300">Marginal Rate:</div>
         <div className="text-right font-medium">{formatPercent(yearData.marginalRate)}</div>
