@@ -5,7 +5,7 @@ import {
   YearlyTaxImpact,
   EquityCompEvent,
   DeferralEvent 
-} from '../types/EquityTypes';
+} from '../types';
 import { defaultFormState } from '../utils/defaultValues';
 import { calculateAmtImpact } from '../utils/equityCalculations';
 import { 
@@ -30,7 +30,7 @@ interface EquityFormContextType {
   calculateMultiYearImpact: () => YearlyTaxImpact[];
   getEquityEvents: () => EquityCompEvent[];
   getDeferralEvents: () => DeferralEvent[];
-  getTaxBracketRate: (income: number) => number;
+  getTaxBracketRate: (income: number) => string;
   getDistanceToNextBracket: (income: number) => { nextThreshold: number; distance: number };
   checkIrmaaImpact: (income: number) => boolean;
   resetForm: () => void;
@@ -39,17 +39,17 @@ interface EquityFormContextType {
 const EquityFormContext = createContext<EquityFormContextType | undefined>(undefined);
 
 export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [formState, setFormState] = useState<EquityFormState>(defaultFormState);
+  const [formState, setFormState] = useState<EquityFormState>(defaultFormState as EquityFormState);
   
   const updateForm = useCallback((updates: Partial<EquityFormState>) => {
     setFormState(current => ({ ...current, ...updates }));
   }, []);
   
   const resetForm = useCallback(() => {
-    setFormState(defaultFormState);
+    setFormState(defaultFormState as EquityFormState);
   }, []);
   
-  const value = {
+  const value: EquityFormContextType = {
     formState,
     updateForm,
     calculateAmtImpact: () => calculateAmtImpact(formState),

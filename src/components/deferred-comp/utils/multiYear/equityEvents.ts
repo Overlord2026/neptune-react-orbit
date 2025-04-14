@@ -17,38 +17,50 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
   const currentYear = new Date().getFullYear();
   const spreadPerShare = formState.fairMarketValue - formState.strikePrice;
   
+  // Use nullish coalescing to handle potentially missing properties
+  const year1Exercise = ('year1Exercise' in formState) ? formState.year1Exercise : 0;
+  const year2Exercise = ('year2Exercise' in formState) ? formState.year2Exercise : 0;
+  
   if (formState.planningApproach === "multi-year") {
     // Year 1 exercise
-    if (formState.year1Exercise > 0) {
-      const spread = spreadPerShare * formState.year1Exercise;
+    if (year1Exercise > 0) {
+      const spread = spreadPerShare * year1Exercise;
       const ordinaryIncome = formState.equityType === "NSO" || formState.isDisqualifyingDisposition ? spread : 0;
       const amtImpact = formState.equityType === "ISO" && !formState.isDisqualifyingDisposition ? calculateAmtImpact(formState) : 0;
       
       events.push({
         year: currentYear,
         type: formState.equityType,
-        sharesExercised: formState.year1Exercise,
+        sharesExercised: year1Exercise,
         spread,
         amtImpact,
         ordinaryIncome,
-        isDisqualifyingDisposition: formState.isDisqualifyingDisposition
+        isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
+        // Add missing properties required by the merged type
+        incomeRecognized: ordinaryIncome,
+        taxRate: 0.30, // Simplified tax rate
+        taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
       });
     }
     
     // Year 2 exercise
-    if (formState.year2Exercise > 0) {
-      const spread = spreadPerShare * formState.year2Exercise;
+    if (year2Exercise > 0) {
+      const spread = spreadPerShare * year2Exercise;
       const ordinaryIncome = formState.equityType === "NSO" || formState.isDisqualifyingDisposition ? spread : 0;
       const amtImpact = formState.equityType === "ISO" && !formState.isDisqualifyingDisposition ? calculateAmtImpact(formState) : 0;
       
       events.push({
         year: currentYear + 1,
         type: formState.equityType,
-        sharesExercised: formState.year2Exercise,
+        sharesExercised: year2Exercise,
         spread,
         amtImpact,
         ordinaryIncome,
-        isDisqualifyingDisposition: formState.isDisqualifyingDisposition
+        isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
+        // Add missing properties required by the merged type
+        incomeRecognized: ordinaryIncome,
+        taxRate: 0.30, // Simplified tax rate
+        taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
       });
     }
   } 
@@ -67,7 +79,11 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
         spread,
         amtImpact,
         ordinaryIncome,
-        isDisqualifyingDisposition: formState.isDisqualifyingDisposition
+        isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
+        // Add missing properties required by the merged type
+        incomeRecognized: ordinaryIncome,
+        taxRate: 0.30, // Simplified tax rate
+        taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
       });
     } 
     else if (formState.exerciseStrategy === "partial") {
@@ -83,7 +99,11 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
         spread,
         amtImpact,
         ordinaryIncome,
-        isDisqualifyingDisposition: formState.isDisqualifyingDisposition
+        isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
+        // Add missing properties required by the merged type
+        incomeRecognized: ordinaryIncome,
+        taxRate: 0.30, // Simplified tax rate
+        taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
       });
     }
     else if (formState.exerciseStrategy === "split") {
@@ -109,7 +129,11 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
           spread,
           amtImpact,
           ordinaryIncome,
-          isDisqualifyingDisposition: formState.isDisqualifyingDisposition
+          isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
+          // Add missing properties required by the merged type
+          incomeRecognized: ordinaryIncome,
+          taxRate: 0.30, // Simplified tax rate
+          taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
         });
         
         remainingShares -= sharesPerYear;
