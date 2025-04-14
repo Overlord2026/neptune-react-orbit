@@ -1,87 +1,77 @@
 
-// Define the tax return data type
+import { StateCode } from '@/utils/stateTaxData';
+
+export interface W2Form {
+  employerName: string;
+  employerEIN: string;
+  wages: number;
+  federalWithholding: number;
+  stateWithholding?: number;
+}
+
+export interface Dependent {
+  name: string;
+  relationship: string;
+  ssn: string;
+  dateOfBirth: string;
+}
+
+export interface ItemizedDeductions {
+  medicalExpenses: number;
+  stateTaxes: number;
+  propertyTaxes: number;
+  mortgageInterest: number;
+  charitableContributions: number;
+  otherDeductions: number;
+}
+
 export interface TaxReturnData {
-  // Eligibility
-  hasOnlyW2Income: boolean | null;
-  hasDependents: boolean | null;
-  hasSelfEmploymentIncome: boolean | null;
-  isEligible: boolean;
-  
-  // Personal Info
+  // Personal Information
   firstName: string;
   lastName: string;
   ssn: string;
-  filingStatus: 'single' | 'married' | 'head_of_household' | '';
-  dependents: { name: string; ssn: string; relationship: string }[];
+  dateOfBirth: string;
+  occupation: string;
+  filingStatus: 'single' | 'married_joint' | 'married_separate' | 'head_of_household' | 'qualifying_widow';
+  
+  // Contact Information
+  email: string;
+  phone: string;
   address: {
     street: string;
     city: string;
     state: string;
-    zipCode: string;
+    zip: string;
   };
   
+  // Dependents
+  dependents: Dependent[];
+  
   // Income
-  w2Forms: {
-    employer: string;
-    wages: number;
-    federalWithholding: number;
-    stateWithholding: number;
-  }[];
+  w2Forms: W2Form[];
   interestIncome: number;
   dividendIncome: number;
   
-  // Deductions & Credits
+  // Deductions
   useStandardDeduction: boolean;
-  itemizedDeductions: {
-    medicalExpenses: number;
-    stateTaxes: number;
-    propertyTaxes: number;
-    mortgageInterest: number;
-    charitableContributions: number;
-  };
+  itemizedDeductions: ItemizedDeductions;
+  
+  // Credits
   childTaxCredit: boolean;
   educationCredit: boolean;
   
-  // Results
-  calculatedRefund: number;
-  calculatedOwed: number;
+  // Refund information
+  directDeposit: boolean;
+  bankRoutingNumber?: string;
+  bankAccountNumber?: string;
+  bankAccountType?: 'checking' | 'savings';
   
-  // Filing
-  bankInfo: {
-    routingNumber: string;
-    accountNumber: string;
-    accountType: 'checking' | 'savings' | '';
-  };
+  // Result values (calculated)
+  calculatedRefund?: number;
+  calculatedOwed?: number;
   
-  // Confirmation
-  referenceNumber: string;
-  
-  // Disclaimer
-  disclaimerAcknowledged?: boolean;
-  
-  // Additional properties needed for tax trap checking
-  investmentIncome?: number;
-  socialSecurityBenefits?: number;
-  isOver65?: boolean;
-  hasHealthInsurance?: boolean;
-  
-  // Spouse-related information
-  spouseFirstName?: string;
-  spouseLastName?: string;
-  spouseAge?: number;
-  spouseSsn?: string;
-  spouseIsOver65?: boolean;
+  // State tax information
+  includeStateTax?: boolean;
+  residentState?: StateCode;
+  stateTax?: number;
 }
-
-// Define the steps of our filing flow
-export const FILING_STEPS = [
-  { id: 'eligibility', label: 'Eligibility' },
-  { id: 'personal', label: 'Personal Info' },
-  { id: 'income', label: 'Income' },
-  { id: 'deductions', label: 'Deductions' },
-  { id: 'review', label: 'Review' },
-  { id: 'file', label: 'E-File' },
-  { id: 'confirmation', label: 'Confirmation' },
-] as const;
-
-export type FilingStep = typeof FILING_STEPS[number]['id'];

@@ -18,6 +18,7 @@ interface ReviewStepProps {
 const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
   const [calculatedRefund, setCalculatedRefund] = useState(0);
   const [calculatedOwed, setCalculatedOwed] = useState(0);
+  const [stateTax, setStateTax] = useState(0);
   
   // Calculate AGI and taxable income for tax trap checks
   const { 
@@ -26,15 +27,17 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
   } = calculateTaxValues(data);
   
   useEffect(() => {
-    const { calculatedRefund, calculatedOwed } = calculateTaxValues(data);
+    const { calculatedRefund, calculatedOwed, stateTax } = calculateTaxValues(data);
     setCalculatedRefund(calculatedRefund);
     setCalculatedOwed(calculatedOwed);
+    setStateTax(stateTax || 0);
   }, [data]);
   
   const handleSubmit = () => {
     onComplete({
       calculatedRefund,
-      calculatedOwed
+      calculatedOwed,
+      stateTax
     });
   };
   
@@ -48,7 +51,12 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
       </div>
       
       {/* Result Summary Card */}
-      <ReviewSummaryCard refund={calculatedRefund} owed={calculatedOwed} />
+      <ReviewSummaryCard 
+        refund={calculatedRefund} 
+        owed={calculatedOwed} 
+        stateTax={data.includeStateTax ? stateTax : undefined}
+        residentState={data.residentState}
+      />
       
       {/* Tax Traps Section */}
       <TaxTrapSection 

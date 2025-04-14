@@ -1,14 +1,10 @@
 
-/**
- * Tax Calculator Types
- * 
- * Central location for tax-related type definitions
- */
-
-import { FilingStatusType } from './taxBracketData';
+import { FilingStatusType } from "./taxBracketData";
+import { StateCode } from "./stateTaxData";
 
 export interface TaxInput {
   year: number;
+  filing_status: FilingStatusType;
   wages: number;
   interest: number;
   dividends: number;
@@ -16,12 +12,8 @@ export interface TaxInput {
   ira_distributions: number;
   roth_conversion: number;
   social_security: number;
-  isItemizedDeduction: boolean;
-  itemizedDeductionAmount?: number;
-  filing_status: FilingStatusType;
-  scenarioDate?: string; // Added for tax data versioning
   
-  // Spouse data for married filing scenarios
+  // Spouse income (for MFJ)
   spouseWages?: number;
   spouseInterest?: number;
   spouseDividends?: number;
@@ -30,9 +22,20 @@ export interface TaxInput {
   spouseRothConversion?: number;
   spouseSocialSecurity?: number;
   
-  // Community property settings
+  // Deduction options
+  isItemizedDeduction: boolean;
+  itemizedDeductionAmount: number;
+  
+  // Community property state
   isInCommunityPropertyState?: boolean;
   splitCommunityIncome?: boolean;
+  
+  // Timestamp reference if needed
+  scenarioDate?: Date;
+  
+  // State tax options
+  includeStateTax?: boolean;
+  residentState?: StateCode;
 }
 
 export interface TaxResult {
@@ -43,33 +46,28 @@ export interface TaxResult {
   agi: number;
   taxable_income: number;
   total_tax: number;
+  federal_tax?: number;
+  state_tax?: number;
+  state_code?: StateCode;
   ordinary_tax: number;
   capital_gains_tax: number;
   marginal_rate: number;
   marginal_capital_gains_rate: number;
   effective_rate: number;
-  brackets_breakdown?: {
+  brackets_breakdown: {
     ordinary: { bracket: number; amount: number; tax: number }[];
     capitalGains: { bracket: number; amount: number; tax: number }[];
   };
   updated_at: Date;
-  tax_data_updated_at?: string; // When the tax data used was last updated
-  tax_data_is_current?: boolean; // Whether the tax data is current
-  tax_data_version?: string; // Version of tax data used for calculation
-  tax_data_warning?: string; // Warning about tax data (e.g., mid-year update)
-  safe_harbor?: import('./safeHarborUtils').SafeHarborResult;
-  
-  // MFS comparison data (if applicable)
-  mfs_comparison?: {
-    primary_tax: number;
-    spouse_tax: number;
-    combined_tax: number;
-    difference: number; // Difference compared to MFJ
-  };
+  tax_data_updated_at: Date;
+  tax_data_is_current: boolean;
+  tax_data_version?: string;
+  tax_data_warning?: string;
+  mfs_comparison?: any;
+  safe_harbor?: any;
 }
 
 export interface TaxDataCacheInfo {
+  dataUpdatedAt: Date;
   isCurrent: boolean;
-  dataUpdatedAt: string;
-  lastChecked: string;
 }

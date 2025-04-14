@@ -23,6 +23,7 @@ import {
 
 import { applyCommunityPropertyRules } from './spouseCalculationUtils';
 import { calculateSafeHarbor } from './safeHarborUtils';
+import { calculateStateTax, StateCode } from './stateTaxData';
 
 import { TaxInput, TaxResult } from './taxCalculatorTypes';
 
@@ -130,6 +131,15 @@ export function calculateTaxScenario(
     input.itemizedDeductionAmount
   );
   
+  // Calculate state tax if applicable
+  let state_tax = 0;
+  let state_code: StateCode | undefined = undefined;
+  
+  if (input.includeStateTax && input.residentState) {
+    state_code = input.residentState as StateCode;
+    state_tax = calculateStateTax(taxable_income, state_code);
+  }
+  
   // Calculate MFS comparison if requested and filing status is MFJ
   let mfs_comparison;
   
@@ -142,6 +152,9 @@ export function calculateTaxScenario(
     mfs_comparison.difference = mfs_comparison.combined_tax - taxResults.totalTax;
   }
   
+  // Calculate total tax (federal + state)
+  const total_tax = taxResults.totalTax + state_tax;
+  
   // Return result with enhanced data including tax data currency and version information
   return {
     scenario_name,
@@ -150,12 +163,15 @@ export function calculateTaxScenario(
     total_income,
     agi,
     taxable_income,
-    total_tax: taxResults.totalTax,
+    federal_tax: taxResults.totalTax,
+    state_tax: state_tax,
+    state_code: state_code,
+    total_tax: total_tax,
     ordinary_tax: taxResults.ordinaryTax,
     capital_gains_tax: taxResults.capitalGainsTax,
     marginal_rate: taxResults.marginalOrdinaryRate,
     marginal_capital_gains_rate: taxResults.marginalCapitalGainsRate,
-    effective_rate: taxResults.effectiveRate,
+    effective_rate: total_tax / total_income,
     brackets_breakdown: taxResults.bracketsBreakdown,
     updated_at: new Date(),
     tax_data_updated_at: taxDataInfo.dataUpdatedAt,
@@ -190,3 +206,4 @@ export function calculateTaxScenarioWithSafeHarbor(
     safe_harbor: safeHarborResult
   };
 }
+

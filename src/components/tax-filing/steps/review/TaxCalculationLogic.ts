@@ -1,11 +1,13 @@
 
 import { TaxReturnData } from '../../types/TaxReturnTypes';
+import { calculateStateTax, StateCode } from '@/utils/stateTaxData';
 
 export const calculateTaxValues = (data: TaxReturnData): {
   calculatedRefund: number;
   calculatedOwed: number;
   calculatedAGI: number;
   calculatedTaxableIncome: number;
+  stateTax?: number;
 } => {
   // Calculate total income
   const totalW2Income = data.w2Forms.reduce((sum, form) => sum + form.wages, 0);
@@ -44,27 +46,35 @@ export const calculateTaxValues = (data: TaxReturnData): {
     tax -= 2500; // Simplified American Opportunity Credit
   }
   tax = Math.max(0, tax);
+
+  // Calculate state tax if applicable
+  let stateTax = 0;
+  if (data.includeStateTax && data.residentState) {
+    stateTax = calculateStateTax(taxableIncome, data.residentState as StateCode);
+  }
   
   // Calculate total withholding
   const totalWithholding = data.w2Forms.reduce((sum, form) => 
     sum + form.federalWithholding, 0);
     
-  // Calculate refund or amount owed
+  // Calculate refund or amount owed (including state tax)
   let calculatedRefund = 0;
   let calculatedOwed = 0;
+  const totalTax = tax + stateTax;
   
-  if (totalWithholding > tax) {
-    calculatedRefund = totalWithholding - tax;
+  if (totalWithholding > totalTax) {
+    calculatedRefund = totalWithholding - totalTax;
     calculatedOwed = 0;
   } else {
     calculatedRefund = 0;
-    calculatedOwed = tax - totalWithholding;
+    calculatedOwed = totalTax - totalWithholding;
   }
   
   return {
     calculatedRefund,
     calculatedOwed,
     calculatedAGI,
-    calculatedTaxableIncome
+    calculatedTaxableIncome,
+    stateTax
   };
 };

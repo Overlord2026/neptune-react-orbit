@@ -39,6 +39,9 @@ export const TaxResultsSummary: React.FC = () => {
   const yearlyData = taxImpact.multiYearImpact.find(
     impact => impact.year === (activeYear === "current" ? currentYear : currentYear + 1)
   );
+
+  // Calculate if there's state tax information
+  const hasStateTax = formState.includeStateTax && formState.residentState && formState.residentState !== 'NONE';
   
   return (
     <div className="mb-6">
@@ -69,6 +72,12 @@ export const TaxResultsSummary: React.FC = () => {
               activeYear={activeYear}
               spreadPerShare={taxImpact.spreadPerShare}
               nextYearIncome={taxImpact.nextYearIncome}
+              hasStateTax={hasStateTax}
+              stateTaxInfo={hasStateTax ? {
+                stateCode: formState.residentState,
+                stateTax: yearlyData?.stateTax || 0,
+                federalTax: yearlyData?.federalTax || 0
+              } : undefined}
             />
             
             <WarningsSection
@@ -82,3 +91,4 @@ export const TaxResultsSummary: React.FC = () => {
     </div>
   );
 };
+

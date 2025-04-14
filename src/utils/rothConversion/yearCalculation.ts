@@ -1,3 +1,4 @@
+
 /**
  * Single Year Calculation Utilities
  * 
@@ -125,6 +126,17 @@ export function processSingleYearCalculation({
     beforeCharitableTraps
   });
   
+  // Add state tax information if applicable
+  if (scenarioData.includeStateTax && scenarioData.residentState) {
+    yearTaxInput.includeStateTax = true;
+    yearTaxInput.residentState = scenarioData.residentState;
+    
+    // Handle potential state relocation in multi-year scenarios
+    if (scenarioData.stateRelocationYear && currentYear >= scenarioData.stateRelocationYear) {
+      yearTaxInput.residentState = scenarioData.futureResidentState || 'NONE';
+    }
+  }
+  
   // Calculate tax on this scenario
   const taxResult = calculateTaxScenario(
     yearTaxInput, 
@@ -185,6 +197,15 @@ export function processSingleYearCalculation({
       ...charitableContribution,
       ...updatedCharitableImpact
     } : undefined,
-    warnings: updatedWarnings
+    warnings: updatedWarnings,
+    // Include state tax information in the return
+    stateTaxInfo: taxResult.state_tax ? {
+      stateCode: taxResult.state_code,
+      stateTax: taxResult.state_tax,
+      federalTax: taxResult.federal_tax,
+      totalTax: taxResult.total_tax,
+      stateTaxDifference: taxResult.state_tax - (noConversionTaxResult.state_tax || 0)
+    } : undefined
   };
 }
+
