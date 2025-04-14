@@ -1,4 +1,3 @@
-
 /**
  * Types for equity compensation and deferral calculations
  */
@@ -86,5 +85,5 @@ export interface DeferralEvent {
   fromYear: number;
   toYear: number;
   amount: number;
-  taxSavings: number;
+  taxSavings?: number;
 }

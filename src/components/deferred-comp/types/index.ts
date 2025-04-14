@@ -1,4 +1,3 @@
-
 /**
  * Re-export all types from EquityTypes
  */
@@ -33,13 +32,15 @@ export interface EquityCompEvent extends EquityTypesCompEvent {
 
 // Merge the two versions of DeferralEvent
 export interface DeferralEvent extends EquityTypesDeferralEvent {
-  // Add missing properties from original types.ts
   year: number;
+  fromYear: number;
+  toYear: number;
+  amount: number;
   amountDeferred: number;
   taxRate: number;
   taxesSaved: number;
-  amount?: number;
   taxSavings?: number;
+  taxRate?: number;
 }
 
 // Merge the two versions of YearlyTaxImpact
