@@ -61,7 +61,6 @@ export const getInitialTaxData = (): TaxReturnData => {
     hasOnlyW2Income: null,
     hasDependents: null,
     hasSelfEmploymentIncome: null,
-    isEligible: null,
     
     // Calculation results
     calculatedRefund: 0,

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TaxReturnData } from '../types/TaxReturnTypes';
+import { TaxReturnData, W2Form } from '../types/TaxReturnTypes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,17 +17,26 @@ const IncomeStep: React.FC<IncomeStepProps> = ({ data, onComplete }) => {
   const [dividendIncome, setDividendIncome] = React.useState(data.dividendIncome);
 
   const handleAddW2 = () => {
-    setW2Forms([...w2Forms, { employer: '', wages: 0, federalWithholding: 0, stateWithholding: 0 }]);
+    setW2Forms([...w2Forms, { 
+      employerName: '', 
+      employerEIN: '', 
+      wages: 0, 
+      federalWithholding: 0, 
+      stateWithholding: 0 
+    }]);
   };
 
   const handleRemoveW2 = (index: number) => {
     setW2Forms(w2Forms.filter((_, i) => i !== index));
   };
 
-  const handleW2Change = (index: number, field: string, value: string | number) => {
+  const handleW2Change = (index: number, field: keyof W2Form, value: string | number) => {
     const updatedW2Forms = [...w2Forms];
-    // @ts-ignore - We know these fields exist on the W2 form object
-    updatedW2Forms[index][field] = field === 'employer' ? value : Number(value);
+    if (field === 'employerName' || field === 'employerEIN') {
+      updatedW2Forms[index][field] = value as string;
+    } else {
+      updatedW2Forms[index][field] = Number(value);
+    }
     setW2Forms(updatedW2Forms);
   };
 
@@ -82,8 +91,8 @@ const IncomeStep: React.FC<IncomeStepProps> = ({ data, onComplete }) => {
                 <Label htmlFor={`employer-${index}`}>Employer Name</Label>
                 <Input
                   id={`employer-${index}`}
-                  value={form.employer}
-                  onChange={(e) => handleW2Change(index, 'employer', e.target.value)}
+                  value={form.employerName}
+                  onChange={(e) => handleW2Change(index, 'employerName', e.target.value)}
                 />
               </div>
               
@@ -112,7 +121,7 @@ const IncomeStep: React.FC<IncomeStepProps> = ({ data, onComplete }) => {
                 <Input
                   id={`state-${index}`}
                   type="number"
-                  value={form.stateWithholding}
+                  value={form.stateWithholding || 0}
                   onChange={(e) => handleW2Change(index, 'stateWithholding', e.target.value)}
                 />
               </div>

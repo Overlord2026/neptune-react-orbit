@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { TaxReturnData } from '../types/TaxReturnTypes';
 import { Button } from '@/components/ui/button';
@@ -19,20 +20,21 @@ const personalInfoSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   ssn: z.string().regex(/^\d{3}-\d{2}-\d{4}$/, "SSN must be in format XXX-XX-XXXX"),
-  filingStatus: z.enum(["single", "married", "head_of_household"], {
+  filingStatus: z.enum(["single", "married_joint", "married_separate", "head_of_household", "qualifying_widow"], {
     required_error: "Please select a filing status",
   }),
   address: z.object({
     street: z.string().min(1, "Street address is required"),
     city: z.string().min(1, "City is required"),
     state: z.string().min(2, "State is required"),
-    zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, "ZIP code must be in format XXXXX or XXXXX-XXXX"),
+    zip: z.string().regex(/^\d{5}(-\d{4})?$/, "ZIP code must be in format XXXXX or XXXXX-XXXX"),
   }),
   dependents: z.array(
     z.object({
       name: z.string().min(1, "Name is required"),
       ssn: z.string().regex(/^\d{3}-\d{2}-\d{4}$/, "SSN must be in format XXX-XX-XXXX"),
       relationship: z.string().min(1, "Relationship is required"),
+      dateOfBirth: z.string().optional(),
     })
   ),
 });
@@ -46,14 +48,19 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
       firstName: data.firstName,
       lastName: data.lastName,
       ssn: data.ssn,
-      filingStatus: data.filingStatus || "single",
+      filingStatus: data.filingStatus,
       address: {
         street: data.address.street,
         city: data.address.city,
         state: data.address.state,
-        zipCode: data.address.zipCode,
+        zip: data.address.zip,
       },
-      dependents: data.dependents.length > 0 ? data.dependents : [],
+      dependents: data.dependents.length > 0 ? data.dependents.map(d => ({
+        name: d.name,
+        ssn: d.ssn,
+        relationship: d.relationship,
+        dateOfBirth: d.dateOfBirth
+      })) : [],
     },
   });
 
@@ -72,12 +79,13 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
         street: values.address.street,
         city: values.address.city,
         state: values.address.state,
-        zipCode: values.address.zipCode,
+        zip: values.address.zip,
       },
       dependents: values.dependents.map(dependent => ({
         name: dependent.name,
         ssn: dependent.ssn,
         relationship: dependent.relationship,
+        dateOfBirth: dependent.dateOfBirth || new Date().toISOString().split('T')[0]
       })),
     };
     onComplete(formattedData);

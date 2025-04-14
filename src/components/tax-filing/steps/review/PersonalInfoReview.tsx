@@ -24,12 +24,14 @@ const PersonalInfoReview: React.FC<PersonalInfoReviewProps> = ({ data }) => {
           <div className="flex justify-between md:block">
             <dt className="font-medium text-muted-foreground">Filing Status:</dt>
             <dd>{data.filingStatus === 'single' ? 'Single' : 
-                 data.filingStatus === 'married' ? 'Married Filing Jointly' : 
-                 data.filingStatus === 'head_of_household' ? 'Head of Household' : ''}</dd>
+                 data.filingStatus === 'married_joint' ? 'Married Filing Jointly' : 
+                 data.filingStatus === 'married_separate' ? 'Married Filing Separately' :
+                 data.filingStatus === 'head_of_household' ? 'Head of Household' : 
+                 data.filingStatus === 'qualifying_widow' ? 'Qualifying Widow(er)' : ''}</dd>
           </div>
           <div className="flex justify-between md:block">
             <dt className="font-medium text-muted-foreground">Address:</dt>
-            <dd>{data.address.street}, {data.address.city}, {data.address.state} {data.address.zipCode}</dd>
+            <dd>{data.address.street}, {data.address.city}, {data.address.state} {data.address.zip}</dd>
           </div>
         </dl>
       </Card>

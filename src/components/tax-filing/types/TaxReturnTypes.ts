@@ -7,6 +7,8 @@ export interface W2Form {
   wages: number;
   federalWithholding: number;
   stateWithholding?: number;
+  // Add the employer property for compatibility
+  employer?: string;
 }
 
 export interface Dependent {
@@ -56,6 +58,7 @@ export interface TaxReturnData {
     city: string;
     state: string;
     zip: string;
+    zipCode?: string; // Add for compatibility
   };
   
   // Dependents
@@ -86,7 +89,7 @@ export interface TaxReturnData {
   
   // State tax information
   includeStateTax?: boolean;
-  residentState?: StateCode;
+  residentState?: StateCode | '';
   stateTax?: number;
   
   // Additional fields needed for components
@@ -100,4 +103,5 @@ export interface TaxReturnData {
   disclaimerAcknowledged?: boolean;
   referenceNumber?: string;
   bankInfo?: any;
+  isEligible?: boolean; // Add for compatibility with EligibilityStep
 }

@@ -1,3 +1,4 @@
+
 /**
  * Types for equity compensation and deferral calculations
  */
@@ -23,7 +24,7 @@ export interface EquityFormState {
   
   // Deferral Strategy
   deferralAmount: number;
-  deferralStrategy: "next-year" | "multi-year";
+  deferralStrategy: "next-year" | "multi-year" | "staggered";
   deferralYears: number;
   sabbaticalYear: number;
   retirementYear: number;

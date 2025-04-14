@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Label } from "@/components/ui/label";
@@ -74,7 +75,7 @@ const DeferralStrategyStep: React.FC<DeferralStrategyStepProps> = ({ onNext, onP
           </div>
           <RadioGroup 
             value={formState.deferralStrategy} 
-            onValueChange={(value) => updateForm({ deferralStrategy: value as "next-year" | "multi-year" })}
+            onValueChange={(value) => updateForm({ deferralStrategy: value as "next-year" | "multi-year" | "staggered" })}
             className="space-y-3"
           >
             <div className="flex items-center space-x-2">
@@ -84,10 +85,15 @@ const DeferralStrategyStep: React.FC<DeferralStrategyStepProps> = ({ onNext, onP
             
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="multi-year" id="multi-year" />
-              <Label htmlFor="multi-year">Stagger deferral over multiple years</Label>
+              <Label htmlFor="multi-year">Multi-year deferral</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="staggered" id="staggered" />
+              <Label htmlFor="staggered">Staggered deferral</Label>
             </div>
             
-            {formState.deferralStrategy === "multi-year" && (
+            {(formState.deferralStrategy === "multi-year" || formState.deferralStrategy === "staggered") && (
               <div className="ml-6 mb-4">
                 <Label htmlFor="deferralYears">Number of years to defer across</Label>
                 <Input 
