@@ -19,7 +19,7 @@ export const calculateMultiYearImpact = (formState: EquityFormState): YearlyTaxI
   
   // Get all events
   const equityEvents = getEquityEvents(formState);
-  const deferralEvents = getDeferralEventsFromDeferralUtils(formState);
+  const deferralEvents = getDeferralEventsFromDeferralUtils(formState) as unknown as DeferralEvent[];
   
   // Calculate impact for current year and next year
   for (let yearOffset = 0; yearOffset <= 1; yearOffset++) {
@@ -30,36 +30,26 @@ export const calculateMultiYearImpact = (formState: EquityFormState): YearlyTaxI
     
     // Calculate ordinary income from equity
     const equityOrdinaryIncome = yearEquityEvents.reduce((sum, event) => {
-      // Handle potential missing properties
-      if ('ordinaryIncome' in event) {
-        return sum + (event.ordinaryIncome || 0);
-      } else if ('incomeRecognized' in event) {
-        return sum + (event.incomeRecognized || 0);
-      }
-      return sum;
+      return sum + (event.ordinaryIncome || 0);
     }, 0);
     
     // Calculate AMT income
     const amtIncome = yearEquityEvents.reduce(
       (sum, event) => {
-        // Handle potential missing properties
-        if ('type' in event && 'spread' in event && 'isDisqualifyingDisposition' in event) {
-          return sum + (event.type === "ISO" && !event.isDisqualifyingDisposition ? event.spread : 0);
-        }
-        return sum;
+        return sum + (event.type === "ISO" && !event.isDisqualifyingDisposition ? event.spread : 0);
       }, 
       0
     );
     
     // Calculate deferrals out for this year
     const deferralsOut = deferralEvents
-      .filter(event => ('fromYear' in event) && event.fromYear === year)
-      .reduce((sum, event) => sum + (('amount' in event) ? event.amount : 0), 0);
+      .filter(event => event.fromYear === year)
+      .reduce((sum, event) => sum + event.amount, 0);
     
     // Calculate deferrals in for this year
     const deferralsIn = deferralEvents
-      .filter(event => ('toYear' in event) && event.toYear === year)
-      .reduce((sum, event) => sum + (('amount' in event) ? event.amount : 0), 0);
+      .filter(event => event.toYear === year)
+      .reduce((sum, event) => sum + event.amount, 0);
     
     // Calculate total income with strategy
     const totalIncomeWithStrategy = baseIncome + equityOrdinaryIncome + deferralsIn - deferralsOut;

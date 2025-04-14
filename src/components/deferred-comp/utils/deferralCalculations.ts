@@ -3,7 +3,7 @@
  * Deferral calculations utilities
  */
 
-import { EquityFormState, DeferralEvent } from '../types/EquityTypes';
+import { EquityFormState, DeferralEvent } from '../types';
 import { getTaxBracketRate } from './taxBracketUtils';
 
 /**
@@ -47,6 +47,7 @@ export const getDeferralEvents = (formState: EquityFormState): DeferralEvent[] =
   const events: DeferralEvent[] = [];
   const currentYear = new Date().getFullYear();
   const taxSavings = calculateDeferralBenefit(formState);
+  const taxRate = getTaxBracketRate(formState.bonusAmount);
   
   if (formState.deferralStrategy === "next-year") {
     // Simple next year deferral
@@ -54,10 +55,15 @@ export const getDeferralEvents = (formState: EquityFormState): DeferralEvent[] =
       fromYear: currentYear,
       toYear: currentYear + 1,
       amount: formState.deferralAmount,
-      taxSavings
+      taxSavings,
+      // Add required properties
+      year: currentYear,
+      amountDeferred: formState.deferralAmount,
+      taxRate,
+      taxesSaved: taxSavings
     });
   } 
-  else if (formState.deferralStrategy === "multi-year") {
+  else if (formState.deferralStrategy === "multi-year" || formState.deferralStrategy === "staggered") {
     // Multi-year staggered deferral
     const amountPerYear = formState.deferralAmount / formState.deferralYears;
     const savingsPerYear = taxSavings / formState.deferralYears;
@@ -67,7 +73,12 @@ export const getDeferralEvents = (formState: EquityFormState): DeferralEvent[] =
         fromYear: currentYear,
         toYear: currentYear + 1 + i,
         amount: amountPerYear,
-        taxSavings: savingsPerYear
+        taxSavings: savingsPerYear,
+        // Add required properties
+        year: currentYear + i,
+        amountDeferred: amountPerYear,
+        taxRate,
+        taxesSaved: savingsPerYear
       });
     }
   }

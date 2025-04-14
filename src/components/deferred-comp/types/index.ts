@@ -1,3 +1,4 @@
+
 /**
  * Re-export all types from EquityTypes
  */
@@ -17,7 +18,7 @@ export type { EquityType };
 // Merge the two versions of EquityFormState with the expanded type
 export interface EquityFormState extends EquityTypesFormState {
   equityType: EquityType;
-  // Other properties remain the same
+  // Modify the deferral strategy to include all possible values
   deferralStrategy: "next-year" | "staggered" | "multi-year";
 }
 
@@ -27,20 +28,14 @@ export interface EquityCompEvent extends EquityTypesCompEvent {
   incomeRecognized: number;
   taxRate: number;
   taxesPaid: number;
-  spread?: number;
 }
 
 // Merge the two versions of DeferralEvent
 export interface DeferralEvent extends EquityTypesDeferralEvent {
   year: number;
-  fromYear: number;
-  toYear: number;
-  amount: number;
   amountDeferred: number;
   taxRate: number;
   taxesSaved: number;
-  taxSavings?: number;
-  taxRate?: number;
 }
 
 // Merge the two versions of YearlyTaxImpact
@@ -51,6 +46,4 @@ export interface YearlyTaxImpact extends EquityTypesYearlyTaxImpact {
   incomeBracket: string;
   nextBracket: string;
   distanceToNextBracket: number;
-  amtAdjustment?: number;
-  irmaaImpact?: boolean;
 }

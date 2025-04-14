@@ -18,8 +18,8 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
   const spreadPerShare = formState.fairMarketValue - formState.strikePrice;
   
   // Use nullish coalescing to handle potentially missing properties
-  const year1Exercise = ('year1Exercise' in formState) ? formState.year1Exercise : 0;
-  const year2Exercise = ('year2Exercise' in formState) ? formState.year2Exercise : 0;
+  const year1Exercise = formState.year1Exercise || 0;
+  const year2Exercise = formState.year2Exercise || 0;
   
   if (formState.planningApproach === "multi-year") {
     // Year 1 exercise
@@ -36,7 +36,7 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
         amtImpact,
         ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add missing properties required by the merged type
+        // Add required properties
         incomeRecognized: ordinaryIncome,
         taxRate: 0.30, // Simplified tax rate
         taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
@@ -57,7 +57,7 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
         amtImpact,
         ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add missing properties required by the merged type
+        // Add required properties
         incomeRecognized: ordinaryIncome,
         taxRate: 0.30, // Simplified tax rate
         taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
@@ -80,7 +80,7 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
         amtImpact,
         ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add missing properties required by the merged type
+        // Add required properties
         incomeRecognized: ordinaryIncome,
         taxRate: 0.30, // Simplified tax rate
         taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
@@ -100,7 +100,7 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
         amtImpact,
         ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add missing properties required by the merged type
+        // Add required properties
         incomeRecognized: ordinaryIncome,
         taxRate: 0.30, // Simplified tax rate
         taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
@@ -130,7 +130,7 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
           amtImpact,
           ordinaryIncome,
           isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-          // Add missing properties required by the merged type
+          // Add required properties
           incomeRecognized: ordinaryIncome,
           taxRate: 0.30, // Simplified tax rate
           taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
