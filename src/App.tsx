@@ -17,8 +17,10 @@ import DeferredCompensationPage from "./pages/DeferredCompPage";
 import TaxEducationPage from "./pages/BasicTaxEducationPage";
 import CollaborationCenterPage from "./pages/CollaborationCenterPage";
 import TaxDocumentAggregatorPage from "./pages/TaxDocumentAggregatorPage";
+import CompareRothScenariosPage from "./pages/CompareRothScenariosPage";
 
-function App() {
+// Using the pattern you suggested with useRoutes
+function AppRoutes() {
   const routes = useRoutes([
     {
       path: "/",
@@ -43,6 +45,10 @@ function App() {
     {
       path: "/tax-planning/roth-conversion",
       element: <Layout><RothConversionPage /></Layout>
+    },
+    {
+      path: "/tax-planning/roth-scenarios",
+      element: <Layout><CompareRothScenariosPage /></Layout>
     },
     {
       path: "/tax-planning/estate-gifting",
@@ -83,6 +89,10 @@ function App() {
   ]);
 
   return routes;
+}
+
+function App() {
+  return <AppRoutes />;
 }
 
 export default App;

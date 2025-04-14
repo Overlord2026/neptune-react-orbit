@@ -39,6 +39,13 @@ export interface EquityFormState {
   // ISO Specific
   holdingPeriod: "less-than-year" | "more-than-year" | "unknown";
   isDisqualifyingDisposition: boolean;
+  
+  // State tax properties
+  includeStateTax?: boolean;
+  residentState?: string;
+  
+  // IRMAA flag
+  includeIrmaa?: boolean;
 }
 
 export interface YearlyTaxImpact {
@@ -54,6 +61,15 @@ export interface YearlyTaxImpact {
   nextBracket: string;
   distanceToNextBracket: number;
   irmaaImpact: boolean;
+  
+  // Additional fields needed to match types.ts
+  capitalGains: number;
+  effectiveRate: number;
+  taxableIncome: number;
+  equityIncome?: number;
+  amtImpact?: number;
+  stateTax?: number;
+  federalTax?: number;
 }
 
 export interface EquityCompEvent {
