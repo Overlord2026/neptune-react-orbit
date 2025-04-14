@@ -11,13 +11,13 @@ import {
   DeferralEvent as EquityTypesDeferralEvent 
 } from './EquityTypes';
 
-// Re-export the types from EquityTypes.ts
-export { EquityType };
+// Re-export the expanded types
+export type { EquityType };
 
-// Merge the two versions of EquityFormState
+// Merge the two versions of EquityFormState with the expanded type
 export interface EquityFormState extends EquityTypesFormState {
-  // Add missing properties from original types.ts
-  equityType: "NSO" | "ISO" | "NONE" | "RSU" | "ESPP" | "Other" | "";
+  equityType: EquityType;
+  // Other properties remain the same
   deferralStrategy: "next-year" | "staggered" | "multi-year";
 }
 

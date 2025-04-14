@@ -2,7 +2,7 @@
  * Types for equity compensation and deferral calculations
  */
 
-export type EquityType = "NSO" | "ISO" | "RSU" | "ESPP" | "Other";
+export type EquityType = "" | "NONE" | "NSO" | "ISO" | "RSU" | "ESPP" | "Other";
 
 export interface EquityFormState {
   // Basic Info
