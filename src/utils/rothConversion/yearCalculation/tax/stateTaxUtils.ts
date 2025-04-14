@@ -6,7 +6,7 @@
  */
 
 import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
-import { TaxInput } from '../../taxCalculator';
+import { TaxInput } from '../../../taxCalculator';
 import { StateCode } from '@/utils/stateTaxData';
 
 /**

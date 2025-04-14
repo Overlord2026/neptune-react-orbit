@@ -3,36 +3,25 @@
  * Single Year Calculation Utilities
  * 
  * Functions for calculating a single year within a multi-year Roth conversion scenario.
+ * This file orchestrates the various specialized utility modules to process a full year calculation.
  */
 
 import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
-import { TaxInput, calculateTaxScenario } from '../taxCalculator';
-import { calculateRMD } from '../rmdCalculationUtils';
+import { calculateTaxScenario } from '../taxCalculator';
+
+// Import specialized calculation modules
+import { calculateYearlyIncome } from './yearCalculation/income/incomeCalculation';
 import { determineConversionAmounts } from './conversionUtils';
-import { 
-  TaxTrapInput, checkTaxTraps
-} from '@/utils/taxTraps';
-import { StateCode } from '@/utils/stateTaxData';
+import { processTaxableIncome } from './yearCalculation/income/taxableIncomeProcessor';
+import { calculateCharitableEffect } from './yearCalculation/charitable/charitableProcessor';
+import { prepareTaxInput } from './yearCalculation/tax/taxInputPreparation';
+import { applyStateTaxInfo } from './yearCalculation/tax/stateTaxUtils';
+import { processTaxResults } from './yearCalculation/tax/taxResultProcessor';
+import { checkForTaxTraps } from './yearCalculation/tax/taxTrapUtils';
 
-// Import additional modular utilities for processing
-import { processCharitableContribution, checkForCharitableOpportunities } from './yearCalculation/charitableAdjustments';
-import { prepareTaxInput } from './yearCalculation/taxInputPreparation';
-import { checkForTaxTraps } from './yearCalculation/taxTrapUtils';
-import { applyStateTaxInfo } from './yearCalculation/stateTaxUtils';
-import { calculateYearlyIncome } from './yearCalculation/incomeCalculation';
-import { 
-  getCharitableContributionForYear 
-} from './charitableContributionUtils';
-import { 
-  calculateCharitableImpact 
-} from './charitableImpactUtils';
-import { 
-  calculateCharitableOpportunity 
-} from './charitableOpportunityUtils';
-import { 
-  getStandardDeduction 
-} from './deductionUtils';
-
+/**
+ * Input parameters for a single year calculation
+ */
 interface YearCalculationInput {
   scenarioData: MultiYearScenarioData;
   currentYear: number;
@@ -43,6 +32,9 @@ interface YearCalculationInput {
   i: number; // Year index
 }
 
+/**
+ * Process a single year calculation in a multi-year Roth conversion scenario
+ */
 export function processSingleYearCalculation({
   scenarioData,
   currentYear,
@@ -52,7 +44,7 @@ export function processSingleYearCalculation({
   spouseTraditionalIRABalance,
   i
 }: YearCalculationInput) {
-  // Calculate income components using dedicated function
+  // Calculate income components
   const {
     baseIncome,
     spouseBaseIncome,
@@ -68,16 +60,20 @@ export function processSingleYearCalculation({
     i
   });
   
-  // Process charitable contribution and adjust RMD if using QCD
-  const { charitableContribution, adjustedRmdAmount } = processCharitableContribution(
+  // Process taxable income with charitable adjustments
+  const { 
+    charitableContribution, 
+    adjustedRmdAmount,
+    totalPreConversionIncome 
+  } = processTaxableIncome(
     scenarioData,
     currentYear,
     currentAge,
-    rmdAmount
+    baseIncome,
+    spouseBaseIncome,
+    rmdAmount,
+    spouseRmdAmount
   );
-  
-  // Total income before conversion (using adjusted RMD if applicable)
-  const totalPreConversionIncome = baseIncome + spouseBaseIncome + adjustedRmdAmount + spouseRmdAmount;
   
   // Determine conversion amounts
   const { conversionAmount, spouseConversionAmount } = determineConversionAmounts({
@@ -106,8 +102,19 @@ export function processSingleYearCalculation({
     isMedicare: currentAge >= 65
   });
   
+  // Calculate charitable effects
+  const { charitableImpact, updatedWarnings } = calculateCharitableEffect({
+    scenarioData,
+    currentYear,
+    currentAge,
+    baseAGI,
+    charitableContribution,
+    beforeCharitableTraps,
+    warnings
+  });
+  
   // Prepare tax input with charitable impact
-  const { yearTaxInput, charitableImpact } = prepareTaxInput({
+  const { yearTaxInput } = prepareTaxInput({
     currentYear,
     baseIncome,
     adjustedRmdAmount,
@@ -118,58 +125,23 @@ export function processSingleYearCalculation({
     spouseConversionAmount,
     charitableContribution,
     baseAGI,
-    beforeCharitableTraps
+    beforeCharitableTraps,
+    charitableImpact
   });
   
   // Apply state tax information if applicable
   applyStateTaxInfo(yearTaxInput, scenarioData, currentYear);
   
-  // Calculate tax on this scenario
-  const taxResult = calculateTaxScenario(
-    yearTaxInput, 
-    `Year ${currentYear} Roth Conversion`,
-    "multi_year_analysis"
-  );
-  
-  // Calculate tax on the same scenario without conversion
-  const noConversionInput = { ...yearTaxInput, roth_conversion: 0, spouseRothConversion: 0 };
-  const noConversionTaxResult = calculateTaxScenario(
-    noConversionInput,
-    `Year ${currentYear} No Conversion`,
-    "multi_year_analysis"
-  );
+  // Calculate tax results for this scenario and no-conversion scenario
+  const results = processTaxResults({
+    yearTaxInput,
+    charitableContribution,
+    charitableImpact,
+    scenarioName: `Year ${currentYear} Roth Conversion`,
+    updatedWarnings,
+    rmdAmount
+  });
 
-  // Recalculate charitable impact with the actual marginal rate from tax result
-  let updatedWarnings = [...warnings];
-  let updatedCharitableImpact = charitableImpact;
-  
-  if (scenarioData.useCharitablePlanning && charitableContribution.amount > 0) {
-    updatedCharitableImpact = calculateCharitableImpact(
-      charitableContribution.amount,
-      charitableContribution.useQcd,
-      charitableContribution.isBunching,
-      scenarioData.filingStatus,
-      currentYear,
-      taxResult.marginal_rate, // Use actual marginal rate
-      rmdAmount,
-      baseAGI,
-      beforeCharitableTraps
-    );
-    
-    // Check for additional charitable opportunities
-    const opportunityWarning = checkForCharitableOpportunities(
-      beforeCharitableTraps,
-      scenarioData.filingStatus,
-      currentAge,
-      baseAGI,
-      currentYear
-    );
-    
-    if (opportunityWarning) {
-      updatedWarnings.push(opportunityWarning);
-    }
-  }
-  
   return {
     baseIncome,
     spouseBaseIncome,
@@ -178,20 +150,6 @@ export function processSingleYearCalculation({
     totalPreConversionIncome,
     conversionAmount,
     spouseConversionAmount,
-    taxResult,
-    noConversionTaxResult,
-    charitableContribution: scenarioData.useCharitablePlanning ? {
-      ...charitableContribution,
-      ...updatedCharitableImpact
-    } : undefined,
-    warnings: updatedWarnings,
-    // Include state tax information in the return
-    stateTaxInfo: taxResult.state_tax ? {
-      stateCode: taxResult.state_code,
-      stateTax: taxResult.state_tax,
-      federalTax: taxResult.federal_tax,
-      totalTax: taxResult.total_tax,
-      stateTaxDifference: taxResult.state_tax - (noConversionTaxResult.state_tax || 0)
-    } : undefined
+    ...results
   };
 }

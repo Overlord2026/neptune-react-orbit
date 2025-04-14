@@ -6,7 +6,7 @@
  */
 
 import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
-import { calculateRMD } from '../../rmdCalculationUtils';
+import { calculateRMD } from '../../../rmdCalculationUtils';
 
 interface IncomeParams {
   scenarioData: MultiYearScenarioData;

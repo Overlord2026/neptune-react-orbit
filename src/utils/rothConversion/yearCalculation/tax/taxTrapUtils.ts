@@ -6,7 +6,7 @@
  */
 
 import { TaxTrapInput, checkTaxTraps, TaxTrapResult, TaxTrapWarning } from '@/utils/taxTraps';
-import { getStandardDeduction } from '../deductionUtils';
+import { getStandardDeduction } from '../../deductionUtils';
 
 /**
  * Check for tax traps and generate warnings

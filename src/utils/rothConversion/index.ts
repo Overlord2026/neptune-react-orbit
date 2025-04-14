@@ -15,3 +15,6 @@ export {
   calculateCharitableOpportunity,
   getStandardDeduction
 } from './charitableUtils';
+
+// Export specialized modules
+export * from './yearCalculation/index';
