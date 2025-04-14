@@ -13,7 +13,7 @@ import { EquityImpactCards } from "./EquityImpactCards";
 import { DeferralImpactCard } from "./DeferralImpactCard";
 import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
 import { toast } from "sonner";
-import { saveScenario, EquityScenario } from "@/utils/taxScenarioStorage";
+import { saveScenario, EquityScenario } from "@/utils/taxScenario";
 import { FilingStatusType } from "@/utils/taxBracketData";
 import { LoadingStateDisplay } from "./LoadingState";
 

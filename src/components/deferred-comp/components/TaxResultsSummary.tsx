@@ -6,6 +6,7 @@ import { YearSelector } from "./tax-summary/YearSelector";
 import { TaxBreakdownSection } from "./tax-summary/TaxBreakdownSection";
 import { WarningsSection } from "./tax-summary/WarningsSection";
 import { calculateTaxImpact } from "./tax-summary/TaxCalculation";
+import type { EquityFormState } from "../types";
 
 export const TaxResultsSummary: React.FC = () => {
   const { 
@@ -23,7 +24,7 @@ export const TaxResultsSummary: React.FC = () => {
   
   // Calculate detailed tax impact based on form data
   const taxImpact = calculateTaxImpact(
-    formState, 
+    formState as EquityFormState, 
     calculateAmtImpact, 
     calculateMultiYearImpact, 
     getEquityEvents, 

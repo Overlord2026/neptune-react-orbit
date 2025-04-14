@@ -10,3 +10,6 @@ export { calculateTaxableIncome } from './taxableIncomeCalculator';
 export { calculateTotalTaxLiability } from './taxLiabilityCalculator';
 export { getDistanceToNextBracket } from './bracketAnalyzer';
 export { formatCurrency, formatPercent } from '../formatUtils';
+
+// Re-export tax scenario utilities
+export * from '../taxScenario';
