@@ -1,3 +1,4 @@
+
 /**
  * Single Year Calculation Utilities
  * 
@@ -17,6 +18,8 @@ import { StateCode } from '@/utils/stateTaxData';
 import { processCharitableContribution, checkForCharitableOpportunities } from './yearCalculation/charitableAdjustments';
 import { prepareTaxInput } from './yearCalculation/taxInputPreparation';
 import { checkForTaxTraps } from './yearCalculation/taxTrapUtils';
+import { applyStateTaxInfo } from './yearCalculation/stateTaxUtils';
+import { calculateYearlyIncome } from './yearCalculation/incomeCalculation';
 import { 
   getCharitableContributionForYear 
 } from './charitableContributionUtils';
@@ -49,29 +52,21 @@ export function processSingleYearCalculation({
   spouseTraditionalIRABalance,
   i
 }: YearCalculationInput) {
-  // Calculate projected income for this year with growth
-  const baseIncome = scenarioData.baseAnnualIncome * 
-    Math.pow(1 + scenarioData.incomeGrowthRate, i);
-  
-  // Calculate spouse income if applicable
-  let spouseBaseIncome = 0;
-  if (scenarioData.includeSpouse && scenarioData.spouseBaseAnnualIncome) {
-    spouseBaseIncome = scenarioData.spouseBaseAnnualIncome *
-      Math.pow(1 + scenarioData.incomeGrowthRate, i);
-  }
-  
-  // Calculate RMD if applicable
-  let rmdAmount = 0;
-  if (scenarioData.includeRMDs && currentAge >= scenarioData.rmdStartAge) {
-    rmdAmount = calculateRMD(traditionalIRABalance, currentAge);
-  }
-  
-  // Calculate spouse RMD if applicable
-  let spouseRmdAmount = 0;
-  if (scenarioData.includeSpouse && scenarioData.includeRMDs && 
-      spouseAge && spouseAge >= (scenarioData.spouseRmdStartAge || scenarioData.rmdStartAge)) {
-    spouseRmdAmount = calculateRMD(spouseTraditionalIRABalance, spouseAge);
-  }
+  // Calculate income components using dedicated function
+  const {
+    baseIncome,
+    spouseBaseIncome,
+    rmdAmount,
+    spouseRmdAmount
+  } = calculateYearlyIncome({
+    scenarioData,
+    currentYear,
+    currentAge,
+    spouseAge,
+    traditionalIRABalance,
+    spouseTraditionalIRABalance,
+    i
+  });
   
   // Process charitable contribution and adjust RMD if using QCD
   const { charitableContribution, adjustedRmdAmount } = processCharitableContribution(
@@ -126,29 +121,8 @@ export function processSingleYearCalculation({
     beforeCharitableTraps
   });
   
-  // Add state tax information if applicable
-  if (scenarioData.includeStateTax && scenarioData.residentState) {
-    yearTaxInput.includeStateTax = true;
-    
-    // Safely handle state code assignment
-    yearTaxInput.residentState = 
-      (scenarioData.residentState !== "" && 
-       scenarioData.residentState !== "NONE" && 
-       scenarioData.residentState !== "OTHER") 
-        ? scenarioData.residentState as StateCode 
-        : undefined;
-    
-    // Handle potential state relocation in multi-year scenarios
-    if (scenarioData.stateRelocationYear && currentYear >= scenarioData.stateRelocationYear) {
-      yearTaxInput.residentState = 
-        (scenarioData.futureResidentState && 
-         scenarioData.futureResidentState !== "" && 
-         scenarioData.futureResidentState !== "NONE" && 
-         scenarioData.futureResidentState !== "OTHER")
-          ? scenarioData.futureResidentState as StateCode
-          : undefined;
-    }
-  }
+  // Apply state tax information if applicable
+  applyStateTaxInfo(yearTaxInput, scenarioData, currentYear);
   
   // Calculate tax on this scenario
   const taxResult = calculateTaxScenario(
