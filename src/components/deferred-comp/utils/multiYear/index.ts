@@ -1,8 +1,9 @@
 
 /**
- * Multi-year tax calculations - Reexport modules
+ * Re-export all multi-year calculation modules
  */
 
 export { calculateMultiYearImpact } from './calculateMultiYearImpact';
 export { getEquityEvents } from './equityEvents';
-export { getDeferralEvents } from '../deferralCalculations';
+export * from './taxCalculations';
+export * from './charitableIntegration';

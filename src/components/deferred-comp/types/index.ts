@@ -28,6 +28,7 @@ export interface EquityCompEvent extends EquityTypesCompEvent {
   incomeRecognized: number;
   taxRate: number;
   taxesPaid: number;
+  spread?: number;
 }
 
 // Merge the two versions of DeferralEvent
@@ -37,9 +38,18 @@ export interface DeferralEvent extends EquityTypesDeferralEvent {
   amountDeferred: number;
   taxRate: number;
   taxesSaved: number;
+  amount?: number;
+  taxSavings?: number;
 }
 
 // Merge the two versions of YearlyTaxImpact
 export interface YearlyTaxImpact extends EquityTypesYearlyTaxImpact {
-  // All properties are already covered
+  // Add additional properties needed by components
+  taxSavings: number;
+  taxWithoutStrategy: number;
+  incomeBracket: string;
+  nextBracket: string;
+  distanceToNextBracket: number;
+  amtAdjustment?: number;
+  irmaaImpact?: boolean;
 }

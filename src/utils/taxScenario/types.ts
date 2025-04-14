@@ -1,6 +1,6 @@
 
 import { TaxResult } from '../taxCalculatorTypes';
-import { YearlyTaxImpact } from '../../components/deferred-comp/types/EquityTypes';
+import { YearlyTaxImpact } from '../../components/deferred-comp/types';
 
 /**
  * Type definitions for tax scenarios

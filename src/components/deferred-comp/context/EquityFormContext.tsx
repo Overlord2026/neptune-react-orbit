@@ -39,15 +39,80 @@ interface EquityFormContextType {
 const EquityFormContext = createContext<EquityFormContextType | undefined>(undefined);
 
 export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [formState, setFormState] = useState<EquityFormState>(defaultFormState as EquityFormState);
+  const [formState, setFormState] = useState<EquityFormState>({
+    ...defaultFormState as Partial<EquityFormState>,
+    // Ensure all required properties are present for EquityTypesFormState
+    employer: '',
+    shareCount: 0,
+    bonusAmount: 0,
+    strikePrice: 0,
+    fairMarketValue: 0,
+    vestedShares: 0,
+    unvestedShares: 0,
+    exerciseStrategy: "full",
+    partialShares: 0,
+    splitYears: 2,
+    deferralAmount: 0,
+    deferralStrategy: "next-year",
+    deferralYears: 2,
+    planningApproach: "single-year",
+    year1Exercise: 0,
+    year2Exercise: 0,
+    year1Deferral: 0,
+    year2Deferral: 0,
+    holdingPeriod: "unknown",
+    isDisqualifyingDisposition: false,
+    equityType: "",
+    hasDeferredComp: false,
+    sabbaticalYear: 0,
+    retirementYear: 0,
+    includeStateTax: false,
+    residentState: "",
+    includeIrmaa: false
+  });
   
   const updateForm = useCallback((updates: Partial<EquityFormState>) => {
     setFormState(current => ({ ...current, ...updates }));
   }, []);
   
   const resetForm = useCallback(() => {
-    setFormState(defaultFormState as EquityFormState);
+    setFormState({
+      ...defaultFormState as Partial<EquityFormState>,
+      employer: '',
+      shareCount: 0,
+      bonusAmount: 0,
+      strikePrice: 0,
+      fairMarketValue: 0,
+      vestedShares: 0,
+      unvestedShares: 0,
+      exerciseStrategy: "full",
+      partialShares: 0,
+      splitYears: 2,
+      deferralAmount: 0,
+      deferralStrategy: "next-year",
+      deferralYears: 2,
+      planningApproach: "single-year",
+      year1Exercise: 0,
+      year2Exercise: 0,
+      year1Deferral: 0,
+      year2Deferral: 0,
+      holdingPeriod: "unknown",
+      isDisqualifyingDisposition: false,
+      equityType: "",
+      hasDeferredComp: false,
+      sabbaticalYear: 0,
+      retirementYear: 0,
+      includeStateTax: false,
+      residentState: "",
+      includeIrmaa: false
+    });
   }, []);
+  
+  // Adapting the tax bracket rate function to return a string
+  const getTaxBracketRateString = (income: number): string => {
+    const rate = getTaxBracketRate(income);
+    return rate.toString() + '%';
+  };
   
   const value: EquityFormContextType = {
     formState,
@@ -56,8 +121,8 @@ export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     calculateDeferralBenefit: () => calculateDeferralBenefit(formState),
     calculateMultiYearImpact: () => calculateMultiYearImpact(formState),
     getEquityEvents: () => getEquityEvents(formState),
-    getDeferralEvents: () => getDeferralEvents(formState),
-    getTaxBracketRate,
+    getDeferralEvents: () => getDeferralEvents(formState) as DeferralEvent[],
+    getTaxBracketRate: getTaxBracketRateString,
     getDistanceToNextBracket,
     checkIrmaaImpact,
     resetForm
