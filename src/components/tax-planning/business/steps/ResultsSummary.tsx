@@ -89,7 +89,16 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         business_tax_details: taxResult,
         business_input: businessInput,
         updated_at: new Date(),
-        type: 'business-income'
+        type: 'business-income',
+        brackets_breakdown: {
+          ordinary: [
+            { bracket: 10, amount: 10000, tax: 1000 },
+            { bracket: 22, amount: taxResult.netTaxableIncome - 10000, tax: (taxResult.netTaxableIncome - 10000) * 0.22 }
+          ],
+          capitalGains: []
+        },
+        tax_data_updated_at: new Date(),
+        tax_data_is_current: true
       };
       
       await saveScenario(scenarioToSave);
@@ -481,7 +490,7 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
                     <li>Additional accounting/tax preparation fees ($800-$2,500/year)</li>
                     <li>Separate tax return filing requirements</li>
                   </ul>
-                  <p className="mt-2">Generally, S-Corps become advantageous when saving at least $2,000-3,000 in SE taxes annually.</p>
+                  <p className="mt-2">Generally, S-Corporations become advantageous when saving at least $2,000-3,000 in SE taxes annually.</p>
                 </AlertDescription>
               </Alert>
             </>
@@ -616,7 +625,7 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           <Separator />
           
           <Alert className="bg-blue-600/10 border-blue-600/20">
-            <Info className="h-4 w-4 text-blue-500" />
+            <Info className="h-4 w-4 text-blue-50" />
             <AlertTitle>Federal Tax Estimates Only</AlertTitle>
             <AlertDescription className="text-sm">
               This tool approximates federal self-employment taxes and QBI deductions; states vary widely in their tax treatment of business income. 

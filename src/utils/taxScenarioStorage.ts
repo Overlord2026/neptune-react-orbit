@@ -15,8 +15,8 @@ export interface EquityScenario extends TaxResult {
   results?: YearlyTaxImpact[];
   amtImpact?: number;
   deferralBenefit?: number;
-  scenario_name: string;  // Added to match TaxOutputStep usage
-  id?: string;  // Optional ID to match usage in TaxOutputStep
+  
+  // Required properties that must be defined (not optional)
   brackets_breakdown: {
     ordinary: { bracket: number; amount: number; tax: number }[];
     capitalGains: { bracket: number; amount: number; tax: number }[];
