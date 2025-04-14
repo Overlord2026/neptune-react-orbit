@@ -16,28 +16,19 @@ import {
   archiveDocumentsByYear,
   restoreDocumentsByYear
 } from '@/utils/documentArchiveUtils';
-
-interface Document {
-  id: string;
-  name: string;
-  source?: string;
-  uploadDate: string;
-  type: string;
-  archived?: boolean;
-}
+import { useDocumentContext } from './DocumentContext';
 
 interface DocumentArchiveSectionProps {
-  documents: Document[];
   selectedYear: string;
   onArchiveStatusChange: () => void;
 }
 
 const DocumentArchiveSection: React.FC<DocumentArchiveSectionProps> = ({ 
-  documents, 
   selectedYear,
   onArchiveStatusChange 
 }) => {
   const { toast } = useToast();
+  const { documents } = useDocumentContext();
   const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
@@ -46,13 +37,9 @@ const DocumentArchiveSection: React.FC<DocumentArchiveSectionProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Filter documents by archive status and selected year
-  const archivedDocs = documents.filter(doc => 
-    doc.archived && new Date(doc.uploadDate).getFullYear().toString() === selectedYear
-  );
-  
-  const activeDocs = documents.filter(doc => 
-    !doc.archived && new Date(doc.uploadDate).getFullYear().toString() === selectedYear
-  );
+  const documentsList = documents[selectedYear] || [];
+  const archivedDocs = documentsList.filter(doc => doc.archived);
+  const activeDocs = documentsList.filter(doc => !doc.archived);
 
   // Handle selecting a document
   const handleSelectDoc = (docId: string) => {
