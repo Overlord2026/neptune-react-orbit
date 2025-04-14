@@ -78,6 +78,11 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         taxable_income: taxResult.netTaxableIncome,
         agi: taxResult.netProfit - (taxResult.selfEmploymentTaxDeduction || 0),
         total_tax: taxResult.selfEmploymentTax,
+        ordinary_tax: taxResult.selfEmploymentTax, // Add missing field
+        capital_gains_tax: 0, // Add missing field
+        marginal_rate: 0.15, // Add approximate marginal rate
+        marginal_capital_gains_rate: 0, // Add missing field
+        effective_rate: taxResult.effectiveTaxRate, // Use existing effective rate
         business_income: taxResult.netProfit,
         business_tax_details: taxResult,
         business_input: businessInput,
@@ -819,4 +824,3 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
 };
 
 export default ResultsSummary;
-
