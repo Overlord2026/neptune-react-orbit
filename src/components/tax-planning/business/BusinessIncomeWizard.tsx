@@ -21,14 +21,26 @@ import { useToast } from '@/hooks/use-toast';
 // Define the step type for the wizard
 type WizardStep = 'business-info' | 'expenses' | 'entity-comparison' | 'multi-year' | 'results';
 
-const BusinessIncomeWizard: React.FC = () => {
+interface BusinessIncomeWizardProps {
+  initialIncome?: number;
+  initialYear?: number;
+  onComplete?: (result: BusinessTaxResult, input: BusinessIncomeInput) => void;
+  isEmbedded?: boolean;
+}
+
+const BusinessIncomeWizard: React.FC<BusinessIncomeWizardProps> = ({ 
+  initialIncome = 75000, 
+  initialYear = new Date().getFullYear(),
+  onComplete,
+  isEmbedded = false
+}) => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<WizardStep>('business-info');
   const [businessInput, setBusinessInput] = useState<BusinessIncomeInput>({
     businessType: 'sole_proprietorship',
-    income: 75000,
+    income: initialIncome,
     expenses: {},
-    year: new Date().getFullYear(),
+    year: initialYear,
   });
   const [taxResult, setTaxResult] = useState<BusinessTaxResult | null>(null);
   const [showComparison, setShowComparison] = useState<boolean>(false);
@@ -88,8 +100,12 @@ const BusinessIncomeWizard: React.FC = () => {
         setCurrentStep('results');
         break;
       case 'results':
-        // Reset to beginning
-        setCurrentStep('business-info');
+        // Reset to beginning or trigger the onComplete callback if provided
+        if (onComplete && taxResult) {
+          onComplete(taxResult, businessInput);
+        } else {
+          setCurrentStep('business-info');
+        }
         break;
     }
   };

@@ -28,6 +28,8 @@ import {
 import { TaxTrapChecker } from '@/components/tax/TaxTrapChecker';
 import { checkTaxTraps, TaxTrapResult } from '@/utils/taxTraps';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
+import { saveScenario } from '@/utils/taxScenarioStorage';
+import { useToast } from '@/hooks/use-toast';
 
 interface ResultsSummaryProps {
   businessInput: BusinessIncomeInput;
@@ -42,8 +44,10 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
   onReset,
   onPrev
 }) => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('summary');
   const [sCorpComparison, setSCorpComparison] = useState<BusinessTaxResult | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Initialize S-Corp comparison when component mounts
   React.useEffect(() => {
@@ -60,6 +64,122 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
       setSCorpComparison(result);
     }
   }, [businessInput, taxResult]);
+
+  // Save scenario to storage for integration with other tools
+  const handleSaveScenario = async () => {
+    if (!taxResult) return;
+    
+    try {
+      const scenarioToSave = {
+        scenario_name: `${getBusinessTypeText()} Income (${getCurrentYear()})`,
+        year: getCurrentYear(),
+        filing_status: 'single' as const, // Explicitly typed as const
+        total_income: taxResult.netProfit,
+        taxable_income: taxResult.netTaxableIncome,
+        agi: taxResult.netProfit - (taxResult.selfEmploymentTaxDeduction || 0),
+        total_tax: taxResult.selfEmploymentTax,
+        business_income: taxResult.netProfit,
+        business_tax_details: taxResult,
+        business_input: businessInput,
+        updated_at: new Date(),
+        type: 'business-income'
+      };
+      
+      await saveScenario(scenarioToSave);
+      
+      toast({
+        title: "Scenario Saved",
+        description: "Your business income scenario has been saved and can be integrated with other tax tools.",
+      });
+    } catch (err) {
+      console.error("Error saving scenario:", err);
+      toast({
+        title: "Save Error",
+        description: "There was an error saving your scenario. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Export results as CSV
+  const exportResults = () => {
+    if (!taxResult) return;
+    
+    setIsExporting(true);
+    
+    try {
+      // Basic business info
+      let csv = "Business Income Tax Summary\n";
+      csv += `Business Type,${getBusinessTypeText()}\n`;
+      csv += `Tax Year,${getCurrentYear()}\n\n`;
+      
+      // Income details
+      csv += "INCOME DETAILS\n";
+      csv += `Net Profit,${formatCurrency(taxResult.netProfit)}\n`;
+      
+      if (businessInput.businessType === 's_corp') {
+        csv += `Owner's Wages,${formatCurrency(businessInput.sCorpWages || 0)}\n`;
+        csv += `Distributions,${formatCurrency(businessInput.sCorpDistributions || 0)}\n`;
+      }
+      
+      // Tax details
+      csv += "\nTAX DETAILS\n";
+      if (businessInput.businessType === 's_corp') {
+        csv += `Payroll Taxes,${formatCurrency(taxResult.payrollTaxes)}\n`;
+      } else {
+        csv += `Self-Employment Tax,${formatCurrency(taxResult.selfEmploymentTax)}\n`;
+        csv += `SE Tax Deduction,${formatCurrency(taxResult.selfEmploymentTaxDeduction)}\n`;
+      }
+      csv += `QBI Deduction,${taxResult.qbiDeduction ? formatCurrency(taxResult.qbiDeduction) : "N/A"}\n`;
+      csv += `Net Taxable Income,${formatCurrency(taxResult.netTaxableIncome)}\n`;
+      csv += `Effective Tax Rate,${formatPercent(taxResult.effectiveTaxRate)}\n`;
+      
+      // Warnings & considerations
+      if (taxResult.warnings.length > 0) {
+        csv += "\nCONSIDERATIONS & WARNINGS\n";
+        taxResult.warnings.forEach(warning => {
+          csv += `${warning.message}\n`;
+        });
+      }
+      
+      // Comparison (if applicable)
+      if (sCorpComparison && businessInput.businessType !== 's_corp') {
+        csv += "\nS-CORPORATION COMPARISON\n";
+        csv += `Potential SE Tax as Sole Prop/LLC,${formatCurrency(taxResult.selfEmploymentTax)}\n`;
+        csv += `Potential Payroll Tax as S-Corp,${formatCurrency(sCorpComparison.payrollTaxes)}\n`;
+        csv += `Potential Tax Savings,${formatCurrency(taxResult.selfEmploymentTax - sCorpComparison.payrollTaxes)}\n`;
+        csv += "DISCLAIMER: S-Corps have additional costs including state fees, additional tax returns, and payroll administration.\n";
+      }
+      
+      // General disclaimer
+      csv += "\nDISCLAIMER\n";
+      csv += "This summary approximates federal self-employment taxes and QBI deductions; states vary widely. Consult with a tax professional for personalized advice.\n";
+      
+      // Create downloadable file
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Business_Tax_Summary_${getCurrentYear()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Export Successful",
+        description: "Your business tax summary has been exported as a CSV file.",
+      });
+    } catch (err) {
+      console.error("Error exporting data:", err);
+      toast({
+        title: "Export Error",
+        description: "There was an error exporting your data. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (!taxResult) {
     return (
@@ -143,7 +263,7 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
     // you would need more complete tax information
     return {
       year: getCurrentYear(),
-      filing_status: 'single',
+      filing_status: 'single' as const, // Explicitly typed as const
       agi: taxResult.netProfit - taxResult.selfEmploymentTaxDeduction,
       total_income: taxResult.netProfit,
       taxable_income: taxResult.netTaxableIncome,
@@ -489,22 +609,51 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         </TabsContent>
       </Tabs>
       
-      {/* "Did You Know" Section */}
-      <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70 overflow-hidden">
-        <CardHeader className="bg-[#2A2F3C]/30">
-          <CardTitle className="flex items-center gap-2 text-lg">
+      {/* Integration & Disclaimer Section */}
+      <Card className="border-[#2A2F3C] bg-[#1A1F2C]/70">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg flex items-center gap-2">
             <Info className="h-5 w-5 text-[#FFD700]" />
-            Did You Know?
+            Integration Options & Disclaimers
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
-          <p className="text-muted-foreground">
-            {
-              businessInput.businessType === 's_corp'
-                ? "S-Corporations can help save on self-employment taxes, but the IRS requires you to pay yourself a 'reasonable salary' that's comparable to what others in your field earn for similar work."
-                : "For 2024, the 20% qualified business income (QBI) deduction allows eligible pass-through business owners to deduct up to 20% of their qualified business income. This deduction has income limitations for certain service businesses."
-            }
-          </p>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col md:flex-row gap-4 md:justify-between items-start md:items-center">
+            <div>
+              <h4 className="font-medium text-white">Multi-Year Integration</h4>
+              <p className="text-sm text-muted-foreground">
+                Save your business income data to include it in your comprehensive tax planning.
+              </p>
+            </div>
+            
+            <Button onClick={handleSaveScenario} className="w-full md:w-auto">
+              Save to Multi-Year Plan
+            </Button>
+          </div>
+          
+          <Separator />
+          
+          <Alert className="bg-blue-600/10 border-blue-600/20">
+            <Info className="h-4 w-4 text-blue-500" />
+            <AlertTitle>Federal Tax Estimates Only</AlertTitle>
+            <AlertDescription className="text-sm">
+              This tool approximates federal self-employment taxes and QBI deductions; states vary widely in their tax treatment of business income. 
+              Consult local tax laws or a tax professional for state-specific guidance.
+            </AlertDescription>
+          </Alert>
+          
+          {businessInput.businessType !== 's_corp' && sCorpSavings > 0 && (
+            <Alert className="bg-amber-50/10 border-amber-600/20">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertTitle>S-Corp Considerations</AlertTitle>
+              <AlertDescription className="text-sm">
+                Converting to an S-Corporation may save approximately {formatCurrency(sCorpSavings)} in self-employment taxes based on your inputs. 
+                However, S-Corps involve additional costs including incorporation fees, annual state fees (ranging from $50-$800 depending on your state), 
+                payroll processing costs ($50-$200/month), separate tax returns, and higher accounting fees. The IRS also requires S-Corp owners to 
+                pay themselves "reasonable compensation" before taking distributions.
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
       </Card>
       
@@ -619,6 +768,21 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           </DialogContent>
         </Dialog>
         
+        <Button 
+          variant="outline" 
+          className="w-full sm:w-auto"
+          onClick={exportResults}
+          disabled={isExporting}
+        >
+          {isExporting ? (
+            <>Processing...</>
+          ) : (
+            <>
+              <Download className="mr-2 h-4 w-4" /> Export Summary
+            </>
+          )}
+        </Button>
+        
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -641,10 +805,13 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
         </Button>
       </div>
       
-      {/* Disclaimer */}
+      {/* Enhanced Disclaimer */}
       <div className="border border-[#2A2F3C] bg-[#1A1F2C]/30 p-4 rounded-md">
         <p className="text-xs text-muted-foreground">
-          <span className="font-medium">Disclaimer:</span> This tool provides estimates only and is not a substitute for professional tax advice. Tax calculations are simplified and may not account for all tax scenarios. Always consult with a tax professional for advice specific to your situation.
+          <span className="font-medium">Disclaimer:</span> This tool provides estimates only and is not a substitute for professional tax advice. 
+          Tax calculations are simplified and may not account for all tax scenarios. S-Corporation conversions require additional filings, fees, 
+          and payroll administration. The IRS requires S-Corp owners to pay themselves "reasonable compensation" before taking distributions. 
+          Always consult with a tax professional for advice specific to your situation.
         </p>
       </div>
     </div>
@@ -652,3 +819,4 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
 };
 
 export default ResultsSummary;
+
