@@ -60,7 +60,6 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
         marginal_capital_gains_rate: 0,
         effective_rate: yearData.totalTax / yearData.ordinaryIncome,
         updated_at: new Date(),
-        id: `equity-${Date.now()}`,
         brackets_breakdown: {
           ordinary: [
             { bracket: 10, amount: 10000, tax: 1000 },
@@ -70,6 +69,7 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
         },
         tax_data_updated_at: new Date(),
         tax_data_is_current: true,
+        tax_data_version: "2025.1",
         
         formState,
         results: calculateMultiYearImpact(),

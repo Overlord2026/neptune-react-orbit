@@ -62,7 +62,7 @@ export interface YearlyTaxImpact {
   distanceToNextBracket: number;
   irmaaImpact: boolean;
   
-  // Additional fields needed to match types.ts
+  // Required fields to fix TypeScript errors
   capitalGains: number;
   effectiveRate: number;
   taxableIncome: number;

@@ -1,3 +1,4 @@
+
 /**
  * Multi-year tax impact calculations for equity compensation and deferrals
  */
@@ -60,6 +61,7 @@ export const calculateMultiYearImpact = (formState: EquityFormState): YearlyTaxI
     const totalTax = totalIncomeWithStrategy * 0.20; // Simplistic effective tax rate
     const taxWithoutStrategy = totalIncomeWithoutStrategy * 0.20; // Same simplistic rate
     const taxSavings = taxWithoutStrategy - totalTax;
+    const effectiveRate = totalTax / totalIncomeWithStrategy;
     
     // Check IRMAA impact
     const irmaaImpact = checkIrmaaImpact(totalIncomeWithStrategy);
@@ -76,7 +78,15 @@ export const calculateMultiYearImpact = (formState: EquityFormState): YearlyTaxI
       incomeBracket,
       nextBracket: nextBracketInfo.rate,
       distanceToNextBracket: nextBracketInfo.distance,
-      irmaaImpact
+      irmaaImpact,
+      // Add missing required fields
+      capitalGains: 0, // No capital gains in this context
+      effectiveRate,
+      taxableIncome: totalIncomeWithStrategy * 0.9, // Simplified taxable income calculation
+      equityIncome: equityOrdinaryIncome,
+      amtImpact: amtAdjustment,
+      stateTax: formState.includeStateTax ? totalIncomeWithStrategy * 0.05 : 0, // Simplified state tax
+      federalTax: totalTax - (formState.includeStateTax ? totalIncomeWithStrategy * 0.05 : 0) // Federal tax is total minus state
     });
   }
   
