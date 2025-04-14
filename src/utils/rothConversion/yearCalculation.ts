@@ -1,4 +1,3 @@
-
 /**
  * Single Year Calculation Utilities
  * 
@@ -12,6 +11,7 @@ import { determineConversionAmounts } from './conversionUtils';
 import { 
   TaxTrapInput, checkTaxTraps
 } from '@/utils/taxTraps';
+import { StateCode } from '@/utils/stateTaxData';
 
 // Import additional modular utilities for processing
 import { processCharitableContribution, checkForCharitableOpportunities } from './yearCalculation/charitableAdjustments';
@@ -129,11 +129,24 @@ export function processSingleYearCalculation({
   // Add state tax information if applicable
   if (scenarioData.includeStateTax && scenarioData.residentState) {
     yearTaxInput.includeStateTax = true;
-    yearTaxInput.residentState = scenarioData.residentState;
+    
+    // Safely handle state code assignment
+    yearTaxInput.residentState = 
+      (scenarioData.residentState !== "" && 
+       scenarioData.residentState !== "NONE" && 
+       scenarioData.residentState !== "OTHER") 
+        ? scenarioData.residentState as StateCode 
+        : undefined;
     
     // Handle potential state relocation in multi-year scenarios
     if (scenarioData.stateRelocationYear && currentYear >= scenarioData.stateRelocationYear) {
-      yearTaxInput.residentState = scenarioData.futureResidentState || 'NONE';
+      yearTaxInput.residentState = 
+        (scenarioData.futureResidentState && 
+         scenarioData.futureResidentState !== "" && 
+         scenarioData.futureResidentState !== "NONE" && 
+         scenarioData.futureResidentState !== "OTHER")
+          ? scenarioData.futureResidentState as StateCode
+          : undefined;
     }
   }
   
@@ -208,4 +221,3 @@ export function processSingleYearCalculation({
     } : undefined
   };
 }
-
