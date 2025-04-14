@@ -1,4 +1,3 @@
-
 import { StateCode } from '@/utils/stateTaxData';
 
 export interface W2Form {
@@ -7,8 +6,7 @@ export interface W2Form {
   wages: number;
   federalWithholding: number;
   stateWithholding?: number;
-  // Make employer optional for compatibility with both interfaces
-  employer?: string;
+  employer?: string; // Added employer property as optional for compatibility
 }
 
 export interface Dependent {
@@ -16,15 +14,6 @@ export interface Dependent {
   relationship: string;
   ssn: string;
   dateOfBirth: string;
-}
-
-export interface ItemizedDeductions {
-  medicalExpenses: number;
-  stateTaxes: number;
-  propertyTaxes: number;
-  mortgageInterest: number;
-  charitableContributions: number;
-  otherDeductions: number;
 }
 
 // Define filing steps type
@@ -40,6 +29,15 @@ export const FILING_STEPS = [
   { id: 'file', label: 'File Return' },
   { id: 'confirmation', label: 'Confirmation' }
 ];
+
+export interface ItemizedDeductions {
+  medicalExpenses: number;
+  stateTaxes: number;
+  propertyTaxes: number;
+  mortgageInterest: number;
+  charitableContributions: number;
+  otherDeductions: number;
+}
 
 export interface TaxReturnData {
   // Personal Information

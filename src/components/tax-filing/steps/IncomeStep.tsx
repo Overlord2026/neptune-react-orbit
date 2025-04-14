@@ -32,7 +32,7 @@ const IncomeStep: React.FC<IncomeStepProps> = ({ data, onComplete }) => {
 
   const handleW2Change = (index: number, field: keyof W2Form, value: string | number) => {
     const updatedW2Forms = [...w2Forms];
-    if (field === 'employerName' || field === 'employerEIN') {
+    if (field === 'employerName' || field === 'employerEIN' || field === 'employer') {
       updatedW2Forms[index][field] = value as string;
     } else {
       updatedW2Forms[index][field] = Number(value);
