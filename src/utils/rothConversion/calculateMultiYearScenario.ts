@@ -5,8 +5,9 @@
  * Main function for calculating multi-year Roth conversion scenarios.
  */
 
-import { MultiYearScenarioData, YearlyResult } from '@/components/tax/roth-conversion/types/ScenarioTypes';
-import { TaxInput, calculateTaxScenario } from '../taxCalculator';
+import { MultiYearScenarioData, YearlyResult, CharitableContribution } from '@/types/tax/rothConversionTypes';
+import { TaxInput } from '@/types/tax/taxCalculationTypes';
+import { calculateTaxScenario } from '../taxCalculator';
 import { processSingleYearCalculation } from './yearCalculation';
 import { updateAccountBalances } from './accountBalanceUtils';
 
@@ -110,7 +111,7 @@ export const calculateMultiYearScenario = async (
     
     // Calculate MFS comparison if requested
     let mfsComparison;
-    if (scenarioData.compareMfjVsMfs && scenarioData.filingStatus === 'married') {
+    if (scenarioData.compareMfjVsMfs && scenarioData.filingStatus === 'married_joint') {
       const mfsResult = taxResult.mfs_comparison;
       if (mfsResult) {
         mfsComparison = {
@@ -127,7 +128,11 @@ export const calculateMultiYearScenario = async (
     const charitableContribution = yearResult.charitableContribution || {
       amount: 0,
       useQcd: false,
-      isBunching: false
+      isBunching: false,
+      standardDeduction: 0,
+      itemizedDeduction: 0,
+      isItemizing: false,
+      taxSavings: 0
     };
     
     // Get charitable impact info from yearResult
@@ -167,8 +172,7 @@ export const calculateMultiYearScenario = async (
       mfsComparison,
       
       // Charitable contribution impact
-      charitableContribution,
-      charitableImpact
+      charitableContribution
     });
   }
   

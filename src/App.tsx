@@ -9,6 +9,7 @@ import TaxFilingOptionsPage from "./pages/TaxFilingOptionsPage";
 import TaxVaultPage from "./pages/TaxVaultPage";
 import TaxToolsPage from "./pages/TaxToolsPage";
 import RothConversionPage from "./pages/RothConversionPage";
+import RothConversionAnalysisPage from "./pages/RothConversionAnalysisPage";
 import EstateGiftingPage from "./pages/EstateGiftingPage";
 import CharitableGivingPage from "./pages/CharitablePlanningPage";
 import TaxReturnPage from "./pages/TaxReturnAnalyzerPage";
@@ -22,8 +23,10 @@ import CompareRothScenariosPage from "./pages/CompareRothScenariosPage";
 import RecommendedReadingPage from "./pages/RecommendedReadingPage";
 import BasicEducationPage from "./pages/BasicTaxEducationPage";
 import TaxGuidePage from "./pages/TaxGuidePage";
+import AdvancedTaxEducationPage from "./pages/AdvancedTaxEducationPage";
+import TaxGlossaryPage from "./pages/TaxGlossaryPage";
 
-// Using the pattern you suggested with useRoutes
+// Using the pattern with useRoutes
 function AppRoutes() {
   const routes = useRoutes([
     {
@@ -55,6 +58,14 @@ function AppRoutes() {
       element: <Layout><RothConversionPage /></Layout>
     },
     {
+      path: "/tax-planning/roth",
+      element: <Layout><RothConversionPage /></Layout>
+    },
+    {
+      path: "/tax-planning/roth-analysis",
+      element: <Layout><RothConversionAnalysisPage /></Layout>
+    },
+    {
       path: "/tax-planning/roth-scenarios",
       element: <Layout><CompareRothScenariosPage /></Layout>
     },
@@ -64,6 +75,10 @@ function AppRoutes() {
     },
     {
       path: "/tax-planning/charitable-giving",
+      element: <Layout><CharitableGivingPage /></Layout>
+    },
+    {
+      path: "/tax-planning/charitable-planning",
       element: <Layout><CharitableGivingPage /></Layout>
     },
     {
@@ -101,6 +116,14 @@ function AppRoutes() {
     {
       path: "/tax-planning/basic-education",
       element: <Layout><BasicEducationPage /></Layout>
+    },
+    {
+      path: "/tax-planning/advanced-tax-education",
+      element: <Layout><AdvancedTaxEducationPage /></Layout>
+    },
+    {
+      path: "/tax-planning/glossary",
+      element: <Layout><TaxGlossaryPage /></Layout>
     },
     {
       path: "/tax-planning/guides/:guideId",

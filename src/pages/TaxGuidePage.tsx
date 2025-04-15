@@ -1,232 +1,195 @@
 
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import GlossaryTerm from '@/components/GlossaryTerm';
+import { 
+  ArrowLeft, 
+  BookOpen, 
+  ArrowRight, 
+  Share2,
+  BookMarked
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
-const guideContent = {
+// Sample guide content data - in a real app, this would come from an API or database
+const guides = {
   'understanding-tax-brackets': {
     title: 'Understanding Tax Brackets',
-    content: (
-      <>
-        <p className="mb-4">
-          The U.S. tax system uses a progressive structure with different tax rates applied to different portions 
-          of your income. This guide explains how tax brackets work and how to optimize your tax strategy around them.
-        </p>
-        
-        <h3 className="text-xl font-semibold mb-2">How Tax Brackets Work</h3>
-        <p className="mb-4">
-          Rather than taxing all your income at one rate, the IRS divides your income into "brackets" 
-          with progressively higher tax rates. For example, in 2025, a single filer might pay:
-        </p>
-        
-        <ul className="list-disc list-inside mb-4 space-y-1">
-          <li>10% on the first $11,000 of income</li>
-          <li>12% on income from $11,001 to $44,725</li>
-          <li>22% on income from $44,726 to $95,375</li>
-          <li>And so on for higher brackets</li>
-        </ul>
-        
-        <h3 className="text-xl font-semibold mb-2">Marginal vs. Effective Tax Rate</h3>
-        <p className="mb-4">
-          Your <GlossaryTerm termId="marginal_tax_rate">marginal tax rate</GlossaryTerm> is the rate applied to your last dollar of income. 
-          Your <GlossaryTerm termId="effective_tax_rate">effective tax rate</GlossaryTerm> is your total tax divided by your total income, 
-          which is always lower than your marginal rate in a progressive tax system.
-        </p>
-        
-        <h3 className="text-xl font-semibold mb-2">Tax Bracket Management Strategies</h3>
-        <p className="mb-4">Key strategies for optimizing your tax brackets include:</p>
-        
-        <Card className="mb-4 bg-[#1A1F2C]">
-          <CardContent className="pt-4">
-            <ul className="list-disc list-inside space-y-2">
-              <li><strong>Income Timing</strong>: Shift income between tax years to avoid jumping into higher brackets</li>
-              <li><strong>Retirement Contributions</strong>: Use pre-tax retirement accounts to reduce taxable income</li>
-              <li><strong>Roth Conversions</strong>: Fill up lower tax brackets with strategic <GlossaryTerm termId="roth_conversion">Roth conversions</GlossaryTerm></li>
-              <li><strong>Charitable Giving</strong>: Use charitable donations to reduce taxable income</li>
-              <li><strong>Tax-Loss Harvesting</strong>: Offset capital gains with capital losses</li>
-            </ul>
-          </CardContent>
-        </Card>
-        
-        <h3 className="text-xl font-semibold mb-2">Example: Filling Up Lower Brackets</h3>
-        <p className="mb-4">
-          If you're in the 12% bracket with room before hitting the 22% bracket, you might consider 
-          Roth conversions up to the top of the 12% bracket. This allows you to pay taxes at a lower rate 
-          now rather than potentially higher rates later.
-        </p>
-        
-        <div className="bg-[#1A1F2C] p-4 rounded-md mb-4">
-          <h4 className="font-semibold mb-2">Example Calculation</h4>
-          <p>For a single filer in 2025 with $35,000 of taxable income:</p>
-          <ul className="list-disc list-inside text-sm space-y-1">
-            <li>Currently in the 12% bracket</li>
-            <li>22% bracket begins at $44,725</li>
-            <li>Potential for $9,725 Roth conversion while staying in 12% bracket</li>
-          </ul>
-        </div>
-        
-        <h3 className="text-xl font-semibold mb-2">Bracket Changes and Tax Planning</h3>
-        <p className="mb-4">
-          Tax brackets are periodically adjusted for inflation and may change with new tax legislation. 
-          The current brackets from the Tax Cuts and Jobs Act are scheduled to sunset after 2025, 
-          making bracket-aware planning especially important now.
-        </p>
-        
-        <div className="bg-amber-100 dark:bg-amber-900/30 p-4 rounded-md text-amber-800 dark:text-amber-200 text-sm mb-6">
-          <p><strong>Note:</strong> This guide provides general education, not personalized tax advice. 
-          Tax laws change frequently and strategies may not be applicable to your specific situation. 
-          Consult a tax professional before implementing these strategies.</p>
-        </div>
-      </>
-    )
+    category: 'Basic Education',
+    author: 'Tax Planning Team',
+    publishDate: '2025-03-15',
+    estimatedReadTime: '6 min read',
+    content: `
+      <h2>Understanding Tax Brackets</h2>
+      <p>Tax brackets are the income ranges that determine your tax rate. The U.S. employs a progressive tax system, meaning different portions of your income are taxed at different rates.</p>
+      <h3>How Tax Brackets Work</h3>
+      <p>Your income doesn't all get taxed at one rate. Instead, it's divided into chunks, with each chunk taxed at its corresponding rate. This is why they're called "marginal" tax rates—they apply only to the income within that specific margin or bracket.</p>
+      <p>For 2025, there are seven federal income tax brackets: 10%, 12%, 22%, 24%, 32%, 35%, and 37%. Which brackets you fall into depends on your taxable income and filing status.</p>
+      <h3>Example of Marginal Tax Rates</h3>
+      <p>If you're single with a taxable income of $50,000 in 2025:</p>
+      <ul>
+        <li>The first $11,000 is taxed at 10% = $1,100</li>
+        <li>Income from $11,001 to $44,725 is taxed at 12% = $4,047</li>
+        <li>Income from $44,726 to $50,000 is taxed at 22% = $1,160</li>
+        <li>Total federal income tax: $6,307</li>
+      </ul>
+      <p>Your highest bracket (22%) is your "marginal tax rate," but your "effective tax rate" is lower—about 12.6% ($6,307 ÷ $50,000).</p>
+      <h3>Strategies for Tax Bracket Management</h3>
+      <p>Understanding your tax brackets allows for strategic planning:</p>
+      <ul>
+        <li>Timing income recognition across tax years</li>
+        <li>Using retirement account contributions to lower taxable income</li>
+        <li>Harvesting investment losses to offset gains</li>
+        <li>Considering Roth conversions when in lower tax brackets</li>
+      </ul>
+      <h3>Tax Bracket Changes</h3>
+      <p>Under current law, some tax provisions from the Tax Cuts and Jobs Act will expire after 2025, potentially pushing some taxpayers into higher brackets in 2026. This makes tax planning in 2025 especially important.</p>
+    `
   },
-  'retirement-tax-strategies': {
-    title: 'Retirement Tax Strategies',
-    content: (
-      <>
-        <p className="mb-4">
-          Planning for taxes in retirement requires understanding how different income sources are taxed 
-          and how to manage withdrawals strategically. This guide covers key retirement tax planning strategies.
-        </p>
-        
-        <h3 className="text-xl font-semibold mb-2">How Retirement Income is Taxed</h3>
-        <p className="mb-4">
-          Different retirement income sources have different tax treatments:
-        </p>
-        
-        <ul className="list-disc list-inside mb-4 space-y-1">
-          <li><strong>Traditional IRA/401(k)</strong>: Taxed as ordinary income</li>
-          <li><strong>Roth IRA/401(k)</strong>: Tax-free withdrawals (if qualified)</li>
-          <li><strong>Social Security</strong>: Partially taxable based on total income</li>
-          <li><strong>Pensions</strong>: Generally fully taxable as ordinary income</li>
-          <li><strong>Capital Gains</strong>: Taxed at preferential rates (0%, 15%, or 20%)</li>
-        </ul>
-        
-        <h3 className="text-xl font-semibold mb-2">Strategic Withdrawal Planning</h3>
-        <Card className="mb-4 bg-[#1A1F2C]">
-          <CardContent className="pt-4">
-            <p className="mb-2">The sequence of withdrawals can significantly impact your tax situation:</p>
-            <ol className="list-decimal list-inside space-y-2">
-              <li><strong>Taxable accounts first</strong>: Begin with non-retirement accounts to benefit from lower capital gains rates</li>
-              <li><strong>Traditional IRA/401(k)</strong>: Draw from these accounts next, especially up to lower tax brackets</li>
-              <li><strong>Roth accounts last</strong>: Preserve tax-free growth as long as possible</li>
-            </ol>
-          </CardContent>
-        </Card>
-        
-        <h3 className="text-xl font-semibold mb-2">Roth Conversion Ladders</h3>
-        <p className="mb-4">
-          A <GlossaryTerm termId="roth_conversion_ladder">Roth conversion ladder</GlossaryTerm> involves converting portions of traditional retirement 
-          accounts to Roth accounts over multiple years, paying taxes at potentially lower rates 
-          and setting up tax-free withdrawals later.
-        </p>
-        
-        <div className="bg-[#1A1F2C] p-4 rounded-md mb-4">
-          <h4 className="font-semibold mb-2">Example Strategy</h4>
-          <p>For someone retiring at 60 with significant traditional IRA assets:</p>
-          <ul className="list-disc list-inside text-sm space-y-1">
-            <li>Convert amounts up to the top of the 12% or 22% bracket each year</li>
-            <li>Live on taxable accounts during this period</li>
-            <li>Begin tax-free withdrawals from converted Roth funds at age 65+</li>
-            <li>Minimize future RMDs and potentially reduce Medicare premiums</li>
-          </ul>
-        </div>
-        
-        <h3 className="text-xl font-semibold mb-2">Required Minimum Distributions (RMDs)</h3>
-        <p className="mb-4">
-          <GlossaryTerm termId="rmd">RMDs</GlossaryTerm> begin at age 73 (as of 2023 law) for traditional retirement accounts. 
-          Planning for these mandatory withdrawals is crucial to avoid excess taxation in later years.
-        </p>
-        
-        <h3 className="text-xl font-semibold mb-2">Qualified Charitable Distributions (QCDs)</h3>
-        <p className="mb-4">
-          <GlossaryTerm termId="qcd">QCDs</GlossaryTerm> allow direct transfers from IRAs to charities, satisfying RMDs without 
-          increasing taxable income. This can be powerful for philanthropically-minded retirees.
-        </p>
-        
-        <div className="bg-amber-100 dark:bg-amber-900/30 p-4 rounded-md text-amber-800 dark:text-amber-200 text-sm mb-6">
-          <p><strong>Note:</strong> This guide provides general education, not personalized tax advice. 
-          Tax laws change frequently, and strategies should be evaluated based on your specific situation. 
-          Consult a financial advisor before implementing these strategies.</p>
-        </div>
-      </>
-    )
+  'roth-vs-traditional': {
+    title: 'Roth vs. Traditional Retirement Accounts',
+    category: 'Retirement Planning',
+    author: 'Retirement Planning Team',
+    publishDate: '2025-02-28',
+    estimatedReadTime: '8 min read',
+    content: `
+      <h2>Roth vs. Traditional Retirement Accounts: Which Is Right For You?</h2>
+      <p>One of the most common questions in retirement planning is whether to choose Roth or Traditional retirement accounts. Both offer tax advantages, but they work differently and may be better suited for different situations.</p>
+      <h3>Traditional IRAs and 401(k)s</h3>
+      <p>With Traditional accounts, contributions are typically tax-deductible in the year they're made, reducing your current taxable income. The investments grow tax-deferred, and you pay ordinary income tax on withdrawals in retirement.</p>
+      <h3>Roth IRAs and Roth 401(k)s</h3>
+      <p>With Roth accounts, contributions are made with after-tax dollars, so there's no immediate tax deduction. However, the investments grow tax-free, and qualified withdrawals in retirement are completely tax-free.</p>
+      <h3>Key Factors in Choosing Between Them</h3>
+      <ul>
+        <li><strong>Current vs. Future Tax Rates</strong>: If you expect to be in a higher tax bracket in retirement than you are now, Roth accounts tend to be more advantageous.</li>
+        <li><strong>Time Horizon</strong>: Younger investors often benefit more from Roth accounts due to decades of tax-free growth.</li>
+        <li><strong>Tax Diversification</strong>: Having both types of accounts provides flexibility in retirement to manage your tax liability.</li>
+        <li><strong>Required Minimum Distributions</strong>: Traditional accounts require RMDs starting at age 73 (in 2025), while Roth IRAs do not.</li>
+      </ul>
+      <h3>Strategic Considerations</h3>
+      <p>Consider converting Traditional IRA funds to a Roth IRA in years when your income is lower, as you'll pay less tax on the conversion. This strategy, known as a Roth conversion ladder, can be particularly effective for early retirees.</p>
+      <p>Remember that Roth contributions can be withdrawn at any time without penalty, making them more flexible for emergency needs before retirement.</p>
+    `
+  },
+  'tax-loss-harvesting': {
+    title: 'Tax-Loss Harvesting Strategies',
+    category: 'Investment Planning',
+    author: 'Investment Team',
+    publishDate: '2025-01-10',
+    estimatedReadTime: '7 min read',
+    content: `
+      <h2>Tax-Loss Harvesting Strategies</h2>
+      <p>Tax-loss harvesting is a strategy that can help lower your tax bill while maintaining your investment position. It involves selling investments that have lost value to offset capital gains from other investments.</p>
+      <h3>How Tax-Loss Harvesting Works</h3>
+      <p>When you sell an investment for less than you paid for it, you realize a capital loss. These losses can offset capital gains from other investments, potentially reducing your tax liability. If your losses exceed your gains, you can use up to $3,000 of the excess to reduce your ordinary income, with any remaining losses carried forward to future tax years.</p>
+      <h3>Strategic Implementation</h3>
+      <ul>
+        <li><strong>Timing Matters</strong>: Consider harvesting losses near year-end when you have a clearer picture of your overall tax situation.</li>
+        <li><strong>Watch for Wash Sale Rules</strong>: Avoid buying a "substantially identical" investment within 30 days before or after selling at a loss, or the IRS will disallow the loss.</li>
+        <li><strong>Maintain Asset Allocation</strong>: Replace sold investments with similar (but not identical) investments to maintain your desired asset allocation.</li>
+        <li><strong>Consider Tax Lots</strong>: Sell specific lots with the highest cost basis to maximize losses while minimizing the impact on your portfolio.</li>
+      </ul>
+      <h3>Advanced Strategies</h3>
+      <p>Tax-loss harvesting isn't just for bear markets. Even in rising markets, portions of your portfolio may underperform, providing tax-loss harvesting opportunities.</p>
+      <p>Consider "tax-gain harvesting" if you're in the 0% capital gains bracket—selling winners to reset your cost basis higher without triggering tax liability.</p>
+      <p>Remember that tax-loss harvesting is most valuable in taxable brokerage accounts—it doesn't apply to IRAs, 401(k)s, or other tax-advantaged accounts where gains and losses aren't taxed annually.</p>
+    `
   }
 };
 
 const TaxGuidePage: React.FC = () => {
   const { guideId } = useParams<{ guideId: string }>();
-  
-  const guide = guideId && guideContent[guideId as keyof typeof guideContent];
+  const guide = guides[guideId as keyof typeof guides];
   
   if (!guide) {
     return (
-      <div className="container content-padding section-margin">
-        <div className="mb-6">
-          <Button variant="outline" className="mb-4" asChild>
-            <Link to="/tax-planning/recommended-reading">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Resources
-            </Link>
-          </Button>
-          <h2 className="text-3xl font-bold tracking-tight neptune-gold">Guide Not Found</h2>
-          <p className="text-muted-foreground">
-            The requested guide could not be found. Please return to the resources page.
+      <div className="container mx-auto py-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <Link to="/tax-planning/recommended-reading">
+            <Button variant="outline" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" /> Back to Reading List
+            </Button>
+          </Link>
+        </div>
+        <div className="text-center py-16">
+          <h1 className="text-2xl font-bold text-white">Guide Not Found</h1>
+          <p className="text-muted-foreground mt-2">
+            The requested tax guide could not be found.
           </p>
+          <Link to="/tax-planning/recommended-reading" className="mt-6 inline-block">
+            <Button>View All Tax Guides</Button>
+          </Link>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="container content-padding section-margin">
-      <div className="mb-6">
-        <Button variant="outline" className="mb-4 border-[#9b87f5] text-[#9b87f5]" asChild>
-          <Link to="/tax-planning/recommended-reading">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Resources
-          </Link>
-        </Button>
-        
-        <h2 className="text-3xl font-bold tracking-tight neptune-gold flex items-center gap-2">
-          <BookOpen className="h-8 w-8 text-[#9b87f5]" />
-          {guide.title}
-        </h2>
-        <p className="text-muted-foreground">
-          Tax education guide from our recommended resources
-        </p>
-      </div>
-      
-      <Card className="mb-6 border border-[#8E9196]">
-        <CardHeader className="bg-[#1A1F2C] border-b border-[#333]">
-          <CardTitle>Guide Overview</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-6">
-          {guide.content}
-        </CardContent>
-      </Card>
-      
-      <Separator className="my-6" />
-      
-      <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-400">
-          For more in-depth analysis and personalized guidance, consider our advanced tax planning tools.
-        </p>
-        <div className="flex gap-2">
-          <Button variant="outline" className="border-[#9b87f5] text-[#9b87f5]" asChild>
-            <Link to="/tax-planning/recommended-reading">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Resources
-            </Link>
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <Link to="/tax-planning/recommended-reading">
+          <Button variant="outline" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" /> Back to Reading List
           </Button>
-          <Button className="bg-[#9b87f5] hover:bg-[#8a76e4]" asChild>
-            <Link to="/tax-planning">
-              Explore Tax Planning Tools
-            </Link>
+        </Link>
+        <div className="flex gap-2">
+          <Button variant="outline" className="flex items-center gap-2">
+            <BookMarked className="h-4 w-4" /> Save
+          </Button>
+          <Button variant="outline" className="flex items-center gap-2">
+            <Share2 className="h-4 w-4" /> Share
           </Button>
         </div>
       </div>
+      
+      <div className="border-b pb-4">
+        <h1 className="text-3xl font-bold text-white neptune-gold">{guide.title}</h1>
+        <div className="flex flex-wrap items-center text-sm text-muted-foreground mt-2 gap-x-4 gap-y-1">
+          <span className="flex items-center">
+            <BookOpen className="h-4 w-4 mr-1" /> {guide.category}
+          </span>
+          <span>{guide.author}</span>
+          <span>Published {guide.publishDate}</span>
+          <span>{guide.estimatedReadTime}</span>
+        </div>
+      </div>
+      
+      <div className="prose prose-invert max-w-none">
+        <div dangerouslySetInnerHTML={{ __html: guide.content }} />
+      </div>
+      
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t">
+        <Link to="/tax-planning/recommended-reading">
+          <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto">
+            <ArrowLeft className="h-4 w-4" /> Back to Reading List
+          </Button>
+        </Link>
+        
+        <Button className="flex items-center gap-2 w-full sm:w-auto bg-primary">
+          Next Article <ArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
+      
+      <Card className="bg-card border-primary/20">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="bg-primary/20 p-3 rounded-full">
+              <BookOpen className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-medium text-lg text-white">Related Tax Guides</h3>
+              <div className="grid gap-2 mt-2">
+                <Link to="/tax-planning/guides/roth-vs-traditional" className="text-primary hover:underline">
+                  Roth vs. Traditional Retirement Accounts
+                </Link>
+                <Link to="/tax-planning/guides/tax-loss-harvesting" className="text-primary hover:underline">
+                  Tax-Loss Harvesting Strategies
+                </Link>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

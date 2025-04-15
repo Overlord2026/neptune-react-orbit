@@ -1,27 +1,5 @@
 
-import { TaxResult } from '../taxCalculatorTypes';
-import { YearlyTaxImpact } from '../../components/deferred-comp/types';
-
 /**
- * Type definitions for tax scenarios
+ * Re-export unified tax scenario types from central location
  */
-
-// Define interface for equity scenario data
-export interface EquityScenario extends TaxResult {
-  id?: string; // Add the optional id property
-  type: string;
-  formState?: any;
-  results?: YearlyTaxImpact[];
-  amtImpact?: number;
-  deferralBenefit?: number;
-  scenario_name: string;
-  
-  // Required properties that must be defined (not optional)
-  brackets_breakdown: {
-    ordinary: { bracket: number; amount: number; tax: number }[];
-    capitalGains: { bracket: number; amount: number; tax: number }[];
-  };
-  tax_data_updated_at: Date;
-  tax_data_is_current: boolean;
-  tax_data_version?: string;
-}
+export * from '../../types/tax/equityTypes';

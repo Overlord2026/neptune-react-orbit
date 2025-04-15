@@ -49,7 +49,9 @@ const SidebarContent = () => {
         icon={<BookOpen className="h-5 w-5" />}
         defaultOpen={location.pathname.includes('/tax-planning/education') || 
                     location.pathname.includes('/tax-planning/basic-education') ||
+                    location.pathname.includes('/tax-planning/advanced-tax-education') ||
                     location.pathname.includes('/tax-planning/recommended-reading') ||
+                    location.pathname.includes('/tax-planning/glossary') ||
                     location.pathname.includes('/tax-planning/guides/')}
       >
         <SidebarItem 
@@ -87,8 +89,8 @@ const SidebarContent = () => {
         <SidebarItem 
           icon={<FileCheck className="h-5 w-5" />} 
           label="Return Analyzer" 
-          href="/tax-planning/analyzer" 
-          isActive={location.pathname === '/tax-planning/analyzer'} 
+          href="/tax-filing/tax-return" 
+          isActive={location.pathname === '/tax-filing/tax-return'} 
         />
         <SidebarItem 
           icon={<Briefcase className="h-5 w-5" />} 
@@ -99,14 +101,15 @@ const SidebarContent = () => {
         <SidebarItem 
           icon={<Lock className="h-5 w-5" />} 
           label="Tax Vault" 
-          href="/tax-planning/tax-vault" 
-          isActive={location.pathname === '/tax-planning/tax-vault'} 
+          href="/tax-vault" 
+          isActive={location.pathname === '/tax-vault'} 
         />
         <SidebarItem 
           icon={<BarChart3 className="h-5 w-5" />} 
           label="Roth Conversion Planner" 
           href="/tax-planning/roth" 
-          isActive={location.pathname === '/tax-planning/roth'} 
+          isActive={location.pathname === '/tax-planning/roth' || 
+                   location.pathname === '/tax-planning/roth-conversion'} 
         />
         <SidebarItem 
           icon={<Gift className="h-5 w-5" />} 
@@ -118,7 +121,8 @@ const SidebarContent = () => {
           icon={<HandCoins className="h-5 w-5" />} 
           label="Charitable Planning" 
           href="/tax-planning/charitable-planning" 
-          isActive={location.pathname === '/tax-planning/charitable-planning'} 
+          isActive={location.pathname === '/tax-planning/charitable-planning' ||
+                   location.pathname === '/tax-planning/charitable-giving'} 
         />
         <SidebarItem 
           icon={<Briefcase className="h-5 w-5" />} 
@@ -149,12 +153,6 @@ const SidebarContent = () => {
           label="Social Security" 
           href="/tax-planning/social-security" 
           isActive={location.pathname === '/tax-planning/social-security'} 
-        />
-        <SidebarItem 
-          icon={<Scroll className="h-5 w-5" />} 
-          label="Tax Vault" 
-          href="/tax-planning/tax-vault" 
-          isActive={location.pathname === '/tax-planning/tax-vault'} 
         />
       </SidebarGroup>
 
