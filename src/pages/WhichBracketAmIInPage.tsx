@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -99,7 +100,7 @@ const WhichBracketAmIInPage: React.FC = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="single">Single</SelectItem>
-                  <SelectItem value="married">Married Filing Jointly</SelectItem>
+                  <SelectItem value="married_joint">Married Filing Jointly</SelectItem>
                   <SelectItem value="head_of_household">Head of Household</SelectItem>
                 </SelectContent>
               </Select>
@@ -189,7 +190,7 @@ const WhichBracketAmIInPage: React.FC = () => {
             <CardTitle>Tax Brackets for {taxYear}</CardTitle>
             <CardDescription>
               Filing as: {filingStatus === 'single' ? 'Single' : 
-                        filingStatus === 'married' ? 'Married Filing Jointly' : 
+                        filingStatus === 'married_joint' ? 'Married Filing Jointly' : 
                         'Head of Household'}
               {taxYear === 2025 && " (Projected Brackets)"}
             </CardDescription>

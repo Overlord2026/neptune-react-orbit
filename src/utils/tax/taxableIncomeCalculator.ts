@@ -31,9 +31,10 @@ export const calculateTaxableIncome = (
     // Map the filing status to the new structure
     const filingStatusMap: Record<FilingStatusType, keyof typeof STANDARD_DEDUCTION> = {
       "single": "single",
-      "married": "marriedFilingJointly",
+      "married_joint": "marriedFilingJointly",
       "married_separate": "marriedFilingSeparately",
-      "head_of_household": "headOfHousehold"
+      "head_of_household": "headOfHousehold",
+      "qualifying_widow": "marriedFilingJointly" // Qualifying widow uses same standard deduction as MFJ
     };
     standardDeduction = STANDARD_DEDUCTION[filingStatusMap[filingStatus]];
   }

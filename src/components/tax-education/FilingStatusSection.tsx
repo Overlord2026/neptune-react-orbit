@@ -27,7 +27,7 @@ import {
 
 interface FilingStatusSectionProps {
   selectedYear: number;
-  selectedFilingStatus: 'single' | 'married' | 'head_of_household';
+  selectedFilingStatus: 'single' | 'married_joint' | 'head_of_household';
 }
 
 const FilingStatusSection: React.FC<FilingStatusSectionProps> = ({
@@ -36,7 +36,7 @@ const FilingStatusSection: React.FC<FilingStatusSectionProps> = ({
 }) => {
   // Get example brackets for comparison
   const singleBrackets = getBrackets(selectedYear, "single", "ordinary");
-  const marriedBrackets = getBrackets(selectedYear, "married", "ordinary");
+  const marriedBrackets = getBrackets(selectedYear, "married_joint", "ordinary");
   const hohBrackets = getBrackets(selectedYear, "head_of_household", "ordinary");
   
   const contentOptions = {

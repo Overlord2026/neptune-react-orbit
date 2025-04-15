@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import TaxTrapInputForm from '@/components/tax/TaxTrapInputForm';
 import TaxTrapAnalysis from '@/components/tax/TaxTrapAnalysis';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 const TaxTrapContainer: React.FC = () => {
-  const [filingStatus, setFilingStatus] = useState<'single' | 'married' | 'married_separate' | 'head_of_household'>('single');
+  const [filingStatus, setFilingStatus] = useState<FilingStatusType>('single');
   const [year, setYear] = useState(2023);
   const [agi, setAgi] = useState(85000);
   const [capitalGains, setCapitalGains] = useState(5000);
@@ -19,7 +20,7 @@ const TaxTrapContainer: React.FC = () => {
   // Derived values
   const magi = agi; // Simplified for demo purposes
   const totalIncome = agi + capitalGains;
-  const taxableIncome = Math.max(0, agi - (filingStatus === 'single' ? 12950 : filingStatus === 'married' ? 25900 : 19400));
+  const taxableIncome = Math.max(0, agi - (filingStatus === 'single' ? 12950 : filingStatus === 'married_joint' ? 25900 : 19400));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -12,7 +12,7 @@ import DynamicContentText from '@/components/DynamicContentText';
 
 interface TaxBracketsSectionProps {
   selectedYear: number;
-  selectedFilingStatus: 'single' | 'married' | 'head_of_household';
+  selectedFilingStatus: 'single' | 'married_joint' | 'head_of_household';
 }
 
 const TaxBracketsSection: React.FC<TaxBracketsSectionProps> = ({

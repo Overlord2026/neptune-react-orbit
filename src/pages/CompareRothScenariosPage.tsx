@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TaxResult } from "@/utils/taxCalculatorTypes";
@@ -12,6 +13,7 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Calendar, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { FilingStatusType } from "@/types/tax/filingTypes";
 
 const CompareRothScenariosPage: React.FC = () => {
   const navigate = useNavigate();
@@ -44,7 +46,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.114,
-    filing_status: "married",
+    filing_status: "married_joint" as FilingStatusType,
     updated_at: new Date(),
     tax_data_updated_at: new Date(),
     tax_data_is_current: true,
@@ -70,7 +72,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.126,
-    filing_status: "married",
+    filing_status: "married_joint" as FilingStatusType,
     updated_at: new Date(),
     tax_data_updated_at: new Date(),
     tax_data_is_current: true,
@@ -96,7 +98,7 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.135,
-    filing_status: "married",
+    filing_status: "married_joint" as FilingStatusType,
     updated_at: new Date(),
     tax_data_updated_at: new Date(),
     tax_data_is_current: true,
