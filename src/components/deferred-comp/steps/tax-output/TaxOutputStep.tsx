@@ -13,7 +13,8 @@ import { EquityImpactCards } from "./EquityImpactCards";
 import { DeferralImpactCard } from "./DeferralImpactCard";
 import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
 import { toast } from "sonner";
-import { saveScenario, EquityScenario } from "@/utils/taxScenario";
+import { saveScenario } from "@/utils/taxScenario";
+import { EquityScenario } from "@/types/tax/equityTypes";
 import { FilingStatusType } from "@/types/tax/filingTypes";
 import { LoadingStateDisplay } from "./LoadingState";
 
@@ -45,31 +46,52 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
       const results = calculateMultiYearImpact();
       const yearData = results.find(y => y.year === currentYear) || results[0];
       
-      const scenarioData: Partial<EquityScenario> = {
-        scenario_name: `${formState.equityType || "Deferred"} Analysis - ${new Date().toLocaleDateString()}`,
+      const scenarioData: EquityScenario = {
+        id: `equity-${Date.now()}`,
+        name: `${formState.equityType || "Deferred"} Analysis - ${new Date().toLocaleDateString()}`,
+        formState,
+        result: {
+          totalTaxableIncome: yearData.ordinaryIncome,
+          estimatedTax: yearData.totalTax,
+          amtIncome: yearData.amtIncome || 0,
+          amtImpact: yearData.amtImpact || 0,
+          deferralBenefit: formState.hasDeferredComp ? calculateDeferralBenefit() : 0,
+          spreadPerShare: 0,
+          exercisedShares: 0,
+          incomeFromExercise: 0,
+          deferredIncome: formState.deferralAmount,
+          nextYearIncome: 0,
+          bracketImpact: false,
+          bracketBefore: "",
+          bracketAfter: "",
+          multiYearImpact: calculateMultiYearImpact(),
+          equityEvents: [],
+          deferralEvents: [],
+          federal_tax: yearData.federalTax,
+          state_tax: yearData.stateTax
+        },
         type: "equity-compensation",
         year: currentYear,
         filing_status: "single" as FilingStatusType,
         total_income: yearData.ordinaryIncome,
         agi: yearData.ordinaryIncome,
-        taxable_income: yearData.ordinaryIncome * 0.9,
+        taxable_income: yearData.taxableIncome,
         total_tax: yearData.totalTax,
         ordinary_tax: yearData.totalTax,
         capital_gains_tax: 0,
         marginal_rate: yearData.marginalRate,
         marginal_capital_gains_rate: 0,
-        effective_rate: yearData.totalTax / yearData.ordinaryIncome,
-        standard_deduction: 12950, // Using 2022 value
-        federal_tax: yearData.totalTax,
+        effective_rate: yearData.effectiveRate,
+        federal_tax: yearData.federalTax,
+        standard_deduction: 12950,
         brackets: [],
-        formState,
-        results: calculateMultiYearImpact(),
         amtImpact: formState.equityType === "ISO" ? calculateAmtImpact() : 0,
         deferralBenefit: formState.hasDeferredComp ? calculateDeferralBenefit() : 0,
-        tax_data_is_current: true,
+        results: calculateMultiYearImpact(),
+        tax_data_is_current: true
       };
 
-      await saveScenario(scenarioData as EquityScenario);
+      await saveScenario(scenarioData);
       toast.success("Your analysis has been saved successfully.");
     } catch (error) {
       console.error("Error saving scenario:", error);

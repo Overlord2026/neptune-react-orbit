@@ -42,6 +42,12 @@ export interface EquityFormState {
   // Additional planning options
   sabbaticalYear?: number;
   retirementYear?: number;
+  
+  // Multi-year specific fields
+  year1Exercise?: number;
+  year2Exercise?: number;
+  year1Deferral?: number;
+  year2Deferral?: number;
 }
 
 // Equity scenario
@@ -50,6 +56,26 @@ export interface EquityScenario {
   name: string;
   formState: EquityFormState;
   result: TaxImpactResult;
+  scenario_name?: string;
+  type?: string;
+  year?: number;
+  filing_status?: FilingStatusType;
+  total_income?: number;
+  agi?: number;
+  taxable_income?: number;
+  total_tax?: number;
+  ordinary_tax?: number;
+  capital_gains_tax?: number;
+  marginal_rate?: number;
+  marginal_capital_gains_rate?: number;
+  effective_rate?: number;
+  federal_tax?: number;
+  standard_deduction?: number;
+  brackets?: any[];
+  amtImpact?: number;
+  deferralBenefit?: number;
+  results?: YearlyTaxImpact[];
+  tax_data_is_current?: boolean;
 }
 
 // Equity compensation event
@@ -58,6 +84,10 @@ export interface EquityCompEvent {
   sharesExercised: number;
   income: number;
   tax: number;
+  type?: string;
+  isDisqualifyingDisposition?: boolean;
+  spread?: number;
+  ordinaryIncome?: number;
 }
 
 // Deferral event
@@ -65,6 +95,9 @@ export interface DeferralEvent {
   year: number;
   amount: number;
   taxSavings?: number;
+  fromYear?: number;
+  toYear?: number;
+  event?: string;
 }
 
 // Yearly tax impact

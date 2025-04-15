@@ -62,6 +62,8 @@ export interface MultiYearScenarioData {
   residentState?: string;
   includeStateTax?: boolean;
   stateRelocationYear?: number;
+  futureResidentState?: string;
+  startYear?: number;
 }
 
 export interface YearlyResult {

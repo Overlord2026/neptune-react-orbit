@@ -30,6 +30,7 @@ export interface TaxInput {
   includeStateTax?: boolean;
   residentState?: string;
   stateRelocationYear?: number;
+  futureResidentState?: string;
 }
 
 export interface TaxResult {
@@ -57,6 +58,7 @@ export interface TaxResult {
   mfs_comparison?: any;
   safe_harbor?: any;
   standard_deduction?: number;
+  brackets?: any[];
 }
 
 export interface TaxScenario extends TaxResult {
@@ -65,4 +67,5 @@ export interface TaxScenario extends TaxResult {
   description?: string;
   is_baseline: boolean;
   result: TaxResult;
+  scenario_id?: string;
 }

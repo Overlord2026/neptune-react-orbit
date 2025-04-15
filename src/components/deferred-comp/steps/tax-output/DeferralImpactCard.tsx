@@ -1,7 +1,8 @@
 
 import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEquityForm } from "../../context/EquityFormContext";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { formatCurrency } from "../../utils/formatUtils";
 
 interface DeferralImpactCardProps {
   currentYear: number;
@@ -9,53 +10,89 @@ interface DeferralImpactCardProps {
 
 export const DeferralImpactCard: React.FC<DeferralImpactCardProps> = ({ currentYear }) => {
   const { formState, calculateDeferralBenefit } = useEquityForm();
-  const deferralBenefit = calculateDeferralBenefit();
   
+  const deferralBenefit = calculateDeferralBenefit();
+  const taxSavingsPercentage = (deferralBenefit / formState.deferralAmount) * 100;
+  
+  const getTaxImpactDescription = () => {
+    if (formState.deferralStrategy === "next-year") {
+      return (
+        <>
+          By deferring {formatCurrency(formState.deferralAmount)} to {currentYear + 1}, 
+          you'll reduce your {currentYear} taxable income and potentially lower your tax bracket.
+        </>
+      );
+    } else if (formState.deferralStrategy === "multi-year") {
+      const endYear = currentYear + (formState.deferralYears || 2);
+      return (
+        <>
+          By spreading {formatCurrency(formState.deferralAmount)} across {formState.deferralYears || 2} years 
+          ({currentYear + 1} to {endYear}), you'll reduce income spikes and potentially stay in lower tax brackets.
+        </>
+      );
+    }
+    return null;
+  };
+
+  const getAverageAnnualAmount = () => {
+    if (formState.deferralStrategy === "next-year") {
+      return formState.deferralAmount;
+    } else if (formState.deferralStrategy === "multi-year") {
+      return formState.deferralAmount / (formState.deferralYears || 2);
+    }
+    return 0;
+  };
+
   return (
-    <Card className="bg-[#1D2433] border-[#2A2F3C]">
-      <CardHeader>
-        <CardTitle>Deferred Compensation Impact</CardTitle>
-        <CardDescription>
-          Deferring income can reduce your current year tax burden.
-        </CardDescription>
+    <Card className="bg-gradient-to-br from-blue-950 to-indigo-950 border-[#3B4A75] text-white">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-blue-200">Deferred Compensation Impact</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Deferral</p>
-              <p className="text-lg font-semibold">${formState.deferralAmount.toLocaleString()}</p>
+            <div className="p-3 bg-blue-900/30 rounded-lg">
+              <div className="text-sm text-blue-200">Total Deferral</div>
+              <div className="text-xl font-semibold">{formatCurrency(formState.deferralAmount)}</div>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Estimated Tax Benefit</p>
-              <p className="text-lg font-semibold text-green-500">
-                ${deferralBenefit.toLocaleString()}
-              </p>
+            <div className="p-3 bg-blue-900/30 rounded-lg">
+              <div className="text-sm text-blue-200">Tax Savings</div>
+              <div className="text-xl font-semibold text-green-400">{formatCurrency(deferralBenefit)}</div>
+              <div className="text-xs text-blue-300">~{taxSavingsPercentage.toFixed(1)}% benefit</div>
             </div>
           </div>
           
-          <div>
-            <p className="text-sm font-medium">Deferral Strategy</p>
-            <p className="text-sm">
-              {formState.deferralStrategy === "next-year" 
-                ? `Defer all to ${currentYear + 1}`
-                : `Stagger across ${formState.deferralYears || 2} years`}
+          <div className="mt-4">
+            <h4 className="text-sm font-medium text-blue-200">Deferral Strategy</h4>
+            <p className="text-sm mt-1 text-blue-100">
+              {getTaxImpactDescription()}
             </p>
           </div>
           
-          {(formState.deferralStrategy === "multi-year" || formState.deferralStrategy === "staggered") && (
-            <div className="mt-2">
-              <p className="text-sm font-medium">Optimized for lower income years</p>
-              {formState.sabbaticalYear && formState.sabbaticalYear > currentYear && (
-                <p className="text-xs">Sabbatical year: {formState.sabbaticalYear}</p>
-              )}
-              {formState.retirementYear && formState.retirementYear > currentYear && (
-                <p className="text-xs">Retirement year: {formState.retirementYear}</p>
-              )}
+          <div className="mt-4 p-3 bg-blue-900/30 rounded-lg">
+            <div className="text-sm text-blue-200">Future Annual Payments</div>
+            <div className="mt-1 flex justify-between items-center">
+              <div>
+                <div className="text-lg font-semibold">{formatCurrency(getAverageAnnualAmount())}</div>
+                <div className="text-xs text-blue-300">per year</div>
+              </div>
+              <div className="text-xs text-blue-300">
+                {formState.deferralStrategy === "next-year" ? (
+                  <>In {currentYear + 1}</>
+                ) : (
+                  <>{currentYear + 1} - {currentYear + (formState.deferralYears || 2)}</>
+                )}
+              </div>
             </div>
-          )}
+          </div>
+          
+          <div className="mt-3 text-xs text-blue-300 italic">
+            Note: Future taxation will depend on your income and tax rates in those years.
+          </div>
         </div>
       </CardContent>
     </Card>
   );
 };
+
+export default DeferralImpactCard;

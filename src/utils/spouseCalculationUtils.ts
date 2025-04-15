@@ -63,7 +63,7 @@ export function applyCommunityPropertyRules(input: TaxInput): TaxInput {
  * Useful for determining if filing MFJ or MFS is more beneficial
  */
 export function calculateMFSComparison(input: TaxInput) {
-  if (input.filing_status !== "married" ||
+  if (input.filing_status !== "married_joint" ||
       (input.spouseWages === undefined && 
        input.spouseInterest === undefined && 
        input.spouseDividends === undefined && 

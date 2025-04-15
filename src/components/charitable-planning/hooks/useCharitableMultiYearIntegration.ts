@@ -1,67 +1,64 @@
 
 import { useState, useCallback } from 'react';
-import { CharitableContribution, MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
-import { CharitableScenario } from '../types/CharitableTypes';
-import { useMultiYearContext } from '@/components/tax/roth-conversion/multiYear/context/MultiYearContext';
+import { MultiYearScenarioData, CharitableContribution } from '@/types/tax/rothConversionTypes';
 
-export const useCharitableMultiYearIntegration = (charitableScenario: CharitableScenario) => {
-  const { scenarioData: rothScenarioData, handleUpdateScenarioData, handleCalculate } = useMultiYearContext();
-  const [isIntegrated, setIsIntegrated] = useState(false);
+export function useCharitableMultiYearIntegration() {
+  const [useCharitablePlanning, setUseCharitablePlanning] = useState(false);
+  const [charitableAmount, setCharitableAmount] = useState<number>(0);
+  const [bunchingEnabled, setBunchingEnabled] = useState(false);
+  const [useQcd, setUseQcd] = useState(false);
   
-  const integrateWithMultiYear = useCallback(() => {
-    // Extract data from charitable scenario to create contributions array
-    const contributions: CharitableContribution[] = [];
-    const startYear = rothScenarioData.startYear;
-    
-    // Process charitable scenario data
-    if (charitableScenario.multiYearPlan.isIntegrated) {
-      // If we have specific yearly data in the charitable scenario
-      charitableScenario.multiYearPlan.years.forEach(yearData => {
-        contributions.push({
-          year: yearData.year,
-          amount: yearData.contribution,
-          useQcd: charitableScenario.qcd.useQcd && charitableScenario.age >= 70.5,
-          isBunching: yearData.isItemizing && charitableScenario.dafStrategy.approach === 'bunching'
-        });
-      });
-    } 
-    // If no specific data, create basic contributions based on annual giving
-    else if (charitableScenario.annualGiving.type === 'fixed') {
-      for (let i = 0; i < 5; i++) {
-        contributions.push({
-          year: startYear + i,
-          amount: charitableScenario.annualGiving.amount,
-          useQcd: charitableScenario.qcd.useQcd && charitableScenario.age + i >= 70.5
-        });
-      }
-    } else if (charitableScenario.annualGiving.type === 'variable' && charitableScenario.annualGiving.yearlyAmounts) {
-      charitableScenario.annualGiving.yearlyAmounts.forEach(yearAmount => {
-        contributions.push({
-          year: yearAmount.year,
-          amount: yearAmount.amount,
-          useQcd: charitableScenario.qcd.useQcd && charitableScenario.age + (yearAmount.year - startYear) >= 70.5
-        });
-      });
+  const integrateCharitableWithScenario = useCallback((scenarioData: MultiYearScenarioData): CharitableContribution => {
+    if (!useCharitablePlanning || charitableAmount <= 0) {
+      return {
+        amount: 0,
+        isQcd: false,
+        isBunching: false
+      };
     }
-    
-    // Update the Roth conversion scenario data
-    handleUpdateScenarioData({
-      useCharitablePlanning: true,
-      charitableContributions: contributions,
-      dafBunching: charitableScenario.dafStrategy.useDaf && charitableScenario.dafStrategy.approach === 'bunching' ? {
-        enabled: true,
-        bunchingYears: charitableScenario.dafStrategy.bunchingYears,
-        bunchingAmount: charitableScenario.dafStrategy.bunchingAmount || charitableScenario.annualGiving.amount * charitableScenario.dafStrategy.bunchingYears
-      } : undefined
-    });
-    
-    // Run the calculation
-    handleCalculate();
-    setIsIntegrated(true);
-  }, [charitableScenario, rothScenarioData, handleUpdateScenarioData, handleCalculate]);
-  
+
+    // Create a standard contribution
+    if (!bunchingEnabled) {
+      return {
+        amount: charitableAmount,
+        isQcd: useQcd,
+        isBunching: false
+      };
+    }
+
+    // Create a bunched contribution for even years
+    const currentYear = new Date().getFullYear();
+    const startYear = scenarioData.startYear || currentYear;
+    const evenYears = Array.from(
+      { length: 10 }, 
+      (_, i) => startYear + i
+    ).filter(year => year % 2 === 0);
+
+    return {
+      amount: charitableAmount * 2,
+      isQcd: useQcd,
+      isBunching: true,
+      years: evenYears
+    };
+  }, [useCharitablePlanning, charitableAmount, bunchingEnabled, useQcd]);
+
+  const updateScenarioWithCharitable = useCallback((scenarioData: MultiYearScenarioData): Partial<MultiYearScenarioData> => {
+    return {
+      ...scenarioData,
+      useCharitablePlanning
+    };
+  }, [useCharitablePlanning]);
+
   return {
-    integrateWithMultiYear,
-    isIntegrated
+    useCharitablePlanning,
+    setUseCharitablePlanning,
+    charitableAmount,
+    setCharitableAmount,
+    bunchingEnabled,
+    setBunchingEnabled,
+    useQcd,
+    setUseQcd,
+    integrateCharitableWithScenario,
+    updateScenarioWithCharitable
   };
-};
+}

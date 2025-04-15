@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { TaxInput, FilingStatusType } from '@/utils/taxCalculator';
+import { TaxInput, FilingStatusType } from '@/types/tax';
 import { STANDARD_DEDUCTION } from '@/utils/taxBracketData';
 
 interface ScenarioFormProps {
@@ -148,8 +148,9 @@ const ScenarioForm: React.FC<ScenarioFormProps> = ({ onSubmit }) => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="single">Single</SelectItem>
-            <SelectItem value="married">Married Filing Jointly</SelectItem>
+            <SelectItem value="married_joint">Married Filing Jointly</SelectItem>
             <SelectItem value="head_of_household">Head of Household</SelectItem>
+            <SelectItem value="married_separate">Married Filing Separately</SelectItem>
           </SelectContent>
         </Select>
       </div>
