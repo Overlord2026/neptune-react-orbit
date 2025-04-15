@@ -1,15 +1,30 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import TaxTools from '@/components/tax-planning/TaxTools';
 import ImportFromTaxReturn from '@/components/tax-planning/ImportFromTaxReturn';
 import OnboardingModal from '@/components/tax-planning/OnboardingModal';
+import TaxToolsGuidance from '@/components/tax-planning/TaxToolsGuidance';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useToast } from '@/hooks/use-toast';
 
 const TaxToolsPage: React.FC = () => {
   const { toast } = useToast();
   const { showOnboarding, completeOnboarding } = useOnboarding();
+  const [showGuidance, setShowGuidance] = useState<boolean>(true);
+  
+  // Check local storage for user preference on guidance visibility
+  useEffect(() => {
+    const hasHiddenGuidance = localStorage.getItem('hideTaxToolsGuidance') === 'true';
+    if (hasHiddenGuidance) {
+      setShowGuidance(false);
+    }
+  }, []);
+  
+  const handleHideGuidanceForever = () => {
+    localStorage.setItem('hideTaxToolsGuidance', 'true');
+    setShowGuidance(false);
+  };
   
   const handleDataImported = (data: any) => {
     console.log("Tax return data imported:", data);
@@ -29,6 +44,11 @@ const TaxToolsPage: React.FC = () => {
           Access powerful scenarios for Roth conversions, multi-year planning, tax trap checks, and more.
         </p>
       </div>
+      
+      {/* Guidance Component */}
+      {showGuidance && (
+        <TaxToolsGuidance onHideForever={handleHideGuidanceForever} />
+      )}
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">

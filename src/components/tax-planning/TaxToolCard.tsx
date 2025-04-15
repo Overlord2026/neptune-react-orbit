@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -77,9 +76,15 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
     }
   };
   
+  // Create a slug from the title for the tooltip finder to target
+  const titleSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  
   return (
     <Link to={link} className="block transition-all duration-200 hover:scale-[1.02]">
-      <Card className="h-full border-[#2A2F3C] bg-[#1A1F2C] hover:border-[#00C47C] transition-colors">
+      <Card 
+        className="h-full border-[#2A2F3C] bg-[#1A1F2C] hover:border-[#00C47C] transition-colors"
+        id={titleSlug}
+      >
         <CardHeader className="space-y-1">
           <CardTitle className="text-xl font-semibold text-white flex items-center gap-3">
             {icon}
