@@ -20,7 +20,9 @@ import {
   Gift,
   HandCoins,
   BarChart,
-  Lock
+  Lock,
+  BookText,
+  Library
 } from 'lucide-react';
 
 const SidebarContent = () => {
@@ -45,7 +47,10 @@ const SidebarContent = () => {
       <SidebarGroup 
         title="Tax Education" 
         icon={<BookOpen className="h-5 w-5" />}
-        defaultOpen={location.pathname.includes('/tax-planning/education')}
+        defaultOpen={location.pathname.includes('/tax-planning/education') || 
+                    location.pathname.includes('/tax-planning/basic-education') ||
+                    location.pathname.includes('/tax-planning/recommended-reading') ||
+                    location.pathname.includes('/tax-planning/guides/')}
       >
         <SidebarItem 
           icon={<FileText className="h-5 w-5" />} 
@@ -60,7 +65,14 @@ const SidebarContent = () => {
           isActive={location.pathname === '/tax-planning/advanced-tax-education'} 
         />
         <SidebarItem 
-          icon={<FileText className="h-5 w-5" />} 
+          icon={<Library className="h-5 w-5" />} 
+          label="Recommended Reading" 
+          href="/tax-planning/recommended-reading" 
+          isActive={location.pathname === '/tax-planning/recommended-reading' ||
+                   location.pathname.includes('/tax-planning/guides/')} 
+        />
+        <SidebarItem 
+          icon={<BookText className="h-5 w-5" />} 
           label="Tax Glossary" 
           href="/tax-planning/glossary" 
           isActive={location.pathname === '/tax-planning/glossary'} 

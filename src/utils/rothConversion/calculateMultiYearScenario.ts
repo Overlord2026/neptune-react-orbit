@@ -123,11 +123,19 @@ export const calculateMultiYearScenario = async (
       }
     }
     
-    // Extract charitable contribution info from yearResult if available
+    // Extract charitable contribution info from yearResult
     const charitableContribution = yearResult.charitableContribution || {
       amount: 0,
       useQcd: false,
       isBunching: false
+    };
+    
+    // Get charitable impact info from yearResult
+    const charitableImpact = yearResult.charitableImpact || {
+      standardDeduction: 0,
+      itemizedDeduction: 0,
+      isItemizing: false,
+      taxSavings: 0
     };
     
     // Add this year's results to the array
@@ -159,7 +167,8 @@ export const calculateMultiYearScenario = async (
       mfsComparison,
       
       // Charitable contribution impact
-      charitableContribution
+      charitableContribution,
+      charitableImpact
     });
   }
   

@@ -19,6 +19,9 @@ import TaxEducationPage from "./pages/BasicTaxEducationPage";
 import CollaborationCenterPage from "./pages/CollaborationCenterPage";
 import TaxDocumentAggregatorPage from "./pages/TaxDocumentAggregatorPage";
 import CompareRothScenariosPage from "./pages/CompareRothScenariosPage";
+import RecommendedReadingPage from "./pages/RecommendedReadingPage";
+import BasicEducationPage from "./pages/BasicTaxEducationPage";
+import TaxGuidePage from "./pages/TaxGuidePage";
 
 // Using the pattern you suggested with useRoutes
 function AppRoutes() {
@@ -90,6 +93,18 @@ function AppRoutes() {
     {
       path: "/tax-planning/aggregator",
       element: <Layout><TaxDocumentAggregatorPage /></Layout>
+    },
+    {
+      path: "/tax-planning/recommended-reading",
+      element: <Layout><RecommendedReadingPage /></Layout>
+    },
+    {
+      path: "/tax-planning/basic-education",
+      element: <Layout><BasicEducationPage /></Layout>
+    },
+    {
+      path: "/tax-planning/guides/:guideId",
+      element: <Layout><TaxGuidePage /></Layout>
     }
   ]);
 
