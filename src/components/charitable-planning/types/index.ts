@@ -16,92 +16,19 @@ export type {
 } from './CharitableTypes';
 
 // Define missing types that were being re-exported
-export interface CharitableInput {
-  annualAmount: number;
-  age: number;
-  filingStatus: string;
-  isItemizer: boolean;
-}
-
-export interface CharitableStrategy {
-  type: string;
-  name: string;
-  description: string;
-  isAvailable: boolean;
-}
-
-export interface CharitablePlanning {
-  input: CharitableInput;
-  strategies: CharitableStrategy[];
-  selectedStrategy?: string;
-}
-
-export interface CharitablePlanningStep {
-  id: string;
-  title: string;
-  description: string;
-}
-
-export interface DonationOption {
-  id: string;
-  name: string;
-  description: string;
-}
-
-export type CrtType = "CRAT" | "CRUT";
-
-export interface CrtInput {
-  fundingAmount: number;
-  payoutRate: number;
-  trustTerm: number | "lifetime";
-  beneficiaryAge: number;
-  spouseBeneficiary: boolean;
-  spouseAge?: number;
-}
-
-export interface CrtCalculationResult {
-  charitableDeduction: number;
-  annualPayout: number;
-  remainderValue: number;
-}
-
-export interface QcdInput {
-  amount: number;
-  age: number;
-  rmdAmount: number;
-}
-
-export interface QcdCalculationResult {
-  taxSavings: number;
-  irmaaImpact: boolean;
-}
-
-export interface DafInput {
-  annualGiving: number;
-  bunchingYears: number;
-  bunchingAmount: number;
-}
-
-export interface DafCalculationResult {
-  taxSavings: number;
-  annualDeductions: { year: number; deduction: number }[];
-}
-
-export interface CharitablePlanningContext {
-  state: CharitablePlanning;
-  dispatch: (action: { type: CharitableActionType; payload?: any }) => void;
-}
-
-export type CharitableActionType = 
-  | 'SET_ANNUAL_AMOUNT' 
-  | 'SET_AGE' 
-  | 'SET_FILING_STATUS'
-  | 'SELECT_STRATEGY';
-
-export interface CharitableState {
-  input: CharitableInput;
-  strategies: CharitableStrategy[];
-  selectedStrategy?: string;
-}
-
-export type PlanningTimeframe = 'short-term' | 'medium-term' | 'long-term';
+export type { CharitableInput } from './CharitablePlanningTypes';
+export type { CharitableStrategy } from './CharitablePlanningTypes';
+export type { CharitablePlanning } from './CharitablePlanningTypes';
+export type { CharitablePlanningStep } from './CharitablePlanningTypes';
+export type { DonationOption } from './CharitablePlanningTypes';
+export type { CrtType } from './CharitablePlanningTypes';
+export type { CrtInput } from './CharitablePlanningTypes';
+export type { CrtCalculationResult } from './CharitablePlanningTypes';
+export type { QcdInput } from './CharitablePlanningTypes';
+export type { QcdCalculationResult } from './CharitablePlanningTypes';
+export type { DafInput } from './CharitablePlanningTypes';
+export type { DafCalculationResult } from './CharitablePlanningTypes';
+export type { CharitablePlanningContext } from './CharitablePlanningTypes';
+export type { CharitableActionType } from './CharitablePlanningTypes';
+export type { CharitableState } from './CharitablePlanningTypes';
+export type { PlanningTimeframe } from './CharitablePlanningTypes';
