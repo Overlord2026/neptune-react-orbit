@@ -6,7 +6,8 @@ import { formatCurrency, formatPercent } from './formatUtils';
 
 // Export formatters for backward compatibility
 export { formatCurrency, formatPercent } from './formatUtils';
-export { FilingStatusType, LegacyFilingStatusType, convertLegacyFilingStatus } from '@/types/tax/filingTypes';
+export type { FilingStatusType, LegacyFilingStatusType } from '@/types/tax/filingTypes';
+export { convertLegacyFilingStatus } from '@/types/tax/filingTypes';
 
 // Tax bracket types
 export type BracketType = "ordinary" | "ltcg";
