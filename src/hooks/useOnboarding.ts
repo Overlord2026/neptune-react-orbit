@@ -5,10 +5,14 @@ export const useOnboarding = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   
   useEffect(() => {
+    // Check if the user has chosen to permanently skip the onboarding
+    const permanentSkip = localStorage.getItem('permanentOnboardingSkip') === 'true';
+    
     // Check if the user has seen the onboarding modal before
     const hasSeenOnboarding = localStorage.getItem('seenOnboarding') === 'true';
     
-    if (!hasSeenOnboarding) {
+    // Only show onboarding if it hasn't been permanently skipped and hasn't been seen yet
+    if (!permanentSkip && !hasSeenOnboarding) {
       setShowOnboarding(true);
     }
   }, []);
@@ -20,6 +24,7 @@ export const useOnboarding = () => {
   
   const resetOnboarding = () => {
     localStorage.removeItem('seenOnboarding');
+    localStorage.removeItem('permanentOnboardingSkip');
     setShowOnboarding(true);
   };
   

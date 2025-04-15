@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, X, MessageSquareText, HelpCircle } from "lucide-react";
+import { Play, X, MessageSquareText, HelpCircle, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface TaxToolsGuidanceProps {
@@ -13,7 +13,16 @@ const TaxToolsGuidance: React.FC<TaxToolsGuidanceProps> = ({ onHideForever }) =>
   const [showVideo, setShowVideo] = useState<boolean>(false);
   const [chatPrompt, setChatPrompt] = useState<string>('');
   const [showChatBox, setShowChatBox] = useState<boolean>(false);
+  const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
   const { toast } = useToast();
+  
+  useEffect(() => {
+    // Check if the user has provided feedback
+    const hasGivenFeedback = localStorage.getItem('taxToolsFeedback') === 'true';
+    if (hasGivenFeedback) {
+      setFeedbackGiven(true);
+    }
+  }, []);
   
   const handleChatSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +70,20 @@ const TaxToolsGuidance: React.FC<TaxToolsGuidanceProps> = ({ onHideForever }) =>
     
     setChatPrompt('');
   };
+
+  const handleFeedback = (helpful: boolean) => {
+    toast({
+      title: helpful ? "Thank you for your feedback!" : "We'll work to improve this guidance.",
+      description: helpful ? "We're glad you found this helpful." : "Your feedback helps us make the tools more user-friendly.",
+    });
+    
+    // Store that feedback was given
+    localStorage.setItem('taxToolsFeedback', 'true');
+    setFeedbackGiven(true);
+    
+    // In a real app, you would send this feedback to your analytics or feedback system
+    console.log(`User found guidance ${helpful ? 'helpful' : 'not helpful'}`);
+  };
   
   return (
     <Card className="bg-[#1A1F2C] border-[#353e52] mb-6 relative overflow-hidden">
@@ -105,6 +128,28 @@ const TaxToolsGuidance: React.FC<TaxToolsGuidanceProps> = ({ onHideForever }) =>
                 Which tool do I need?
               </Button>
             </div>
+            
+            {!feedbackGiven && (
+              <div className="flex items-center gap-3 pt-2 text-sm text-[#B0B0B0]">
+                <span>Is this guidance helpful?</span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-400 hover:text-green-500"
+                  onClick={() => handleFeedback(true)}
+                >
+                  <ThumbsUp className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-400 hover:text-red-500"
+                  onClick={() => handleFeedback(false)}
+                >
+                  <ThumbsDown className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
             
             {showChatBox && (
               <form onSubmit={handleChatSubmit} className="mt-4 flex gap-2">

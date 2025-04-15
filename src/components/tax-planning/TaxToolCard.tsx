@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface TaxToolProps {
   id: string;
@@ -13,6 +14,7 @@ interface TaxToolProps {
   link: string;
   documentCount?: number;
   lastUpdated?: string;
+  recommended?: boolean;
 }
 
 const TaxToolCard: React.FC<TaxToolProps> = ({ 
@@ -23,7 +25,8 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   comingSoon, 
   link,
   documentCount,
-  lastUpdated
+  lastUpdated,
+  recommended
 }) => {
   // Add bullets for estate and gifting, charitable planning, roth tools, and deferred comp tools
   const showBullets = id === "estate-gifting" || id === "roth-conversion" || id === "charitable-planning" || id === "deferred-comp" || id === "small-business";
@@ -82,13 +85,18 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   return (
     <Link to={link} className="block transition-all duration-200 hover:scale-[1.02]">
       <Card 
-        className="h-full border-[#2A2F3C] bg-[#1A1F2C] hover:border-[#00C47C] transition-colors"
+        className={`h-full border-[#2A2F3C] bg-[#1A1F2C] hover:border-[#00C47C] transition-colors ${recommended ? 'ring-2 ring-[#FFD700] ring-opacity-30' : ''}`}
         id={titleSlug}
       >
         <CardHeader className="space-y-1">
           <CardTitle className="text-xl font-semibold text-white flex items-center gap-3">
             {icon}
-            {title}
+            <div className="flex-1">
+              {title}
+              {recommended && (
+                <Badge className="ml-2 bg-[#FFD700] text-black font-normal">Recommended</Badge>
+              )}
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-4">

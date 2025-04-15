@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 import TaxTools from '@/components/tax-planning/TaxTools';
 import ImportFromTaxReturn from '@/components/tax-planning/ImportFromTaxReturn';
 import OnboardingModal from '@/components/tax-planning/OnboardingModal';
@@ -10,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const TaxToolsPage: React.FC = () => {
   const { toast } = useToast();
-  const { showOnboarding, completeOnboarding } = useOnboarding();
+  const { showOnboarding, completeOnboarding, resetOnboarding } = useOnboarding();
   const [showGuidance, setShowGuidance] = useState<boolean>(true);
   
   // Check local storage for user preference on guidance visibility
@@ -35,14 +37,28 @@ const TaxToolsPage: React.FC = () => {
     // In a real implementation, this data would be used to initialize
     // scenarios or stored in a context for use across the application
   };
+
+  const handleReplayOnboarding = () => {
+    resetOnboarding();
+  };
   
   return (
     <div className="container mx-auto py-6 space-y-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-white">Tax Tools</h1>
-        <p className="text-lg text-muted-foreground">
-          Access powerful scenarios for Roth conversions, multi-year planning, tax trap checks, and more.
-        </p>
+      <div className="flex justify-between items-center">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold text-white">Tax Tools</h1>
+          <p className="text-lg text-muted-foreground">
+            Access powerful scenarios for Roth conversions, multi-year planning, tax trap checks, and more.
+          </p>
+        </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="gap-2 text-primary hover:text-primary/80"
+          onClick={handleReplayOnboarding}
+        >
+          <RefreshCw className="h-4 w-4" /> Replay Intro
+        </Button>
       </div>
       
       {/* Guidance Component */}
