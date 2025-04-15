@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   AlertCircle, 
   AlertTriangle,
@@ -27,7 +27,7 @@ interface TaxTrapAlertsProps {
 }
 
 const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = React.useState(true);
   
   if (!alerts || alerts.length === 0) {
     return (

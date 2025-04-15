@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TaxResult } from '@/utils/taxCalculator';
@@ -9,28 +10,35 @@ interface BracketSummaryProps {
   scenario: TaxResult;
 }
 
+interface BracketItem {
+  bracket: number;
+  amount: number;
+  tax: number;
+}
+
 const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
   // Safely check if brackets_breakdown exists and has arrays
-  const hasOrdinary = scenario.brackets_breakdown?.ordinary && Array.isArray(scenario.brackets_breakdown.ordinary) && scenario.brackets_breakdown.ordinary.length > 0;
-  const hasCapitalGains = scenario.brackets_breakdown?.capitalGains && Array.isArray(scenario.brackets_breakdown.capitalGains) && scenario.brackets_breakdown.capitalGains.length > 0;
+  const hasOrdinary = scenario.brackets_breakdown?.ordinary && 
+                      Array.isArray(scenario.brackets_breakdown.ordinary) && 
+                      scenario.brackets_breakdown.ordinary.length > 0;
+  const hasCapitalGains = scenario.brackets_breakdown?.capitalGains && 
+                          Array.isArray(scenario.brackets_breakdown.capitalGains) && 
+                          scenario.brackets_breakdown.capitalGains.length > 0;
   const currentYear = new Date().getFullYear();
   const isFutureProjection = scenario.year > currentYear;
   
   // Helper function to safely calculate sum of bracket amounts
-  const sumBracketAmounts = (brackets: any[] | undefined): number => {
+  const sumBracketAmounts = (brackets: BracketItem[] | undefined): number => {
     if (!Array.isArray(brackets)) return 0;
     return brackets.reduce((sum, bracket) => sum + bracket.amount, 0);
   };
   
-  const renderBrackets = (brackets: any) => {
-    if (!brackets) return null;
-    
-    // Ensure brackets is an array before using map
-    const bracketsArray = Array.isArray(brackets) ? brackets : [];
+  const renderBrackets = (brackets: BracketItem[] | undefined) => {
+    if (!brackets || !Array.isArray(brackets)) return null;
     
     return (
       <div className="space-y-2">
-        {bracketsArray.map((bracket, index) => (
+        {brackets.map((bracket, index) => (
           <div key={index} className="flex justify-between text-sm">
             <span className="font-medium">{formatPercent(bracket.bracket / 100)}</span>
             <span className="text-right">{formatCurrency(bracket.amount)}</span>
