@@ -49,8 +49,8 @@ function getStateTaxRate(stateCode: StateCode | undefined, scenarioData: MultiYe
   if (!stateCode) return 0;
   
   // Look up the tax rate from our data
-  const stateTaxInfo = STATE_TAX_RATES[stateCode];
+  const stateTaxRate = STATE_TAX_RATES[stateCode];
   
   // Return the rate or a default if not found
-  return stateTaxInfo?.effective_rate || scenarioData.stateIncomeTax || 0;
+  return stateTaxRate !== undefined ? stateTaxRate : (scenarioData.stateIncomeTax || 0);
 }
