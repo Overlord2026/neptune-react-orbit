@@ -37,6 +37,12 @@ export const YearlyTaxMetrics: React.FC<YearlyTaxMetricsProps> = ({
     return `${(rate * 100).toFixed(1)}%`;
   };
 
+  // Default values for potentially missing properties
+  const marginalRate = yearData.marginalRate || 0;
+  const effectiveRate = yearData.effectiveRate || 0;
+  const equityIncome = yearData.equityIncome || 0;
+  const amtImpact = yearData.amtImpact || 0;
+
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -49,7 +55,7 @@ export const YearlyTaxMetrics: React.FC<YearlyTaxMetricsProps> = ({
               {triggersAmt ? "AMT Income:" : "Exercise Income:"}
             </div>
             <div className="text-right font-medium">
-              {formatCurrency(yearData.equityIncome || 0)}
+              {formatCurrency(equityIncome)}
             </div>
           </>
         )}
@@ -65,10 +71,10 @@ export const YearlyTaxMetrics: React.FC<YearlyTaxMetricsProps> = ({
         <div className="text-right font-medium">{formatCurrency(yearData.ordinaryIncome)}</div>
         
         <div className="text-gray-300">Marginal Rate:</div>
-        <div className="text-right font-medium">{formatPercent(yearData.marginalRate)}</div>
+        <div className="text-right font-medium">{formatPercent(marginalRate)}</div>
         
         <div className="text-gray-300">Effective Rate:</div>
-        <div className="text-right font-medium">{formatPercent(yearData.effectiveRate)}</div>
+        <div className="text-right font-medium">{formatPercent(effectiveRate)}</div>
         
         {hasStateTax && stateTaxInfo && (
           <>
@@ -88,7 +94,7 @@ export const YearlyTaxMetrics: React.FC<YearlyTaxMetricsProps> = ({
         <div className="mt-2 pt-2 border-t border-gray-700">
           <div className="flex justify-between items-center">
             <span className="text-amber-300">AMT Impact:</span>
-            <span className="text-amber-300 font-medium">{formatCurrency(yearData.amtImpact || 0)}</span>
+            <span className="text-amber-300 font-medium">{formatCurrency(amtImpact)}</span>
           </div>
         </div>
       )}

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -53,7 +54,7 @@ export const EquityCompWizard = () => {
       case 2:
         return <HoldingPeriodStep onNext={handleNext} onPrevious={handlePrevious} />;
       case 3:
-        return <DeferralStrategyStep onNext={handleNext} onPrevious={handlePrevious} />;
+        return <DeferralStrategyStep />;
       case 4:
         return <MultiYearApproachStep onNext={handleNext} onPrevious={handlePrevious} />;
       case 5:

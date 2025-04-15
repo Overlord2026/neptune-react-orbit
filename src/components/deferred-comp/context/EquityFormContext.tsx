@@ -25,6 +25,7 @@ import {
 interface EquityFormContextType {
   formState: EquityFormState;
   updateForm: (updates: Partial<EquityFormState>) => void;
+  updateFormState: (updates: Partial<EquityFormState>) => void; // Alias for updateForm
   calculateAmtImpact: () => number;
   calculateDeferralBenefit: () => number;
   calculateMultiYearImpact: () => YearlyTaxImpact[];
@@ -49,6 +50,9 @@ export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setFormState(current => ({ ...current, ...updates }));
   }, []);
   
+  // Alias for updateForm to maintain compatibility
+  const updateFormState = updateForm;
+  
   const resetForm = useCallback(() => {
     setFormState({
       ...defaultFormState,
@@ -66,6 +70,7 @@ export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const value: EquityFormContextType = {
     formState,
     updateForm,
+    updateFormState, // Added alias
     calculateAmtImpact: () => calculateAmtImpact(formState),
     calculateDeferralBenefit: () => calculateDeferralBenefit(formState),
     calculateMultiYearImpact: () => calculateMultiYearImpact(formState),

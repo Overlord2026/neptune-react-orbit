@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Label } from "@/components/ui/label";
@@ -18,12 +19,16 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ onNext }) => {
 
   const handleContinue = () => {
     // Validate required fields
-    if (!formState.equityType || (!formState.shareCount && !formState.bonusAmount)) {
+    if (!formState.equityType || (!formState.totalShares && !formState.bonusAmount)) {
       alert("Please fill in all required fields");
       return;
     }
     onNext();
   };
+
+  // Use totalShares as a backup for shareCount for backward compatibility
+  const shareCount = formState.shareCount || formState.totalShares || 0;
+  const employer = formState.employer || "";
 
   return (
     <div className="space-y-6">
@@ -94,7 +99,7 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ onNext }) => {
             <Label htmlFor="employer">Current employer</Label>
             <Input 
               id="employer" 
-              value={formState.employer} 
+              value={employer} 
               onChange={(e) => updateForm({ employer: e.target.value })} 
               placeholder="Enter your employer's name"
             />
@@ -109,8 +114,8 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ onNext }) => {
               <Input 
                 id="shareCount" 
                 type="number"
-                value={formState.shareCount || ""} 
-                onChange={(e) => updateForm({ shareCount: Number(e.target.value) })} 
+                value={shareCount || ""} 
+                onChange={(e) => updateForm({ totalShares: Number(e.target.value), shareCount: Number(e.target.value) })} 
                 placeholder="Enter total number of shares"
               />
             </div>

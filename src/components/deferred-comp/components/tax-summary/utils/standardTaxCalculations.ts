@@ -15,14 +15,21 @@ export const calculateEquityValues = (formState: EquityFormState) => {
   
   // If user has stock options
   if (formState.equityType === "NSO" || formState.equityType === "ISO") {
-    spreadPerShare = formState.fairMarketValue - formState.strikePrice;
+    // Handle potentially undefined properties safely
+    const fairMarketValue = formState.fairMarketValue || 0;
+    const strikePrice = formState.strikePrice || 0;
+    const vestedShares = formState.vestedShares || 0;
+    const partialShares = formState.partialShares || 0;
+    const splitYears = formState.splitYears || 1;
+    
+    spreadPerShare = fairMarketValue - strikePrice;
     
     if (formState.exerciseStrategy === "full") {
-      exercisedShares = formState.vestedShares;
+      exercisedShares = vestedShares;
     } else if (formState.exerciseStrategy === "partial") {
-      exercisedShares = formState.partialShares;
+      exercisedShares = partialShares;
     } else if (formState.exerciseStrategy === "split") {
-      exercisedShares = Math.floor(formState.vestedShares / formState.splitYears);
+      exercisedShares = Math.floor(vestedShares / splitYears);
     }
     
     incomeFromExercise = spreadPerShare * exercisedShares;
@@ -45,7 +52,7 @@ export const calculateDeferredIncome = (formState: EquityFormState) => {
     if (formState.deferralStrategy === "next-year") {
       nextYearIncome = deferredIncome;
     } else if (formState.deferralStrategy === "multi-year") {
-      // If staggered, divide by years
+      // If staggered, divide by years (default to 2 years if undefined)
       nextYearIncome = deferredIncome / (formState.deferralYears || 2);
     }
   }

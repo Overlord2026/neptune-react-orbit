@@ -3,7 +3,6 @@
  * Re-export unified tax types from central location
  */
 export type { 
-  EquityType, 
   EquityFormState, 
   EquityCompEvent, 
   DeferralEvent, 

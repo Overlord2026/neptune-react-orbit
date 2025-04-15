@@ -6,6 +6,13 @@ export const EquityPlanningTable: React.FC = () => {
   const { formState } = useEquityForm();
   const currentYear = new Date().getFullYear();
   
+  // Get values safely with defaults for potentially undefined fields
+  const vestedShares = formState.vestedShares || 0;
+  const fairMarketValue = formState.fairMarketValue || 0;
+  const strikePrice = formState.strikePrice || 0;
+  const partialShares = formState.partialShares || 0;
+  const splitYears = formState.splitYears || 2;
+  
   // Calculate simple data for display
   const calculateRows = () => {
     const rows = [];
@@ -14,41 +21,41 @@ export const EquityPlanningTable: React.FC = () => {
       // Single exercise of all shares
       rows.push({
         year: currentYear,
-        shares: formState.vestedShares,
-        value: formState.vestedShares * formState.fairMarketValue,
-        cost: formState.vestedShares * formState.strikePrice,
-        spread: formState.vestedShares * (formState.fairMarketValue - formState.strikePrice)
+        shares: vestedShares,
+        value: vestedShares * fairMarketValue,
+        cost: vestedShares * strikePrice,
+        spread: vestedShares * (fairMarketValue - strikePrice)
       });
     } 
     else if (formState.exerciseStrategy === "partial") {
       // Partial exercise
       rows.push({
         year: currentYear,
-        shares: formState.partialShares,
-        value: formState.partialShares * formState.fairMarketValue,
-        cost: formState.partialShares * formState.strikePrice,
-        spread: formState.partialShares * (formState.fairMarketValue - formState.strikePrice)
+        shares: partialShares,
+        value: partialShares * fairMarketValue,
+        cost: partialShares * strikePrice,
+        spread: partialShares * (fairMarketValue - strikePrice)
       });
     }
     else if (formState.exerciseStrategy === "split") {
       // Split across multiple years
-      const sharesPerYear = Math.floor(formState.vestedShares / formState.splitYears);
-      let remainingShares = formState.vestedShares;
+      const sharesPerYear = Math.floor(vestedShares / splitYears);
+      let remainingShares = vestedShares;
       
-      for (let i = 0; i < formState.splitYears; i++) {
-        const sharesToExercise = i === formState.splitYears - 1 
+      for (let i = 0; i < splitYears; i++) {
+        const sharesToExercise = i === splitYears - 1 
           ? remainingShares // Last year gets any remainder
           : sharesPerYear;
           
         rows.push({
           year: currentYear + i,
           shares: sharesToExercise,
-          value: sharesToExercise * formState.fairMarketValue,
-          cost: sharesToExercise * formState.strikePrice,
-          spread: sharesToExercise * (formState.fairMarketValue - formState.strikePrice)
+          value: sharesToExercise * fairMarketValue,
+          cost: sharesToExercise * strikePrice,
+          spread: sharesToExercise * (fairMarketValue - strikePrice)
         });
         
-        remainingShares -= sharesToExercise;
+        remainingShares -= sharesPerYear;
       }
     }
     

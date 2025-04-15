@@ -8,6 +8,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { EquityCompEvent } from '../../types/EquityTypes';
 import ShareScenarioCard from '@/components/tax-planning/collaboration/ShareScenarioCard';
 
+// Function to safely get a property that might be missing
+const safeGet = <T, K extends keyof T>(obj: T, key: K): T[K] | undefined => {
+  return obj ? obj[key] : undefined;
+};
+
 export const TaxSummaryCard = () => {
   const { 
     formState, 
@@ -55,12 +60,12 @@ export const TaxSummaryCard = () => {
   const calculateSplitExerciseBenefit = () => {
     if (!nextYearExercise || formState.exerciseStrategy !== 'split') return 0;
     
-    // Assuming income is the spread
-    const currentYearSpread = currentYearExercise?.income || 0;
-    const nextYearSpread = nextYearExercise?.income || 0;
+    // Use taxableIncome instead of income property
+    const currentYearIncome = currentYearExercise?.taxableIncome || 0;
+    const nextYearIncome = nextYearExercise?.taxableIncome || 0;
     
-    const singleYearTax = (currentYearSpread + nextYearSpread) * 0.35;
-    const splitYearTax = currentYearSpread * 0.32 + nextYearSpread * 0.32;
+    const singleYearTax = (currentYearIncome + nextYearIncome) * 0.35;
+    const splitYearTax = currentYearIncome * 0.32 + nextYearIncome * 0.32;
     
     return singleYearTax - splitYearTax;
   };

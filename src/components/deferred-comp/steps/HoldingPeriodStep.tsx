@@ -8,7 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { InfoTooltip } from '../components/InfoTooltip';
 
-export const HoldingPeriodStep: React.FC = () => {
+export const HoldingPeriodStep: React.FC<{
+  onNext?: () => void;
+  onPrevious?: () => void;
+}> = ({ onNext, onPrevious }) => {
   const { formState, updateFormState } = useEquityForm();
   
   // Convert string to number for holdingPeriod if it exists

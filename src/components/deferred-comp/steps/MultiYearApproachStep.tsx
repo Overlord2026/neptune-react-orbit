@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useEquityForm } from "../context/EquityFormContext";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,13 @@ const MultiYearApproachStep: React.FC<MultiYearApproachStepProps> = ({ onNext, o
   const handleContinue = () => {
     onNext();
   };
+
+  // Default values for potentially undefined properties
+  const vestedShares = formState.vestedShares || 0;
+  const year1Exercise = formState.year1Exercise || 0;
+  const year2Exercise = formState.year2Exercise || 0;
+  const year1Deferral = formState.year1Deferral || 0;
+  const year2Deferral = formState.year2Deferral || 0;
 
   return (
     <div className="space-y-6">
@@ -59,8 +67,8 @@ const MultiYearApproachStep: React.FC<MultiYearApproachStepProps> = ({ onNext, o
                       <Input 
                         id="year1Exercise" 
                         type="number"
-                        max={formState.vestedShares}
-                        value={formState.year1Exercise || ""} 
+                        max={vestedShares}
+                        value={year1Exercise || ""} 
                         onChange={(e) => updateForm({ year1Exercise: Number(e.target.value) })} 
                         placeholder="0"
                       />
@@ -74,7 +82,7 @@ const MultiYearApproachStep: React.FC<MultiYearApproachStepProps> = ({ onNext, o
                         id="year1Deferral" 
                         type="number"
                         max={formState.bonusAmount}
-                        value={formState.year1Deferral || ""} 
+                        value={year1Deferral || ""} 
                         onChange={(e) => updateForm({ year1Deferral: Number(e.target.value) })} 
                         placeholder="0"
                       />
@@ -89,12 +97,12 @@ const MultiYearApproachStep: React.FC<MultiYearApproachStepProps> = ({ onNext, o
                       <Input 
                         id="year2Exercise" 
                         type="number"
-                        max={formState.vestedShares - (formState.year1Exercise || 0)}
-                        value={formState.year2Exercise || ""} 
+                        max={vestedShares - year1Exercise}
+                        value={year2Exercise || ""} 
                         onChange={(e) => updateForm({ year2Exercise: Number(e.target.value) })} 
                         placeholder="0"
                       />
-                      {formState.equityType === "ISO" && formState.year1Exercise && formState.year2Exercise && (
+                      {formState.equityType === "ISO" && year1Exercise > 0 && year2Exercise > 0 && (
                         <p className="text-xs text-amber-300 mt-1">
                           Note: Exercising ISOs across multiple years may help manage AMT liability.
                         </p>
@@ -108,7 +116,7 @@ const MultiYearApproachStep: React.FC<MultiYearApproachStepProps> = ({ onNext, o
                       <Input 
                         id="year2Deferral" 
                         type="number"
-                        value={formState.year2Deferral || ""} 
+                        value={year2Deferral || ""} 
                         onChange={(e) => updateForm({ year2Deferral: Number(e.target.value) })} 
                         placeholder="0"
                       />

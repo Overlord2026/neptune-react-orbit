@@ -18,13 +18,15 @@ export const ExerciseStrategySummary: React.FC<{ spreadPerShare: number }> = ({ 
     ? "A disqualifying disposition of ISOs creates ordinary income like an NSO"
     : "ISO exercises don't create regular taxable income, but may trigger AMT";
   
+  const partialShares = formState.partialShares || 0;
+  
   return (
     <MetricCard
       title="Exercise Strategy"
       tooltipContent={<p className="max-w-xs">{tooltipContent}</p>}
       value={
         formState.exerciseStrategy === "full" ? "Exercise all vested options" :
-        formState.exerciseStrategy === "partial" ? `Exercise ${formState.partialShares} shares` :
+        formState.exerciseStrategy === "partial" ? `Exercise ${partialShares} shares` :
         `Split across ${formState.splitYears} years`
       }
       subtitle={

@@ -6,6 +6,15 @@ export interface EquityCompEvent {
   cashRequired: number;
   taxableIncome: number;
   event: "exercise" | "sale" | "lapse";
+  type?: string;
+  spread?: number;
+  amtImpact?: number;
+  ordinaryIncome?: number;
+  isDisqualifyingDisposition?: boolean;
+  incomeRecognized?: number;
+  taxRate?: number;
+  taxesPaid?: number;
+  income?: number; // Added for compatibility
 }
 
 export interface DeferralEvent {
@@ -14,6 +23,14 @@ export interface DeferralEvent {
   taxSavings: number;
   bracketBefore?: string;
   bracketAfter?: string;
+  event?: string;
+  tax?: number;
+  netAmount?: number;
+  fromYear?: number;
+  toYear?: number;
+  amountDeferred?: number;
+  taxRate?: number;
+  taxesSaved?: number;
 }
 
 export interface YearlyTaxImpact {
@@ -29,6 +46,12 @@ export interface YearlyTaxImpact {
   nextBracket: string;
   stateTax?: number;
   federalTax?: number;
+  marginalRate?: number;
+  effectiveRate?: number;
+  equityIncome?: number;
+  amtImpact?: number;
+  amtIncome?: number;
+  taxableIncome?: number;
 }
 
 export interface TaxImpactResult {
@@ -51,7 +74,7 @@ export interface TaxImpactResult {
 }
 
 export interface EquityFormState {
-  equityType: "NSO" | "ISO" | "RSU" | "ESPP" | "none";
+  equityType: "NSO" | "ISO" | "RSU" | "ESPP" | "Other" | "none";
   totalShares: number;
   grantPrice: number;
   currentPrice: number;
@@ -64,10 +87,30 @@ export interface EquityFormState {
   isDisqualifyingDisposition: boolean;
   hasDeferredComp: boolean;
   bonusAmount: number;
-  deferralStrategy: "fixed" | "percentage" | "multi-year";
+  deferralStrategy: "next-year" | "multi-year";
   deferralAmount: number;
   deferralPercentage: number;
   planningApproach: "single-year" | "multi-year";
   includeStateTax: boolean;
   residentState: string;
+  
+  // Additional properties needed by components
+  vestedShares?: number;
+  unvestedShares?: number;
+  partialShares?: number;
+  strikePrice?: number;
+  fairMarketValue?: number;
+  shareCount?: number;
+  employer?: string;
+  sharePrice?: number;
+  numShares?: number;
+  splitRatio?: number;
+  sabbaticalYear?: number;
+  retirementYear?: number;
+  deferralYears?: number;
+  year1Exercise?: number;
+  year2Exercise?: number;
+  year1Deferral?: number;
+  year2Deferral?: number;
 }
+
