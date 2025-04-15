@@ -1,6 +1,6 @@
 
 /**
- * Defines the types of filing statuses used in tax calculations
+ * Defines the comprehensive types of filing statuses used in tax calculations
  */
 export type FilingStatusType = 
   'single' 
@@ -45,19 +45,59 @@ export const FILING_STEPS = [
 
 // Additional types can be added here as needed
 export interface W2Form {
-  // Define W2 form structure
+  employerName: string;
+  employerEIN: string;
+  wages: number;
+  federalWithholding: number;
+  stateWithholding: number;
 }
 
 export interface TaxReturnData {
-  // Define tax return data structure
+  firstName: string;
+  lastName: string;
+  ssn: string;
+  filingStatus: FilingStatusType;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  dependents: Dependent[];
+  w2Forms: W2Form[];
+  interestIncome: number;
+  dividendIncome: number;
+  useStandardDeduction: boolean;
+  itemizedDeductions: Record<string, number>;
+  hasOnlyW2Income: boolean;
+  hasDependents: boolean;
+  hasSelfEmploymentIncome: boolean;
+  childTaxCredit: boolean;
+  educationCredit: boolean;
+  calculatedRefund: number;
+  calculatedOwed: number;
+  referenceNumber: string;
+  residentState: string;
+  includeStateTax: boolean;
+  bankInfo?: {
+    accountType: 'checking' | 'savings';
+    routingNumber: string;
+    accountNumber: string;
+  };
 }
 
 export interface Dependent {
-  // Define dependent information structure
+  firstName: string;
+  lastName: string;
+  relationship: string;
+  age: number;
 }
 
 export interface ItemizedDeductions {
-  // Define itemized deductions structure
+  stateAndLocalTax: number;
+  medicalExpenses: number;
+  mortgageInterest: number;
+  charitableDonations: number;
 }
 
 export type FilingStep = typeof FILING_STEPS[number]['id'];
