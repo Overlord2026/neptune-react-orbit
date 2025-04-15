@@ -4,7 +4,7 @@
  */
 import { StateCode } from "../../utils/stateTaxData";
 
-// Ensure FilingStatusType is explicitly exported
+// Ensure explicit export of FilingStatusType
 export type FilingStatusType = 
   | 'single' 
   | 'married_joint' 
