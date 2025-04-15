@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { YearlyResult } from '../../types/ScenarioTypes';
+import { YearlyResult } from '@/types/tax/rothConversionTypes';
 import { CalendarHeart, HeartHandshake, Percent, ShieldCheck } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -92,12 +92,12 @@ const CharitableContributionImpact: React.FC<CharitableContributionImpactProps> 
                 year.charitableContribution?.trapAvoidance?.map((avoidance, avoidanceIdx) => (
                   <Alert key={`${idx}-${avoidanceIdx}`} className="bg-green-950/20 border-green-800/30">
                     <ShieldCheck className="h-4 w-4 text-green-500" />
-                    <AlertTitle>Year {year.year}: {avoidance.title}</AlertTitle>
+                    <AlertTitle>Year {year.year}: {avoidance.name}</AlertTitle>
                     <AlertDescription className="text-sm">
                       {avoidance.description}
-                      {avoidance.savings > 0 && (
+                      {avoidance.taxSavings > 0 && (
                         <div className="font-medium mt-1">
-                          Financial impact: ${avoidance.savings.toLocaleString()}
+                          Financial impact: ${avoidance.taxSavings.toLocaleString()}
                         </div>
                       )}
                     </AlertDescription>

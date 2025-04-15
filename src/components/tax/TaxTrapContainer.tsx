@@ -21,13 +21,16 @@ const TaxTrapContainer: React.FC = () => {
   const magi = agi; // Simplified for demo purposes
   const totalIncome = agi + capitalGains;
   const taxableIncome = Math.max(0, agi - (filingStatus === 'single' ? 12950 : filingStatus === 'married_joint' ? 25900 : 19400));
+  
+  // Convert FilingStatusType to the format expected by TaxTrapInputForm
+  const convertedFilingStatus = filingStatus === 'married_joint' ? 'married' as any : filingStatus;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-1">
         <TaxTrapInputForm 
-          filingStatus={filingStatus}
-          setFilingStatus={setFilingStatus}
+          filingStatus={convertedFilingStatus}
+          setFilingStatus={(status) => setFilingStatus(status === 'married' ? 'married_joint' as FilingStatusType : status as FilingStatusType)}
           year={year}
           setYear={setYear}
           agi={agi}
@@ -50,7 +53,7 @@ const TaxTrapContainer: React.FC = () => {
           scenarioId={scenarioId}
           scenarioData={{
             year,
-            filing_status: filingStatus,
+            filing_status: convertedFilingStatus,
             agi,
             magi,
             total_income: totalIncome,

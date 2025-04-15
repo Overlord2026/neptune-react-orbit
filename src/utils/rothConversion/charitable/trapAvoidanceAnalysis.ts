@@ -182,4 +182,3 @@ export function analyzeTrapAvoidance(
   // Prioritize and return strategies
   return prioritizeAvoidanceStrategies(trapAvoidances);
 }
-
