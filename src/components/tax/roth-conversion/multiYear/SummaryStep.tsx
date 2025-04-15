@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useMultiYearContext } from './context/MultiYearContext';
 import FilingStatusComparison from './components/FilingStatusComparison';
 import ScenarioSummaryTable from './components/ScenarioSummaryTable';
+import WarningsWrapper from './components/WarningsWrapper';
 
 const SummaryStep: React.FC = () => {
   const { 
@@ -21,6 +22,10 @@ const SummaryStep: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <div className="mb-4">
+        <WarningsWrapper />
+      </div>
+      
       <div className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
           <ScenarioSummaryTable 
