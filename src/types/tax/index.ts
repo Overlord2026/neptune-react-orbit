@@ -4,9 +4,32 @@
  */
 
 // Use explicit named exports instead of star exports
-export type { EquityType, EquityFormState, EquityScenario, EquityCompEvent, DeferralEvent, YearlyTaxImpact, TaxImpactResult } from './equityTypes';
-export type { FilingStatusType, LegacyFilingStatusType, W2Form, TaxReturnData, Dependent, FilingStep, ItemizedDeductions } from './filingTypes';
-export type { TaxInput, TaxResult, TaxScenario } from './taxCalculationTypes';
+export type { 
+  EquityType, 
+  EquityFormState, 
+  EquityScenario, 
+  EquityCompEvent, 
+  DeferralEvent, 
+  YearlyTaxImpact, 
+  TaxImpactResult 
+} from './equityTypes';
+
+export type { 
+  FilingStatusType, 
+  LegacyFilingStatusType, 
+  W2Form, 
+  TaxReturnData, 
+  Dependent, 
+  FilingStep, 
+  ItemizedDeductions 
+} from './filingTypes';
+
+export type { 
+  TaxInput, 
+  TaxResult, 
+  TaxScenario 
+} from './taxCalculationTypes';
+
 export type { 
   RothConversionInput,
   RothConversionScenario, 
@@ -21,6 +44,8 @@ export type {
 
 // Export conversion function
 export { convertLegacyFilingStatus } from './filingTypes';
+
+// Export filing steps for navigation
 export const FILING_STEPS = [
   { id: 'eligibility', label: 'Eligibility' },
   { id: 'personal', label: 'Personal Info' },

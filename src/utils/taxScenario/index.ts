@@ -31,6 +31,17 @@ export {
   updateTaxScenario
 } from './storage';
 
-// Re-export the types
-export type { TaxInput, TaxResult, TaxScenario } from '../taxCalculatorTypes';
-export type { EquityFormState, YearlyTaxImpact, EquityCompEvent, DeferralEvent, TaxImpactResult } from '../../types/tax/equityTypes';
+// Re-export the types - use direct imports to avoid circular references
+import type { TaxInput, TaxResult, TaxScenario } from '../taxCalculatorTypes';
+import type { EquityFormState, YearlyTaxImpact, EquityCompEvent, DeferralEvent, TaxImpactResult } from '../../types/tax/equityTypes';
+
+export type { 
+  TaxInput, 
+  TaxResult, 
+  TaxScenario,
+  EquityFormState, 
+  YearlyTaxImpact, 
+  EquityCompEvent, 
+  DeferralEvent, 
+  TaxImpactResult 
+};

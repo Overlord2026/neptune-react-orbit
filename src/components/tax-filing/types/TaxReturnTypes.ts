@@ -2,4 +2,25 @@
 /**
  * Re-export tax filing types from central location
  */
-export * from '../../../types/tax/filingTypes';
+import { 
+  FilingStatusType, 
+  LegacyFilingStatusType, 
+  W2Form, 
+  TaxReturnData, 
+  Dependent, 
+  FilingStep, 
+  ItemizedDeductions,
+  convertLegacyFilingStatus 
+} from '../../../types/tax/filingTypes';
+
+export type {
+  FilingStatusType,
+  LegacyFilingStatusType,
+  W2Form,
+  TaxReturnData,
+  Dependent,
+  FilingStep,
+  ItemizedDeductions
+};
+
+export { convertLegacyFilingStatus };

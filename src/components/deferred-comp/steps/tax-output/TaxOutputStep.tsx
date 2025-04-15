@@ -13,9 +13,9 @@ import { EquityImpactCards } from "./EquityImpactCards";
 import { DeferralImpactCard } from "./DeferralImpactCard";
 import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
 import { toast } from "sonner";
-import { saveScenario } from "@/utils/taxScenario";
-import { EquityScenario } from "@/types/tax/equityTypes";
+import { saveTaxScenario } from "@/utils/taxScenario/storage";
 import { FilingStatusType } from "@/types/tax/filingTypes";
+import { EquityScenario } from "@/types/tax/equityTypes";
 import { LoadingStateDisplay } from "./LoadingState";
 
 interface TaxOutputStepProps {
@@ -91,7 +91,7 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
         tax_data_is_current: true
       };
 
-      await saveScenario(scenarioData);
+      await saveTaxScenario(scenarioData);
       toast.success("Your analysis has been saved successfully.");
     } catch (error) {
       console.error("Error saving scenario:", error);

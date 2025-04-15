@@ -6,9 +6,10 @@
  * importing and re-exporting functionality from specialized modules.
  */
 
-// Re-export types
+// Re-export types from the centralized type export
+import { FilingStatusType } from '../types/tax/filingTypes';
 export type { TaxInput, TaxResult, TaxDataCacheInfo } from './taxCalculatorTypes';
-export type { FilingStatusType } from './taxBracketData';
+export type { FilingStatusType };
 
 // Re-export constants
 export { STANDARD_DEDUCTION } from './taxBracketData';
