@@ -114,3 +114,29 @@ export interface EquityFormState {
   year2Deferral?: number;
 }
 
+// Add the missing EquityScenario interface
+export interface EquityScenario {
+  id: string;
+  name: string;
+  formState: EquityFormState;
+  result: TaxImpactResult;
+  type: string;
+  year: number;
+  filing_status: string;
+  total_income: number;
+  agi: number;
+  taxable_income: number;
+  total_tax: number;
+  ordinary_tax: number;
+  capital_gains_tax: number;
+  marginal_rate: number;
+  marginal_capital_gains_rate: number;
+  effective_rate: number;
+  federal_tax: number;
+  standard_deduction: number;
+  brackets: any[];
+  amtImpact: number;
+  deferralBenefit: number;
+  results: YearlyTaxImpact[];
+  tax_data_is_current: boolean;
+}

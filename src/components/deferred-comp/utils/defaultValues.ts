@@ -10,12 +10,14 @@ export const defaultEquityFormState: EquityFormState = {
   equityType: "none",
   hasDeferredComp: false,
   includeStateTax: false,
-  residentState: undefined,
+  residentState: "",
   employer: "",
   
   // Equity details
-  sharePrice: 0,
+  totalShares: 0,
+  currentPrice: 0,
   grantPrice: 0,
+  sharePrice: 0,
   numShares: 0,
   vestedShares: 0,
   partialShares: 0,
@@ -26,10 +28,14 @@ export const defaultEquityFormState: EquityFormState = {
   holdingPeriod: 0,
   
   // Strategy options
+  exerciseStrategyType: "standard",
+  exerciseStrategy: "full",
+  exerciseAmount: 0,
+  firstYearPercentage: 50,
   deferralAmount: 0,
+  deferralPercentage: 0,
   deferralStrategy: "next-year",
   deferralYears: 2,
-  exerciseStrategy: "full",
   splitYears: 2,
   splitRatio: 50,
   planningApproach: "single-year",

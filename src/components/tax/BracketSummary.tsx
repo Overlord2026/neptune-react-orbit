@@ -11,8 +11,9 @@ interface BracketSummaryProps {
 }
 
 const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
-  const hasOrdinary = scenario.brackets_breakdown?.ordinary?.length > 0;
-  const hasCapitalGains = scenario.brackets_breakdown?.capitalGains?.length > 0;
+  // Safely check if brackets_breakdown exists and has arrays
+  const hasOrdinary = scenario.brackets_breakdown?.ordinary && Array.isArray(scenario.brackets_breakdown.ordinary) && scenario.brackets_breakdown.ordinary.length > 0;
+  const hasCapitalGains = scenario.brackets_breakdown?.capitalGains && Array.isArray(scenario.brackets_breakdown.capitalGains) && scenario.brackets_breakdown.capitalGains.length > 0;
   const currentYear = new Date().getFullYear();
   const isFutureProjection = scenario.year > currentYear;
   

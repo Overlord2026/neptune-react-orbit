@@ -77,7 +77,11 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
       
       events.push({
         year: currentYear,
+        equityType: formState.equityType,
         sharesExercised: year1Shares,
+        cashRequired: year1Shares * formState.strikePrice,
+        taxableIncome: ordinaryIncome,
+        event: "exercise",
         spread: spread,
         amtImpact: amtImpact,
         ordinaryIncome: ordinaryIncome,
@@ -98,7 +102,11 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
       
       events.push({
         year: currentYear + 1,
+        equityType: formState.equityType,
         sharesExercised: year2Shares,
+        cashRequired: year2Shares * formState.strikePrice,
+        taxableIncome: ordinaryIncome,
+        event: "exercise",
         spread: spread,
         amtImpact: amtImpact,
         ordinaryIncome: ordinaryIncome,

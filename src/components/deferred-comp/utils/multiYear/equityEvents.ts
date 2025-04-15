@@ -30,13 +30,16 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
       
       events.push({
         year: currentYear,
-        type: formState.equityType,
+        equityType: formState.equityType,
         sharesExercised: year1Exercise,
+        cashRequired: year1Exercise * formState.strikePrice,
+        taxableIncome: ordinaryIncome,
+        event: "exercise",
+        type: formState.equityType,
         spread,
         amtImpact,
         ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add required properties
         incomeRecognized: ordinaryIncome,
         taxRate: 0.30, // Simplified tax rate
         taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
@@ -51,13 +54,16 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
       
       events.push({
         year: currentYear + 1,
-        type: formState.equityType,
+        equityType: formState.equityType,
         sharesExercised: year2Exercise,
+        cashRequired: year2Exercise * formState.strikePrice,
+        taxableIncome: ordinaryIncome,
+        event: "exercise",
+        type: formState.equityType,
         spread,
         amtImpact,
         ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add required properties
         incomeRecognized: ordinaryIncome,
         taxRate: 0.30, // Simplified tax rate
         taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
@@ -74,13 +80,16 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
       
       events.push({
         year: currentYear,
-        type: formState.equityType,
+        equityType: formState.equityType,
         sharesExercised: formState.vestedShares,
+        cashRequired: formState.vestedShares * formState.strikePrice,
+        taxableIncome: ordinaryIncome,
+        event: "exercise",
+        type: formState.equityType,
         spread,
         amtImpact,
         ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add required properties
         incomeRecognized: ordinaryIncome,
         taxRate: 0.30, // Simplified tax rate
         taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
@@ -94,13 +103,16 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
       
       events.push({
         year: currentYear,
-        type: formState.equityType,
+        equityType: formState.equityType,
         sharesExercised: formState.partialShares,
+        cashRequired: formState.partialShares * formState.strikePrice,
+        taxableIncome: ordinaryIncome,
+        event: "exercise",
+        type: formState.equityType,
         spread,
         amtImpact,
         ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add required properties
         incomeRecognized: ordinaryIncome,
         taxRate: 0.30, // Simplified tax rate
         taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation
@@ -124,13 +136,16 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
         
         events.push({
           year: currentYear + i,
-          type: formState.equityType,
+          equityType: formState.equityType,
           sharesExercised: sharesToExercise,
+          cashRequired: sharesToExercise * formState.strikePrice,
+          taxableIncome: ordinaryIncome,
+          event: "exercise",
+          type: formState.equityType,
           spread,
           amtImpact,
           ordinaryIncome,
           isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-          // Add required properties
           incomeRecognized: ordinaryIncome,
           taxRate: 0.30, // Simplified tax rate
           taxesPaid: ordinaryIncome * 0.30 // Simplified tax calculation

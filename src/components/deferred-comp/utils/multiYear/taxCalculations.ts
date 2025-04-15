@@ -49,10 +49,6 @@ export const calculateYearlyTaxMetrics = (
   return {
     year,
     ordinaryIncome: totalIncome,
-    capitalGains: 0,
-    amtIncome,
-    amtAdjustment,
-    amtImpact,
     totalTax,
     taxWithoutStrategy,
     taxSavings,
@@ -64,6 +60,9 @@ export const calculateYearlyTaxMetrics = (
     nextBracket: nextBracketInfo.rate,
     distanceToNextBracket: nextBracketInfo.distance,
     irmaaImpact,
+    amtAdjustment,
+    amtIncome,
+    amtImpact,
     stateTax,
     federalTax
   };
