@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Save } from "lucide-react";
@@ -26,7 +26,7 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
   isSaving = false,
   setIsSaving = () => {}
 }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
   
   const handleSaveScenario = async () => {
     if (isSaving) return;
@@ -35,7 +35,7 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
       setIsSaving(true);
       await saveTaxScenario(scenarioData);
       toast.success("Scenario saved successfully!");
-      router.push('/scenarios');
+      navigate('/scenarios');
     } catch (error) {
       console.error("Failed to save scenario:", error);
       toast.error("Failed to save scenario. Please try again.");

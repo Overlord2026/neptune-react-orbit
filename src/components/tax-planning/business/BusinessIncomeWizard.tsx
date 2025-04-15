@@ -1,269 +1,213 @@
 
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
-import { calculateSmallBusinessTax, BusinessIncomeInput, BusinessTaxResult } from '@/utils/tax/businessTaxCalculator';
+import { BusinessIncomeInput, BusinessTaxResult, calculateSmallBusinessTax } from '@/utils/tax/businessTaxCalculator';
+import { Card, CardContent } from '@/components/ui/card';
 import BusinessInfoStep from './steps/BusinessInfoStep';
 import ExpensesStep from './steps/ExpensesStep';
 import EntityComparisonStep from './steps/EntityComparisonStep';
 import MultiYearPlanStep from './steps/MultiYearPlanStep';
 import ResultsSummary from './steps/ResultsSummary';
-import { Badge } from '@/components/ui/badge';
-import { Info } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 
-// Define the step type for the wizard
-type WizardStep = 'business-info' | 'expenses' | 'entity-comparison' | 'multi-year' | 'results';
+// Type for the steps in the wizard
+type BusinessWizardStep = 'business-info' | 'expenses' | 'entity-comparison' | 'multi-year-plan' | 'results';
 
-interface BusinessIncomeWizardProps {
-  initialIncome?: number;
-  initialYear?: number;
-  onComplete?: (result: BusinessTaxResult, input: BusinessIncomeInput) => void;
-  isEmbedded?: boolean;
-}
+// Initial business input state
+const initialBusinessInput: BusinessIncomeInput = {
+  businessType: 'sole_proprietorship',
+  income: 50000,
+  expenses: {
+    advertising: 0,
+    carAndTruck: 0,
+    commissions: 0,
+    contractLabor: 0,
+    insurance: 0,
+    legalAndProfessional: 0,
+    officeExpenses: 0,
+    rentOrLease: 0,
+    repairs: 0,
+    supplies: 0,
+    taxes: 0,
+    travel: 0,
+    meals: 0,
+    utilities: 0,
+    otherExpenses: 0,
+  },
+  year: 2024,
+  useHomeOffice: false,
+  homeOfficePercent: 0,
+  homeOfficeExpenses: 0,
+  taxRate: 0.22,
+  projectedGrowth: 0.03,
+};
 
-const BusinessIncomeWizard: React.FC<BusinessIncomeWizardProps> = ({ 
-  initialIncome = 75000, 
-  initialYear = new Date().getFullYear(),
-  onComplete,
-  isEmbedded = false
-}) => {
-  const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState<WizardStep>('business-info');
-  const [businessInput, setBusinessInput] = useState<BusinessIncomeInput>({
-    businessType: 'sole_proprietorship',
-    income: initialIncome,
-    expenses: {},
-    year: initialYear,
-  });
-  const [taxResult, setTaxResult] = useState<BusinessTaxResult | null>(null);
-  const [showComparison, setShowComparison] = useState<boolean>(false);
-  const [showMultiYear, setShowMultiYear] = useState<boolean>(false);
+const initialTaxResult: BusinessTaxResult = {
+  netProfit: 0,
+  selfEmploymentTax: 0,
+  selfEmploymentTaxDeduction: 0,
+  payrollTaxes: 0,
+  qbiDeduction: null,
+  netTaxableIncome: 0,
+  effectiveTaxRate: 0,
+  warnings: []
+};
 
-  // Update business inputs
-  const updateBusinessInput = (updates: Partial<BusinessIncomeInput>) => {
+const BusinessIncomeWizard: React.FC = () => {
+  const [step, setStep] = useState<BusinessWizardStep>('business-info');
+  const [businessInput, setBusinessInput] = useState<BusinessIncomeInput>(initialBusinessInput);
+  const [taxResult, setTaxResult] = useState<BusinessTaxResult>(initialTaxResult);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Handle step changes
+  const goToNext = () => {
+    switch (step) {
+      case 'business-info':
+        setStep('expenses');
+        break;
+      case 'expenses':
+        calculateTaxResults();
+        setStep('entity-comparison');
+        break;
+      case 'entity-comparison':
+        setStep('multi-year-plan');
+        break;
+      case 'multi-year-plan':
+        setStep('results');
+        break;
+      case 'results':
+        resetWizard();
+        break;
+    }
+  };
+
+  const goToPrev = () => {
+    switch (step) {
+      case 'expenses':
+        setStep('business-info');
+        break;
+      case 'entity-comparison':
+        setStep('expenses');
+        break;
+      case 'multi-year-plan':
+        setStep('entity-comparison');
+        break;
+      case 'results':
+        setStep('multi-year-plan');
+        break;
+    }
+  };
+
+  const resetWizard = () => {
+    setBusinessInput(initialBusinessInput);
+    setTaxResult(initialTaxResult);
+    setStep('business-info');
+  };
+
+  // Calculate tax results based on inputs
+  const calculateTaxResults = () => {
+    const result = calculateSmallBusinessTax(businessInput);
+    setTaxResult(result);
+  };
+
+  // Update business input state
+  const updateBusinessInput = (newData: Partial<BusinessIncomeInput>) => {
     setBusinessInput(prev => ({
       ...prev,
-      ...updates
+      ...newData
     }));
   };
 
-  // Calculate taxes when needed
-  const calculateTaxes = () => {
-    try {
-      const result = calculateSmallBusinessTax(businessInput);
-      setTaxResult(result);
-      return result;
-    } catch (error) {
-      toast({
-        title: "Calculation Error",
-        description: "There was an error calculating your taxes. Please review your inputs.",
-        variant: "destructive"
-      });
-      return null;
-    }
+  // Update expense in business input
+  const updateExpense = (expenseKey: string, value: number) => {
+    setBusinessInput(prev => ({
+      ...prev,
+      expenses: {
+        ...prev.expenses,
+        [expenseKey]: value
+      }
+    }));
   };
 
-  // Navigate to next step
-  const nextStep = () => {
-    switch(currentStep) {
-      case 'business-info':
-        setCurrentStep('expenses');
-        break;
-      case 'expenses':
-        // Calculate taxes before moving to next steps
-        const result = calculateTaxes();
-        if (result) {
-          if (showComparison) {
-            setCurrentStep('entity-comparison');
-          } else if (showMultiYear) {
-            setCurrentStep('multi-year');
-          } else {
-            setCurrentStep('results');
-          }
-        }
-        break;
-      case 'entity-comparison':
-        if (showMultiYear) {
-          setCurrentStep('multi-year');
-        } else {
-          setCurrentStep('results');
-        }
-        break;
-      case 'multi-year':
-        setCurrentStep('results');
-        break;
-      case 'results':
-        // Reset to beginning or trigger the onComplete callback if provided
-        if (onComplete && taxResult) {
-          onComplete(taxResult, businessInput);
-        } else {
-          setCurrentStep('business-info');
-        }
-        break;
-    }
-  };
-
-  // Navigate to previous step
-  const prevStep = () => {
-    switch(currentStep) {
-      case 'expenses':
-        setCurrentStep('business-info');
-        break;
-      case 'entity-comparison':
-        setCurrentStep('expenses');
-        break;
-      case 'multi-year':
-        if (showComparison) {
-          setCurrentStep('entity-comparison');
-        } else {
-          setCurrentStep('expenses');
-        }
-        break;
-      case 'results':
-        if (showMultiYear) {
-          setCurrentStep('multi-year');
-        } else if (showComparison) {
-          setCurrentStep('entity-comparison');
-        } else {
-          setCurrentStep('expenses');
-        }
-        break;
-    }
-  };
-
-  // Render the appropriate step content
+  // Render content based on current step
   const renderStepContent = () => {
-    switch(currentStep) {
+    switch (step) {
       case 'business-info':
         return (
           <BusinessInfoStep 
             businessInput={businessInput}
-            updateBusinessInput={updateBusinessInput}
-            setShowComparison={setShowComparison}
-            setShowMultiYear={setShowMultiYear}
-            onNext={nextStep}
+            onChange={updateBusinessInput}
+            onNext={goToNext}
           />
         );
       case 'expenses':
         return (
           <ExpensesStep 
             businessInput={businessInput}
-            updateBusinessInput={updateBusinessInput}
-            onNext={nextStep}
-            onPrev={prevStep}
+            onChange={updateBusinessInput}
+            updateExpense={updateExpense}
+            onNext={goToNext}
+            onPrev={goToPrev}
           />
         );
       case 'entity-comparison':
         return (
           <EntityComparisonStep 
             businessInput={businessInput}
-            updateBusinessInput={updateBusinessInput}
             taxResult={taxResult}
-            onNext={nextStep}
-            onPrev={prevStep}
+            onChange={updateBusinessInput}
+            onNext={goToNext}
+            onPrev={goToPrev}
           />
         );
-      case 'multi-year':
+      case 'multi-year-plan':
         return (
           <MultiYearPlanStep 
             businessInput={businessInput}
-            updateBusinessInput={updateBusinessInput}
-            onNext={nextStep}
-            onPrev={prevStep}
+            onChange={updateBusinessInput}
+            onNext={goToNext}
+            onPrev={goToPrev}
           />
         );
       case 'results':
+        // Convert business tax result to TaxScenario format for the ResultsSummary component
+        const scenarioData = {
+          id: `business-${Date.now()}`,
+          scenario_name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`,
+          year: businessInput.year,
+          filing_status: "single",
+          is_baseline: false,
+          total_income: businessInput.income,
+          agi: businessInput.income - taxResult.selfEmploymentTaxDeduction,
+          taxable_income: taxResult.netTaxableIncome,
+          total_tax: taxResult.selfEmploymentTax + (taxResult.netTaxableIncome * (businessInput.taxRate || 0.22)),
+          ordinary_tax: taxResult.netTaxableIncome * (businessInput.taxRate || 0.22),
+          capital_gains_tax: 0,
+          marginal_rate: businessInput.taxRate || 0.22,
+          effective_rate: taxResult.effectiveTaxRate,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
         return (
-          <ResultsSummary 
-            businessInput={businessInput}
-            taxResult={taxResult}
-            onReset={() => setCurrentStep('business-info')}
-            onPrev={prevStep}
+          <ResultsSummary
+            title="Business Tax Summary"
+            description="Review your estimated business tax liability"
+            scenarioData={scenarioData}
+            onContinue={resetWizard}
+            isSaving={isSaving}
+            setIsSaving={setIsSaving}
           />
         );
       default:
-        return null;
+        return <p>Unknown step</p>;
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Business Income Tax Wizard</h2>
-          <p className="text-muted-foreground">Optimize your small business tax strategy</p>
-        </div>
-        
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center gap-1">
-                <Badge variant="outline" className="bg-[#2A2F3C]">
-                  <span className="text-yellow-400 font-semibold">Beta</span>
-                </Badge>
-                <Info className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="max-w-xs">This tool provides tax estimates only. Always consult a qualified tax professional for advice specific to your situation.</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-      
-      <Tabs value={currentStep} className="w-full">
-        <TabsList className="grid grid-cols-5 mb-6">
-          <TabsTrigger 
-            value="business-info"
-            disabled={currentStep !== 'business-info'}
-            className={currentStep === 'business-info' ? 'text-primary' : ''}
-          >
-            Business Info
-          </TabsTrigger>
-          <TabsTrigger 
-            value="expenses"
-            disabled={currentStep !== 'expenses'}
-            className={currentStep === 'expenses' ? 'text-primary' : ''}
-          >
-            Expenses
-          </TabsTrigger>
-          <TabsTrigger 
-            value="entity-comparison"
-            disabled={!showComparison || currentStep !== 'entity-comparison'}
-            className={currentStep === 'entity-comparison' ? 'text-primary' : ''}
-          >
-            Entity Options
-          </TabsTrigger>
-          <TabsTrigger 
-            value="multi-year"
-            disabled={!showMultiYear || currentStep !== 'multi-year'}
-            className={currentStep === 'multi-year' ? 'text-primary' : ''}
-          >
-            Multi-Year
-          </TabsTrigger>
-          <TabsTrigger 
-            value="results"
-            disabled={currentStep !== 'results'}
-            className={currentStep === 'results' ? 'text-primary' : ''}
-          >
-            Results
-          </TabsTrigger>
-        </TabsList>
-
-        <Card className="border-[#2A2F3C] bg-[#1A1F2C]">
-          <CardContent className="pt-6">
-            {renderStepContent()}
-          </CardContent>
-        </Card>
-      </Tabs>
-    </div>
+    <Card>
+      <CardContent className="pt-6">
+        {renderStepContent()}
+      </CardContent>
+    </Card>
   );
 };
 
