@@ -7,6 +7,15 @@ import { YearlyTaxImpact } from '@/types/tax/equityTypes';
 import { getTaxBracket } from '../taxBracketUtils';
 
 /**
+ * Calculate tax for multi-year equity scenarios
+ */
+export const calculateTaxForMultiYearEquity = (income: number, year: number, filingStatus: string): number => {
+  // Simplified implementation of tax calculation for multi-year equity
+  const taxRate = income > 200000 ? 0.32 : income > 100000 ? 0.24 : 0.22;
+  return income * taxRate;
+};
+
+/**
  * Calculate tax metrics for a given year with specified income levels
  */
 export const calculateYearlyTaxMetrics = (

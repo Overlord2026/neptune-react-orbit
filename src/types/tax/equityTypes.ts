@@ -71,6 +71,8 @@ export interface TaxImpactResult {
   multiYearImpact: YearlyTaxImpact[];
   equityEvents: EquityCompEvent[];
   deferralEvents: DeferralEvent[];
+  federal_tax?: number;
+  state_tax?: number;
 }
 
 export interface EquityFormState {
@@ -114,7 +116,7 @@ export interface EquityFormState {
   year2Deferral?: number;
 }
 
-// Add the missing EquityScenario interface
+// Update the EquityScenario interface with missing properties
 export interface EquityScenario {
   id: string;
   name: string;
@@ -139,4 +141,11 @@ export interface EquityScenario {
   deferralBenefit: number;
   results: YearlyTaxImpact[];
   tax_data_is_current: boolean;
+  is_baseline?: boolean;
+  scenario_name?: string;
+  updated_at?: Date;
+  created_at?: Date;
+  inputs?: any;
+  is_favorite?: boolean;
+  tags?: string[];
 }

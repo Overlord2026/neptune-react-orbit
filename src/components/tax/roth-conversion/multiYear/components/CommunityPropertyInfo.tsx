@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
-import { formatCurrency } from '@/utils/taxBracketData';
+import { formatCurrency } from '@/utils/formatUtils';
 
 interface CommunityPropertyInfoProps {
   showTitle?: boolean;

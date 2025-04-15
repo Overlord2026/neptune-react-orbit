@@ -75,23 +75,27 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
         filing_status: "single" as FilingStatusType,
         total_income: yearData.ordinaryIncome,
         agi: yearData.ordinaryIncome,
-        taxable_income: yearData.taxableIncome,
+        taxable_income: yearData.taxableIncome || 0,
         total_tax: yearData.totalTax,
         ordinary_tax: yearData.totalTax,
         capital_gains_tax: 0,
-        marginal_rate: yearData.marginalRate,
+        marginal_rate: yearData.marginalRate || 0,
         marginal_capital_gains_rate: 0,
-        effective_rate: yearData.effectiveRate,
-        federal_tax: yearData.federalTax,
+        effective_rate: yearData.effectiveRate || 0,
+        federal_tax: yearData.federalTax || 0,
         standard_deduction: 12950,
         brackets: [],
         amtImpact: formState.equityType === "ISO" ? calculateAmtImpact() : 0,
         deferralBenefit: formState.hasDeferredComp ? calculateDeferralBenefit() : 0,
         results: calculateMultiYearImpact(),
-        tax_data_is_current: true
+        tax_data_is_current: true,
+        scenario_name: `${formState.equityType || "Deferred"} Analysis - ${new Date().toLocaleDateString()}`,
+        updated_at: new Date(),
+        created_at: new Date(),
+        is_baseline: false
       };
 
-      await saveTaxScenario(scenarioData);
+      await saveTaxScenario(scenarioData as any);
       toast.success("Your analysis has been saved successfully.");
     } catch (error) {
       console.error("Error saving scenario:", error);

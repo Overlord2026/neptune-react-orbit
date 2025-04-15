@@ -5,7 +5,6 @@
 
 // Use explicit named exports instead of star exports
 export type { 
-  EquityType, 
   EquityFormState, 
   EquityScenario, 
   EquityCompEvent, 

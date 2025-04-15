@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import GlossaryTerm from '@/components/GlossaryTerm';
-import DynamicContentText from '@/components/DynamicContentText';
 import { FilingStatusType } from '@/types/tax/filingTypes';
 
 interface TaxBracketsSectionProps {
@@ -20,16 +19,21 @@ const TaxBracketsSection: React.FC<TaxBracketsSectionProps> = ({
   selectedYear,
   selectedFilingStatus
 }) => {
-  const contentOptions = {
-    year: selectedYear,
-    filingStatus: selectedFilingStatus,
-    format: 'currency' as const
+  // Convert filing status for display
+  const getDisplayFilingStatus = (status: FilingStatusType): string => {
+    switch (status) {
+      case 'single': return 'single';
+      case 'married_joint': return 'married filing jointly';
+      case 'married_separate': return 'married filing separately';
+      case 'head_of_household': return 'head of household';
+      default: return status.replace('_', ' ');
+    }
   };
 
   // Generate example calculation based on the current filing status
   const getExampleText = () => {
     // Convert filing status for display
-    const displayFilingStatus = selectedFilingStatus.replace('_', ' ');
+    const displayFilingStatus = getDisplayFilingStatus(selectedFilingStatus);
     
     return (
       <div className="p-4 bg-[#1A1F2C] rounded-md">
