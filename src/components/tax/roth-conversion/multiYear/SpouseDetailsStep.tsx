@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -235,14 +234,14 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="spouseTraditionalIRAStartBalance">Spouse Traditional IRA Balance</Label>
+              <Label htmlFor="spouseTraditionalIRABalance">Spouse Traditional IRA Balance</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
                 <Input 
-                  id="spouseTraditionalIRAStartBalance" 
+                  id="spouseTraditionalIRABalance" 
                   className="pl-7"
-                  value={formatCurrency(scenarioData.spouseTraditionalIRAStartBalance)}
-                  onChange={(e) => handleCurrencyChange('spouseTraditionalIRAStartBalance', e.target.value)}
+                  value={formatCurrency(scenarioData.spouseTraditionalIRABalance)}
+                  onChange={(e) => handleCurrencyChange('spouseTraditionalIRABalance', e.target.value)}
                 />
               </div>
             </div>
@@ -291,7 +290,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
 
       {isMarried && 
        scenarioData.includeSpouse && 
-       (scenarioData.spouseTraditionalIRAStartBalance || 0) > 0 && (
+       (scenarioData.spouseTraditionalIRABalance || 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">IRA Planning Approach</CardTitle>
