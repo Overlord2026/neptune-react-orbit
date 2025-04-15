@@ -88,11 +88,11 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {renderBrackets(scenario.brackets_breakdown?.ordinary)}
+                      {renderBrackets(scenario.brackets_breakdown?.ordinary as BracketItem[] | undefined)}
                       <tr className="bg-muted/30">
                         <td className="px-3 py-2 text-sm font-medium">Total</td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
-                          {formatCurrency(sumBracketAmounts(scenario.brackets_breakdown?.ordinary))}
+                          {formatCurrency(sumBracketAmounts(scenario.brackets_breakdown?.ordinary as BracketItem[] | undefined))}
                         </td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
                           {formatCurrency(scenario.ordinary_tax)}
@@ -117,11 +117,11 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {renderBrackets(scenario.brackets_breakdown?.capitalGains)}
+                      {renderBrackets(scenario.brackets_breakdown?.capitalGains as BracketItem[] | undefined)}
                       <tr className="bg-muted/30">
                         <td className="px-3 py-2 text-sm font-medium">Total</td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
-                          {formatCurrency(sumBracketAmounts(scenario.brackets_breakdown?.capitalGains))}
+                          {formatCurrency(sumBracketAmounts(scenario.brackets_breakdown?.capitalGains as BracketItem[] | undefined))}
                         </td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
                           {formatCurrency(scenario.capital_gains_tax)}

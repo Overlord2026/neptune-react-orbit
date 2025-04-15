@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,10 +9,62 @@ import { YearlyResult } from '@/types/tax/rothConversionTypes';
 import { useMultiYear } from './context/MultiYearContext';
 import { format } from 'date-fns';
 import { Separator } from '@/components/ui/separator';
-import RmdScheduleDisplay from './components/RmdScheduleDisplay';
+
+// Create the RmdScheduleDisplay component since it was missing
+interface RmdScheduleDisplayProps {
+  results: YearlyResult[];
+  includeSpouse: boolean;
+}
+
+const RmdScheduleDisplay: React.FC<RmdScheduleDisplayProps> = ({ results, includeSpouse }) => {
+  // Filter only years with RMDs
+  const rmdYears = results.filter(result => 
+    (result.rmdAmount && result.rmdAmount > 0) || 
+    (includeSpouse && result.spouseRmdAmount && result.spouseRmdAmount > 0)
+  );
+
+  if (rmdYears.length === 0) {
+    return <p className="text-muted-foreground">No RMDs in this scenario.</p>;
+  }
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Year</TableHead>
+          <TableHead>Age</TableHead>
+          <TableHead>Your RMD</TableHead>
+          {includeSpouse && <TableHead>Spouse RMD</TableHead>}
+          <TableHead>Total RMD</TableHead>
+          <TableHead>Tax Impact</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rmdYears.map(year => {
+          const yourRmd = year.rmdAmount || 0;
+          const spouseRmd = includeSpouse ? year.spouseRmdAmount || 0 : 0;
+          const totalRmd = yourRmd + spouseRmd;
+          // Estimate tax impact at marginal rate
+          const taxImpact = totalRmd * (year.marginalRate || 0.22);
+          
+          return (
+            <TableRow key={year.year}>
+              <TableCell>{year.year}</TableCell>
+              <TableCell>{year.age}</TableCell>
+              <TableCell>${yourRmd.toLocaleString()}</TableCell>
+              {includeSpouse && <TableCell>${spouseRmd.toLocaleString()}</TableCell>}
+              <TableCell>${totalRmd.toLocaleString()}</TableCell>
+              <TableCell>${taxImpact.toLocaleString()}</TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  );
+};
 
 interface ResultsStepProps {
-  
+  // Empty interface since we're using context
 }
 
 const ResultsStep: React.FC<ResultsStepProps> = () => {

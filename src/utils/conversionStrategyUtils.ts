@@ -1,12 +1,42 @@
 
-// Import the standardized type from the central location
-import { ConversionStrategyType } from '../types/tax/rothConversionTypes';
+/**
+ * Conversion Strategy Utilities
+ * 
+ * Functions for determining conversion amounts based on different strategies.
+ */
 
-// Re-export it properly with 'export type' syntax for isolated modules
-export type { ConversionStrategyType };
+import { ConversionStrategyType } from '@/types/tax/rothConversionTypes';
+import { getTaxBracketsForYear } from './taxBracketData';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
-// Helper functions
-export const getConversionStrategyLabel = (strategy: ConversionStrategyType): string => {
+export const determineConversionAmountForStrategy = (
+  strategy: ConversionStrategyType,
+  fixedAmount: number,
+  totalPreConversionIncome: number,
+  year: number,
+  filingStatus: FilingStatusType
+): number => {
+  switch (strategy) {
+    case 'fixed':
+      return fixedAmount;
+    case 'bracket_12':
+      return fillUpTo12PercentBracket(totalPreConversionIncome, year, filingStatus);
+    case 'bracket_22':
+      return fillUpTo22PercentBracket(totalPreConversionIncome, year, filingStatus);
+    case 'bracket_12_22':
+      return fillUpTo22PercentBracket(totalPreConversionIncome, year, filingStatus);
+    case 'bracket_fill':
+      return calculateOptimalFill(totalPreConversionIncome, year, filingStatus);
+    case 'tax_efficient':
+      return calculateEfficientAmount(totalPreConversionIncome, year, filingStatus);
+    case 'partial':
+    case 'custom':
+    default:
+      return Math.min(fixedAmount, 50000); // Default to fixed amount with a reasonable cap
+  }
+};
+
+export const getStrategyLabel = (strategy: ConversionStrategyType): string => {
   switch (strategy) {
     case 'fixed':
       return 'Fixed Amount';
@@ -16,222 +46,88 @@ export const getConversionStrategyLabel = (strategy: ConversionStrategyType): st
       return 'Fill 22% Bracket';
     case 'bracket_12_22':
       return 'Fill 12% + 22% Brackets';
-    default:
+    case 'bracket_fill':
+      return 'Bracket Optimization';
+    case 'tax_efficient':
+      return 'Tax Efficiency';
+    case 'partial':
+      return 'Partial Conversion';
+    case 'custom':
       return 'Custom Strategy';
-  }
-};
-
-// Calculate conversion amount based on strategy
-export const calculateConversionAmount = (
-  strategy: ConversionStrategyType,
-  fixedAmount: number,
-  baseIncome: number,
-  filingStatus: string,
-  year: number
-): number => {
-  // Get tax bracket thresholds for the year
-  const brackets = getTaxBracketThresholds(year);
-  
-  // If brackets aren't available or strategy is fixed, return fixed amount
-  if (!brackets || strategy === 'fixed') {
-    return fixedAmount;
-  }
-  
-  // Get the appropriate threshold based on filing status
-  const statusKey = getFilingStatusKey(filingStatus);
-  
-  // Calculate conversion amount based on strategy
-  switch (strategy) {
-    case 'bracket_12':
-      return calculateFillBracket(brackets, '12%', statusKey, baseIncome);
-    case 'bracket_22':
-      return calculateFillBracket(brackets, '22%', statusKey, baseIncome);
-    case 'bracket_12_22':
-      return calculateFillBracket(brackets, '22%', statusKey, baseIncome);
     default:
-      return fixedAmount;
+      return 'Undefined Strategy';
   }
 };
 
-// Helper function to get filing status key for bracket lookup
-const getFilingStatusKey = (filingStatus: string): string => {
-  switch (filingStatus) {
-    case 'single':
-      return 'single';
-    case 'married':
-    case 'married_joint':
-      return 'married';
-    case 'married_separate':
-      return 'marriedSeparate';
-    case 'head_of_household':
-      return 'headOfHousehold';
-    default:
-      return 'single';
-  }
-};
-
-// Helper function to calculate amount needed to fill a tax bracket
-const calculateFillBracket = (
-  brackets: any,
-  targetBracket: string,
-  statusKey: string,
-  baseIncome: number
-): number => {
-  // Find the target bracket
-  const bracket = brackets.find((b: any) => b.label === targetBracket);
-  if (!bracket) return 0;
-  
-  // Get the threshold for the filing status
-  const threshold = bracket[`${statusKey}Threshold`];
-  
-  // Calculate how much more income can fit in this bracket
-  const remainingInBracket = Math.max(0, threshold - baseIncome);
-  
-  return remainingInBracket;
-};
-
-// Get tax bracket thresholds for a specific year
-const getTaxBracketThresholds = (year: number): any[] => {
-  // This would typically come from a data source or API
-  // For now, using simplified 2023 brackets
-  return [
-    {
-      label: '10%',
-      rate: 0.10,
-      singleThreshold: 11000,
-      marriedThreshold: 22000,
-      headOfHouseholdThreshold: 15700,
-      marriedSeparateThreshold: 11000
-    },
-    {
-      label: '12%',
-      rate: 0.12,
-      singleThreshold: 44725,
-      marriedThreshold: 89450,
-      headOfHouseholdThreshold: 59850,
-      marriedSeparateThreshold: 44725
-    },
-    {
-      label: '22%',
-      rate: 0.22,
-      singleThreshold: 95375,
-      marriedThreshold: 190750,
-      headOfHouseholdThreshold: 95350,
-      marriedSeparateThreshold: 95375
-    },
-    {
-      label: '24%',
-      rate: 0.24,
-      singleThreshold: 182100,
-      marriedThreshold: 364200,
-      headOfHouseholdThreshold: 182100,
-      marriedSeparateThreshold: 182100
-    },
-    {
-      label: '32%',
-      rate: 0.32,
-      singleThreshold: 231250,
-      marriedThreshold: 462500,
-      headOfHouseholdThreshold: 231250,
-      marriedSeparateThreshold: 231250
-    },
-    {
-      label: '35%',
-      rate: 0.35,
-      singleThreshold: 578125,
-      marriedThreshold: 693750,
-      headOfHouseholdThreshold: 578100,
-      marriedSeparateThreshold: 346875
-    },
-    {
-      label: '37%',
-      rate: 0.37,
-      singleThreshold: Infinity,
-      marriedThreshold: Infinity,
-      headOfHouseholdThreshold: Infinity,
-      marriedSeparateThreshold: Infinity
-    }
-  ];
-};
-
-// Get the maximum recommended conversion amount
-export const getMaxRecommendedConversion = (
-  traditionalIRABalance: number,
-  filingStatus: string,
-  baseIncome: number,
-  year: number
-): number => {
-  // Get tax bracket thresholds
-  const brackets = getTaxBracketThresholds(year);
-  if (!brackets) return traditionalIRABalance;
-  
-  // Get the appropriate threshold based on filing status
-  const statusKey = getFilingStatusKey(filingStatus);
-  
-  // Find the 24% bracket threshold
-  const bracket24 = brackets.find((b: any) => b.label === '24%');
-  if (!bracket24) return traditionalIRABalance;
-  
-  // Calculate how much more income can fit in the 22% bracket
-  const threshold = bracket24[`${statusKey}Threshold`];
-  const remainingIn22Bracket = Math.max(0, threshold - baseIncome);
-  
-  // Return the smaller of the remaining bracket room or the IRA balance
-  return Math.min(remainingIn22Bracket, traditionalIRABalance);
-};
-
-// Estimate tax impact of a conversion
-export const estimateConversionTaxImpact = (
-  conversionAmount: number,
-  baseIncome: number,
-  filingStatus: string,
-  year: number
-): { 
-  taxWithoutConversion: number;
-  taxWithConversion: number;
-  taxIncrease: number;
-  marginalRate: number;
-  effectiveRateOnConversion: number;
-} => {
-  // This is a simplified calculation - in a real app, you'd use a more sophisticated tax calculator
-  const estimatedTaxRate = 0.24; // Simplified 24% marginal rate
-  const taxWithoutConversion = baseIncome * 0.15; // Simplified calculation
-  const taxWithConversion = taxWithoutConversion + (conversionAmount * estimatedTaxRate);
-  const taxIncrease = taxWithConversion - taxWithoutConversion;
-  
-  return {
-    taxWithoutConversion,
-    taxWithConversion,
-    taxIncrease,
-    marginalRate: estimatedTaxRate,
-    effectiveRateOnConversion: conversionAmount > 0 ? taxIncrease / conversionAmount : 0
-  };
-};
-
-// Export the missing function required by rothConversion/conversionUtils.ts
-export const getMaxConversionAmount = (
-  strategy: ConversionStrategyType,
-  baseIncome: number,
+// Fill up to the 12% tax bracket
+function fillUpTo12PercentBracket(
+  currentIncome: number,
   year: number,
-  filingStatus: string,
-  fixedAmount?: number
-): number => {
-  // Implementation based on strategy
-  switch (strategy) {
-    case 'fixed':
-      return fixedAmount || 0;
-    case 'bracket_12':
-      const brackets = getTaxBracketThresholds(year);
-      if (!brackets) return 0;
-      const statusKey = getFilingStatusKey(filingStatus);
-      const bracket12 = brackets.find((b: any) => b.label === '12%');
-      if (!bracket12) return 0;
-      return Math.max(0, bracket12[`${statusKey}Threshold`] - baseIncome);
-    case 'bracket_22':
-      return calculateConversionAmount(strategy, fixedAmount || 0, baseIncome, filingStatus, year);
-    case 'bracket_12_22':
-      return calculateConversionAmount(strategy, fixedAmount || 0, baseIncome, filingStatus, year);
-    default:
-      return 0;
+  filingStatus: FilingStatusType
+): number {
+  const brackets = getTaxBracketsForYear(year, filingStatus, 'ordinary');
+  
+  // Find the end of the 12% bracket
+  const bracket12End = brackets.find(b => b.rate === 0.12)?.max || 0;
+  
+  // Calculate amount to fill up to the end of 12% bracket
+  const amountToFill = Math.max(0, bracket12End - currentIncome);
+  
+  return amountToFill;
+}
+
+// Fill up to the 22% tax bracket
+function fillUpTo22PercentBracket(
+  currentIncome: number,
+  year: number,
+  filingStatus: FilingStatusType
+): number {
+  const brackets = getTaxBracketsForYear(year, filingStatus, 'ordinary');
+  
+  // Find the end of the 22% bracket
+  const bracket22End = brackets.find(b => b.rate === 0.22)?.max || 0;
+  
+  // Calculate amount to fill up to the end of 22% bracket
+  const amountToFill = Math.max(0, bracket22End - currentIncome);
+  
+  return amountToFill;
+}
+
+// Calculate the optimal fill amount based on tax brackets
+function calculateOptimalFill(
+  currentIncome: number,
+  year: number,
+  filingStatus: FilingStatusType
+): number {
+  // Optimal bracket strategy logic would go here
+  // For now, use a simplified version that fills up to the 22% bracket
+  return fillUpTo22PercentBracket(currentIncome, year, filingStatus);
+}
+
+// Calculate the most tax-efficient conversion amount
+function calculateEfficientAmount(
+  currentIncome: number,
+  year: number,
+  filingStatus: FilingStatusType
+): number {
+  // Tax-efficient strategy logic
+  const brackets = getTaxBracketsForYear(year, filingStatus, 'ordinary');
+  
+  // Find where the 24% bracket starts (end of 22% bracket)
+  const bracket22End = brackets.find(b => b.rate === 0.22)?.max || 0;
+  
+  // Find where the 12% bracket ends
+  const bracket12End = brackets.find(b => b.rate === 0.12)?.max || 0;
+  
+  if (currentIncome < bracket12End) {
+    // If in 10% or 12% bracket, fill up to end of 12% bracket
+    return Math.max(0, bracket12End - currentIncome);
+  } else if (currentIncome < bracket22End) {
+    // If in 22% bracket, fill up to end of 22% bracket
+    return Math.max(0, bracket22End - currentIncome);
+  } else {
+    // If in 24% or higher bracket, don't convert anything
+    // unless there are special circumstances (e.g., future expected higher tax rates)
+    return 0;
   }
-};
+}

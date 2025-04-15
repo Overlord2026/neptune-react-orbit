@@ -1,4 +1,3 @@
-
 /**
  * Multi-Year Roth Conversion Scenario Calculation
  * 
@@ -20,19 +19,19 @@ export const calculateMultiYearScenario = async (
   const results: YearlyResult[] = [];
   
   // Initial account balances
-  let traditionalIRABalance = scenarioData.traditionalIRAStartBalance;
-  let rothIRABalance = scenarioData.rothIRAStartBalance;
+  let traditionalIraBalance = scenarioData.traditionalIRAStartBalance;
+  let rothIraBalance = scenarioData.rothIRAStartBalance;
   let cumulativeTaxPaid = 0;
   let cumulativeTaxSaved = 0;
   
   // Spouse account balances (if applicable)
-  let spouseTraditionalIRABalance = scenarioData.spouseTraditionalIRAStartBalance || 0;
-  let spouseRothIRABalance = scenarioData.spouseRothIRAStartBalance || 0;
+  let spouseTraditionalIraBalance = scenarioData.spouseTraditionalIRAStartBalance || 0;
+  let spouseRothIraBalance = scenarioData.spouseRothIRAStartBalance || 0;
   
   // Traditional-only scenario (for comparison)
-  let traditionalScenarioBalance = traditionalIRABalance + rothIRABalance;
+  let traditionalScenarioBalance = traditionalIraBalance + rothIraBalance;
   if (scenarioData.includeSpouse) {
-    traditionalScenarioBalance += (spouseTraditionalIRABalance + spouseRothIRABalance);
+    traditionalScenarioBalance += (spouseTraditionalIraBalance + spouseRothIraBalance);
   }
 
   // Track if break-even has occurred
@@ -50,8 +49,8 @@ export const calculateMultiYearScenario = async (
       currentYear,
       currentAge,
       spouseAge,
-      traditionalIRABalance,
-      spouseTraditionalIRABalance,
+      traditionalIRABalance: traditionalIraBalance,
+      spouseTraditionalIRABalance: spouseTraditionalIraBalance,
       i
     });
     
@@ -77,10 +76,10 @@ export const calculateMultiYearScenario = async (
     // Update account balances
     const balanceUpdate = updateAccountBalances({
       scenarioData,
-      traditionalIRABalance,
-      rothIRABalance,
-      spouseTraditionalIRABalance,
-      spouseRothIRABalance,
+      traditionalIRABalance: traditionalIraBalance,
+      rothIRABalance: rothIraBalance,
+      spouseTraditionalIRABalance: spouseTraditionalIraBalance,
+      spouseRothIRABalance: spouseRothIraBalance,
       traditionalScenarioBalance,
       conversionAmount,
       rmdAmount,
@@ -88,15 +87,15 @@ export const calculateMultiYearScenario = async (
       spouseRmdAmount
     });
     
-    traditionalIRABalance = balanceUpdate.traditionalIRABalance;
-    rothIRABalance = balanceUpdate.rothIRABalance;
-    spouseTraditionalIRABalance = balanceUpdate.spouseTraditionalIRABalance;
-    spouseRothIRABalance = balanceUpdate.spouseRothIRABalance;
+    traditionalIraBalance = balanceUpdate.traditionalIRABalance;
+    rothIraBalance = balanceUpdate.rothIRABalance;
+    spouseTraditionalIraBalance = balanceUpdate.spouseTraditionalIRABalance;
+    spouseRothIraBalance = balanceUpdate.spouseRothIRABalance;
     traditionalScenarioBalance = balanceUpdate.traditionalScenarioBalance;
     
     // Calculate cumulative value difference (tax savings)
-    const rothScenarioBalance = traditionalIRABalance + rothIRABalance + 
-      (scenarioData.includeSpouse ? (spouseTraditionalIRABalance + spouseRothIRABalance) : 0);
+    const rothScenarioBalance = traditionalIraBalance + rothIraBalance + 
+      (scenarioData.includeSpouse ? (spouseTraditionalIraBalance + spouseRothIraBalance) : 0);
     
     // Adjust for taxes paid for conversions
     const adjustedRothBalance = rothScenarioBalance - cumulativeTaxPaid;
@@ -142,11 +141,11 @@ export const calculateMultiYearScenario = async (
     results.push({
       year: currentYear,
       age: currentAge,
-      traditionalIRABalance,
-      rothIRABalance,
+      traditionalIraBalance,
+      rothIraBalance,
       conversionAmount,
       rmdAmount,
-      taxableIncome: totalPreConversionIncome + conversionAmount + (spouseConversionAmount || 0), // Add missing taxableIncome
+      taxableIncome: totalPreConversionIncome + conversionAmount + (spouseConversionAmount || 0),
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
       effectiveRate: taxResult.effective_rate,
@@ -159,8 +158,8 @@ export const calculateMultiYearScenario = async (
       
       // Spouse related results (if applicable)
       spouseAge,
-      spouseTraditionalIRABalance: scenarioData.includeSpouse ? spouseTraditionalIRABalance : undefined,
-      spouseRothIRABalance: scenarioData.includeSpouse ? spouseRothIRABalance : undefined,
+      spouseTraditionalIraBalance: scenarioData.includeSpouse ? spouseTraditionalIraBalance : undefined,
+      spouseRothIraBalance: scenarioData.includeSpouse ? spouseRothIraBalance : undefined,
       spouseConversionAmount: scenarioData.includeSpouse ? spouseConversionAmount : undefined,
       spouseRmdAmount: scenarioData.includeSpouse ? spouseRmdAmount : undefined,
       
@@ -168,7 +167,18 @@ export const calculateMultiYearScenario = async (
       mfsComparison,
       
       // Charitable contribution impact
-      charitableContribution: completeCharitableContribution
+      charitableContribution: completeCharitableContribution,
+      
+      // Other required properties
+      filingStatus: scenarioData.filingStatus,
+      income: baseIncome,
+      spouseIncome: spouseBaseIncome,
+      totalIncome: totalPreConversionIncome,
+      irmaaImpact: false,
+      totalTraditionalBalance: traditionalIraBalance + (scenarioData.includeSpouse ? spouseTraditionalIraBalance : 0),
+      totalRothBalance: rothIraBalance + (scenarioData.includeSpouse ? spouseRothIraBalance : 0),
+      totalRetirementBalance: traditionalIraBalance + rothIraBalance + 
+        (scenarioData.includeSpouse ? (spouseTraditionalIraBalance + spouseRothIraBalance) : 0)
     });
   }
   

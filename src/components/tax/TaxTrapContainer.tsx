@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import TaxTrapInputForm from '@/components/tax/TaxTrapInputForm';
 import TaxTrapAnalysis from '@/components/tax/TaxTrapAnalysis';
@@ -20,11 +21,6 @@ const TaxTrapContainer: React.FC = () => {
   const magi = agi; // Simplified for demo purposes
   const totalIncome = agi + capitalGains;
   const taxableIncome = Math.max(0, agi - (filingStatus === 'single' ? 12950 : filingStatus === 'married_joint' ? 25900 : 19400));
-
-  // For FilingStatusSelect, make sure it handles FilingStatusType compatible values
-  const handleFilingStatusChange = (value: FilingStatusType) => {
-    setFilingStatus(value);
-  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

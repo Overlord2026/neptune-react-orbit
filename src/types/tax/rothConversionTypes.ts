@@ -48,7 +48,7 @@ export interface CharitableContribution {
   recipient?: string;
 }
 
-export type ConversionStrategyType = 'fixed' | 'partial' | 'bracket_fill' | 'tax_efficient' | 'custom';
+export type ConversionStrategyType = 'fixed' | 'partial' | 'bracket_fill' | 'tax_efficient' | 'custom' | 'bracket_12' | 'bracket_22' | 'bracket_12_22';
 
 export interface TrapAlert {
   id: string;
@@ -117,8 +117,8 @@ export interface YearlyResult {
 
 export interface MultiYearScenarioData {
   startAge: number;
-  startYear: number;  // Made non-optional since it's essential
-  numYears: number;   // Made non-optional since it's essential
+  startYear: number;
+  numYears: number;
   traditionalIRABalance: number;
   traditionalIRAStartBalance: number;
   rothIRABalance: number;
@@ -143,6 +143,7 @@ export interface MultiYearScenarioData {
   includeRMDs: boolean;
   includeIrmaa: boolean;
   
+  // Add all referenced optional properties
   isInCommunityPropertyState?: boolean;
   splitCommunityIncome?: boolean;
   assumedDeathYear?: number;
