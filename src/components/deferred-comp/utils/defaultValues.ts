@@ -23,7 +23,7 @@ export const defaultEquityFormState: EquityFormState = {
   fairMarketValue: 0,
   strikePrice: 0,
   isDisqualifyingDisposition: false,
-  holdingPeriod: undefined,
+  holdingPeriod: 0,
   
   // Strategy options
   deferralAmount: 0,
@@ -51,3 +51,6 @@ export const defaultEquityFormState: EquityFormState = {
 export function getDefaultFormState(): EquityFormState {
   return { ...defaultEquityFormState };
 }
+
+// Alias for defaultFormState to maintain backward compatibility
+export const defaultFormState = defaultEquityFormState;

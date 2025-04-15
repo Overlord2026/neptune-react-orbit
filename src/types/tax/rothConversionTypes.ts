@@ -57,6 +57,8 @@ export interface MultiYearScenarioData {
   includeSpouse?: boolean;
   spouseAge?: number;
   spouseIraBalance?: number;
+  spouseFirstName?: string;
+  spouseLastName?: string;
   isInCommunityPropertyState?: boolean;
   splitCommunityIncome?: boolean;
   residentState?: string;
@@ -64,6 +66,22 @@ export interface MultiYearScenarioData {
   stateRelocationYear?: number;
   futureResidentState?: string;
   startYear?: number;
+  startAge?: number;
+  spouseBaseAnnualIncome?: number;
+  spouseTraditionalIRAStartBalance?: number;
+  spouseRothIRAStartBalance?: number;
+  combinedIRAApproach?: boolean;
+  compareMfjVsMfs?: boolean;
+  rmdStartAge?: number;
+  spouseRmdStartAge?: number;
+  includeRMDs?: boolean;
+  numYears?: number;
+  includeBeneficiary?: boolean;
+  beneficiaryAge?: number;
+  beneficiaryIncomeTaxRate?: number;
+  assumedDeathYear?: number;
+  spouseAssumedDeathYear?: number;
+  useCharitablePlanning?: boolean;
 }
 
 export interface YearlyResult {
@@ -77,6 +95,27 @@ export interface YearlyResult {
     tax: number;
     effectiveRate: number;
   }[];
+  mfsComparison?: {
+    mfjTotalTax: number;
+    spouse1Tax: number;
+    spouse2Tax: number;
+    combinedMfsTax: number;
+    taxDifference: number;
+    mfjIrmaa?: number;
+    spouse1Irmaa?: number;
+    spouse2Irmaa?: number;
+    combinedMfsIrmaa?: number;
+  };
+  communityPropertySplit?: {
+    originalPrimaryIncome: number;
+    originalSpouseIncome: number;
+    splitPrimaryIncome: number;
+    splitSpouseIncome: number;
+  };
+  rmdAmount?: number;
+  spouseRmdAmount?: number;
+  conversionAmount?: number;
+  spouseConversionAmount?: number;
 }
 
 export interface CharitableContribution {

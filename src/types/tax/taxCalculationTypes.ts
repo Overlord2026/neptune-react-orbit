@@ -26,7 +26,7 @@ export interface TaxInput {
   spouseRothConversion?: number;
   spouseSocialSecurity?: number;
   isInCommunityPropertyState?: boolean;
-  splitCommunityIncome?: boolean;
+  splitCommunityIncome?: boolean; // We'll use boolean consistently
   includeStateTax?: boolean;
   residentState?: string;
   stateRelocationYear?: number;

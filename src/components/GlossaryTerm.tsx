@@ -14,7 +14,7 @@ interface GlossaryTermProps {
   children: React.ReactNode;
 }
 
-const GlossaryTerm = ({ termId, children }: GlossaryTermProps) => {
+const GlossaryTerm: React.FC<GlossaryTermProps> = ({ termId, children }: GlossaryTermProps) => {
   const term = getGlossaryTerm(termId);
   
   if (!term) {

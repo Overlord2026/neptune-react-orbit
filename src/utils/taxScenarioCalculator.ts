@@ -153,7 +153,8 @@ export function calculateTaxScenario(
   }
   
   // Calculate total tax (federal + state)
-  const total_tax = taxResults.totalTax + state_tax;
+  const federal_tax = taxResults.totalTax;
+  const total_tax = federal_tax + state_tax;
   
   // Return result with enhanced data including tax data currency and version information
   return {
@@ -163,10 +164,10 @@ export function calculateTaxScenario(
     total_income,
     agi,
     taxable_income,
-    federal_tax: taxResults.totalTax,
-    state_tax: state_tax,
-    state_code: state_code,
-    total_tax: total_tax,
+    federal_tax,
+    state_tax,
+    state_code,
+    total_tax,
     ordinary_tax: taxResults.ordinaryTax,
     capital_gains_tax: taxResults.capitalGainsTax,
     marginal_rate: taxResults.marginalOrdinaryRate,
@@ -178,7 +179,9 @@ export function calculateTaxScenario(
     tax_data_is_current: taxDataInfo.isCurrent,
     tax_data_version: taxDataVersion?.version,
     tax_data_warning: taxDataWarning,
-    mfs_comparison
+    mfs_comparison,
+    standard_deduction: taxResults.standardDeduction,
+    brackets: taxResults.brackets
   };
 }
 

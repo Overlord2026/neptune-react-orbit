@@ -2,4 +2,4 @@
 /**
  * Re-export unified tax scenario types from central location
  */
-export * from '../../types/tax/equityTypes';
+export type { EquityFormState, YearlyTaxImpact, EquityCompEvent, DeferralEvent, TaxImpactResult } from '../../types/tax/equityTypes';

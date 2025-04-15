@@ -2,4 +2,4 @@
 /**
  * Re-export unified types from central location
  */
-export * from '../types/tax/taxCalculationTypes';
+export type { TaxInput, TaxResult, TaxScenario } from '../types/tax/taxCalculationTypes';
