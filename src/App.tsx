@@ -25,6 +25,8 @@ import BasicEducationPage from "./pages/BasicTaxEducationPage";
 import TaxGuidePage from "./pages/TaxGuidePage";
 import AdvancedTaxEducationPage from "./pages/AdvancedTaxEducationPage";
 import TaxGlossaryPage from "./pages/TaxGlossaryPage";
+import TaxTrapCheckerPage from "./pages/TaxTrapCheckerPage";
+import AdvancedTaxStrategiesPage from "./pages/AdvancedTaxStrategiesPage";
 
 // Using the pattern with useRoutes
 function AppRoutes() {
@@ -128,6 +130,14 @@ function AppRoutes() {
     {
       path: "/tax-planning/guides/:guideId",
       element: <Layout><TaxGuidePage /></Layout>
+    },
+    {
+      path: "/tax-planning/tax-traps",
+      element: <Layout><TaxTrapCheckerPage /></Layout>
+    },
+    {
+      path: "/tax-planning/advanced-strategies",
+      element: <Layout><AdvancedTaxStrategiesPage /></Layout>
     }
   ]);
 

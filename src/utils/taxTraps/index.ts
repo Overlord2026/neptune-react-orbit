@@ -1,130 +1,156 @@
 
 import { TaxTrapInput, TaxTrapResult, TaxTrapWarning } from './types';
-import { checkIRMAASurcharges, generateIRMAAWarning } from './irmaaChecker';
-import { checkCapitalGainsRate, generateCapitalGainsWarning } from './capitalGainsChecker';
-import { calculateTaxableSocialSecurity, generateSocialSecurityWarning } from './socialSecurityChecker';
-import { checkACASubsidyImpact, generateACAWarning } from './acaChecker';
 
 /**
- * Main function to check various tax traps
+ * Check for tax traps in a scenario
  */
 export function checkTaxTraps(input: TaxTrapInput): TaxTrapResult {
   const warnings: TaxTrapWarning[] = [];
-  const result: TaxTrapResult = {
-    scenario_id: input.scenario_id,
-    warnings: [],
-  };
-  
-  // Use MAGI if provided, otherwise use AGI
-  const magi = input.magi || input.agi;
-  
-  // 1. Check IRMAA (Medicare) surcharges
-  if (input.medicare_enrollment) {
-    const irmaaResult = checkIRMAASurcharges(
-      input.year, 
-      input.filing_status,
-      magi
-    );
-    
-    if (irmaaResult.partB_surcharge > 0 || irmaaResult.partD_surcharge > 0) {
-      const annual_impact = (irmaaResult.partB_surcharge + irmaaResult.partD_surcharge) * 12;
+  let irmaa_data;
+  let social_security_data;
+  let capital_gains_data;
+  let aca_data;
+
+  // Check for IRMAA
+  if (input.medicare_enrollment && input.magi) {
+    const irmaaThreshold = input.filing_status === 'single' ? 97000 : 194000;
+    if (input.magi > irmaaThreshold) {
+      const surchargePartB = input.magi > 500000 ? 395.60 : 
+                          input.magi > 330000 ? 297.90 :
+                          input.magi > 222000 ? 178.70 :
+                          input.magi > 194000 ? 59.40 : 0;
+                      
+      const surchargePartD = input.magi > 500000 ? 80.30 : 
+                          input.magi > 330000 ? 59.80 :
+                          input.magi > 222000 ? 38.80 :
+                          input.magi > 194000 ? 12.90 : 0;
       
-      result.irmaa_data = {
-        partB_surcharge: irmaaResult.partB_surcharge,
-        partD_surcharge: irmaaResult.partD_surcharge,
-        annual_impact
+      const annualImpact = (surchargePartB + surchargePartD) * 12;
+      
+      warnings.push({
+        type: 'irmaa',
+        severity: 'warning',
+        title: 'Medicare IRMAA Surcharge Triggered',
+        description: `Your MAGI of $${input.magi.toLocaleString()} exceeds the IRMAA threshold, triggering additional Medicare premium costs.`,
+        financial_impact: annualImpact,
+        icon: 'alertCircle'
+      });
+      
+      irmaa_data = {
+        partB_surcharge: surchargePartB,
+        partD_surcharge: surchargePartD,
+        annual_impact: annualImpact
       };
-      
-      const warning = generateIRMAAWarning(irmaaResult);
-      if (warning) warnings.push(warning);
     }
   }
-  
-  // 2. Check capital gains tax rate changes
-  if (input.capital_gains_long > 0) {
-    const cgResult = checkCapitalGainsRate(
-      input.year,
-      input.filing_status,
-      input.taxable_income
-    );
-    
-    const warning = generateCapitalGainsWarning(cgResult, input.taxable_income, input.capital_gains_long);
-    
-    if (warning) {
-      result.capital_gains_data = {
-        current_rate: cgResult.current_rate,
-        potential_rate: cgResult.current_rate === 0 ? 15 : 20,
-        tax_increase: warning.financial_impact
-      };
-      
-      warnings.push(warning);
-    }
-  }
-  
-  // 3. Check Social Security taxation
+
+  // Check for Social Security taxation
   if (input.social_security_amount > 0) {
-    const otherIncome = input.total_income - input.social_security_amount;
+    const combinedIncome = input.magi ? 
+      input.magi + (input.social_security_amount * 0.5) :
+      input.agi + (input.social_security_amount * 0.5);
     
-    const warning = generateSocialSecurityWarning(
-      input.social_security_amount,
-      otherIncome,
-      input.filing_status
-    );
+    let taxablePercentage = 0;
+    const threshold1 = input.filing_status === 'single' ? 25000 : 32000;
+    const threshold2 = input.filing_status === 'single' ? 34000 : 44000;
     
-    if (warning) {
-      const taxableSS = calculateTaxableSocialSecurity(
-        input.social_security_amount,
-        otherIncome,
-        input.filing_status
-      );
-      const taxablePercentage = (taxableSS / input.social_security_amount) * 100;
+    if (combinedIncome > threshold2) {
+      taxablePercentage = 85;
+    } else if (combinedIncome > threshold1) {
+      taxablePercentage = 50;
+    }
+    
+    if (taxablePercentage > 0) {
+      const taxableSSAmount = input.social_security_amount * (taxablePercentage / 100);
+      const approxTaxRate = input.filing_status === 'single' ? 0.22 : 0.15;
+      const taxImpact = taxableSSAmount * approxTaxRate;
       
-      result.social_security_data = {
+      warnings.push({
+        type: 'social_security',
+        severity: taxablePercentage === 85 ? 'warning' : 'info',
+        title: `${taxablePercentage}% of Social Security Taxable`,
+        description: `Based on your combined income, ${taxablePercentage}% of your Social Security benefits are subject to income tax.`,
+        financial_impact: taxImpact,
+        icon: 'info'
+      });
+      
+      social_security_data = {
         taxable_percentage: taxablePercentage,
-        tax_increase: warning.financial_impact
+        tax_increase: Math.round(taxImpact)
       };
-      
-      warnings.push(warning);
     }
   }
-  
-  // 4. Check ACA subsidy impacts
-  if (input.aca_enrollment) {
-    const acaResult = checkACASubsidyImpact(
-      input.year,
-      input.household_size,
-      magi
-    );
+
+  // Check for capital gains bracket jump
+  if (input.capital_gains_long > 5000) {
+    const incomeBeforeCG = input.taxable_income - input.capital_gains_long;
+    const threshold = input.filing_status === 'single' ? 44625 : 89250; // 0% to 15% threshold
     
-    result.aca_data = {
-      current_fpl_percentage: acaResult.fpl_percentage,
-      subsidy_impact: acaResult.subsidy_impact
-    };
-    
-    const warning = generateACAWarning(acaResult);
-    if (warning) warnings.push(warning);
+    if (incomeBeforeCG < threshold && (incomeBeforeCG + input.capital_gains_long) > threshold) {
+      const amountInHigherBracket = (incomeBeforeCG + input.capital_gains_long) - threshold;
+      const taxIncrease = amountInHigherBracket * 0.15;
+      
+      warnings.push({
+        type: 'capital_gains',
+        severity: 'alert',
+        title: 'Capital Gains Rate Increase',
+        description: `Your capital gains crossed from the 0% to 15% tax bracket, causing a significant tax increase.`,
+        financial_impact: taxIncrease,
+        icon: 'alertTriangle'
+      });
+      
+      capital_gains_data = {
+        current_rate: 15,
+        potential_rate: 0,
+        tax_increase: Math.round(taxIncrease)
+      };
+    }
   }
-  
-  // Sort warnings by financial impact (highest first)
-  result.warnings = warnings.sort((a, b) => b.financial_impact - a.financial_impact);
-  
-  return result;
+
+  // Check for ACA subsidy cliff
+  if (input.aca_enrollment) {
+    const fplAmount = 13590 + ((input.household_size - 1) * 4720); // Approximate 2023 FPL
+    const fplPercentage = (input.magi || input.agi) / fplAmount * 100;
+    
+    if (fplPercentage > 395 && fplPercentage < 410) {
+      const subsidyLoss = input.household_size * 4000; // Rough estimate
+      
+      warnings.push({
+        type: 'aca',
+        severity: 'alert',
+        title: 'ACA Subsidy Cliff Risk',
+        description: `Your income is close to 400% of the Federal Poverty Level, risking loss of ACA premium subsidies.`,
+        financial_impact: subsidyLoss,
+        icon: 'alertTriangle'
+      });
+      
+      aca_data = {
+        current_fpl_percentage: Math.round(fplPercentage),
+        subsidy_impact: subsidyLoss
+      };
+    }
+  }
+
+  // Opportunity for charitable contributions
+  if (input.taxable_income > 150000) {
+    warnings.push({
+      type: 'charitable_opportunity',
+      severity: 'info',
+      title: 'Charitable Giving Opportunity',
+      description: `Your high income level provides tax-saving opportunities through strategic charitable contributions.`,
+      financial_impact: Math.round(input.taxable_income * 0.02), // Rough estimate of potential savings
+      icon: 'info'
+    });
+  }
+
+  return {
+    scenario_id: input.scenario_id,
+    warnings,
+    irmaa_data,
+    social_security_data,
+    capital_gains_data,
+    aca_data
+  };
 }
 
-/**
- * Save tax trap results to database (placeholder function)
- */
-export function saveTaxTrapResults(results: TaxTrapResult): Promise<void> {
-  // This would be a database operation in a real application
-  console.log('Tax trap results saved:', results);
-  
-  // Simulate async operation
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 500);
-  });
-}
-
-// Re-export types for convenience
-export type { TaxTrapInput, TaxTrapResult, TaxTrapWarning } from './types';
+export * from './types';
