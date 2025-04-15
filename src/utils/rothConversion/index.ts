@@ -5,6 +5,7 @@
  * Central export point for all Roth conversion utility functions.
  */
 
+// Export named functions directly
 export { calculateMultiYearScenario } from './calculateMultiYearScenario';
 export { processSingleYearCalculation } from './yearCalculation';
 export { updateAccountBalances } from './accountBalanceUtils';
@@ -16,5 +17,13 @@ export {
   getStandardDeduction
 } from './charitableUtils';
 
-// Export specialized modules
-export * from './yearCalculation/index';
+// Export specific functions from yearCalculation instead of using star exports
+export { 
+  calculateYearlyIncome,
+  processTaxableIncome,
+  calculateCharitableEffect,
+  prepareTaxInput,
+  applyStateTaxInfo,
+  checkForTaxTraps,
+  processTaxResults
+} from './yearCalculation/index';
