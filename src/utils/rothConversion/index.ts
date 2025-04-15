@@ -23,7 +23,7 @@ export {
   processTaxableIncome,
   calculateCharitableEffect,
   prepareTaxInput,
-  applyStateTaxInfo,
+  calculateStateTax,
   checkForTaxTraps,
   processTaxResults
 } from './yearCalculation/index';
