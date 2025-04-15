@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useState } from 'react';
 import { MultiYearScenarioData, YearlyResult } from '@/types/tax/rothConversionTypes';
 import { FilingStatusType } from '@/types/tax/filingTypes';
+import { calculateMultiYearScenario } from '@/utils/rothConversion/calculateMultiYearScenario';
+import { toast } from 'sonner';
 
 interface MultiYearContextType {
   scenarioData: MultiYearScenarioData;
@@ -17,6 +19,9 @@ interface MultiYearContextType {
   yearlyResults?: YearlyResult[];
   scenarioName?: string;
   hasCalculated?: boolean;
+  isCalculating?: boolean;
+  handleCalculate: () => Promise<void>;
+  handleUpdateScenarioData: (data: Partial<MultiYearScenarioData>) => void;
 }
 
 const defaultScenarioData: MultiYearScenarioData = {
@@ -54,6 +59,7 @@ export const MultiYearProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [scenarioData, setScenarioData] = useState<MultiYearScenarioData>(defaultScenarioData);
   const [results, setResults] = useState<YearlyResult[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [calculationError, setCalculationError] = useState<string | null>(null);
   const [hasCalculated, setHasCalculated] = useState<boolean>(false);
@@ -61,6 +67,32 @@ export const MultiYearProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateScenarioData = (data: Partial<MultiYearScenarioData>) => {
     setScenarioData(prev => ({ ...prev, ...data }));
+  };
+
+  const handleUpdateScenarioData = updateScenarioData;
+
+  const handleCalculate = async () => {
+    setIsCalculating(true);
+    setCalculationError(null);
+    
+    try {
+      const calculatedResults = await calculateMultiYearScenario(scenarioData);
+      setResults(calculatedResults);
+      setHasCalculated(true);
+      
+      if (calculatedResults.length > 0) {
+        toast.success("Calculation completed successfully");
+      } else {
+        toast.error("No results were generated");
+        setCalculationError("Failed to generate results. Please check your inputs and try again.");
+      }
+    } catch (error) {
+      console.error("Error calculating scenario:", error);
+      toast.error("Failed to calculate scenario");
+      setCalculationError(error instanceof Error ? error.message : "Unknown calculation error");
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   return (
@@ -78,7 +110,10 @@ export const MultiYearProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setCalculationError,
         yearlyResults: results,
         scenarioName,
-        hasCalculated
+        hasCalculated,
+        isCalculating,
+        handleCalculate,
+        handleUpdateScenarioData
       }}
     >
       {children}

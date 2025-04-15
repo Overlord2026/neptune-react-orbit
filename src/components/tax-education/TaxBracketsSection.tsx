@@ -28,10 +28,13 @@ const TaxBracketsSection: React.FC<TaxBracketsSectionProps> = ({
 
   // Generate example calculation based on the current filing status
   const getExampleText = () => {
+    // Convert filing status for display
+    const displayFilingStatus = selectedFilingStatus.replace('_', ' ');
+    
     return (
       <div className="p-4 bg-[#1A1F2C] rounded-md">
         <p>
-          For a {selectedFilingStatus.replace('_', ' ')} filer with $60,000 taxable income in {selectedYear}:
+          For a {displayFilingStatus} filer with $60,000 taxable income in {selectedYear}:
         </p>
         <ul className="list-disc list-inside space-y-1">
           <li>Pay 10% on first $11,000 = $1,100</li>

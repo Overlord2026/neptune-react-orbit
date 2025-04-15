@@ -68,6 +68,10 @@ export interface YearlyResult {
     spouseIncome: number;
     primaryTax: number;
     spouseTax: number;
+    originalPrimaryIncome?: number;
+    originalSpouseIncome?: number;
+    splitPrimaryIncome?: number;
+    splitSpouseIncome?: number;
   };
   brackets?: Array<{ min: number; max: number; rate: number }>;
 }
@@ -85,16 +89,16 @@ export interface YearlyConversionSummary {
 export interface MultiYearScenarioData {
   // Basic information
   startAge: number;
-  startYear?: number;
-  numYears?: number;
+  startYear: number;
+  numYears: number;
   traditionalIRABalance: number;
-  traditionalIRAStartBalance?: number;
+  traditionalIRAStartBalance: number;
   rothIRABalance: number;
-  rothIRAStartBalance?: number;
+  rothIRAStartBalance: number;
   yearsToProject?: number;
   inflationRate: number;
   investmentReturn: number;
-  expectedAnnualReturn?: number;
+  expectedAnnualReturn: number;
   
   // Conversion strategy
   conversionStrategy: ConversionStrategyType;
@@ -139,6 +143,17 @@ export interface MultiYearScenarioData {
   charitableAmount?: number;
   charitableFrequency?: string;
   useCharitablePlanning?: boolean;
+  charitableContributions?: Array<{
+    year: number;
+    amount: number;
+    useQcd?: boolean;
+    isBunching?: boolean;
+  }>;
+  dafBunching?: {
+    enabled: boolean;
+    bunchingYears: number;
+    bunchingAmount: number;
+  };
   
   // Beneficiary information
   includeBeneficiary?: boolean;

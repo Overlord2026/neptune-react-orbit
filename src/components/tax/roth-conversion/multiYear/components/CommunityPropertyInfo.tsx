@@ -47,7 +47,7 @@ const CommunityPropertyInfo: React.FC<CommunityPropertyInfoProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Alert variant="outline" className="bg-transparent border-yellow-500/30">
+        <Alert className="bg-transparent border-yellow-500/30">
           <AlertTitle className="text-yellow-500">Community Property State Income Splitting</AlertTitle>
           <AlertDescription className="text-sm">
             <p className="mb-2">

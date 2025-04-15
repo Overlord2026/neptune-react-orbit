@@ -146,6 +146,7 @@ export const calculateMultiYearScenario = async (
       rothIRABalance,
       conversionAmount,
       rmdAmount,
+      taxableIncome: totalPreConversionIncome + conversionAmount + (spouseConversionAmount || 0), // Add missing taxableIncome
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
       effectiveRate: taxResult.effective_rate,
