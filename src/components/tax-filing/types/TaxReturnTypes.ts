@@ -10,7 +10,8 @@ import {
   Dependent, 
   FilingStep, 
   ItemizedDeductions,
-  convertLegacyFilingStatus 
+  convertLegacyFilingStatus,
+  FILING_STEPS
 } from '../../../types/tax/filingTypes';
 
 export type {
@@ -23,4 +24,4 @@ export type {
   ItemizedDeductions
 };
 
-export { convertLegacyFilingStatus };
+export { convertLegacyFilingStatus, FILING_STEPS };
