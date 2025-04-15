@@ -1,30 +1,38 @@
 
-import { TaxResult } from '../taxCalculatorTypes';
-import { EquityScenario } from './types';
+/**
+ * Tax Scenario Fetch
+ * 
+ * Functions for fetching tax scenarios
+ */
+import { TaxScenario } from './types';
+import { getSavedScenarios } from './storage';
 
 /**
- * Fetch saved scenarios
- * This is a placeholder function and would be replaced with actual database operations
+ * Fetch a specific tax scenario by ID
  */
-export function fetchScenarios(): Promise<(TaxResult | EquityScenario)[]> {
-  // Get from localStorage for demo purposes
-  const storedScenarios = localStorage.getItem('taxScenarios');
-  const scenarios = storedScenarios ? JSON.parse(storedScenarios) : [];
-  
-  // Simulate async operation
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(scenarios);
-    }, 500);
-  });
-}
+export const fetchTaxScenario = async (scenarioId: string): Promise<TaxScenario | null> => {
+  try {
+    // Get all scenarios
+    const scenarios = getSavedScenarios();
+    
+    // Find the requested scenario
+    const scenario = scenarios.find(s => s.id === scenarioId);
+    
+    return scenario || null;
+  } catch (error) {
+    console.error("Error fetching tax scenario:", error);
+    return null;
+  }
+};
 
 /**
- * Fetch only equity scenarios
+ * Fetch all saved tax scenarios
  */
-export function fetchEquityScenarios(): Promise<EquityScenario[]> {
-  return fetchScenarios()
-    .then(scenarios => scenarios.filter(
-      scenario => 'type' in scenario && scenario.type === 'equity-compensation'
-    ) as EquityScenario[]);
-}
+export const fetchAllScenarios = async (): Promise<TaxScenario[]> => {
+  try {
+    return getSavedScenarios();
+  } catch (error) {
+    console.error("Error fetching all tax scenarios:", error);
+    return [];
+  }
+};

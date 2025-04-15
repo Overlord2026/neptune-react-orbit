@@ -22,20 +22,20 @@ import {
 import {
   calculateTaxScenario as calcTaxScenario,
   calculateTaxScenarioWithSafeHarbor as calcWithSafeHarbor,
-} from './taxScenarioCalculator';
+} from './taxScenario/calculator';
 
 import {
-  saveScenario as saveTaxScenario,
-  fetchScenarios as fetchTaxScenarios,
-} from './taxScenarioStorage';
+  saveTaxScenario as saveTaxScenarioFunc,
+  getSavedScenarios as fetchTaxScenariosFunc,
+} from './taxScenario/storage';
 
 // Re-export functions from modules with their original names
 export const checkTaxDataBeforeCalculation = checkTaxData;
 export const refreshTaxData = refreshData;
 export const calculateTaxScenario = calcTaxScenario;
 export const calculateTaxScenarioWithSafeHarbor = calcWithSafeHarbor;
-export const saveScenario = saveTaxScenario;
-export const fetchScenarios = fetchTaxScenarios;
+export const saveScenario = saveTaxScenarioFunc;
+export const fetchScenarios = fetchTaxScenariosFunc;
 
 // Re-export utility functions that are part of the public API
 export { calculateSafeHarbor } from './safeHarborUtils';

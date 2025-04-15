@@ -1,15 +1,21 @@
 
 /**
- * Tax Scenario Storage
+ * Tax Scenario Index
  * 
- * Functions for saving and retrieving tax scenarios
+ * Central export point for all tax scenario related functionality
  */
 
-// Use named exports instead of star exports
-export * from './types';
-export * from './storage';
-export * from './fetch';
+// Re-export functions from calculator module
+export { 
+  calculateTaxScenario, 
+  calculateTaxScenarioWithSafeHarbor 
+} from './calculator';
 
-// If there are default exports, explicitly re-export them:
-// export { default as StorageDefault } from './storage';
-// export { default as FetchDefault } from './fetch';
+// Re-export utility functions
+export { 
+  applyCommunityPropertyRules,
+  calculateMFSComparison
+} from './spouseUtils';
+
+// Re-export the types
+export * from './types';
