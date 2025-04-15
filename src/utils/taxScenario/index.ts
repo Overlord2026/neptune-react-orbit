@@ -17,5 +17,20 @@ export {
   calculateMFSComparison
 } from './spouseUtils';
 
+// Re-export fetch functions
+export {
+  fetchTaxScenario,
+  fetchAllScenarios
+} from './fetch';
+
+// Re-export storage functions
+export {
+  saveTaxScenario,
+  getSavedScenarios,
+  deleteTaxScenario,
+  updateTaxScenario
+} from './storage';
+
 // Re-export the types
-export * from './types';
+export type { TaxInput, TaxResult, TaxScenario } from '../taxCalculatorTypes';
+export type { EquityFormState, YearlyTaxImpact, EquityCompEvent, DeferralEvent, TaxImpactResult } from '../../types/tax/equityTypes';

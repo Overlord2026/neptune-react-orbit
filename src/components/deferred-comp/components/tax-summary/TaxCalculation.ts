@@ -2,7 +2,7 @@
 /**
  * Tax calculation utilities for equity compensation
  */
-import { EquityFormState, YearlyTaxImpact, EquityCompEvent, DeferralEvent, TaxImpactResult } from "@/types/tax/equityTypes";
+import { EquityFormState, YearlyTaxImpact, EquityCompEvent, DeferralEvent, TaxImpactResult } from "./utils/taxTypes";
 import { getTaxBracketRate } from "./utils/taxBrackets";
 import { calculateEquityValues, calculateDeferredIncome } from "./utils/standardTaxCalculations";
 
