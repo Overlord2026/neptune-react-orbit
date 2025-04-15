@@ -27,7 +27,7 @@ const TaxTrapContainer: React.FC = () => {
       <div className="lg:col-span-1">
         <TaxTrapInputForm 
           filingStatus={filingStatus}
-          setFilingStatus={setFilingStatus as (value: FilingStatusType) => void}
+          setFilingStatus={setFilingStatus}
           year={year}
           setYear={setYear}
           agi={agi}
