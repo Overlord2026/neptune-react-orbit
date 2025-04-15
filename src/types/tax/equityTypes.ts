@@ -60,10 +60,11 @@ export interface EquityCompEvent {
   spread: number;
   amtImpact: number;
   ordinaryIncome: number;
+  isDisqualifyingDisposition?: boolean;
+  // Add missing required fields
   incomeRecognized: number;
   taxRate: number;
   taxesPaid: number;
-  isDisqualifyingDisposition?: boolean;
 }
 
 // Unified DeferralEvent interface
@@ -110,4 +111,24 @@ export interface EquityScenario extends TaxResult {
   amtImpact?: number;
   deferralBenefit?: number;
   scenario_name: string;
+}
+
+// Add TaxImpactResult type that was missing
+export interface TaxImpactResult {
+  totalTaxableIncome: number;
+  estimatedTax: number;
+  amtIncome: number;
+  amtImpact: number;
+  deferralBenefit: number;
+  spreadPerShare: number;
+  exercisedShares: number;
+  incomeFromExercise: number;
+  deferredIncome: number;
+  nextYearIncome: number;
+  bracketImpact: boolean;
+  bracketBefore: string;
+  bracketAfter: string;
+  multiYearImpact: YearlyTaxImpact[];
+  equityEvents: EquityCompEvent[];
+  deferralEvents: DeferralEvent[];
 }

@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle } from 'lucide-react';
 import { TaxInput, calculateTaxScenario } from '@/utils/taxCalculator';
-import { formatPercent } from '@/utils/taxBracketData';
+import { formatPercent, convertFilingStatusToLegacy } from '@/utils/taxBracketData';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/hooks/useDebounce';
-import { FilingStatusType } from '@/utils/taxBracketData';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 interface RealTimeBracketPreviewProps {
   baseIncome: number;

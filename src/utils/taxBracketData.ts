@@ -1,484 +1,110 @@
-/**
- * Tax Bracket Data Utility
- * 
- * This file contains structured tax bracket data that can be used across the application.
- * It's designed to mimic a database structure for easy conversion to a real database in the future.
- */
+// Import the standardized FilingStatusType
+import { FilingStatusType } from '../types/tax/filingTypes';
 
-// Using 'export type' to properly export types when isolatedModules is enabled
-export type FilingStatusType = "single" | "married" | "head_of_household" | "married_separate";
-export type BracketType = "ordinary" | "ltcg"; // ordinary income vs long-term capital gains
+export { FilingStatusType };
 
+// Define the tax bracket data
 export interface TaxBracket {
-  id: string; // Using string for UUID compatibility
-  tax_year: number;
-  filing_status: FilingStatusType;
-  bracket_min: number;
-  bracket_max: number;
-  rate: number; // Decimal representation (e.g., 0.10 for 10%)
-  bracket_type: BracketType;
+  rate: number;
+  singleThreshold: number;
+  marriedThreshold: number;
+  headOfHouseholdThreshold: number;
+  marriedSeparateThreshold: number;
+  label: string;
 }
 
-/**
- * Function to generate a consistent ID based on bracket properties
- */
-const generateBracketId = (
-  year: number, 
-  status: FilingStatusType, 
-  min: number, 
-  type: BracketType
-): string => {
-  return `${year}-${status}-${min}-${type}`;
+// Helper function for formatting percentages
+export const formatPercent = (value: number): string => {
+  return `${(value * 100).toFixed(1)}%`;
 };
 
-/**
- * Ordinary Income Tax Brackets
- */
-const generateOrdinaryIncomeBrackets = (): TaxBracket[] => {
-  const brackets: TaxBracket[] = [];
-  
-  // 2025 Tax Brackets (Projected/Estimated)
-  // Single
-  brackets.push(
-    { id: generateBracketId(2025, "single", 0, "ordinary"), tax_year: 2025, filing_status: "single", bracket_min: 0, bracket_max: 12000, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "single", 12000, "ordinary"), tax_year: 2025, filing_status: "single", bracket_min: 12000, bracket_max: 47000, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "single", 47000, "ordinary"), tax_year: 2025, filing_status: "single", bracket_min: 47000, bracket_max: 95000, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "single", 95000, "ordinary"), tax_year: 2025, filing_status: "single", bracket_min: 95000, bracket_max: 182000, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "single", 182000, "ordinary"), tax_year: 2025, filing_status: "single", bracket_min: 182000, bracket_max: 231250, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "single", 231250, "ordinary"), tax_year: 2025, filing_status: "single", bracket_min: 231250, bracket_max: 578125, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "single", 578125, "ordinary"), tax_year: 2025, filing_status: "single", bracket_min: 578125, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Married Filing Jointly
-  brackets.push(
-    { id: generateBracketId(2025, "married", 0, "ordinary"), tax_year: 2025, filing_status: "married", bracket_min: 0, bracket_max: 24000, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married", 24000, "ordinary"), tax_year: 2025, filing_status: "married", bracket_min: 24000, bracket_max: 94000, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married", 94000, "ordinary"), tax_year: 2025, filing_status: "married", bracket_min: 94000, bracket_max: 190000, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married", 190000, "ordinary"), tax_year: 2025, filing_status: "married", bracket_min: 190000, bracket_max: 364000, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married", 364000, "ordinary"), tax_year: 2025, filing_status: "married", bracket_min: 364000, bracket_max: 462500, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married", 462500, "ordinary"), tax_year: 2025, filing_status: "married", bracket_min: 462500, bracket_max: 693750, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married", 693750, "ordinary"), tax_year: 2025, filing_status: "married", bracket_min: 693750, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Married Filing Separately
-  brackets.push(
-    { id: generateBracketId(2025, "married_separate", 0, "ordinary"), tax_year: 2025, filing_status: "married_separate", bracket_min: 0, bracket_max: 12000, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married_separate", 12000, "ordinary"), tax_year: 2025, filing_status: "married_separate", bracket_min: 12000, bracket_max: 47000, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married_separate", 47000, "ordinary"), tax_year: 2025, filing_status: "married_separate", bracket_min: 47000, bracket_max: 95000, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married_separate", 95000, "ordinary"), tax_year: 2025, filing_status: "married_separate", bracket_min: 95000, bracket_max: 182000, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married_separate", 182000, "ordinary"), tax_year: 2025, filing_status: "married_separate", bracket_min: 182000, bracket_max: 231250, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married_separate", 231250, "ordinary"), tax_year: 2025, filing_status: "married_separate", bracket_min: 231250, bracket_max: 346875, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "married_separate", 346875, "ordinary"), tax_year: 2025, filing_status: "married_separate", bracket_min: 346875, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Head of Household
-  brackets.push(
-    { id: generateBracketId(2025, "head_of_household", 0, "ordinary"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 0, bracket_max: 16000, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "head_of_household", 16000, "ordinary"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 16000, bracket_max: 62000, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "head_of_household", 62000, "ordinary"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 62000, bracket_max: 95350, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "head_of_household", 95350, "ordinary"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 95350, bracket_max: 182100, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "head_of_household", 182100, "ordinary"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 182100, bracket_max: 231250, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "head_of_household", 231250, "ordinary"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 231250, bracket_max: 578100, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2025, "head_of_household", 578100, "ordinary"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 578100, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // 2023 Tax Brackets - Keeping these for historical reference
-  // Single
-  brackets.push(
-    { id: generateBracketId(2023, "single", 0, "ordinary"), tax_year: 2023, filing_status: "single", bracket_min: 0, bracket_max: 11000, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "single", 11000, "ordinary"), tax_year: 2023, filing_status: "single", bracket_min: 11000, bracket_max: 44725, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "single", 44725, "ordinary"), tax_year: 2023, filing_status: "single", bracket_min: 44725, bracket_max: 95375, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "single", 95375, "ordinary"), tax_year: 2023, filing_status: "single", bracket_min: 95375, bracket_max: 182100, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "single", 182100, "ordinary"), tax_year: 2023, filing_status: "single", bracket_min: 182100, bracket_max: 231250, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "single", 231250, "ordinary"), tax_year: 2023, filing_status: "single", bracket_min: 231250, bracket_max: 578125, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "single", 578125, "ordinary"), tax_year: 2023, filing_status: "single", bracket_min: 578125, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Married Filing Jointly
-  brackets.push(
-    { id: generateBracketId(2023, "married", 0, "ordinary"), tax_year: 2023, filing_status: "married", bracket_min: 0, bracket_max: 22000, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married", 22000, "ordinary"), tax_year: 2023, filing_status: "married", bracket_min: 22000, bracket_max: 89450, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married", 89450, "ordinary"), tax_year: 2023, filing_status: "married", bracket_min: 89450, bracket_max: 190750, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married", 190750, "ordinary"), tax_year: 2023, filing_status: "married", bracket_min: 190750, bracket_max: 364200, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married", 364200, "ordinary"), tax_year: 2023, filing_status: "married", bracket_min: 364200, bracket_max: 462500, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married", 462500, "ordinary"), tax_year: 2023, filing_status: "married", bracket_min: 462500, bracket_max: 693750, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married", 693750, "ordinary"), tax_year: 2023, filing_status: "married", bracket_min: 693750, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Married Filing Separately
-  brackets.push(
-    { id: generateBracketId(2023, "married_separate", 0, "ordinary"), tax_year: 2023, filing_status: "married_separate", bracket_min: 0, bracket_max: 11000, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married_separate", 11000, "ordinary"), tax_year: 2023, filing_status: "married_separate", bracket_min: 11000, bracket_max: 44725, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married_separate", 44725, "ordinary"), tax_year: 2023, filing_status: "married_separate", bracket_min: 44725, bracket_max: 95375, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married_separate", 95375, "ordinary"), tax_year: 2023, filing_status: "married_separate", bracket_min: 95375, bracket_max: 182100, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married_separate", 182100, "ordinary"), tax_year: 2023, filing_status: "married_separate", bracket_min: 182100, bracket_max: 231250, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married_separate", 231250, "ordinary"), tax_year: 2023, filing_status: "married_separate", bracket_min: 231250, bracket_max: 346875, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "married_separate", 346875, "ordinary"), tax_year: 2023, filing_status: "married_separate", bracket_min: 346875, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Head of Household
-  brackets.push(
-    { id: generateBracketId(2023, "head_of_household", 0, "ordinary"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 0, bracket_max: 15700, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "head_of_household", 15700, "ordinary"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 15700, bracket_max: 59850, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "head_of_household", 59850, "ordinary"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 59850, bracket_max: 95350, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "head_of_household", 95350, "ordinary"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 95350, bracket_max: 182100, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "head_of_household", 182100, "ordinary"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 182100, bracket_max: 231250, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "head_of_household", 231250, "ordinary"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 231250, bracket_max: 578100, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2023, "head_of_household", 578100, "ordinary"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 578100, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // 2022 Tax Brackets
-  // Single
-  brackets.push(
-    { id: generateBracketId(2022, "single", 0, "ordinary"), tax_year: 2022, filing_status: "single", bracket_min: 0, bracket_max: 10275, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "single", 10275, "ordinary"), tax_year: 2022, filing_status: "single", bracket_min: 10275, bracket_max: 41775, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "single", 41775, "ordinary"), tax_year: 2022, filing_status: "single", bracket_min: 41775, bracket_max: 89075, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "single", 89075, "ordinary"), tax_year: 2022, filing_status: "single", bracket_min: 89075, bracket_max: 170050, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "single", 170050, "ordinary"), tax_year: 2022, filing_status: "single", bracket_min: 170050, bracket_max: 215950, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "single", 215950, "ordinary"), tax_year: 2022, filing_status: "single", bracket_min: 215950, bracket_max: 539900, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "single", 539900, "ordinary"), tax_year: 2022, filing_status: "single", bracket_min: 539900, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Married Filing Jointly
-  brackets.push(
-    { id: generateBracketId(2022, "married", 0, "ordinary"), tax_year: 2022, filing_status: "married", bracket_min: 0, bracket_max: 20550, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married", 20550, "ordinary"), tax_year: 2022, filing_status: "married", bracket_min: 20550, bracket_max: 83550, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married", 83550, "ordinary"), tax_year: 2022, filing_status: "married", bracket_min: 83550, bracket_max: 178150, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married", 178150, "ordinary"), tax_year: 2022, filing_status: "married", bracket_min: 178150, bracket_max: 340100, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married", 340100, "ordinary"), tax_year: 2022, filing_status: "married", bracket_min: 340100, bracket_max: 431900, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married", 431900, "ordinary"), tax_year: 2022, filing_status: "married", bracket_min: 431900, bracket_max: 647850, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married", 647850, "ordinary"), tax_year: 2022, filing_status: "married", bracket_min: 647850, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Married Filing Separately
-  brackets.push(
-    { id: generateBracketId(2022, "married_separate", 0, "ordinary"), tax_year: 2022, filing_status: "married_separate", bracket_min: 0, bracket_max: 10275, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married_separate", 10275, "ordinary"), tax_year: 2022, filing_status: "married_separate", bracket_min: 10275, bracket_max: 41775, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married_separate", 41775, "ordinary"), tax_year: 2022, filing_status: "married_separate", bracket_min: 41775, bracket_max: 89075, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married_separate", 89075, "ordinary"), tax_year: 2022, filing_status: "married_separate", bracket_min: 89075, bracket_max: 170050, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married_separate", 170050, "ordinary"), tax_year: 2022, filing_status: "married_separate", bracket_min: 170050, bracket_max: 215950, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married_separate", 215950, "ordinary"), tax_year: 2022, filing_status: "married_separate", bracket_min: 215950, bracket_max: 323925, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "married_separate", 323925, "ordinary"), tax_year: 2022, filing_status: "married_separate", bracket_min: 323925, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Head of Household
-  brackets.push(
-    { id: generateBracketId(2022, "head_of_household", 0, "ordinary"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 0, bracket_max: 14650, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "head_of_household", 14650, "ordinary"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 14650, bracket_max: 55900, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "head_of_household", 55900, "ordinary"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 55900, bracket_max: 89050, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "head_of_household", 89050, "ordinary"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 89050, bracket_max: 170050, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "head_of_household", 170050, "ordinary"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 170050, bracket_max: 215950, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "head_of_household", 215950, "ordinary"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 215950, bracket_max: 539900, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2022, "head_of_household", 539900, "ordinary"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 539900, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // 2021 Tax Brackets
-  // Single
-  brackets.push(
-    { id: generateBracketId(2021, "single", 0, "ordinary"), tax_year: 2021, filing_status: "single", bracket_min: 0, bracket_max: 9950, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "single", 9950, "ordinary"), tax_year: 2021, filing_status: "single", bracket_min: 9950, bracket_max: 40525, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "single", 40525, "ordinary"), tax_year: 2021, filing_status: "single", bracket_min: 40525, bracket_max: 86375, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "single", 86375, "ordinary"), tax_year: 2021, filing_status: "single", bracket_min: 86375, bracket_max: 164925, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "single", 164925, "ordinary"), tax_year: 2021, filing_status: "single", bracket_min: 164925, bracket_max: 209425, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "single", 209425, "ordinary"), tax_year: 2021, filing_status: "single", bracket_min: 209425, bracket_max: 523600, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "single", 523600, "ordinary"), tax_year: 2021, filing_status: "single", bracket_min: 523600, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Married Filing Jointly
-  brackets.push(
-    { id: generateBracketId(2021, "married", 0, "ordinary"), tax_year: 2021, filing_status: "married", bracket_min: 0, bracket_max: 19900, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married", 19900, "ordinary"), tax_year: 2021, filing_status: "married", bracket_min: 19900, bracket_max: 81050, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married", 81050, "ordinary"), tax_year: 2021, filing_status: "married", bracket_min: 81050, bracket_max: 172750, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married", 172750, "ordinary"), tax_year: 2021, filing_status: "married", bracket_min: 172750, bracket_max: 329850, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married", 329850, "ordinary"), tax_year: 2021, filing_status: "married", bracket_min: 329850, bracket_max: 418850, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married", 418850, "ordinary"), tax_year: 2021, filing_status: "married", bracket_min: 418850, bracket_max: 628300, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married", 628300, "ordinary"), tax_year: 2021, filing_status: "married", bracket_min: 628300, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Married Filing Separately
-  brackets.push(
-    { id: generateBracketId(2021, "married_separate", 0, "ordinary"), tax_year: 2021, filing_status: "married_separate", bracket_min: 0, bracket_max: 9950, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married_separate", 9950, "ordinary"), tax_year: 2021, filing_status: "married_separate", bracket_min: 9950, bracket_max: 40525, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married_separate", 40525, "ordinary"), tax_year: 2021, filing_status: "married_separate", bracket_min: 40525, bracket_max: 86375, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married_separate", 86375, "ordinary"), tax_year: 2021, filing_status: "married_separate", bracket_min: 86375, bracket_max: 164925, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married_separate", 164925, "ordinary"), tax_year: 2021, filing_status: "married_separate", bracket_min: 164925, bracket_max: 209425, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married_separate", 209425, "ordinary"), tax_year: 2021, filing_status: "married_separate", bracket_min: 209425, bracket_max: 314150, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "married_separate", 314150, "ordinary"), tax_year: 2021, filing_status: "married_separate", bracket_min: 314150, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  // Head of Household
-  brackets.push(
-    { id: generateBracketId(2021, "head_of_household", 0, "ordinary"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 0, bracket_max: 14200, rate: 0.10, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "head_of_household", 14200, "ordinary"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 14200, bracket_max: 54200, rate: 0.12, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "head_of_household", 54200, "ordinary"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 54200, bracket_max: 86350, rate: 0.22, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "head_of_household", 86350, "ordinary"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 86350, bracket_max: 164900, rate: 0.24, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "head_of_household", 164900, "ordinary"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 164900, bracket_max: 209400, rate: 0.32, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "head_of_household", 209400, "ordinary"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 209400, bracket_max: 523600, rate: 0.35, bracket_type: "ordinary" },
-    { id: generateBracketId(2021, "head_of_household", 523600, "ordinary"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 523600, bracket_max: Infinity, rate: 0.37, bracket_type: "ordinary" }
-  );
-  
-  return brackets;
+// Helper function to convert between legacy and new filing status types
+export function convertFilingStatusToNew(status: string): FilingStatusType {
+  if (status === 'married') return 'married_joint';
+  return status as FilingStatusType;
+}
+
+export function convertFilingStatusToLegacy(status: FilingStatusType): string {
+  if (status === 'married_joint') return 'married';
+  return status;
+}
+
+// Tax bracket data for different years
+export const taxBracketData: { [year: number]: TaxBracket[] } = {
+  2022: [
+    { rate: 0.10, singleThreshold: 0, marriedThreshold: 0, headOfHouseholdThreshold: 0, marriedSeparateThreshold: 0, label: "10%" },
+    { rate: 0.12, singleThreshold: 10275, marriedThreshold: 20550, headOfHouseholdThreshold: 14600, marriedSeparateThreshold: 10275, label: "12%" },
+    { rate: 0.22, singleThreshold: 41775, marriedThreshold: 83550, headOfHouseholdThreshold: 55925, marriedSeparateThreshold: 41775, label: "22%" },
+    { rate: 0.24, singleThreshold: 89075, marriedThreshold: 178150, headOfHouseholdThreshold: 118850, marriedSeparateThreshold: 89075, label: "24%" },
+    { rate: 0.32, singleThreshold: 170050, marriedThreshold: 340100, headOfHouseholdThreshold: 215950, marriedSeparateThreshold: 170050, label: "32%" },
+    { rate: 0.35, singleThreshold: 215950, marriedThreshold: 431900, headOfHouseholdThreshold: 539900, marriedSeparateThreshold: 215950, label: "35%" },
+    { rate: 0.37, singleThreshold: 539900, marriedThreshold: 647850, headOfHouseholdThreshold: 647850, marriedSeparateThreshold: 539900, label: "37%" }
+  ],
+  2023: [
+    { rate: 0.10, singleThreshold: 0, marriedThreshold: 0, headOfHouseholdThreshold: 0, marriedSeparateThreshold: 0, label: "10%" },
+    { rate: 0.12, singleThreshold: 11000, marriedThreshold: 22000, headOfHouseholdThreshold: 16500, marriedSeparateThreshold: 11000, label: "12%" },
+    { rate: 0.22, singleThreshold: 44725, marriedThreshold: 89450, headOfHouseholdThreshold: 59850, marriedSeparateThreshold: 44725, label: "22%" },
+    { rate: 0.24, singleThreshold: 95375, marriedThreshold: 190750, headOfHouseholdThreshold: 127750, marriedSeparateThreshold: 95375, label: "24%" },
+    { rate: 0.32, singleThreshold: 182100, marriedThreshold: 364200, headOfHouseholdThreshold: 231250, marriedSeparateThreshold: 182100, label: "32%" },
+    { rate: 0.35, singleThreshold: 231250, marriedThreshold: 462500, headOfHouseholdThreshold: 578125, marriedSeparateThreshold: 231250, label: "35%" },
+    { rate: 0.37, singleThreshold: 578125, marriedThreshold: 693750, headOfHouseholdThreshold: 693750, marriedSeparateThreshold: 578125, label: "37%" }
+  ],
+  2024: [
+    { rate: 0.10, singleThreshold: 0, marriedThreshold: 0, headOfHouseholdThreshold: 0, marriedSeparateThreshold: 0, label: "10%" },
+    { rate: 0.12, singleThreshold: 11600, marriedThreshold: 23200, headOfHouseholdThreshold: 17400, marriedSeparateThreshold: 11600, label: "12%" },
+    { rate: 0.22, singleThreshold: 47150, marriedThreshold: 94300, headOfHouseholdThreshold: 63100, marriedSeparateThreshold: 47150, label: "22%" },
+    { rate: 0.24, singleThreshold: 100525, marriedThreshold: 201050, headOfHouseholdThreshold: 134850, marriedSeparateThreshold: 100525, label: "24%" },
+    { rate: 0.32, singleThreshold: 191950, marriedThreshold: 383900, headOfHouseholdThreshold: 243700, marriedSeparateThreshold: 191950, label: "32%" },
+    { rate: 0.35, singleThreshold: 243700, marriedThreshold: 487400, headOfHouseholdThreshold: 609350, marriedSeparateThreshold: 243700, label: "35%" },
+    { rate: 0.37, singleThreshold: 609350, marriedThreshold: 731200, headOfHouseholdThreshold: 731200, marriedSeparateThreshold: 609350, label: "37%" }
+  ],
 };
 
-/**
- * Long-Term Capital Gains Tax Brackets
- */
-const generateLTCGBrackets = (): TaxBracket[] => {
-  const brackets: TaxBracket[] = [];
-  
-  // 2025 LTCG Brackets (Projected/Estimated)
-  // Single
-  brackets.push(
-    { id: generateBracketId(2025, "single", 0, "ltcg"), tax_year: 2025, filing_status: "single", bracket_min: 0, bracket_max: 47000, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2025, "single", 47000, "ltcg"), tax_year: 2025, filing_status: "single", bracket_min: 47000, bracket_max: 518000, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2025, "single", 518000, "ltcg"), tax_year: 2025, filing_status: "single", bracket_min: 518000, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Married Filing Jointly
-  brackets.push(
-    { id: generateBracketId(2025, "married", 0, "ltcg"), tax_year: 2025, filing_status: "married", bracket_min: 0, bracket_max: 94000, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2025, "married", 94000, "ltcg"), tax_year: 2025, filing_status: "married", bracket_min: 94000, bracket_max: 583000, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2025, "married", 583000, "ltcg"), tax_year: 2025, filing_status: "married", bracket_min: 583000, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Married Filing Separately
-  brackets.push(
-    { id: generateBracketId(2025, "married_separate", 0, "ltcg"), tax_year: 2025, filing_status: "married_separate", bracket_min: 0, bracket_max: 47000, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2025, "married_separate", 47000, "ltcg"), tax_year: 2025, filing_status: "married_separate", bracket_min: 47000, bracket_max: 291500, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2025, "married_separate", 291500, "ltcg"), tax_year: 2025, filing_status: "married_separate", bracket_min: 291500, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Head of Household
-  brackets.push(
-    { id: generateBracketId(2025, "head_of_household", 0, "ltcg"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 0, bracket_max: 62000, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2025, "head_of_household", 62000, "ltcg"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 62000, bracket_max: 550000, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2025, "head_of_household", 550000, "ltcg"), tax_year: 2025, filing_status: "head_of_household", bracket_min: 550000, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // 2023 LTCG Brackets
-  // Single
-  brackets.push(
-    { id: generateBracketId(2023, "single", 0, "ltcg"), tax_year: 2023, filing_status: "single", bracket_min: 0, bracket_max: 44625, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2023, "single", 44625, "ltcg"), tax_year: 2023, filing_status: "single", bracket_min: 44625, bracket_max: 492300, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2023, "single", 492300, "ltcg"), tax_year: 2023, filing_status: "single", bracket_min: 492300, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Married Filing Jointly
-  brackets.push(
-    { id: generateBracketId(2023, "married", 0, "ltcg"), tax_year: 2023, filing_status: "married", bracket_min: 0, bracket_max: 89250, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2023, "married", 89250, "ltcg"), tax_year: 2023, filing_status: "married", bracket_min: 89250, bracket_max: 553850, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2023, "married", 553850, "ltcg"), tax_year: 2023, filing_status: "married", bracket_min: 553850, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Married Filing Separately
-  brackets.push(
-    { id: generateBracketId(2023, "married_separate", 0, "ltcg"), tax_year: 2023, filing_status: "married_separate", bracket_min: 0, bracket_max: 44625, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2023, "married_separate", 44625, "ltcg"), tax_year: 2023, filing_status: "married_separate", bracket_min: 44625, bracket_max: 276925, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2023, "married_separate", 276925, "ltcg"), tax_year: 2023, filing_status: "married_separate", bracket_min: 276925, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Head of Household
-  brackets.push(
-    { id: generateBracketId(2023, "head_of_household", 0, "ltcg"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 0, bracket_max: 59750, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2023, "head_of_household", 59750, "ltcg"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 59750, bracket_max: 523050, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2023, "head_of_household", 523050, "ltcg"), tax_year: 2023, filing_status: "head_of_household", bracket_min: 523050, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // 2022 LTCG Brackets
-  // Single
-  brackets.push(
-    { id: generateBracketId(2022, "single", 0, "ltcg"), tax_year: 2022, filing_status: "single", bracket_min: 0, bracket_max: 41675, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2022, "single", 41675, "ltcg"), tax_year: 2022, filing_status: "single", bracket_min: 41675, bracket_max: 459750, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2022, "single", 459750, "ltcg"), tax_year: 2022, filing_status: "single", bracket_min: 459750, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Married Filing Jointly
-  brackets.push(
-    { id: generateBracketId(2022, "married", 0, "ltcg"), tax_year: 2022, filing_status: "married", bracket_min: 0, bracket_max: 83350, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2022, "married", 83350, "ltcg"), tax_year: 2022, filing_status: "married", bracket_min: 83350, bracket_max: 517200, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2022, "married", 517200, "ltcg"), tax_year: 2022, filing_status: "married", bracket_min: 517200, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Married Filing Separately
-  brackets.push(
-    { id: generateBracketId(2022, "married_separate", 0, "ltcg"), tax_year: 2022, filing_status: "married_separate", bracket_min: 0, bracket_max: 41675, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2022, "married_separate", 41675, "ltcg"), tax_year: 2022, filing_status: "married_separate", bracket_min: 41675, bracket_max: 258600, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2022, "married_separate", 258600, "ltcg"), tax_year: 2022, filing_status: "married_separate", bracket_min: 258600, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Head of Household
-  brackets.push(
-    { id: generateBracketId(2022, "head_of_household", 0, "ltcg"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 0, bracket_max: 55800, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2022, "head_of_household", 55800, "ltcg"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 55800, bracket_max: 488500, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2022, "head_of_household", 488500, "ltcg"), tax_year: 2022, filing_status: "head_of_household", bracket_min: 488500, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // 2021 LTCG Brackets
-  // Single
-  brackets.push(
-    { id: generateBracketId(2021, "single", 0, "ltcg"), tax_year: 2021, filing_status: "single", bracket_min: 0, bracket_max: 40400, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "single", 40400, "ltcg"), tax_year: 2021, filing_status: "single", bracket_min: 40400, bracket_max: 445850, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "single", 445850, "ltcg"), tax_year: 2021, filing_status: "single", bracket_min: 445850, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Married Filing Jointly
-  brackets.push(
-    { id: generateBracketId(2021, "married", 0, "ltcg"), tax_year: 2021, filing_status: "married", bracket_min: 0, bracket_max: 80800, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "married", 80800, "ltcg"), tax_year: 2021, filing_status: "married", bracket_min: 80800, bracket_max: 501600, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "married", 501600, "ltcg"), tax_year: 2021, filing_status: "married", bracket_min: 501600, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Married Filing Separately
-  brackets.push(
-    { id: generateBracketId(2021, "married_separate", 0, "ltcg"), tax_year: 2021, filing_status: "married_separate", bracket_min: 0, bracket_max: 40400, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "married_separate", 40400, "ltcg"), tax_year: 2021, filing_status: "married_separate", bracket_min: 40400, bracket_max: 250800, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "married_separate", 250800, "ltcg"), tax_year: 2021, filing_status: "married_separate", bracket_min: 250800, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  // Head of Household
-  brackets.push(
-    { id: generateBracketId(2021, "head_of_household", 0, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 0, bracket_max: 54100, rate: 0.00, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "head_of_household", 54100, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 54100, bracket_max: 473750, rate: 0.15, bracket_type: "ltcg" },
-    { id: generateBracketId(2021, "head_of_household", 473750, "ltcg"), tax_year: 2021, filing_status: "head_of_household", bracket_min: 473750, bracket_max: Infinity, rate: 0.20, bracket_type: "ltcg" }
-  );
-  
-  return brackets;
-};
-
-// Generate all brackets
-export const TAX_BRACKETS_DATA: TaxBracket[] = [
-  ...generateOrdinaryIncomeBrackets(),
-  ...generateLTCGBrackets()
-];
-
-// Standard Deduction Data - 2025 values (projected/estimated)
-export const STANDARD_DEDUCTION = {
-  single: 14200,
-  marriedFilingJointly: 28400,
-  headOfHousehold: 21250,
-  marriedFilingSeparately: 14200
-};
-
-// Legacy standard deduction data structure (for backwards compatibility)
-export const STANDARD_DEDUCTION_BY_YEAR = {
-  2025: {
-    single: 14200,
-    married: 28400,
-    head_of_household: 21250,
-    married_separate: 14200
-  },
-  2023: {
-    single: 13850,
-    married: 27700,
-    head_of_household: 20800,
-    married_separate: 13850
-  },
-  2022: {
-    single: 12950,
-    married: 25900,
-    head_of_household: 19400,
-    married_separate: 12950
-  },
-  2021: {
-    single: 12550,
-    married: 25100,
-    head_of_household: 18800,
-    married_separate: 12550
-  }
-};
-
-/**
- * Get tax brackets for a specific year, filing status, and type
- */
-export const getBrackets = (
+// Function to get the tax bracket for a given year, filing status, and income
+export const getTaxBracket = (
   year: number,
   filingStatus: FilingStatusType,
-  type: BracketType
-): TaxBracket[] => {
-  return TAX_BRACKETS_DATA.filter(
-    bracket => 
-      bracket.tax_year === year && 
-      bracket.filing_status === filingStatus &&
-      bracket.bracket_type === type
-  ).sort((a, b) => a.bracket_min - b.bracket_min);
-};
-
-/**
- * Calculate tax on a given income using the appropriate brackets
- */
-export const calculateTax = (
-  income: number,
-  year: number,
-  filingStatus: FilingStatusType,
-  type: BracketType = "ordinary"
-): number => {
-  let tax = 0;
-  let remainingIncome = income;
-  
-  // Get applicable brackets
-  const brackets = getBrackets(year, filingStatus, type);
-  
-  // Calculate tax bracket by bracket
-  for (let i = 0; i < brackets.length; i++) {
-    const bracket = brackets[i];
-    const nextBracketMin = i < brackets.length - 1 ? brackets[i + 1].bracket_min : Infinity;
-    
-    // Calculate taxable amount in this bracket
-    const taxableInBracket = Math.min(
-      remainingIncome,
-      nextBracketMin - bracket.bracket_min
-    );
-    
-    // If no more income to tax, exit loop
-    if (taxableInBracket <= 0) break;
-    
-    // Add tax for this bracket
-    tax += taxableInBracket * bracket.rate;
-    
-    // Reduce remaining income
-    remainingIncome -= taxableInBracket;
+  income: number
+): TaxBracket => {
+  const brackets = taxBracketData[year];
+  if (!brackets) {
+    console.warn(`No tax bracket data found for year ${year}. Using 2023 data.`);
+    return getTaxBracket(2023, filingStatus, income);
   }
-  
-  return tax;
+
+  let thresholdKey: keyof TaxBracket;
+  switch (filingStatus) {
+    case "single":
+      thresholdKey = "singleThreshold";
+      break;
+    case "married_joint":
+      thresholdKey = "marriedThreshold";
+      break;
+    case "head_of_household":
+      thresholdKey = "headOfHouseholdThreshold";
+      break;
+    case "married_separate":
+      thresholdKey = "marriedSeparateThreshold";
+      break;
+    case "qualifying_widow":
+      thresholdKey = "marriedThreshold"; // Same as married jointly
+      break;
+    default:
+      console.error(`Unknown filing status: ${filingStatus}`);
+      return brackets[0];
+  }
+
+  for (let i = brackets.length - 1; i >= 0; i--) {
+    if (income > brackets[i][thresholdKey]) {
+      return brackets[i];
+    }
+  }
+
+  return brackets[0];
 };
 
-/**
- * Calculate effective tax rate
- * 
- * This function calculates the effective tax rate based on taxable income and total tax
- */
-export const calculateEffectiveRate = (
-  taxableIncome: number,
-  totalTax: number
-): number => {
-  // Avoid division by zero
-  if (taxableIncome <= 0) return 0;
-  
-  return totalTax / taxableIncome;
+// Function to get the tax bracket rate for a given income
+export const getTaxBracketRate = (income: number, year: number = 2023, filingStatus: FilingStatusType = "single"): string => {
+  const bracket = getTaxBracket(year, filingStatus, income);
+  return bracket.label;
 };
-
-/**
- * Format currency for display
- */
-export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', { 
-    style: 'currency', 
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(amount);
-};
-
-/**
- * Format percentage for display
- */
-export const formatPercent = (decimal: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'percent',
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1
-  }).format(decimal);
-};
-
-// Example of additional export we might need in the future
-export const somethingElse = "This is an example extra export";

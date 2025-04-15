@@ -7,6 +7,9 @@ import { StateCode } from "../../utils/stateTaxData";
 // Unified filing status type
 export type FilingStatusType = 'single' | 'married_joint' | 'married_separate' | 'head_of_household' | 'qualifying_widow';
 
+// Alias to support older code still using 'married' instead of 'married_joint'
+export type LegacyFilingStatusType = 'single' | 'married' | 'married_separate' | 'head_of_household';
+
 // Unified W2Form
 export interface W2Form {
   employerName: string;

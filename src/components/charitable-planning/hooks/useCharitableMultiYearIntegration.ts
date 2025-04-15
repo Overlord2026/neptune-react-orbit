@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from 'react';
-import { CharitableContribution, MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
+import { CharitableContribution, MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 import { CharitableScenario } from '../types/CharitableTypes';
 import { useMultiYearContext } from '@/components/tax/roth-conversion/multiYear/context/MultiYearContext';
 

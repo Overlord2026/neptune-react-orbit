@@ -69,27 +69,47 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
     
     // Current year event
     if (year1Shares > 0) {
+      const spread = spreadPerShare * year1Shares;
+      const ordinaryIncome = isOrdinaryIncome ? spread : 0;
+      const amtImpact = !isOrdinaryIncome ? spread * 0.26 : 0;
+      const taxRate = isOrdinaryIncome ? 0.35 : 0; // Estimated rate
+      const taxesPaid = ordinaryIncome * taxRate;
+      
       events.push({
         year: currentYear,
         type: formState.equityType,
         sharesExercised: year1Shares,
-        spread: spreadPerShare * year1Shares,
-        amtImpact: !isOrdinaryIncome ? spreadPerShare * year1Shares * 0.26 : 0,
-        ordinaryIncome: isOrdinaryIncome ? spreadPerShare * year1Shares : 0,
-        isDisqualifyingDisposition: formState.isDisqualifyingDisposition
+        spread: spread,
+        amtImpact: amtImpact,
+        ordinaryIncome: ordinaryIncome,
+        isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
+        // Add required fields
+        incomeRecognized: ordinaryIncome + (isOrdinaryIncome ? 0 : spread),
+        taxRate: taxRate,
+        taxesPaid: taxesPaid
       });
     }
     
     // Next year event
     if (year2Shares > 0) {
+      const spread = spreadPerShare * year2Shares;
+      const ordinaryIncome = isOrdinaryIncome ? spread : 0;
+      const amtImpact = !isOrdinaryIncome ? spread * 0.26 : 0;
+      const taxRate = isOrdinaryIncome ? 0.35 : 0; // Estimated rate
+      const taxesPaid = ordinaryIncome * taxRate;
+      
       events.push({
         year: currentYear + 1,
         type: formState.equityType,
         sharesExercised: year2Shares,
-        spread: spreadPerShare * year2Shares,
-        amtImpact: !isOrdinaryIncome ? spreadPerShare * year2Shares * 0.26 : 0,
-        ordinaryIncome: isOrdinaryIncome ? spreadPerShare * year2Shares : 0,
-        isDisqualifyingDisposition: formState.isDisqualifyingDisposition
+        spread: spread,
+        amtImpact: amtImpact,
+        ordinaryIncome: ordinaryIncome,
+        isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
+        // Add required fields
+        incomeRecognized: ordinaryIncome + (isOrdinaryIncome ? 0 : spread),
+        taxRate: taxRate,
+        taxesPaid: taxesPaid
       });
     }
   }

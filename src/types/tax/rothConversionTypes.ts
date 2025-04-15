@@ -64,3 +64,111 @@ export interface YearlyConversionSummary {
   irmaa_impact: boolean;
   state_tax?: number;
 }
+
+// Multi-Year Scenario Data
+export interface MultiYearScenarioData {
+  startYear: number;
+  startAge: number;
+  numYears: number;
+  traditionalIRAStartBalance: number;
+  rothIRAStartBalance: number;
+  baseAnnualIncome: number;
+  incomeGrowthRate: number;
+  expectedAnnualReturn: number;
+  filingStatus: FilingStatusType;
+  conversionStrategy: ConversionStrategyType;
+  fixedConversionAmount?: number;
+  includeSpouse?: boolean;
+  spouseAge?: number;
+  spouseBaseAnnualIncome?: number;
+  spouseTraditionalIRAStartBalance?: number;
+  spouseRothIRAStartBalance?: number;
+  includeRMDs?: boolean;
+  rmdStartAge?: number;
+  spouseRmdStartAge?: number;
+  includeBeneficiary?: boolean;
+  beneficiaryAge?: number;
+  beneficiaryIncomeTaxRate?: number;
+  assumedDeathYear?: number;
+  spouseAssumedDeathYear?: number;
+  compareMfjVsMfs?: boolean;
+  isInCommunityPropertyState?: boolean;
+  splitCommunityIncome?: boolean;
+  useCharitablePlanning?: boolean;
+  charitableContributions?: CharitableContribution[];
+  dafBunching?: {
+    enabled: boolean;
+    bunchingYears: number;
+    bunchingAmount: number;
+  };
+}
+
+// Yearly Result for Multi-Year Scenarios
+export interface YearlyResult {
+  year: number;
+  age: number;
+  traditionalIRABalance: number;
+  rothIRABalance: number;
+  conversionAmount: number;
+  rmdAmount: number;
+  totalTax: number;
+  marginalRate: number;
+  effectiveRate: number;
+  warnings: TrapAlert[];
+  cumulativeTaxPaid: number;
+  cumulativeTaxSaved: number;
+  traditionalScenarioBalance: number;
+  rothScenarioBalance: number;
+  breakEvenYear?: boolean;
+  spouseAge?: number;
+  spouseTraditionalIRABalance?: number;
+  spouseRothIRABalance?: number;
+  spouseConversionAmount?: number;
+  spouseRmdAmount?: number;
+  mfsComparison?: {
+    mfjTotalTax: number;
+    spouse1Tax: number;
+    spouse2Tax: number;
+    combinedMfsTax: number;
+    taxDifference: number;
+  };
+  charitableContribution?: {
+    amount: number;
+    useQcd: boolean;
+    isBunching: boolean;
+    standardDeduction: number;
+    itemizedDeduction: number;
+    isItemizing: boolean;
+    taxSavings: number;
+    trapAvoidance?: {
+      title: string;
+      description: string;
+      savings: number;
+    }[];
+  };
+  communityPropertySplit?: {
+    originalPrimaryIncome: number;
+    originalSpouseIncome: number;
+    splitPrimaryIncome: number;
+    splitSpouseIncome: number;
+  };
+}
+
+// Charitable Contribution
+export interface CharitableContribution {
+  year: number;
+  amount: number;
+  useQcd: boolean;
+  isBunching?: boolean;
+}
+
+// Tax trap alert type
+export interface TrapAlert {
+  type: string;
+  message: string;
+  severity: 'low' | 'medium' | 'high';
+  trapType: string;
+}
+
+// Conversion strategy type
+export type ConversionStrategyType = 'fixed' | 'bracket_12' | 'bracket_22' | 'bracket_12_22';
