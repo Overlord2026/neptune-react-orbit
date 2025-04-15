@@ -32,8 +32,8 @@ const TaxTrapSection: React.FC<TaxTrapSectionProps> = ({
             social_security_amount: data.socialSecurityBenefits || 0,
             household_size: data.dependents.length + 1,
             medicare_enrollment: data.isOver65 || false,
-            aca_enrollment: data.hasHealthInsurance || false,
-            state_of_residence: data.address?.state
+            aca_enrollment: data.hasHealthInsurance || false
+            // Remove the state_of_residence field
           }}
           className="mb-4"
         />

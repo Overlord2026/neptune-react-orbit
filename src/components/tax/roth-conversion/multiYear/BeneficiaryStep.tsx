@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Info, User } from "lucide-react";
-import { MultiYearScenarioData } from '../types/ScenarioTypes';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 
 interface BeneficiaryStepProps {
   scenarioData: MultiYearScenarioData;
@@ -33,7 +33,7 @@ const BeneficiaryStep: React.FC<BeneficiaryStepProps> = ({
           <div className="flex items-center space-x-2 pt-2">
             <Switch 
               id="includeBeneficiary"
-              checked={scenarioData.includeBeneficiary}
+              checked={scenarioData.includeBeneficiary || false}
               onCheckedChange={(checked) => onUpdateScenarioData({ includeBeneficiary: checked })}
             />
             <Label htmlFor="includeBeneficiary">Include Beneficiary Analysis</Label>
@@ -90,7 +90,7 @@ const BeneficiaryStep: React.FC<BeneficiaryStepProps> = ({
                   id="assumedDeathYear" 
                   type="number"
                   min={scenarioData.startYear}
-                  max={scenarioData.startYear + scenarioData.numYears - 1}
+                  max={scenarioData.startYear + (scenarioData.numYears || 5) - 1} 
                   value={scenarioData.assumedDeathYear?.toString() || ''} 
                   onChange={(e) => {
                     const year = parseInt(e.target.value);
@@ -118,7 +118,7 @@ const BeneficiaryStep: React.FC<BeneficiaryStepProps> = ({
                       id="spouseAssumedDeathYear" 
                       type="number"
                       min={scenarioData.startYear}
-                      max={scenarioData.startYear + scenarioData.numYears - 1}
+                      max={scenarioData.startYear + (scenarioData.numYears || 5) - 1}
                       value={scenarioData.spouseAssumedDeathYear?.toString() || ''} 
                       onChange={(e) => {
                         const year = parseInt(e.target.value);

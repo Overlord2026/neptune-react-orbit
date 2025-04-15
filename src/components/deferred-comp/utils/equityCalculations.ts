@@ -77,13 +77,11 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
       
       events.push({
         year: currentYear,
-        type: formState.equityType,
         sharesExercised: year1Shares,
         spread: spread,
         amtImpact: amtImpact,
         ordinaryIncome: ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add required fields
         incomeRecognized: ordinaryIncome + (isOrdinaryIncome ? 0 : spread),
         taxRate: taxRate,
         taxesPaid: taxesPaid
@@ -100,13 +98,11 @@ export const getEquityEvents = (formState: EquityFormState): EquityCompEvent[] =
       
       events.push({
         year: currentYear + 1,
-        type: formState.equityType,
         sharesExercised: year2Shares,
         spread: spread,
         amtImpact: amtImpact,
         ordinaryIncome: ordinaryIncome,
         isDisqualifyingDisposition: formState.isDisqualifyingDisposition,
-        // Add required fields
         incomeRecognized: ordinaryIncome + (isOrdinaryIncome ? 0 : spread),
         taxRate: taxRate,
         taxesPaid: taxesPaid

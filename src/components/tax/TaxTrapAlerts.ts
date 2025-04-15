@@ -45,4 +45,8 @@ export const convertToUITrapAlert = (coreAlert: CoreTrapAlert): TrapAlert => {
   };
 };
 
-export { default } from './TaxTrapAlerts';
+// Import the component to re-export as default
+import TaxTrapAlertsComponent from './TaxTrapAlerts.tsx';
+
+// Export the component as default
+export default TaxTrapAlertsComponent;

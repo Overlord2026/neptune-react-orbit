@@ -1,4 +1,3 @@
-
 /**
  * Type definitions for equity calculations
  */
@@ -56,38 +55,29 @@ export interface EquityFormState {
 // Yearly impact of tax events
 export interface YearlyTaxImpact {
   year: number;
-  ordinaryIncome: number;
-  totalTax: number;
+  totalIncome: number;
+  taxableIncome: number;
+  taxPaid: number;
   marginalRate: number;
   effectiveRate: number;
-  netCash: number;
-  
-  // Add missing fields referenced in components
-  taxSavings?: number;
-  taxWithoutStrategy?: number;
-  irmaaImpact?: boolean;
-  amtAdjustment?: number;
-  amtImpact?: number;
-  incomeBracket?: string;
-  nextBracket?: string;
-  distanceToNextBracket?: number;
-  stateTax?: number;
-  federalTax?: number;
-  equityIncome?: number;
+  // Add missing fields
+  amtIncome?: number; // Added for equityCalculations
+  equityEvents?: EquityCompEvent[];
 }
 
 // Equity compensation event
 export interface EquityCompEvent {
   year: number;
-  event: string;
-  shares: number;
-  income: number;
-  tax: number;
-  netProceeds: number;
-  
-  // Add missing fields referenced in components
-  sharesExercised?: number;
-  spread?: number;
+  sharesExercised: number;
+  spread: number;
+  incomeRecognized: number;
+  taxRate: number;
+  taxesPaid: number;
+  // Add missing fields used in the codebase
+  type?: string; // equity type (NSO, ISO, etc)
+  amtImpact?: number;
+  ordinaryIncome?: number;
+  isDisqualifyingDisposition?: boolean;
 }
 
 // Deferral event

@@ -58,7 +58,7 @@ export const TAX_BRACKETS_DATA = {
   }
 };
 
-// Helper function to convert legacy filing status to current
+// Helper function to convert modern filing status to legacy
 export const convertFilingStatusToLegacy = (status: FilingStatusType): LegacyFilingStatusType => {
   if (status === 'married_joint') return 'married';
   return status as LegacyFilingStatusType;

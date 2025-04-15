@@ -3,8 +3,8 @@
  * Re-export charitable planning types
  */
 
-// Properly re-export named exports with the 'type' keyword
-export type { 
+// Direct re-export (no type keyword needed for rexport)
+export {
   CharitableInput, 
   CharitableStrategy,
   CharitablePlanning,
@@ -20,5 +20,6 @@ export type {
   CharitablePlanningContext,
   CharitableActionType,
   CharitableState,
-  PlanningTimeframe
+  PlanningTimeframe,
+  CharitableScenario // Added missing type
 } from './CharitableTypes';

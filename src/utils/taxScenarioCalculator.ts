@@ -1,4 +1,3 @@
-
 /**
  * Tax Scenario Calculator
  * 
@@ -61,7 +60,7 @@ export function calculateTaxScenario(
     (input.social_security * 0.85); // 85% of Social Security is typically taxable
     
   // Add spouse income for MFJ filing status
-  if (input.filing_status === "married" && 
+  if (input.filing_status === "married_joint" && 
       (input.spouseWages || 
        input.spouseInterest || 
        input.spouseDividends || 
@@ -94,7 +93,7 @@ export function calculateTaxScenario(
     (input.social_security * 0.85);
     
   // Add spouse's ordinary income for MFJ
-  if (input.filing_status === "married") {
+  if (input.filing_status === "married_joint") {
     ordinary_income +=
       (input.spouseWages || 0) + 
       (input.spouseInterest || 0) + 
@@ -108,7 +107,7 @@ export function calculateTaxScenario(
   let capital_gains = input.capital_gains;
   
   // Add spouse's capital gains for MFJ
-  if (input.filing_status === "married") {
+  if (input.filing_status === "married_joint") {
     capital_gains += (input.spouseCapitalGains || 0);
   }
   
@@ -206,4 +205,3 @@ export function calculateTaxScenarioWithSafeHarbor(
     safe_harbor: safeHarborResult
   };
 }
-

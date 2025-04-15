@@ -1,4 +1,3 @@
-
 /**
  * Type definitions for Roth conversion calculations
  */
@@ -89,8 +88,8 @@ export interface RothConversionScenario {
 export interface CharitableContribution {
   year: number;
   amount: number;
-  strategy: 'standard' | 'bunching' | 'qcd' | 'daf';
-  taxBenefit: number;
+  isBunching?: boolean;
+  useQcd?: boolean; // Added for compatibility
 }
 
 export interface YearlyConversionSummary {
@@ -107,15 +106,35 @@ export interface YearlyConversionSummary {
 }
 
 export interface MultiYearScenarioData {
-  totalConversionAmount: number;
-  totalTaxPaid: number;
-  averageTaxRate: number;
-  endingRothBalance: number;
-  endingTraditionalBalance: number;
-  yearlyData: YearlyResult[];
+  startYear: number; // Added
+  numYears: number; // Added
   filingStatus: FilingStatusType;
-  trapAlerts?: TrapAlert[];
-  trapAvoidanceStrategies?: TrapAvoidance[];
+  includeSpouse?: boolean;
+  spouseFirstName?: string;
+  spouseLastName?: string;
+  spouseAge?: number;
+  spouseRmdStartAge?: number;
+  spouseBaseAnnualIncome?: number;
+  spouseTraditionalIRAStartBalance?: number;
+  spouseRothIRAStartBalance?: number;
+  isInCommunityPropertyState?: boolean;
+  splitCommunityIncome?: boolean;
+  compareMfjVsMfs?: boolean;
+  combinedIRAApproach?: boolean;
+  spouseAssumedDeathYear?: number;
+  // Added for BeneficiaryStep
+  includeBeneficiary?: boolean;
+  beneficiaryAge?: number;
+  beneficiaryIncomeTaxRate?: number;
+  assumedDeathYear?: number;
+  // Added for charitable integration
+  useCharitablePlanning?: boolean;
+  charitableContributions?: CharitableContribution[];
+  dafBunching?: {
+    enabled: boolean;
+    bunchingYears: number;
+    bunchingAmount: number;
+  };
 }
 
 export interface YearlyResult {

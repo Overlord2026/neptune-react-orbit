@@ -6,9 +6,10 @@
  */
 
 import { TaxTrapInput, TaxTrapResult, checkTaxTraps } from '@/utils/taxTraps';
-import { TrapAvoidance } from '@/components/tax/roth-conversion/types/ScenarioTypes';
+import { TrapAvoidance } from '@/types/tax/rothConversionTypes';
 import { calculateBaseImpact } from './calculationCore';
 import { analyzeTrapAvoidance, generateTrapCheckInput } from './trapAvoidanceAnalysis';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 /**
  * Calculate complete tax impact of charitable contribution
@@ -48,18 +49,21 @@ export const calculateCharitableImpact = (
     adjustedAGI -= baseImpact.qcdImpact;
   }
   
+  // Convert legacy filing status to new format if needed
+  const normalizedFilingStatus = filingStatus === 'married' ? 'married_joint' as FilingStatusType : filingStatus as FilingStatusType;
+
   // Create a base input for trap checking
   const baseInput: TaxTrapInput = {
     scenario_id: `charitable_impact_${year}`,
     year: year,
-    filing_status: filingStatus as any,
+    filing_status: normalizedFilingStatus as any,
     agi: baseAGI,
     total_income: baseAGI,
     taxable_income: baseAGI - baseImpact.standardDeduction,
     capital_gains_long: 0,
     capital_gains_short: 0,
     social_security_amount: 0,
-    household_size: filingStatus === 'married' ? 2 : 1,
+    household_size: normalizedFilingStatus === 'married_joint' ? 2 : 1,
     medicare_enrollment: true, // Assume Medicare age for this analysis
     aca_enrollment: false
   };
