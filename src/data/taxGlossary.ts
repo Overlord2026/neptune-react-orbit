@@ -4,6 +4,7 @@ export type GlossaryTerm = {
   definition: string;
   category: 'basic' | 'advanced';
   link?: string;
+  id?: string; // Added to support the id property used in TaxGlossaryPage
 };
 
 export const taxGlossary: Record<string, GlossaryTerm> = {
@@ -109,10 +110,39 @@ export const taxGlossary: Record<string, GlossaryTerm> = {
   }
 };
 
+// Get a single glossary term by ID
 export const getGlossaryTerm = (termId: string): GlossaryTerm | undefined => {
   return taxGlossary[termId];
 };
 
+// Get all glossary terms with their IDs
 export const getAllGlossaryTerms = (): GlossaryTerm[] => {
   return Object.values(taxGlossary);
+};
+
+// Get all glossary terms with IDs included
+export const getTaxGlossaryTerms = (): (GlossaryTerm & { id: string })[] => {
+  return Object.entries(taxGlossary).map(([id, term]) => ({
+    ...term,
+    id
+  }));
+};
+
+// Get all unique categories from the glossary
+export const getTaxGlossaryCategories = (): string[] => {
+  const categories = new Set<string>();
+  Object.values(taxGlossary).forEach(term => {
+    categories.add(term.category);
+  });
+  return Array.from(categories);
+};
+
+// Get all terms for a specific category with IDs included
+export const getTaxGlossaryTermsByCategory = (category: string): (GlossaryTerm & { id: string })[] => {
+  return Object.entries(taxGlossary)
+    .filter(([_, term]) => term.category === category)
+    .map(([id, term]) => ({
+      ...term,
+      id
+    }));
 };
