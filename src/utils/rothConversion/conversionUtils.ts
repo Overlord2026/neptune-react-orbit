@@ -5,7 +5,7 @@
  * Functions for determining conversion amounts based on strategy.
  */
 
-import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 import { getMaxConversionAmount } from '../conversionStrategyUtils';
 
 interface ConversionAmountInput {

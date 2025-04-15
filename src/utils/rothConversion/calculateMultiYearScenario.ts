@@ -132,7 +132,8 @@ export const calculateMultiYearScenario = async (
       standardDeduction: 0,
       itemizedDeduction: 0,
       isItemizing: false,
-      taxSavings: 0
+      taxSavings: 0,
+      trapAvoidance: []
     };
     
     // Get charitable impact info from yearResult

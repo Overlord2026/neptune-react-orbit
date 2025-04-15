@@ -1,8 +1,9 @@
+
 // Import the standardized type from the central location
 import { ConversionStrategyType } from '../types/tax/rothConversionTypes';
 
-// Re-export it
-export { ConversionStrategyType };
+// Re-export it properly with 'export type' syntax for isolated modules
+export type { ConversionStrategyType };
 
 // Helper functions
 export const getConversionStrategyLabel = (strategy: ConversionStrategyType): string => {
@@ -205,4 +206,32 @@ export const estimateConversionTaxImpact = (
     marginalRate: estimatedTaxRate,
     effectiveRateOnConversion: conversionAmount > 0 ? taxIncrease / conversionAmount : 0
   };
+};
+
+// Export the missing function required by rothConversion/conversionUtils.ts
+export const getMaxConversionAmount = (
+  strategy: ConversionStrategyType,
+  baseIncome: number,
+  year: number,
+  filingStatus: string,
+  fixedAmount?: number
+): number => {
+  // Implementation based on strategy
+  switch (strategy) {
+    case 'fixed':
+      return fixedAmount || 0;
+    case 'bracket_12':
+      const brackets = getTaxBracketThresholds(year);
+      if (!brackets) return 0;
+      const statusKey = getFilingStatusKey(filingStatus);
+      const bracket12 = brackets.find((b: any) => b.label === '12%');
+      if (!bracket12) return 0;
+      return Math.max(0, bracket12[`${statusKey}Threshold`] - baseIncome);
+    case 'bracket_22':
+      return calculateConversionAmount(strategy, fixedAmount || 0, baseIncome, filingStatus, year);
+    case 'bracket_12_22':
+      return calculateConversionAmount(strategy, fixedAmount || 0, baseIncome, filingStatus, year);
+    default:
+      return 0;
+  }
 };

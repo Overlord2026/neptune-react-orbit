@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DollarSign, Info } from "lucide-react";
-import { MultiYearScenarioData, ConversionStrategyType } from '../../types/ScenarioTypes';
+import { MultiYearScenarioData, ConversionStrategyType } from '@/types/tax/rothConversionTypes';
 
 interface IncomeInformationCardProps {
   scenarioData: MultiYearScenarioData;

@@ -105,6 +105,11 @@ export interface MultiYearScenarioData {
   spouseFirstName?: string;
   spouseLastName?: string;
   combinedIRAApproach?: 'separate' | 'primary-first' | 'spouse-first' | 'proportional';
+  // Added for state tax support
+  includeStateTax?: boolean;
+  residentState?: StateCode;
+  futureResidentState?: StateCode;
+  stateRelocationYear?: number;
 }
 
 // Yearly Result for Multi-Year Scenarios
