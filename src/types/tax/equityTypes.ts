@@ -25,6 +25,15 @@ export interface EquityFormState {
   filingStatus?: 'single' | 'married_joint' | 'married_separate' | 'head_of_household';
   state?: string;
   includeStateTax?: boolean;
+  residentState?: string;
+  
+  // Add missing fields referenced in components
+  exerciseStrategy?: 'full' | 'partial' | 'split';
+  vestedShares?: number;
+  partialShares?: number;
+  strikePrice?: number;
+  splitYears?: number;
+  deferralStrategy?: 'single-year' | 'multi-year';
 }
 
 // Yearly impact of tax events
@@ -35,6 +44,17 @@ export interface YearlyTaxImpact {
   marginalRate: number;
   effectiveRate: number;
   netCash: number;
+  
+  // Add missing fields referenced in components
+  taxSavings?: number;
+  taxWithoutStrategy?: number;
+  irmaaImpact?: boolean;
+  amtAdjustment?: number;
+  incomeBracket?: string;
+  nextBracket?: string;
+  distanceToNextBracket?: number;
+  stateTax?: number;
+  federalTax?: number;
 }
 
 // Equity compensation event
@@ -45,6 +65,9 @@ export interface EquityCompEvent {
   income: number;
   tax: number;
   netProceeds: number;
+  
+  // Add missing field referenced in components
+  sharesExercised?: number;
 }
 
 // Deferral event

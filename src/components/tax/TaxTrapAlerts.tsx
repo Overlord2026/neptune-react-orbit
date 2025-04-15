@@ -16,7 +16,9 @@ export interface TrapAlert {
   trapType: string;
   severity: "info" | "warning" | "critical";
   message: string;
-  details?: any;
+  details?: string;
+  description?: string;
+  title?: string;
 }
 
 interface TaxTrapAlertsProps {
@@ -96,6 +98,8 @@ const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" })
           <div className="space-y-3">
             {alerts.map((alert, index) => {
               const { icon: Icon, containerClass, textClass, iconClass } = getSeverityDetails(alert.severity);
+              const displayMessage = alert.title || alert.message;
+              const displayDetails = alert.description || alert.details;
               
               return (
                 <div 
@@ -106,13 +110,13 @@ const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" })
                     <Icon className={`h-5 w-5 mt-0.5 ${iconClass}`} />
                     <div className="flex-1">
                       <h4 className={`font-medium text-base mb-1 ${textClass}`}>
-                        {alert.message}
+                        {displayMessage}
                       </h4>
-                      {alert.details && (
+                      {displayDetails && (
                         <p className="text-sm text-muted-foreground mb-2">
-                          {typeof alert.details === 'string' 
-                            ? alert.details 
-                            : JSON.stringify(alert.details)}
+                          {typeof displayDetails === 'string' 
+                            ? displayDetails 
+                            : JSON.stringify(displayDetails)}
                         </p>
                       )}
                       <Link 

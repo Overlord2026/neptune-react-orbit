@@ -12,7 +12,7 @@ export type LegacyFilingStatusType = 'single' | 'married' | 'married_separate' |
 
 // A mapping to convert from legacy to current filing status types
 export const convertLegacyFilingStatus = (status: LegacyFilingStatusType): FilingStatusType => {
-  return status === 'married' ? 'married_joint' : status;
+  return status === 'married' ? 'married_joint' : status as FilingStatusType;
 };
 
 // Unified W2Form
@@ -50,11 +50,11 @@ export const FILING_STEPS = [
 // Unified ItemizedDeductions
 export interface ItemizedDeductions {
   medicalExpenses: number;
-  stateTaxes: number;
   propertyTaxes: number;
   mortgageInterest: number;
   charitableContributions: number;
   otherDeductions: number;
+  stateTaxes: number;
 }
 
 // Unified TaxReturnData
