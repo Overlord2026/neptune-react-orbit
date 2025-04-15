@@ -1,4 +1,3 @@
-
 /**
  * Defines the comprehensive types of filing statuses used in tax calculations
  */
