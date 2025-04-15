@@ -66,7 +66,11 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       <tr className="bg-muted/30">
                         <td className="px-3 py-2 text-sm font-medium">Total</td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
-                          {formatCurrency(scenario.brackets_breakdown?.ordinary.reduce((sum, bracket) => sum + bracket.amount, 0) || 0)}
+                          {formatCurrency(
+                            Array.isArray(scenario.brackets_breakdown?.ordinary) 
+                              ? scenario.brackets_breakdown?.ordinary.reduce((sum, bracket) => sum + bracket.amount, 0) 
+                              : 0
+                          )}
                         </td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
                           {formatCurrency(scenario.ordinary_tax)}
@@ -101,7 +105,11 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       <tr className="bg-muted/30">
                         <td className="px-3 py-2 text-sm font-medium">Total</td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
-                          {formatCurrency(scenario.brackets_breakdown?.capitalGains.reduce((sum, bracket) => sum + bracket.amount, 0) || 0)}
+                          {formatCurrency(
+                            Array.isArray(scenario.brackets_breakdown?.capitalGains)
+                              ? scenario.brackets_breakdown?.capitalGains.reduce((sum, bracket) => sum + bracket.amount, 0) 
+                              : 0
+                          )}
                         </td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
                           {formatCurrency(scenario.capital_gains_tax)}

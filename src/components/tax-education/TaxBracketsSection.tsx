@@ -9,10 +9,11 @@ import {
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import GlossaryTerm from '@/components/GlossaryTerm';
 import DynamicContentText from '@/components/DynamicContentText';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 interface TaxBracketsSectionProps {
   selectedYear: number;
-  selectedFilingStatus: 'single' | 'married_joint' | 'head_of_household';
+  selectedFilingStatus: FilingStatusType;
 }
 
 const TaxBracketsSection: React.FC<TaxBracketsSectionProps> = ({
