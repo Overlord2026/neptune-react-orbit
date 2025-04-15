@@ -9,6 +9,7 @@ import GlossaryTerm from '@/components/GlossaryTerm';
 import InfoTooltip from '@/components/tax/InfoTooltip';
 import RealTimeBracketPreview from '@/components/tax/RealTimeBracketPreview';
 import ShareFeature from '@/components/tax-planning/ShareFeature';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 const RothConversionAnalysisPage = () => {
   // State for the bracket preview
@@ -52,7 +53,7 @@ const RothConversionAnalysisPage = () => {
         <RealTimeBracketPreview 
           baseIncome={120000} 
           year={2025} 
-          filingStatus="married"
+          filingStatus="married_joint"
           capitalGains={15000}
           maxConversion={500000}
           onChange={handleConversionChange}

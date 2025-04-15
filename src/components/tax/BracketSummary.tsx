@@ -56,7 +56,7 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {scenario.brackets_breakdown?.ordinary.map((bracket, index) => (
+                      {Array.isArray(scenario.brackets_breakdown?.ordinary) && scenario.brackets_breakdown?.ordinary.map((bracket, index) => (
                         <tr key={`ordinary-${index}`}>
                           <td className="px-3 py-2 text-sm">{formatPercent(bracket.bracket / 100)}</td>
                           <td className="px-3 py-2 text-sm text-right">{formatCurrency(bracket.amount)}</td>
@@ -95,7 +95,7 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {scenario.brackets_breakdown?.capitalGains.map((bracket, index) => (
+                      {Array.isArray(scenario.brackets_breakdown?.capitalGains) && scenario.brackets_breakdown?.capitalGains.map((bracket, index) => (
                         <tr key={`capital-${index}`}>
                           <td className="px-3 py-2 text-sm">{formatPercent(bracket.bracket / 100)}</td>
                           <td className="px-3 py-2 text-sm text-right">{formatCurrency(bracket.amount)}</td>

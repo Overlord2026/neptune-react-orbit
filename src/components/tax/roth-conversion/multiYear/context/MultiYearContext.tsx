@@ -1,91 +1,87 @@
 
-import React, { createContext, useContext, ReactNode } from 'react';
-import { MultiYearScenarioData, YearlyResult } from '../../types/ScenarioTypes';
-import { useMultiYearScenario } from '../../hooks/useMultiYearScenario';
+import React, { createContext, useContext, useState } from 'react';
+import { MultiYearScenarioData, YearlyResult } from '@/types/tax/rothConversionTypes';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 interface MultiYearContextType {
   scenarioData: MultiYearScenarioData;
-  yearlyResults: YearlyResult[];
-  isCalculating: boolean;
-  hasCalculated: boolean;
-  handleUpdateScenarioData: (newData: Partial<MultiYearScenarioData>) => void;
-  handleCalculate: () => void;
-  scenarioName: string;
+  updateScenarioData: (data: Partial<MultiYearScenarioData>) => void;
+  results: YearlyResult[];
+  setResults: (results: YearlyResult[]) => void;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+  currentStep: number;
+  setCurrentStep: (step: number) => void;
+  calculationError: string | null;
+  setCalculationError: (error: string | null) => void;
 }
+
+const defaultScenarioData: MultiYearScenarioData = {
+  startAge: 60,
+  startYear: new Date().getFullYear(),
+  numYears: 10,
+  traditionalIRABalance: 500000,
+  traditionalIRAStartBalance: 500000,
+  rothIRABalance: 100000,
+  rothIRAStartBalance: 100000,
+  inflationRate: 0.025,
+  investmentReturn: 0.06,
+  expectedAnnualReturn: 0.06,
+  filingStatus: 'married_joint',
+  stateIncomeTax: 0.05,
+  baseAnnualIncome: 120000,
+  conversionStrategy: 'fixed',
+  fixedConversionAmount: 50000,
+  includeSpouse: true,
+  spouseAge: 58,
+  spouseTraditionalIRABalance: 250000,
+  spouseRothIRABalance: 75000,
+  spouseTraditionalIRAStartBalance: 250000,
+  spouseRothIRAStartBalance: 75000,
+  spouseBaseAnnualIncome: 60000,
+  rmdStartAge: 73,
+  spouseRmdStartAge: 73,
+  includeRMDs: true,
+  includeIrmaa: true
+};
 
 const MultiYearContext = createContext<MultiYearContextType | undefined>(undefined);
 
-export const useMultiYearContext = () => {
-  const context = useContext(MultiYearContext);
-  if (context === undefined) {
-    throw new Error('useMultiYearContext must be used within a MultiYearProvider');
-  }
-  return context;
-};
+export const MultiYearProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [scenarioData, setScenarioData] = useState<MultiYearScenarioData>(defaultScenarioData);
+  const [results, setResults] = useState<YearlyResult[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [calculationError, setCalculationError] = useState<string | null>(null);
 
-interface MultiYearProviderProps {
-  children: ReactNode;
-}
-
-export const MultiYearProvider: React.FC<MultiYearProviderProps> = ({ children }) => {
-  // Initialize with default scenario data
-  const {
-    scenarioData,
-    yearlyResults,
-    isCalculating,
-    hasCalculated,
-    handleUpdateScenarioData,
-    handleCalculate
-  } = useMultiYearScenario({
-    startAge: 55,
-    startYear: new Date().getFullYear(),
-    numYears: 30,
-    filingStatus: 'married',
-    traditionalIRAStartBalance: 500000,
-    rothIRAStartBalance: 100000,
-    expectedAnnualReturn: 0.06,
-    baseAnnualIncome: 80000,
-    incomeGrowthRate: 0.02,
-    conversionStrategy: 'bracket_12',
-    includeRMDs: true,
-    rmdStartAge: 73,
-    includeBeneficiary: false,
-    beneficiaryAge: 50,
-    beneficiaryIncomeTaxRate: 0.24,
-    taxInflationAdjustment: true,
-    
-    includeSpouse: true,
-    spouseAge: 53,
-    spouseTraditionalIRAStartBalance: 300000,
-    spouseRothIRAStartBalance: 50000,
-    spouseBaseAnnualIncome: 60000,
-    spouseRmdStartAge: 73,
-    
-    combinedIRAApproach: true,
-    
-    isInCommunityPropertyState: false,
-    splitCommunityIncome: false,
-    
-    compareMfjVsMfs: false,
-    
-    includeIrmaa: true
-  });
-  
-  const scenarioName = `Multi-Year Roth Conversion (${scenarioData.startYear} - ${scenarioData.startYear + scenarioData.numYears - 1})`;
-
-  const value = {
-    scenarioData,
-    yearlyResults,
-    isCalculating,
-    hasCalculated,
-    handleUpdateScenarioData,
-    handleCalculate,
-    scenarioName
+  const updateScenarioData = (data: Partial<MultiYearScenarioData>) => {
+    setScenarioData(prev => ({ ...prev, ...data }));
   };
 
   return (
-    <MultiYearContext.Provider value={value}>
+    <MultiYearContext.Provider
+      value={{
+        scenarioData,
+        updateScenarioData,
+        results,
+        setResults,
+        isLoading,
+        setIsLoading,
+        currentStep,
+        setCurrentStep,
+        calculationError,
+        setCalculationError
+      }}
+    >
       {children}
     </MultiYearContext.Provider>
   );
+};
+
+export const useMultiYear = () => {
+  const context = useContext(MultiYearContext);
+  if (context === undefined) {
+    throw new Error('useMultiYear must be used within a MultiYearProvider');
+  }
+  return context;
 };

@@ -26,6 +26,24 @@ const TaxBracketsSection: React.FC<TaxBracketsSectionProps> = ({
     format: 'currency' as const
   };
 
+  // Generate example calculation based on the current filing status
+  const getExampleText = () => {
+    return (
+      <div className="p-4 bg-[#1A1F2C] rounded-md">
+        <p>
+          For a {selectedFilingStatus.replace('_', ' ')} filer with $60,000 taxable income in {selectedYear}:
+        </p>
+        <ul className="list-disc list-inside space-y-1">
+          <li>Pay 10% on first $11,000 = $1,100</li>
+          <li>Pay 12% on next $33,725 (from $11,001 to $44,725) = $4,047</li>
+          <li>Pay 22% on remaining $15,275 (from $44,726 to $60,000) = $3,361</li>
+          <li>Total tax = $8,508</li>
+          <li><GlossaryTerm termId="effective_tax_rate">Effective tax rate</GlossaryTerm> = 14.2% ($8,508 ÷ $60,000)</li>
+        </ul>
+      </div>
+    );
+  };
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="bg-[#1A1F2C]">
@@ -54,18 +72,7 @@ const TaxBracketsSection: React.FC<TaxBracketsSectionProps> = ({
                 See Example Calculation
               </AccordionTrigger>
               <AccordionContent>
-                <div className="p-4 bg-[#1A1F2C] rounded-md">
-                  <p>
-                    For a {selectedFilingStatus} filer with $60,000 taxable income in {selectedYear}:
-                  </p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>Pay 10% on first $11,000 = $1,100</li>
-                    <li>Pay 12% on next $33,725 (from $11,001 to $44,725) = $4,047</li>
-                    <li>Pay 22% on remaining $15,275 (from $44,726 to $60,000) = $3,361</li>
-                    <li>Total tax = $8,508</li>
-                    <li><GlossaryTerm termId="effective_tax_rate">Effective tax rate</GlossaryTerm> = 14.2% ($8,508 ÷ $60,000)</li>
-                  </ul>
-                </div>
+                {getExampleText()}
               </AccordionContent>
             </AccordionItem>
           </Accordion>
