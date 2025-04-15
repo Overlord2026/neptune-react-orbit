@@ -1,4 +1,3 @@
-
 import { FilingStatusType } from './filingTypes';
 import { StateCode } from '@/utils/stateTaxData';
 
@@ -44,6 +43,7 @@ export interface CharitableContribution {
   taxDeduction: number;
   description?: string;
   isQcd?: boolean;
+  isBunching?: boolean;
   recipient?: string;
 }
 
@@ -128,7 +128,6 @@ export interface MultiYearScenarioData {
   includeRMDs: boolean;
   includeIrmaa: boolean;
   
-  // Add missing fields
   isInCommunityPropertyState?: boolean;
   splitCommunityIncome?: boolean;
   assumedDeathYear?: number;
