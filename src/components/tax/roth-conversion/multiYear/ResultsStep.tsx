@@ -5,12 +5,12 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
-import { YearlyResult } from '@/types/tax/rothConversionTypes';
+import { MultiYearScenarioData, YearlyResult } from '@/types/tax/rothConversionTypes';
 import { useMultiYear } from './context/MultiYearContext';
 import { format } from 'date-fns';
 import { Separator } from '@/components/ui/separator';
 
-// Create the RmdScheduleDisplay component since it was missing
+// Create the RmdScheduleDisplay component
 interface RmdScheduleDisplayProps {
   results: YearlyResult[];
   includeSpouse: boolean;
@@ -63,12 +63,16 @@ const RmdScheduleDisplay: React.FC<RmdScheduleDisplayProps> = ({ results, includ
   );
 };
 
+// Update the interface to match the props passed from TabContentManager
 interface ResultsStepProps {
-  // Empty interface since we're using context
+  yearlyResults: YearlyResult[];
+  scenarioData: MultiYearScenarioData;
+  isCalculating: boolean;
 }
 
-const ResultsStep: React.FC<ResultsStepProps> = () => {
-  const { results, scenarioData } = useMultiYear();
+const ResultsStep: React.FC<ResultsStepProps> = ({ yearlyResults, scenarioData, isCalculating }) => {
+  // Use the props directly instead of context
+  const results = yearlyResults;
 
   const accountBalanceForYear = (result: YearlyResult, showSpouse: boolean) => {
     return showSpouse 

@@ -46,6 +46,7 @@ export interface CharitableContribution {
   isQcd?: boolean;
   isBunching?: boolean;
   recipient?: string;
+  useQcd?: boolean;  // Add this property which is referenced in code
 }
 
 export type ConversionStrategyType = 'fixed' | 'partial' | 'bracket_fill' | 'tax_efficient' | 'custom' | 'bracket_12' | 'bracket_22' | 'bracket_12_22';
@@ -166,4 +167,5 @@ export interface MultiYearScenarioData {
   spouseLastName?: string;
   combinedIRAApproach?: boolean;
   incomeGrowthRate?: number;
+  dafBunching?: boolean;
 }

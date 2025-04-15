@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TabsContent } from "@/components/ui/tabs";
 import { useMultiYearContext } from './context/MultiYearContext';
@@ -22,7 +23,7 @@ const TabContentManager: React.FC<TabContentManagerProps> = ({
 }) => {
   const {
     scenarioData,
-    yearlyResults,
+    results,
     isCalculating,
     handleUpdateScenarioData,
     handleCalculate
@@ -83,7 +84,7 @@ const TabContentManager: React.FC<TabContentManagerProps> = ({
       
       <TabsContent value="results" className="mt-0 space-y-4">
         <ResultsStep 
-          yearlyResults={yearlyResults}
+          yearlyResults={results}
           scenarioData={scenarioData}
           isCalculating={isCalculating}
         />
