@@ -29,6 +29,7 @@ export interface TaxInput {
   splitCommunityIncome?: boolean;
   includeStateTax?: boolean;
   residentState?: string;
+  stateRelocationYear?: number;
 }
 
 export interface TaxResult {
@@ -55,6 +56,7 @@ export interface TaxResult {
   tax_data_warning?: string;
   mfs_comparison?: any;
   safe_harbor?: any;
+  standard_deduction?: number;
 }
 
 export interface TaxScenario extends TaxResult {

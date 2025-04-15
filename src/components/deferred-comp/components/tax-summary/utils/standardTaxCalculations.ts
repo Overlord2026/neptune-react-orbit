@@ -2,7 +2,7 @@
 /**
  * Standard tax calculation utilities
  */
-import { EquityFormState } from "../../../types";
+import { EquityFormState } from "../../../../../types/tax/equityTypes";
 import { getTaxBracketRate } from "./taxBrackets";
 
 /**
@@ -44,7 +44,7 @@ export const calculateDeferredIncome = (formState: EquityFormState) => {
     // Income added to next year
     if (formState.deferralStrategy === "next-year") {
       nextYearIncome = deferredIncome;
-    } else if (formState.deferralStrategy === "multi-year" || formState.deferralStrategy === "staggered") {
+    } else if (formState.deferralStrategy === "multi-year") {
       // If staggered, divide by years
       nextYearIncome = deferredIncome / (formState.deferralYears || 2);
     }

@@ -6,7 +6,7 @@
 import { FilingStatusType } from './filingTypes';
 
 // Equity types
-export type EquityType = "NSO" | "ISO" | "RSU";
+export type EquityType = "NSO" | "ISO" | "RSU" | "ESPP";
 
 // Form state for equity compensation
 export interface EquityFormState {
@@ -16,21 +16,32 @@ export interface EquityFormState {
   hasDeferredComp: boolean;
   includeStateTax: boolean;
   residentState?: string;
+  employer?: string;
   
   // Equity details
   sharePrice: number;
   grantPrice: number;
   numShares: number;
+  vestedShares: number;
+  partialShares: number;
+  shareCount?: number;
+  fairMarketValue: number;
+  strikePrice: number;
   isDisqualifyingDisposition: boolean;
+  holdingPeriod?: number;
   
   // Strategy options
   deferralAmount: number;
   deferralStrategy: "next-year" | "multi-year";
   deferralYears?: number;
-  exerciseStrategy: "all-now" | "split" | "all-later";
+  exerciseStrategy: "full" | "partial" | "split";
   splitYears?: number;
   splitRatio?: number;
   planningApproach: "single-year" | "multi-year";
+  
+  // Additional planning options
+  sabbaticalYear?: number;
+  retirementYear?: number;
 }
 
 // Equity scenario
@@ -97,4 +108,9 @@ export interface TaxImpactResult {
   multiYearImpact: YearlyTaxImpact[];
   equityEvents: EquityCompEvent[];
   deferralEvents: DeferralEvent[];
+  federal_tax?: number;
+  state_tax?: number;
+  updated_at?: Date;
+  standard_deduction?: number;
+  brackets?: any[];
 }

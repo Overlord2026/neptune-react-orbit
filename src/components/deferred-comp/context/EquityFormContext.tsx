@@ -41,7 +41,7 @@ const EquityFormContext = createContext<EquityFormContextType | undefined>(undef
 export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [formState, setFormState] = useState<EquityFormState>({
     ...defaultFormState,
-    equityType: "", // Use empty string instead of "NONE"
+    equityType: "none", // Use "none" instead of empty string
     hasDeferredComp: false,
   });
   
@@ -52,7 +52,7 @@ export const EquityFormProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const resetForm = useCallback(() => {
     setFormState({
       ...defaultFormState,
-      equityType: "", // Use empty string instead of "NONE"
+      equityType: "none", // Use "none" instead of empty string
       hasDeferredComp: false,
     });
   }, []);
