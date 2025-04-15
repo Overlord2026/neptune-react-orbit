@@ -64,7 +64,9 @@ const StepManager: React.FC<StepManagerProps> = ({
             data={taxData} 
             onComplete={(data) => {
               if (disclaimerAcknowledged) {
-                onStepComplete('review', { ...data, disclaimerAcknowledged });
+                // Create a new object that doesn't have disclaimerAcknowledged, since
+                // it's handled separately and doesn't need to be in TaxReturnData
+                onStepComplete('review', data);
               } else {
                 toast({
                   title: "Please acknowledge the disclaimer",

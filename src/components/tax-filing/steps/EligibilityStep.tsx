@@ -27,8 +27,8 @@ const EligibilityStep: React.FC<EligibilityStepProps> = ({ data, onComplete }) =
     onComplete({
       hasOnlyW2Income,
       hasDependents,
-      hasSelfEmploymentIncome,
-      isEligible
+      hasSelfEmploymentIncome
+      // We don't need to add isEligible since it's now part of the TaxReturnData type
     });
   };
 

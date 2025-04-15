@@ -27,7 +27,7 @@ const personalInfoSchema = z.object({
     street: z.string().min(1, "Street address is required"),
     city: z.string().min(1, "City is required"),
     state: z.string().min(2, "State is required"),
-    zip: z.string().regex(/^\d{5}(-\d{4})?$/, "ZIP code must be in format XXXXX or XXXXX-XXXX"),
+    zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, "ZIP code must be in format XXXXX or XXXXX-XXXX"),
   }),
   dependents: z.array(
     z.object({
@@ -53,10 +53,10 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
         street: data.address.street,
         city: data.address.city,
         state: data.address.state,
-        zip: data.address.zip,
+        zipCode: data.address.zipCode,
       },
       dependents: data.dependents.length > 0 ? data.dependents.map(d => ({
-        name: d.name,
+        name: d.name || `${d.firstName} ${d.lastName}`,
         ssn: d.ssn,
         relationship: d.relationship,
         dateOfBirth: d.dateOfBirth
@@ -79,7 +79,7 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
         street: values.address.street,
         city: values.address.city,
         state: values.address.state,
-        zip: values.address.zip,
+        zipCode: values.address.zipCode,
       },
       dependents: values.dependents.map(dependent => ({
         name: dependent.name,
@@ -218,7 +218,7 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onComplete })
               />
               <FormField
                 control={form.control}
-                name="address.zip"
+                name="address.zipCode"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>ZIP Code</FormLabel>

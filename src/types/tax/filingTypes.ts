@@ -84,13 +84,24 @@ export interface TaxReturnData {
     routingNumber: string;
     accountNumber: string;
   };
+  // Additional fields for TaxTrapSection
+  investmentIncome?: number;
+  socialSecurityBenefits?: number;
+  isOver65?: boolean;
+  hasHealthInsurance?: boolean;
+  isEligible?: boolean;
+  disclaimerAcknowledged?: boolean;
+  stateTax?: number;
 }
 
 export interface Dependent {
-  firstName: string;
-  lastName: string;
+  name: string;
+  ssn: string;
   relationship: string;
-  age: number;
+  dateOfBirth?: string;
+  firstName?: string;
+  lastName?: string;
+  age?: number;
 }
 
 export interface ItemizedDeductions {

@@ -35,6 +35,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data, onComplete }) => {
   }, [data]);
   
   const handleSubmit = () => {
+    // We're using the updated TaxReturnData type which includes stateTax
     onComplete({
       calculatedRefund,
       calculatedOwed,

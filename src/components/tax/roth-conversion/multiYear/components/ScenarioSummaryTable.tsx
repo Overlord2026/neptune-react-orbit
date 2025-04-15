@@ -43,8 +43,8 @@ const ScenarioSummaryTable: React.FC<ScenarioSummaryTableProps> = ({
   const averageEffectiveRate = totalTaxPaid / totalConversion;
   
   // Calculate balance metrics
-  const initialBalance = yearlyResults[0].traditionalIRABalance + (yearlyResults[0].spouseTraditionalIRABalance || 0);
-  const finalRothBalance = finalYearResult.rothIRABalance + (finalYearResult.spouseRothIRABalance || 0);
+  const initialBalance = yearlyResults[0].traditionalIraBalance + (yearlyResults[0].spouseTraditionalIraBalance || 0);
+  const finalRothBalance = finalYearResult.rothIraBalance + (finalYearResult.spouseRothIraBalance || 0);
   
   return (
     <Card>
