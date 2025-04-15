@@ -7,6 +7,7 @@ import { formatCurrency, formatPercent } from './formatUtils';
 
 // Export formatters for backward compatibility
 export { formatCurrency, formatPercent } from './formatUtils';
+export { FilingStatusType, LegacyFilingStatusType, convertLegacyFilingStatus } from '@/types/tax/filingTypes';
 
 // Tax bracket types
 export type BracketType = "ordinary" | "ltcg";
@@ -42,6 +43,25 @@ export const STANDARD_DEDUCTION_BY_YEAR = {
     head_of_household: 21900,
     qualifying_widow: 29200
   }
+};
+
+// Export tax brackets data for other modules
+export const TAX_BRACKETS_DATA = {
+  2022: {
+    // Tax bracket data here
+  },
+  2023: {
+    // Tax bracket data here
+  },
+  2024: {
+    // Tax bracket data here
+  }
+};
+
+// Helper function to convert legacy filing status to current
+export const convertFilingStatusToLegacy = (status: FilingStatusType): LegacyFilingStatusType => {
+  if (status === 'married_joint') return 'married';
+  return status as LegacyFilingStatusType;
 };
 
 // Helper function that maps legacy filing status to current filing status for bracket lookups
@@ -140,6 +160,30 @@ export function getBrackets(year: number, filingStatus: FilingStatusType | Legac
   // Return the relevant brackets
   return brackets[bracketType][normalizedFilingStatus as keyof typeof brackets[typeof bracketType]] || 
          brackets[bracketType].single;  // Default to single if status not found
+}
+
+// Calculate tax for a specific income amount
+export function calculateTax(income: number, year: number, filingStatus: FilingStatusType): number {
+  const brackets = getBrackets(year, filingStatus);
+  let tax = 0;
+  
+  for (let i = 0; i < brackets.length; i++) {
+    const bracket = brackets[i];
+    const prevBracketMax = i > 0 ? brackets[i-1].bracket_max : 0;
+    
+    if (income > prevBracketMax) {
+      const taxableInThisBracket = Math.min(income - prevBracketMax, bracket.bracket_max - prevBracketMax);
+      tax += taxableInThisBracket * bracket.rate;
+    }
+  }
+  
+  return tax;
+}
+
+// Calculate effective tax rate
+export function calculateEffectiveRate(tax: number, income: number): number {
+  if (income <= 0) return 0;
+  return tax / income;
 }
 
 // For backward compatibility with getTaxBracket

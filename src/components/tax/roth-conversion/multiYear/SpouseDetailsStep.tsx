@@ -10,6 +10,7 @@ import { Info, AlertTriangle, Users, X, Check } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MultiYearScenarioData } from '../types/ScenarioTypes';
 import { Checkbox } from "@/components/ui/checkbox";
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 interface SpouseDetailsStepProps {
   scenarioData: MultiYearScenarioData;
@@ -21,7 +22,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
   onUpdateScenarioData 
 }) => {
   const [isMarried, setIsMarried] = useState<boolean>(
-    scenarioData.filingStatus === 'married' || scenarioData.filingStatus === 'married_separate'
+    scenarioData.filingStatus === 'married_joint' || scenarioData.filingStatus === 'married_separate'
   );
 
   // Helper to format currency inputs
@@ -46,12 +47,12 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
     
     if (isMarried) {
       onUpdateScenarioData({ 
-        filingStatus: 'married',
+        filingStatus: 'married_joint' as FilingStatusType,
         includeSpouse: true
       });
     } else {
       onUpdateScenarioData({ 
-        filingStatus: 'single',
+        filingStatus: 'single' as FilingStatusType,
         includeSpouse: false,
         isInCommunityPropertyState: false,
         splitCommunityIncome: false,
@@ -100,7 +101,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
                   value={scenarioData.filingStatus} 
                   onValueChange={(value) => {
                     onUpdateScenarioData({ 
-                      filingStatus: value as 'single' | 'married' | 'married_separate' | 'head_of_household',
+                      filingStatus: value as FilingStatusType,
                     });
                   }}
                 >
@@ -108,7 +109,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
                     <SelectValue placeholder="Select filing status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="married">Married Filing Jointly (MFJ)</SelectItem>
+                    <SelectItem value="married_joint">Married Filing Jointly (MFJ)</SelectItem>
                     <SelectItem value="married_separate">Married Filing Separately (MFS)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -303,7 +304,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
               <div className="flex items-center space-x-2 pt-2">
                 <Switch 
                   id="combinedIRAApproach"
-                  checked={scenarioData.combinedIRAApproach}
+                  checked={!!scenarioData.combinedIRAApproach}
                   onCheckedChange={(checked) => onUpdateScenarioData({ combinedIRAApproach: checked })}
                 />
                 <Label htmlFor="combinedIRAApproach">Use combined approach for IRA planning</Label>

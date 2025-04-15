@@ -3,6 +3,7 @@
  * Unified type definitions for tax calculations
  */
 import { FilingStatusType } from "./filingTypes";
+import { StateCode } from "../../utils/stateTaxData";
 
 export interface TaxInput {
   year: number;
@@ -21,8 +22,23 @@ export interface TaxInput {
   spouseWages?: number;
   spouseIraDistributions?: number;
   spouseRothConversion?: number;
+  
+  // Added missing spouse fields
+  spouseInterest?: number;
+  spouseDividends?: number;
+  spouseCapitalGains?: number;
+  spouseSocialSecurity?: number;
+  
+  // Added state tax fields
+  includeStateTax?: boolean;
+  residentState?: StateCode;
+  
+  // Added community property fields
   isInCommunityPropertyState?: boolean;
   splitCommunityIncome?: boolean;
+  
+  // Date for historical tax data version selection
+  scenarioDate?: Date;
 }
 
 export interface TaxResult {
@@ -37,6 +53,7 @@ export interface TaxResult {
   total_tax: number;
   federal_tax: number;
   state_tax?: number;
+  state_code?: StateCode;
   marginal_rate: number;
   effective_rate: number;
   marginal_capital_gains_rate?: number;
@@ -78,6 +95,10 @@ export interface TaxResult {
   };
   tax_data_version?: string;
   tax_data_is_current?: boolean;
+  tax_data_updated_at?: Date;
+  safe_harbor?: any;
+  tax_data_warning?: string;
+  updated_at?: Date;
 }
 
 export interface TaxScenario extends TaxResult {

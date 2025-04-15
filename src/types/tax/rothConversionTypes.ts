@@ -104,7 +104,7 @@ export interface MultiYearScenarioData {
   // Additional fields needed for SpouseDetailsStep
   spouseFirstName?: string;
   spouseLastName?: string;
-  combinedIRAApproach?: 'separate' | 'primary-first' | 'spouse-first' | 'proportional';
+  combinedIRAApproach?: boolean;  // Changed from string union to boolean
   // Added for state tax support
   includeStateTax?: boolean;
   residentState?: StateCode;

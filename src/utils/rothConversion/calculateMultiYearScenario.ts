@@ -65,7 +65,9 @@ export const calculateMultiYearScenario = async (
       spouseConversionAmount,
       taxResult,
       noConversionTaxResult,
-      warnings
+      warnings,
+      charitableContribution,
+      charitableImpact
     } = yearResult;
 
     // Calculate tax savings/cost
@@ -124,24 +126,16 @@ export const calculateMultiYearScenario = async (
       }
     }
     
-    // Extract charitable contribution info from yearResult
-    const charitableContribution = yearResult.charitableContribution || {
-      amount: 0,
-      useQcd: false,
-      isBunching: false,
-      standardDeduction: 0,
-      itemizedDeduction: 0,
-      isItemizing: false,
-      taxSavings: 0,
+    // Complete charitable contribution info from yearResult if available
+    const completeCharitableContribution = {
+      amount: charitableContribution?.amount || 0,
+      useQcd: charitableContribution?.useQcd || false,
+      isBunching: charitableContribution?.isBunching || false,
+      standardDeduction: charitableImpact?.standardDeduction || 0,
+      itemizedDeduction: charitableImpact?.itemizedDeduction || 0, 
+      isItemizing: charitableImpact?.isItemizing || false,
+      taxSavings: charitableImpact?.taxSavings || 0,
       trapAvoidance: []
-    };
-    
-    // Get charitable impact info from yearResult
-    const charitableImpact = yearResult.charitableImpact || {
-      standardDeduction: 0,
-      itemizedDeduction: 0,
-      isItemizing: false,
-      taxSavings: 0
     };
     
     // Add this year's results to the array
@@ -173,7 +167,7 @@ export const calculateMultiYearScenario = async (
       mfsComparison,
       
       // Charitable contribution impact
-      charitableContribution
+      charitableContribution: completeCharitableContribution
     });
   }
   

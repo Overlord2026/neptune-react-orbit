@@ -8,6 +8,7 @@
 
 import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
 import { calculateTaxScenario } from '../taxCalculator';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 // Import specialized calculation modules
 import { calculateYearlyIncome } from './yearCalculation/income/incomeCalculation';
@@ -98,7 +99,7 @@ export function processSingleYearCalculation({
     filingStatus: scenarioData.filingStatus,
     baseAGI,
     currentAge,
-    isMarried: scenarioData.filingStatus === 'married',
+    isMarried: scenarioData.filingStatus === 'married_joint' || scenarioData.filingStatus === 'married_separate',
     isMedicare: currentAge >= 65
   });
   

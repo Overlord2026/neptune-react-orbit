@@ -14,7 +14,7 @@ import { DeferralImpactCard } from "./DeferralImpactCard";
 import { EquityDisclaimerSection } from "./EquityDisclaimerSection";
 import { toast } from "sonner";
 import { saveScenario, EquityScenario } from "@/utils/taxScenario";
-import { FilingStatusType } from "@/utils/taxBracketData";
+import { FilingStatusType } from "@/types/tax/filingTypes";
 import { LoadingStateDisplay } from "./LoadingState";
 
 interface TaxOutputStepProps {
@@ -45,7 +45,7 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
       const results = calculateMultiYearImpact();
       const yearData = results.find(y => y.year === currentYear) || results[0];
       
-      const scenarioData: EquityScenario = {
+      const scenarioData: Partial<EquityScenario> = {
         scenario_name: `${formState.equityType || "Deferred"} Analysis - ${new Date().toLocaleDateString()}`,
         type: "equity-compensation",
         year: currentYear,
@@ -59,25 +59,17 @@ export const TaxOutputStep: React.FC<TaxOutputStepProps> = ({ onPrevious }) => {
         marginal_rate: yearData.marginalRate,
         marginal_capital_gains_rate: 0,
         effective_rate: yearData.totalTax / yearData.ordinaryIncome,
-        updated_at: new Date(),
-        brackets_breakdown: {
-          ordinary: [
-            { bracket: 10, amount: 10000, tax: 1000 },
-            { bracket: 22, amount: yearData.ordinaryIncome - 10000, tax: (yearData.ordinaryIncome - 10000) * 0.22 }
-          ],
-          capitalGains: []
-        },
-        tax_data_updated_at: new Date(),
-        tax_data_is_current: true,
-        tax_data_version: "2025.1",
-        
+        standard_deduction: 12950, // Using 2022 value
+        federal_tax: yearData.totalTax,
+        brackets: [],
         formState,
         results: calculateMultiYearImpact(),
         amtImpact: formState.equityType === "ISO" ? calculateAmtImpact() : 0,
-        deferralBenefit: formState.hasDeferredComp ? calculateDeferralBenefit() : 0
+        deferralBenefit: formState.hasDeferredComp ? calculateDeferralBenefit() : 0,
+        tax_data_is_current: true,
       };
 
-      await saveScenario(scenarioData);
+      await saveScenario(scenarioData as EquityScenario);
       toast.success("Your analysis has been saved successfully.");
     } catch (error) {
       console.error("Error saving scenario:", error);

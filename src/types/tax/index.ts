@@ -4,7 +4,7 @@
  */
 
 // Use explicit named exports instead of star exports
-export type { EquityTypes, EquityScenario, EquityCompEvent } from './equityTypes';
+export type { EquityType, EquityScenario, EquityCompEvent } from './equityTypes';
 export type { FilingStatusType, LegacyFilingStatusType, W2Form, TaxReturnData } from './filingTypes';
 export type { TaxInput, TaxResult, TaxScenario } from './taxCalculationTypes';
 export type { 
@@ -18,6 +18,3 @@ export type {
   ConversionStrategyType,
   TrapAvoidance
 } from './rothConversionTypes';
-
-// If any of these modules have default exports that need to be re-exported:
-// export { default as EquityTypesDefault } from './equityTypes';

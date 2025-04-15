@@ -5,12 +5,13 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from '@/hooks/use-toast';
 import { TaxTrapAdapter } from '@/components/tax/TaxTrapAdapter';
 import RothConversionSlider from '@/components/tax/RothConversionSlider';
-import { TaxInput, calculateTaxScenario, TaxResult, FilingStatusType } from '@/utils/taxCalculator';
+import { TaxInput, calculateTaxScenario, TaxResult } from '@/utils/taxCalculator';
 import { Shield } from 'lucide-react';
 import BracketSummary from '@/components/tax/BracketSummary';
 import { Link } from 'react-router-dom';
 import RealTimeBracketPreview from '@/components/tax/RealTimeBracketPreview';
 import ShareFeature from '@/components/tax-planning/ShareFeature';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 const INITIAL_TAX_INPUT: TaxInput = {
   year: 2025,
@@ -23,7 +24,7 @@ const INITIAL_TAX_INPUT: TaxInput = {
   social_security: 30000,
   isItemizedDeduction: false,
   itemizedDeductionAmount: 0,
-  filing_status: 'married',
+  filing_status: 'married_joint',
 };
 
 const SCENARIO_ID = "2025-base-scenario";
@@ -89,8 +90,11 @@ const Scenario2025Return: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Filing Status:</span>
-                  <span className="font-medium">{taxInput.filing_status === 'married' ? 'Married Filing Jointly' : 
-                                              taxInput.filing_status === 'single' ? 'Single' : 'Head of Household'}</span>
+                  <span className="font-medium">
+                    {taxInput.filing_status === 'married_joint' ? 'Married Filing Jointly' : 
+                     taxInput.filing_status === 'single' ? 'Single' : 
+                     taxInput.filing_status === 'head_of_household' ? 'Head of Household' : 'Married Filing Separately'}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Wages:</span>
@@ -133,7 +137,7 @@ const Scenario2025Return: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Total Income:</span>
-                    <span className="font-medium">${taxResult.total_income.toLocaleString()}</span>
+                    <span className="font-medium">${taxResult.total_income?.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Adjusted Gross Income:</span>
@@ -180,7 +184,7 @@ const Scenario2025Return: React.FC = () => {
               year: taxInput.year,
               filing_status: taxInput.filing_status,
               agi: taxResult.agi,
-              total_income: taxResult.total_income,
+              total_income: taxResult.total_income || 0,
               taxable_income: taxResult.taxable_income,
               capital_gains_long: taxInput.capital_gains,
               capital_gains_short: 0,

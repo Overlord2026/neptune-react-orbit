@@ -21,22 +21,20 @@ export function applyStateTaxInfo(
     taxInput.includeStateTax = true;
     
     // Safely handle state code assignment
-    taxInput.residentState = 
-      (scenarioData.residentState !== "" && 
-       scenarioData.residentState !== "NONE" && 
-       scenarioData.residentState !== "OTHER") 
-        ? scenarioData.residentState as StateCode 
-        : undefined;
+    if (scenarioData.residentState !== "" && 
+        scenarioData.residentState !== "NONE" && 
+        scenarioData.residentState !== "OTHER") {
+      taxInput.residentState = scenarioData.residentState as StateCode;
+    }
     
     // Handle potential state relocation in multi-year scenarios
     if (scenarioData.stateRelocationYear && currentYear >= scenarioData.stateRelocationYear) {
-      taxInput.residentState = 
-        (scenarioData.futureResidentState && 
-         scenarioData.futureResidentState !== "" && 
-         scenarioData.futureResidentState !== "NONE" && 
-         scenarioData.futureResidentState !== "OTHER")
-          ? scenarioData.futureResidentState as StateCode
-          : undefined;
+      if (scenarioData.futureResidentState && 
+          scenarioData.futureResidentState !== "" && 
+          scenarioData.futureResidentState !== "NONE" && 
+          scenarioData.futureResidentState !== "OTHER") {
+        taxInput.residentState = scenarioData.futureResidentState as StateCode;
+      }
     }
   }
 }

@@ -1,122 +1,149 @@
 
-import React, { useState, useMemo } from 'react';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Search } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { taxGlossary } from '@/data/taxGlossary';
-import GlossaryTerm from '@/components/GlossaryTerm';
+import React, { useState } from 'react';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { getTaxGlossaryCategories, getTaxGlossaryTerms, getTaxGlossaryTermsByCategory } from '@/data/taxGlossary';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import GlossaryTerm from "@/components/GlossaryTerm";
+import { SearchIcon } from 'lucide-react';
 
-interface Term {
-  id: string;
-  term: string;
-  definition: string;
-  category: string;
-}
-
-const TaxGlossaryPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+const TaxGlossaryPage = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const allTerms = getTaxGlossaryTerms();
+  const categories = getTaxGlossaryCategories();
   
-  const categories = useMemo(() => {
-    const cats = ['all'];
-    taxGlossary.forEach(term => {
-      if (!cats.includes(term.category)) {
-        cats.push(term.category);
-      }
-    });
-    return cats;
-  }, []);
-
-  const filteredTerms = useMemo(() => {
-    return taxGlossary.filter(term => {
-      // First apply category filter
-      if (selectedCategory !== 'all' && term.category !== selectedCategory) {
-        return false;
-      }
-      
-      // Then apply search filter
-      if (searchQuery === '') {
-        return true;
-      }
-      
-      return (
-        term.term.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        term.definition.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    });
-  }, [searchQuery, selectedCategory]);
+  // Filter terms based on search query
+  const filteredTerms = allTerms.filter(term => 
+    term.term.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    term.definition.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="container content-padding section-margin">
-      <div className="flex flex-col items-start justify-between space-y-2">
-        <div className="space-y-0.5">
-          <h2 className="text-3xl font-bold tracking-tight neptune-gold flex items-center">
-            <BookOpen className="mr-2 h-6 w-6" />
-            Tax Glossary
-          </h2>
-          <p className="text-muted-foreground">
-            Comprehensive definitions of tax terms, concepts, and regulations.
-          </p>
-        </div>
+    <div className="container mx-auto py-8 max-w-4xl">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold mb-2">Tax Planning Glossary</h1>
+        <p className="text-muted-foreground">
+          Navigate tax terminology with definitions and explanations of common tax planning concepts.
+        </p>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-4 items-start mt-6">
-        <div className="relative w-full sm:max-w-sm">
-          <Search className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
+      <div className="mb-6">
+        <div className="relative">
+          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search terms or definitions"
-            className="pl-9"
+            placeholder="Search tax terms..."
+            className="pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
-        <div className="flex gap-2 flex-wrap">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-3 py-1 text-sm rounded ${
-                selectedCategory === category 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-              }`}
-            >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </button>
-          ))}
-        </div>
       </div>
       
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="text-xl">
-            {selectedCategory === 'all' ? 'All Terms' : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Terms`}
-            <span className="text-sm text-muted-foreground ml-2">
-              ({filteredTerms.length} {filteredTerms.length === 1 ? 'term' : 'terms'})
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredTerms.length > 0 ? (
-              filteredTerms.map((term) => (
-                <GlossaryTerm 
-                  key={term.id}
-                  term={term.term}
-                  definition={term.definition}
-                  category={term.category}
-                />
-              ))
-            ) : (
-              <p className="text-muted-foreground col-span-2 text-center py-8">
-                No terms found matching your search criteria.
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {searchQuery ? (
+        <div className="space-y-6">
+          <h2 className="text-xl font-semibold mb-4">Search Results ({filteredTerms.length})</h2>
+          {filteredTerms.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {filteredTerms.map((term) => (
+                <Card key={term.id} className="h-full">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">
+                        <GlossaryTerm termId={term.id}>
+                          {term.term}
+                        </GlossaryTerm>
+                      </CardTitle>
+                      <Badge 
+                        variant={term.category === 'basic' ? 'outline' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {term.category === 'basic' ? 'Basic' : 'Advanced'}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{term.definition}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No matching terms found. Try a different search term.</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <Tabs defaultValue="all">
+          <TabsList className="mb-6">
+            <TabsTrigger value="all">All Terms</TabsTrigger>
+            {categories.map(category => (
+              <TabsTrigger key={category} value={category}>
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          
+          <TabsContent value="all" className="space-y-6">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {allTerms.map((term) => (
+                <Card key={term.id} className="h-full">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">
+                        <GlossaryTerm termId={term.id}>
+                          {term.term}
+                        </GlossaryTerm>
+                      </CardTitle>
+                      <Badge 
+                        variant={term.category === 'basic' ? 'outline' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {term.category === 'basic' ? 'Basic' : 'Advanced'}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{term.definition}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          {categories.map(category => (
+            <TabsContent key={category} value={category} className="space-y-6">
+              <div className="grid gap-4 sm:grid-cols-2">
+                {getTaxGlossaryTermsByCategory(category).map((term) => (
+                  <Card key={term.id} className="h-full">
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="text-lg">{term.term}</CardTitle>
+                        <Badge 
+                          variant={term.category === 'basic' ? 'outline' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {term.category === 'basic' ? 'Basic' : 'Advanced'}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{term.definition}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+      )}
     </div>
   );
 };
