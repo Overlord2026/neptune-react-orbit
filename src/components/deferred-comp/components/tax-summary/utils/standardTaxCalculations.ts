@@ -44,9 +44,9 @@ export const calculateDeferredIncome = (formState: EquityFormState) => {
     // Income added to next year
     if (formState.deferralStrategy === "next-year") {
       nextYearIncome = deferredIncome;
-    } else {
+    } else if (formState.deferralStrategy === "multi-year" || formState.deferralStrategy === "staggered") {
       // If staggered, divide by years
-      nextYearIncome = deferredIncome / formState.deferralYears;
+      nextYearIncome = deferredIncome / (formState.deferralYears || 2);
     }
   }
   

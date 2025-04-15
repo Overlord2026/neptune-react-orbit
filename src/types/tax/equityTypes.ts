@@ -4,7 +4,7 @@
  */
 import { TaxResult } from './taxCalculationTypes';
 
-export type EquityType = 'NSO' | 'ISO' | 'RSU';
+export type EquityType = 'NSO' | 'ISO' | 'RSU' | 'ESPP' | '';
 
 // Form state for equity calculations
 export interface EquityFormState {
@@ -27,13 +27,30 @@ export interface EquityFormState {
   includeStateTax?: boolean;
   residentState?: string;
   
-  // Add missing fields referenced in components
+  // Additional fields referenced in components
   exerciseStrategy?: 'full' | 'partial' | 'split';
   vestedShares?: number;
   partialShares?: number;
   strikePrice?: number;
   splitYears?: number;
-  deferralStrategy?: 'single-year' | 'multi-year';
+  deferralStrategy?: 'next-year' | 'multi-year' | 'staggered';
+  deferralYears?: number;
+  
+  // Additional fields referenced in context and steps
+  employer?: string;
+  shareCount?: number;
+  sabbaticalYear?: number;
+  retirementYear?: number;
+  holdingPeriod?: 'unknown' | 'less-than-year' | 'more-than-year';
+  
+  // Multi-year approach fields
+  year1Exercise?: number;
+  year2Exercise?: number;
+  year1Deferral?: number;
+  year2Deferral?: number;
+  
+  // Optional fields with default values
+  unvestedShares?: number;
 }
 
 // Yearly impact of tax events
@@ -50,11 +67,13 @@ export interface YearlyTaxImpact {
   taxWithoutStrategy?: number;
   irmaaImpact?: boolean;
   amtAdjustment?: number;
+  amtImpact?: number;
   incomeBracket?: string;
   nextBracket?: string;
   distanceToNextBracket?: number;
   stateTax?: number;
   federalTax?: number;
+  equityIncome?: number;
 }
 
 // Equity compensation event
@@ -66,8 +85,9 @@ export interface EquityCompEvent {
   tax: number;
   netProceeds: number;
   
-  // Add missing field referenced in components
+  // Add missing fields referenced in components
   sharesExercised?: number;
+  spread?: number;
 }
 
 // Deferral event
@@ -77,6 +97,14 @@ export interface DeferralEvent {
   amount: number;
   tax: number;
   netAmount: number;
+  
+  // Add additional fields referenced in components
+  fromYear?: number;
+  toYear?: number;
+  taxSavings?: number;
+  amountDeferred?: number;
+  taxRate?: number;
+  taxesSaved?: number;
 }
 
 // Tax impact result
@@ -112,4 +140,7 @@ export interface EquityScenario extends TaxResult {
   federal_tax: number;
   brackets: any[];
   updated_at: Date;
+  tax_data_is_current: boolean;
+  year?: number;
+  filing_status?: string;
 }

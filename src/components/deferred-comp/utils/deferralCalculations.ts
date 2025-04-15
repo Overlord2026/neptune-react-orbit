@@ -52,12 +52,14 @@ export const getDeferralEvents = (formState: EquityFormState): DeferralEvent[] =
   if (formState.deferralStrategy === "next-year") {
     // Simple next year deferral
     events.push({
+      year: currentYear,
+      event: "Defer to next year",
+      amount: formState.deferralAmount,
+      tax: 0,
+      netAmount: formState.deferralAmount,
       fromYear: currentYear,
       toYear: currentYear + 1,
-      amount: formState.deferralAmount,
       taxSavings,
-      // Add required properties
-      year: currentYear,
       amountDeferred: formState.deferralAmount,
       taxRate,
       taxesSaved: taxSavings
@@ -65,17 +67,20 @@ export const getDeferralEvents = (formState: EquityFormState): DeferralEvent[] =
   } 
   else if (formState.deferralStrategy === "multi-year" || formState.deferralStrategy === "staggered") {
     // Multi-year staggered deferral
-    const amountPerYear = formState.deferralAmount / formState.deferralYears;
-    const savingsPerYear = taxSavings / formState.deferralYears;
+    const deferralYears = formState.deferralYears || 2;
+    const amountPerYear = formState.deferralAmount / deferralYears;
+    const savingsPerYear = taxSavings / deferralYears;
     
-    for (let i = 0; i < formState.deferralYears; i++) {
+    for (let i = 0; i < deferralYears; i++) {
       events.push({
+        year: currentYear + i,
+        event: `Deferred Comp Year ${i + 1}`,
+        amount: amountPerYear,
+        tax: 0,
+        netAmount: amountPerYear,
         fromYear: currentYear,
         toYear: currentYear + 1 + i,
-        amount: amountPerYear,
         taxSavings: savingsPerYear,
-        // Add required properties
-        year: currentYear + i,
         amountDeferred: amountPerYear,
         taxRate,
         taxesSaved: savingsPerYear

@@ -39,17 +39,17 @@ export const DeferralImpactCard: React.FC<DeferralImpactCardProps> = ({ currentY
             <p className="text-sm">
               {formState.deferralStrategy === "next-year" 
                 ? `Defer all to ${currentYear + 1}`
-                : `Stagger across ${formState.deferralYears} years`}
+                : `Stagger across ${formState.deferralYears || 2} years`}
             </p>
           </div>
           
-          {formState.deferralStrategy === "multi-year" && (
+          {(formState.deferralStrategy === "multi-year" || formState.deferralStrategy === "staggered") && (
             <div className="mt-2">
               <p className="text-sm font-medium">Optimized for lower income years</p>
-              {formState.sabbaticalYear > currentYear && (
+              {formState.sabbaticalYear && formState.sabbaticalYear > currentYear && (
                 <p className="text-xs">Sabbatical year: {formState.sabbaticalYear}</p>
               )}
-              {formState.retirementYear > currentYear && (
+              {formState.retirementYear && formState.retirementYear > currentYear && (
                 <p className="text-xs">Retirement year: {formState.retirementYear}</p>
               )}
             </div>

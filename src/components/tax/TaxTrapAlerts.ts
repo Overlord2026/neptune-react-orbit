@@ -44,3 +44,5 @@ export const convertToUITrapAlert = (coreAlert: CoreTrapAlert): TrapAlert => {
     title: coreAlert.message
   };
 };
+
+export { default } from './TaxTrapAlerts';

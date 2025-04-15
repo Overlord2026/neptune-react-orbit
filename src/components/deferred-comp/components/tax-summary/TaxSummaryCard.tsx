@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useEquityForm } from '../../context/EquityFormContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -24,7 +25,7 @@ export const TaxSummaryCard = () => {
   const nextYearData = multiYearImpact.find(year => year.year === currentYear + 1);
   
   const totalDeferred = deferralEvents.reduce((sum, event) => sum + event.amount, 0);
-  const totalTaxSavings = deferralEvents.reduce((sum, event) => sum + event.taxSavings, 0);
+  const totalTaxSavings = deferralEvents.reduce((sum, event) => sum + (event.taxSavings || 0), 0);
   
   const currentYearExercise = equityEvents.find(event => event.year === currentYear);
   const nextYearExercise = equityEvents.find(event => event.year === currentYear + 1);
@@ -42,9 +43,9 @@ export const TaxSummaryCard = () => {
     }
     
     if (formState.hasDeferredComp && totalDeferred > 0) {
-      const deferralSummary = formState.deferralStrategy === 'next-year'
+      const deferralSummary = formState.deferralStrategy === "next-year"
         ? `Deferring ${formatCurrency(totalDeferred)} from ${currentYear} to ${currentYear + 1}`
-        : `Staggering ${formatCurrency(totalDeferred)} across ${formState.deferralYears} years`;
+        : `Staggering ${formatCurrency(totalDeferred)} across ${formState.deferralYears || 2} years`;
       summaries.push(deferralSummary);
     }
     
@@ -54,12 +55,12 @@ export const TaxSummaryCard = () => {
   const calculateSplitExerciseBenefit = () => {
     if (!nextYearExercise || formState.exerciseStrategy !== 'split') return 0;
     
-    const singleYearTax = currentYearExercise && nextYearExercise 
-      ? (currentYearExercise.spread + nextYearExercise.spread) * 0.35
-      : 0;
-      
-    const splitYearTax = (currentYearExercise?.spread || 0) * 0.32 + 
-                         (nextYearExercise?.spread || 0) * 0.32;
+    // Assuming income is the spread
+    const currentYearSpread = currentYearExercise?.income || 0;
+    const nextYearSpread = nextYearExercise?.income || 0;
+    
+    const singleYearTax = (currentYearSpread + nextYearSpread) * 0.35;
+    const splitYearTax = currentYearSpread * 0.32 + nextYearSpread * 0.32;
     
     return singleYearTax - splitYearTax;
   };

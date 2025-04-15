@@ -31,7 +31,7 @@ export const EquityTypeSummary: React.FC = () => {
           <p className="text-lg font-medium">
             {formState.deferralStrategy === "next-year" 
               ? `Defer to ${new Date().getFullYear() + 1}` 
-              : `Stagger over ${formState.deferralYears} years`}
+              : `Stagger over ${formState.deferralYears || 2} years`}
           </p>
         </div>
       )}

@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { FilingStatusType } from '@/types/tax/filingTypes';
-import TaxTrapAlerts, { TrapAlert } from './TaxTrapAlerts';
+import TaxTrapAlerts from './TaxTrapAlerts';
+import { TrapAlert } from '@/components/tax/TaxTrapAlerts';
 
 interface ScenarioData {
   year: number;

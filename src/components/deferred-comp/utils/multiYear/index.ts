@@ -7,7 +7,7 @@
 export { calculateMultiYearImpact } from './calculateMultiYearImpact';
 export { getEquityEvents } from './equityEvents';
 
-// Add missing named exports for tax calculations
+// Add named exports for tax calculations
 export const calculateTaxForMultiYearEquity = (income: number, year: number, filingStatus: string): number => {
   // Implementation of tax calculation for multi-year equity
   return income * 0.22; // Simplified implementation 
@@ -23,7 +23,7 @@ export const determineDeferralTaxImpact = (deferredAmount: number, income: numbe
   return deferredAmount * 0.22; // Simplified implementation
 };
 
-// Add missing named exports for charitable integration
+// Add named exports for charitable integration
 export const integrateCharitableWithEquity = (equityIncome: number, charitableAmount: number): number => {
   // Integrate charitable deductions with equity income
   return Math.max(0, equityIncome - charitableAmount); // Simplified implementation

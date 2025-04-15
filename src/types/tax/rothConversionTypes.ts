@@ -1,195 +1,136 @@
 
 /**
- * Unified type definitions for Roth conversions
+ * Type definitions for Roth conversion calculations
  */
-import { TaxResult } from "./taxCalculationTypes";
+
 import { FilingStatusType } from "./filingTypes";
-import { StateCode } from "../../utils/stateTaxData";
 
-// Roth Conversion Scenario Input
 export interface RothConversionInput {
-  year: number;
-  filing_status: FilingStatusType;
-  base_income: number;
-  rmd_amount: number;
-  traditional_ira_balance: number;
-  target_conversion_amount: number;
-  target_tax_bracket: string;
-  include_state_tax: boolean;
-  resident_state?: StateCode;
-  is_over_65: boolean;
-  spouse_info?: {
-    is_over_65: boolean;
-    base_income: number;
-    rmd_amount: number;
-    traditional_ira_balance: number;
-  };
-  charitable_contributions?: number;
-  strategy?: "fill_bracket" | "specific_amount" | "max_conversion";
-}
-
-// Roth Conversion Scenario
-export interface RothConversionScenario extends TaxResult {
-  id?: string;
-  conversion_amount: number;
-  ira_balance_before: number;
-  ira_balance_after: number;
-  rmd_amount: number;
-  tax_increase: number;
-  original_tax: number;
-  tax_rate_on_conversion: number;
-  marginal_bracket_before: string;
-  marginal_bracket_after: string;
-  include_state_tax: boolean;
-  state_code?: StateCode;
-  state_tax_on_conversion?: number;
-  tax_strategies_used: string[];
-  irmaa_impact?: boolean;
-  tax_efficiency_score?: number;
-  multi_year_projection?: YearlyConversionSummary[];
-  scenario_name: string;
-}
-
-// Multi-Year Roth Conversion Summary
-export interface YearlyConversionSummary {
-  year: number;
-  conversion_amount: number;
-  tax_impact: number;
-  balance_before: number;
-  balance_after: number;
-  rmd_amount: number;
-  effective_tax_rate: number;
-  bracket_before: string;
-  bracket_after: string;
-  irmaa_impact: boolean;
-  state_tax?: number;
-}
-
-// Multi-Year Scenario Data
-export interface MultiYearScenarioData {
-  startYear: number;
-  startAge: number;
-  numYears: number;
-  traditionalIRAStartBalance: number;
-  rothIRAStartBalance: number;
-  baseAnnualIncome: number;
-  incomeGrowthRate: number;
-  expectedAnnualReturn: number;
-  filingStatus: FilingStatusType;
-  conversionStrategy: ConversionStrategyType;
-  fixedConversionAmount?: number;
-  includeSpouse?: boolean;
-  spouseAge?: number;
-  spouseBaseAnnualIncome?: number;
-  spouseTraditionalIRAStartBalance?: number;
-  spouseRothIRAStartBalance?: number;
-  includeRMDs?: boolean;
-  rmdStartAge?: number;
-  spouseRmdStartAge?: number;
-  includeBeneficiary?: boolean;
-  beneficiaryAge?: number;
-  beneficiaryIncomeTaxRate?: number;
-  assumedDeathYear?: number;
-  spouseAssumedDeathYear?: number;
-  compareMfjVsMfs?: boolean;
-  isInCommunityPropertyState?: boolean;
-  splitCommunityIncome?: boolean;
-  useCharitablePlanning?: boolean;
-  charitableContributions?: CharitableContribution[];
-  dafBunching?: {
-    enabled: boolean;
-    bunchingYears: number;
-    bunchingAmount: number;
-  };
-  // Additional fields needed for SpouseDetailsStep
-  spouseFirstName?: string;
-  spouseLastName?: string;
-  combinedIRAApproach?: boolean;  // Changed from string union to boolean
-  // Added for state tax support
-  includeStateTax?: boolean;
-  residentState?: StateCode;
-  futureResidentState?: StateCode;
-  stateRelocationYear?: number;
-}
-
-// Yearly Result for Multi-Year Scenarios
-export interface YearlyResult {
-  year: number;
-  age: number;
-  traditionalIRABalance: number;
-  rothIRABalance: number;
+  traditionalIraBalance: number;
+  rothIraBalance: number;
   conversionAmount: number;
-  rmdAmount: number;
-  totalTax: number;
-  marginalRate: number;
-  effectiveRate: number;
-  warnings: TrapAlert[];
-  cumulativeTaxPaid: number;
-  cumulativeTaxSaved: number;
-  traditionalScenarioBalance: number;
-  rothScenarioBalance: number;
-  breakEvenYear?: boolean;
+  currentAge: number;
+  currentIncome: number;
+  fillingStatus: FilingStatusType;
+  includeStateTax?: boolean;
+  stateOfResidence?: string;
+  charitableContributions?: number;
   spouseAge?: number;
-  spouseTraditionalIRABalance?: number;
-  spouseRothIRABalance?: number;
-  spouseConversionAmount?: number;
-  spouseRmdAmount?: number;
-  mfsComparison?: {
-    mfjTotalTax: number;
-    spouse1Tax: number;
-    spouse2Tax: number;
-    combinedMfsTax: number;
-    taxDifference: number;
-    mfjIrmaa?: number;
-    spouse1Irmaa?: number;
-    spouse2Irmaa?: number;
-    combinedMfsIrmaa?: number;
-  };
-  charitableContribution?: {
-    amount: number;
-    useQcd: boolean;
-    isBunching: boolean;
-    standardDeduction: number;
-    itemizedDeduction: number;
-    isItemizing: boolean;
-    taxSavings: number;
-    trapAvoidance?: {
-      title: string;
-      description: string;
-      savings: number;
-    }[];
-  };
-  communityPropertySplit?: {
-    originalPrimaryIncome: number;
-    originalSpouseIncome: number;
-    splitPrimaryIncome: number;
-    splitSpouseIncome: number;
-  };
+  takeLifetimeRMDs?: boolean;
+  projectedRateOfReturn?: number;
+  rmdStartAge?: number;
+  withdrawalRate?: number;
+  inflationRate?: number;
+  lifeExpectancy?: number;
+  spouseLifeExpectancy?: number;
+  medicareStatus?: 'enrolled' | 'not-enrolled';
 }
 
-// Charitable Contribution
+// Updates to add clarity to conversion strategies
+export type ConversionStrategyType = 'immediate' | 'multi-year' | 'partial-bracket-fill' | 'lifetime' | 'opportunistic';
+
+// Define tax trap alert type 
+export interface TrapAlert {
+  type: string;
+  severity: 'high' | 'medium' | 'low';
+  message: string;
+  threshold?: number;
+  impact?: number;
+}
+
+// Define trap avoidance strategy
+export interface TrapAvoidance {
+  trapType: string;
+  strategy: string;
+  amountToAdjust?: number;
+  suggestedAction?: string;
+  impact?: number;
+}
+
+export interface RothConversionScenario {
+  id: string;
+  name: string;
+  description?: string;
+  created_at: Date;
+  updated_at: Date;
+  input: RothConversionInput;
+  results: {
+    tax_impact: {
+      conversion_tax: number;
+      marginal_rate: number;
+      effective_rate: number;
+    };
+    long_term_benefit: {
+      tax_free_growth: number;
+      estate_tax_savings?: number;
+      lifetime_tax_savings?: number;
+    };
+    rmd_impact?: {
+      rmd_reduction: number;
+      annual_rmd_before: number;
+      annual_rmd_after: number;
+    };
+  };
+  // Estate planning related fields
+  is_estate_optimized?: boolean;
+  estate_value?: number;
+  beneficiary_tax_savings?: number;
+  bracket_bumping_events?: Array<{
+    year: number;
+    event: string;
+    amount: number;
+  }>;
+  
+  // Add charitable contribution related fields
+  charitable_contributions?: CharitableContribution[];
+  charitable_benefit?: number;
+}
+
 export interface CharitableContribution {
   year: number;
   amount: number;
-  useQcd: boolean;
-  isBunching?: boolean;
+  strategy: 'standard' | 'bunching' | 'qcd' | 'daf';
+  taxBenefit: number;
 }
 
-// Tax trap alert type
-export interface TrapAlert {
-  type: string;
-  message: string;
-  severity: 'low' | 'medium' | 'high';
-  trapType?: string;
+export interface YearlyConversionSummary {
+  year: number;
+  conversionAmount: number;
+  taxableIncome: number;
+  taxDue: number;
+  marginalRate: number;
+  effectiveRate: number;
+  rothBalanceEndOfYear: number;
+  traditionalBalanceEndOfYear: number;
+  cumulativeTaxPaid: number;
+  rmdAmount?: number;
 }
 
-// Conversion strategy type
-export type ConversionStrategyType = 'fixed' | 'bracket_12' | 'bracket_22' | 'bracket_12_22';
+export interface MultiYearScenarioData {
+  totalConversionAmount: number;
+  totalTaxPaid: number;
+  averageTaxRate: number;
+  endingRothBalance: number;
+  endingTraditionalBalance: number;
+  yearlyData: YearlyResult[];
+  filingStatus: FilingStatusType;
+  trapAlerts?: TrapAlert[];
+  trapAvoidanceStrategies?: TrapAvoidance[];
+}
 
-// TrapAvoidance type - missing but used in the code
-export interface TrapAvoidance {
-  type: string;
-  title: string;
-  description: string;
-  savings: number;
+export interface YearlyResult {
+  year: number;
+  age: number;
+  rothConversion: number;
+  rothBalance: number;
+  traditionalBalance: number;
+  rmdAmount: number;
+  taxableIncome: number;
+  taxPaid: number;
+  marginalRate: number;
+  effectiveTaxRate: number;
+  nextBracketThreshold?: number;
+  bracketFillingPercentage?: number;
+  charitableContributions?: number;
+  netInvestmentIncome?: number;
 }
