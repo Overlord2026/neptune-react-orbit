@@ -14,6 +14,9 @@ interface MultiYearContextType {
   setCurrentStep: (step: number) => void;
   calculationError: string | null;
   setCalculationError: (error: string | null) => void;
+  yearlyResults?: YearlyResult[];
+  scenarioName?: string;
+  hasCalculated?: boolean;
 }
 
 const defaultScenarioData: MultiYearScenarioData = {
@@ -53,6 +56,8 @@ export const MultiYearProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [calculationError, setCalculationError] = useState<string | null>(null);
+  const [hasCalculated, setHasCalculated] = useState<boolean>(false);
+  const [scenarioName, setScenarioName] = useState<string>("Roth Conversion");
 
   const updateScenarioData = (data: Partial<MultiYearScenarioData>) => {
     setScenarioData(prev => ({ ...prev, ...data }));
@@ -70,7 +75,10 @@ export const MultiYearProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         currentStep,
         setCurrentStep,
         calculationError,
-        setCalculationError
+        setCalculationError,
+        yearlyResults: results,
+        scenarioName,
+        hasCalculated
       }}
     >
       {children}
@@ -85,3 +93,6 @@ export const useMultiYear = () => {
   }
   return context;
 };
+
+// Export for components that need the context
+export const useMultiYearContext = useMultiYear;
