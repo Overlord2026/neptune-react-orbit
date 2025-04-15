@@ -58,7 +58,18 @@ export interface YearlyResult {
     spouse2Tax: number;
     combinedMfsTax: number;
     taxDifference: number;
+    mfjIrmaa?: number;
+    spouse1Irmaa?: number;
+    spouse2Irmaa?: number;
+    combinedMfsIrmaa?: number;
   };
+  communityPropertySplit?: {
+    primaryIncome: number;
+    spouseIncome: number;
+    primaryTax: number;
+    spouseTax: number;
+  };
+  brackets?: Array<{ min: number; max: number; rate: number }>;
 }
 
 export interface YearlyConversionSummary {
@@ -152,6 +163,10 @@ export interface CharitableContribution {
   isBunching?: boolean;
   useQcd?: boolean;
   years?: number[];
+  trapAvoidance?: any[];
+  isItemizing?: boolean;
+  itemizedDeduction?: number;
+  standardDeduction?: number;
 }
 
 export interface TrapAlert {

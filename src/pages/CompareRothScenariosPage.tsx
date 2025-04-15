@@ -190,7 +190,12 @@ const CompareRothScenariosPage: React.FC = () => {
             <CardFooter className="flex flex-col gap-3">
               <Button 
                 className="w-full bg-[#9b87f5] hover:bg-[#8a76e4]" 
-                onClick={handleStartFreeTrial}
+                onClick={() => {
+                  toast.success("Starting your free trial!", { 
+                    description: "Redirecting to trial activation..." 
+                  });
+                  navigate('/pricing');
+                }}
               >
                 Start 90-Day Free Trial
               </Button>
