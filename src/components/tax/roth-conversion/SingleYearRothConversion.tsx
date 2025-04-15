@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, Calculator, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { LegacyFilingStatusType } from '@/types/tax/filingTypes';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 import InfoTooltip from '@/components/tax/InfoTooltip';
 import { TaxTrapChecker } from '@/components/tax/TaxTrapChecker';
 import { useToast } from "@/hooks/use-toast";
@@ -26,7 +27,7 @@ interface ConversionResult {
 const SingleYearRothConversion = () => {
   const [income, setIncome] = useState<number>(80000);
   const [iraBalance, setIraBalance] = useState<number>(500000);
-  const [filingStatus, setFilingStatus] = useState<LegacyFilingStatusType>("single");
+  const [filingStatus, setFilingStatus] = useState<FilingStatusType>('single');
   const [conversionAmount, setConversionAmount] = useState<number>(20000);
   const [useBracketFill, setUseBracketFill] = useState<boolean>(false);
   const [bracketFillPercentage, setBracketFillPercentage] = useState<number>(75);
@@ -70,7 +71,7 @@ const SingleYearRothConversion = () => {
       const trapInput: TaxTrapInput = {
         scenario_id: "roth-conversion-single",
         year: currentYear,
-        filing_status: filingStatus,
+        filing_status: filingStatus === 'married_joint' ? 'married' : filingStatus,
         agi: income + actualConversionAmount,
         magi: income + actualConversionAmount,
         total_income: income + actualConversionAmount,
@@ -104,12 +105,14 @@ const SingleYearRothConversion = () => {
     }, 1200);
   };
 
-  const calculateBracketFillAmount = (income: number, filingStatus: LegacyFilingStatusType, percentage: number) => {
+  const calculateBracketFillAmount = (income: number, filingStatus: FilingStatusType, percentage: number) => {
     // This is a simplified calculation - would be replaced with actual bracket calculation
     const brackets = {
       single: [10275, 41775, 89075, 170050, 215950, 539900],
-      married: [20550, 83550, 178150, 340100, 431900, 647850],
-      head_of_household: [14650, 55900, 89050, 170050, 215950, 539900]
+      married_joint: [20550, 83550, 178150, 340100, 431900, 647850],
+      married_separate: [10275, 41775, 89075, 170050, 215950, 323925],
+      head_of_household: [14650, 55900, 89050, 170050, 215950, 539900],
+      qualifying_widow: [20550, 83550, 178150, 340100, 431900, 647850]
     };
 
     // Find next bracket threshold
@@ -129,7 +132,7 @@ const SingleYearRothConversion = () => {
     return Math.min(fillAmount, iraBalance);
   };
 
-  const estimateMarginalRate = (totalIncome: number, filingStatus: LegacyFilingStatusType) => {
+  const estimateMarginalRate = (totalIncome: number, filingStatus: FilingStatusType) => {
     // Simplified marginal rate estimation
     const rates = {
       single: [
@@ -141,7 +144,7 @@ const SingleYearRothConversion = () => {
         { threshold: 215950, rate: 0.35 },
         { threshold: 539900, rate: 0.37 }
       ],
-      married: [
+      married_joint: [
         { threshold: 0, rate: 0.10 },
         { threshold: 20550, rate: 0.12 },
         { threshold: 83550, rate: 0.22 },
@@ -149,6 +152,15 @@ const SingleYearRothConversion = () => {
         { threshold: 340100, rate: 0.32 },
         { threshold: 431900, rate: 0.35 },
         { threshold: 647850, rate: 0.37 }
+      ],
+      married_separate: [
+        { threshold: 0, rate: 0.10 },
+        { threshold: 10275, rate: 0.12 },
+        { threshold: 41775, rate: 0.22 },
+        { threshold: 89075, rate: 0.24 },
+        { threshold: 170050, rate: 0.32 },
+        { threshold: 215950, rate: 0.35 },
+        { threshold: 323925, rate: 0.37 }
       ],
       head_of_household: [
         { threshold: 0, rate: 0.10 },
@@ -158,6 +170,15 @@ const SingleYearRothConversion = () => {
         { threshold: 170050, rate: 0.32 },
         { threshold: 215950, rate: 0.35 },
         { threshold: 539900, rate: 0.37 }
+      ],
+      qualifying_widow: [
+        { threshold: 0, rate: 0.10 },
+        { threshold: 20550, rate: 0.12 },
+        { threshold: 83550, rate: 0.22 },
+        { threshold: 178150, rate: 0.24 },
+        { threshold: 340100, rate: 0.32 },
+        { threshold: 431900, rate: 0.35 },
+        { threshold: 647850, rate: 0.37 }
       ]
     };
 
@@ -216,14 +237,16 @@ const SingleYearRothConversion = () => {
           
           <div>
             <Label htmlFor="filingStatus">Filing Status</Label>
-            <Select value={filingStatus} onValueChange={(value) => setFilingStatus(value as LegacyFilingStatusType)}>
+            <Select value={filingStatus} onValueChange={(value) => setFilingStatus(value as FilingStatusType)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select filing status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="single">Single</SelectItem>
-                <SelectItem value="married">Married Filing Jointly</SelectItem>
+                <SelectItem value="married_joint">Married Filing Jointly</SelectItem>
+                <SelectItem value="married_separate">Married Filing Separately</SelectItem>
                 <SelectItem value="head_of_household">Head of Household</SelectItem>
+                <SelectItem value="qualifying_widow">Qualifying Widow(er)</SelectItem>
               </SelectContent>
             </Select>
           </div>

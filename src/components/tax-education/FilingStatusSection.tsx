@@ -24,10 +24,11 @@ import {
   formatCurrency, 
   getBrackets
 } from '@/utils/taxBracketData';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 interface FilingStatusSectionProps {
   selectedYear: number;
-  selectedFilingStatus: 'single' | 'married_joint' | 'head_of_household';
+  selectedFilingStatus: FilingStatusType;
 }
 
 const FilingStatusSection: React.FC<FilingStatusSectionProps> = ({
@@ -86,7 +87,7 @@ const FilingStatusSection: React.FC<FilingStatusSectionProps> = ({
                 <li>Generally most tax-advantageous</li>
                 <li>
                   Standard Deduction: <DynamicContentText 
-                    options={{...contentOptions, filingStatus: 'married'}}
+                    options={{...contentOptions, filingStatus: 'married_joint'}}
                   >
                     {`current_standard_deduction`}
                   </DynamicContentText>

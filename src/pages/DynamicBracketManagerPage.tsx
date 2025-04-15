@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { FilingStatusType } from '@/types/tax/filingTypes';
 
 const DynamicBracketManagerPage = () => {
-  const [filingStatus, setFilingStatus] = useState<'single' | 'married_joint' | 'head_of_household'>('single');
+  const [filingStatus, setFilingStatus] = useState<FilingStatusType>('single');
   
   // Your existing code here
   
