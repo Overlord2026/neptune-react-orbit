@@ -565,6 +565,19 @@ export const stateTaxData: Record<StateCode, StateTaxData> = {
   }
 };
 
+export const STATE_TAX_RATES: Record<StateCode, number> = Object.fromEntries(
+  Object.entries(stateTaxData).map(([state, data]) => {
+    if (data.type === 'flat') {
+      return [state, data.flatRate || 0];
+    } else if (data.type === 'graduated' && data.brackets) {
+      // Use the highest marginal rate for graduated tax systems
+      const highestRate = Math.max(...data.brackets.map(bracket => bracket.rate));
+      return [state, highestRate / 100];
+    }
+    return [state, 0];
+  })
+);
+
 /**
  * Get the appropriate tax disclaimer for a given state
  * @param stateCode The state code to get the disclaimer for
