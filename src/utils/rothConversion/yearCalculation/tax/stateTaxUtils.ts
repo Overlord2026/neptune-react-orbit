@@ -22,7 +22,7 @@ export const calculateStateTax = (
   let stateCode = determineStateForYear(year, scenarioData);
   
   // Get state tax rate
-  let stateTaxRate = getStateTaxRate(stateCode);
+  let stateTaxRate = getStateTaxRate(stateCode, scenarioData);
   
   // Calculate state tax (simplified calculation)
   return taxableIncome * stateTaxRate;
@@ -45,7 +45,7 @@ function determineStateForYear(year: number, scenarioData: MultiYearScenarioData
 /**
  * Get state tax rate for a specific state
  */
-function getStateTaxRate(stateCode: StateCode | undefined): number {
+function getStateTaxRate(stateCode: StateCode | undefined, scenarioData: MultiYearScenarioData): number {
   if (!stateCode) return 0;
   
   // Look up the tax rate from our data

@@ -3,12 +3,13 @@ import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import TaxDataLastUpdate from '@/components/tax/TaxDataLastUpdate';
 import { getTaxYears } from '@/utils/taxYearUtils';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 interface YearFilingSelectorProps {
   selectedYear: number;
   setSelectedYear: (year: number) => void;
-  selectedFilingStatus: 'single' | 'married' | 'head_of_household';
-  setSelectedFilingStatus: (status: 'single' | 'married' | 'head_of_household') => void;
+  selectedFilingStatus: FilingStatusType;
+  setSelectedFilingStatus: (status: FilingStatusType) => void;
   availableYears?: number[];
 }
 
@@ -47,14 +48,14 @@ const YearFilingSelector: React.FC<YearFilingSelectorProps> = ({
         <label htmlFor="filing-status-select" className="text-sm font-medium">Filing Status</label>
         <Select 
           value={selectedFilingStatus} 
-          onValueChange={(value) => setSelectedFilingStatus(value as 'single' | 'married' | 'head_of_household')}
+          onValueChange={(value) => setSelectedFilingStatus(value as FilingStatusType)}
         >
           <SelectTrigger id="filing-status-select" className="w-[180px]">
             <SelectValue placeholder="Select status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="single">Single</SelectItem>
-            <SelectItem value="married">Married Filing Jointly</SelectItem>
+            <SelectItem value="married_joint">Married Filing Jointly</SelectItem>
             <SelectItem value="head_of_household">Head of Household</SelectItem>
           </SelectContent>
         </Select>

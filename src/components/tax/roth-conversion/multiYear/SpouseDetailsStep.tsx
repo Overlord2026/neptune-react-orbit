@@ -335,7 +335,6 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
         </Card>
       )}
       
-      {/* Spouse/Partner Data Disclaimer */}
       {isMarried && (
         <div className="rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 text-sm">
           <h4 className="font-medium mb-2">Spousal Data Considerations</h4>
