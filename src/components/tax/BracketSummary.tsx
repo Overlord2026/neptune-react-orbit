@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TaxResult } from '@/utils/taxCalculator';
@@ -21,6 +20,25 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
   const sumBracketAmounts = (brackets: any[] | undefined): number => {
     if (!Array.isArray(brackets)) return 0;
     return brackets.reduce((sum, bracket) => sum + bracket.amount, 0);
+  };
+  
+  const renderBrackets = (brackets: any) => {
+    if (!brackets) return null;
+    
+    // Ensure brackets is an array before using map
+    const bracketsArray = Array.isArray(brackets) ? brackets : [];
+    
+    return (
+      <div className="space-y-2">
+        {bracketsArray.map((bracket, index) => (
+          <div key={index} className="flex justify-between text-sm">
+            <span className="font-medium">{formatPercent(bracket.bracket / 100)}</span>
+            <span className="text-right">{formatCurrency(bracket.amount)}</span>
+            <span className="text-right">{formatCurrency(bracket.tax)}</span>
+          </div>
+        ))}
+      </div>
+    );
   };
   
   return (
@@ -62,13 +80,7 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {Array.isArray(scenario.brackets_breakdown?.ordinary) && scenario.brackets_breakdown?.ordinary.map((bracket, index) => (
-                        <tr key={`ordinary-${index}`}>
-                          <td className="px-3 py-2 text-sm">{formatPercent(bracket.bracket / 100)}</td>
-                          <td className="px-3 py-2 text-sm text-right">{formatCurrency(bracket.amount)}</td>
-                          <td className="px-3 py-2 text-sm text-right">{formatCurrency(bracket.tax)}</td>
-                        </tr>
-                      ))}
+                      {renderBrackets(scenario.brackets_breakdown?.ordinary)}
                       <tr className="bg-muted/30">
                         <td className="px-3 py-2 text-sm font-medium">Total</td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
@@ -97,13 +109,7 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {Array.isArray(scenario.brackets_breakdown?.capitalGains) && scenario.brackets_breakdown?.capitalGains.map((bracket, index) => (
-                        <tr key={`capital-${index}`}>
-                          <td className="px-3 py-2 text-sm">{formatPercent(bracket.bracket / 100)}</td>
-                          <td className="px-3 py-2 text-sm text-right">{formatCurrency(bracket.amount)}</td>
-                          <td className="px-3 py-2 text-sm text-right">{formatCurrency(bracket.tax)}</td>
-                        </tr>
-                      ))}
+                      {renderBrackets(scenario.brackets_breakdown?.capitalGains)}
                       <tr className="bg-muted/30">
                         <td className="px-3 py-2 text-sm font-medium">Total</td>
                         <td className="px-3 py-2 text-sm text-right font-medium">

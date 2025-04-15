@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card,
@@ -46,6 +45,14 @@ const formatPercent = (decimal: number): string => {
   }).format(decimal);
 };
 
+const formatBalance = (balance: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0
+  }).format(balance || 0);
+};
+
 const RmdScheduleDisplay: React.FC<RmdScheduleDisplayProps> = ({ 
   scenarioData,
   yearlyResults
@@ -89,9 +96,9 @@ const RmdScheduleDisplay: React.FC<RmdScheduleDisplayProps> = ({
   // Calculate final year RMD percentage of account
   const finalRmdYear = rmdYears.length > 0 ? rmdYears[rmdYears.length - 1] : null;
   const finalRmdPercent = finalRmdYear ? 
-    finalRmdYear.rmdAmount / finalRmdYear.traditionalIRABalance : 0;
-  const finalSpouseRmdPercent = finalRmdYear && finalRmdYear.spouseRmdAmount && finalRmdYear.spouseTraditionalIRABalance ? 
-    finalRmdYear.spouseRmdAmount / finalRmdYear.spouseTraditionalIRABalance : 0;
+    finalRmdYear.rmdAmount / finalRmdYear.traditionalIraBalance : 0;
+  const finalSpouseRmdPercent = finalRmdYear && finalRmdYear.spouseRmdAmount && finalRmdYear.spouseTraditionalIraBalance ? 
+    finalRmdYear.spouseRmdAmount / finalRmdYear.spouseTraditionalIraBalance : 0;
 
   return (
     <Card>
@@ -224,14 +231,14 @@ const RmdScheduleDisplay: React.FC<RmdScheduleDisplayProps> = ({
                         {yearlyResults.filter(result => 
                           result.age >= scenarioData.rmdStartAge - 2
                         ).map((result, index) => {
-                          const withdrawalPercent = result.rmdAmount > 0 && result.traditionalIRABalance > 0 ?
-                            result.rmdAmount / result.traditionalIRABalance : 0;
+                          const withdrawalPercent = result.rmdAmount > 0 && result.traditionalIraBalance > 0 ?
+                            result.rmdAmount / result.traditionalIraBalance : 0;
                             
                           return (
                             <TableRow key={index} className={result.rmdAmount > 0 ? "bg-amber-50/20 dark:bg-amber-950/20" : ""}>
                               <TableCell>{result.year}</TableCell>
                               <TableCell>{result.age}</TableCell>
-                              <TableCell className="text-right">{formatCurrency(result.traditionalIRABalance)}</TableCell>
+                              <TableCell className="text-right">{formatBalance(result.traditionalIraBalance)}</TableCell>
                               <TableCell className="text-right">{formatCurrency(result.rmdAmount)}</TableCell>
                               <TableCell className="text-right">{result.rmdAmount > 0 ? formatPercent(withdrawalPercent) : '-'}</TableCell>
                               <TableCell className="text-right">{formatPercent(result.marginalRate)}</TableCell>
@@ -258,14 +265,14 @@ const RmdScheduleDisplay: React.FC<RmdScheduleDisplayProps> = ({
                           result.spouseAge && result.spouseAge >= (scenarioData.spouseRmdStartAge || 73) - 2
                         ).map((result, index) => {
                           const withdrawalPercent = result.spouseRmdAmount && result.spouseRmdAmount > 0 && 
-                            result.spouseTraditionalIRABalance && result.spouseTraditionalIRABalance > 0 ?
-                            result.spouseRmdAmount / result.spouseTraditionalIRABalance : 0;
+                            result.spouseTraditionalIraBalance && result.spouseTraditionalIraBalance > 0 ?
+                            result.spouseRmdAmount / result.spouseTraditionalIraBalance : 0;
                             
                           return (
                             <TableRow key={index} className={(result.spouseRmdAmount && result.spouseRmdAmount > 0) ? "bg-amber-50/20 dark:bg-amber-950/20" : ""}>
                               <TableCell>{result.year}</TableCell>
                               <TableCell>{result.spouseAge || '--'}</TableCell>
-                              <TableCell className="text-right">{formatCurrency(result.spouseTraditionalIRABalance || 0)}</TableCell>
+                              <TableCell className="text-right">{formatBalance(result.spouseTraditionalIraBalance || 0)}</TableCell>
                               <TableCell className="text-right">{formatCurrency(result.spouseRmdAmount || 0)}</TableCell>
                               <TableCell className="text-right">
                                 {result.spouseRmdAmount && result.spouseRmdAmount > 0 ? formatPercent(withdrawalPercent) : '-'}

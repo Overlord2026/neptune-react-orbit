@@ -59,6 +59,8 @@ export interface TrapAlert {
   threshold: number;
   amount: number;
   severity: 'low' | 'medium' | 'high';
+  type?: string;
+  message?: string;
 }
 
 export interface TrapAvoidance {
@@ -109,12 +111,14 @@ export interface YearlyResult {
   rothScenarioBalance?: number;
   breakEvenYear?: boolean;
   mfsComparison?: any;
+  spouseConversionAmount?: number;
+  effectiveRate?: number;
 }
 
 export interface MultiYearScenarioData {
   startAge: number;
-  startYear: number;
-  numYears: number;
+  startYear: number;  // Made non-optional since it's essential
+  numYears: number;   // Made non-optional since it's essential
   traditionalIRABalance: number;
   traditionalIRAStartBalance: number;
   rothIRABalance: number;
@@ -155,4 +159,10 @@ export interface MultiYearScenarioData {
   beneficiaryIncomeTaxRate?: number;
   includeBeneficiary?: boolean;
   charitableAmount?: number;
+  
+  // Additional properties referenced in other files
+  spouseFirstName?: string;
+  spouseLastName?: string;
+  combinedIRAApproach?: boolean;
+  incomeGrowthRate?: number;
 }
