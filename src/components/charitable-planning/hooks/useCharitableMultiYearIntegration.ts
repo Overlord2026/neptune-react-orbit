@@ -9,43 +9,49 @@ export function useCharitableMultiYearIntegration() {
   const [useQcd, setUseQcd] = useState(false);
   
   const integrateCharitableWithScenario = useCallback((scenarioData: MultiYearScenarioData): CharitableContribution => {
+    const currentYear = new Date().getFullYear();
+    
     if (!useCharitablePlanning || charitableAmount <= 0) {
       return {
+        year: currentYear,
         amount: 0,
+        type: 'standard',
         isQcd: false,
-        isBunching: false
+        isBunching: false,
+        taxDeduction: 0
       };
     }
 
     // Create a standard contribution
     if (!bunchingEnabled) {
       return {
+        year: currentYear,
         amount: charitableAmount,
+        type: 'standard',
         isQcd: useQcd,
-        isBunching: false
+        isBunching: false,
+        taxDeduction: charitableAmount
       };
     }
 
     // Create a bunched contribution for even years
-    const currentYear = new Date().getFullYear();
     const startYear = scenarioData.startYear || currentYear;
-    const evenYears = Array.from(
-      { length: 10 }, 
-      (_, i) => startYear + i
-    ).filter(year => year % 2 === 0);
-
+    
     return {
+      year: startYear,
       amount: charitableAmount * 2,
+      type: 'bunched',
       isQcd: useQcd,
       isBunching: true,
-      years: evenYears
+      taxDeduction: charitableAmount * 2,
+      description: `Bunched contribution for ${startYear}`
     };
   }, [useCharitablePlanning, charitableAmount, bunchingEnabled, useQcd]);
 
   const updateScenarioWithCharitable = useCallback((scenarioData: MultiYearScenarioData): Partial<MultiYearScenarioData> => {
     return {
       ...scenarioData,
-      includeCharitableGiving: useCharitablePlanning,
+      useCharitablePlanning: useCharitablePlanning,
       charitableAmount: charitableAmount
     };
   }, [useCharitablePlanning, charitableAmount]);

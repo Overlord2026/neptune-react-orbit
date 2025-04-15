@@ -90,7 +90,7 @@ const BeneficiaryStep: React.FC<BeneficiaryStepProps> = ({
                   id="assumedDeathYear" 
                   type="number"
                   min={scenarioData.startYear}
-                  max={scenarioData.startYear + (scenarioData.numYears || 5) - 1} 
+                  max={scenarioData.startYear + scenarioData.numYears - 1} 
                   value={scenarioData.assumedDeathYear?.toString() || ''} 
                   onChange={(e) => {
                     const year = parseInt(e.target.value);
@@ -118,7 +118,7 @@ const BeneficiaryStep: React.FC<BeneficiaryStepProps> = ({
                       id="spouseAssumedDeathYear" 
                       type="number"
                       min={scenarioData.startYear}
-                      max={scenarioData.startYear + (scenarioData.numYears || 5) - 1}
+                      max={scenarioData.startYear + scenarioData.numYears - 1}
                       value={scenarioData.spouseAssumedDeathYear?.toString() || ''} 
                       onChange={(e) => {
                         const year = parseInt(e.target.value);

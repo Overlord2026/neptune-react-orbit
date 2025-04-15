@@ -1,3 +1,4 @@
+
 import { FilingStatusType } from './filingTypes';
 import { StateCode } from '@/utils/stateTaxData';
 
@@ -98,6 +99,16 @@ export interface YearlyResult {
   federalTax?: number;
   totalTax?: number;
   brackets?: Array<{ min: number; max: number; rate: number; }>;
+  rmdAmount?: number;
+  spouseRmdAmount?: number;
+  charitableContribution?: any;
+  warnings?: any[];
+  cumulativeTaxPaid?: number;
+  cumulativeTaxSaved?: number;
+  traditionalScenarioBalance?: number;
+  rothScenarioBalance?: number;
+  breakEvenYear?: boolean;
+  mfsComparison?: any;
 }
 
 export interface MultiYearScenarioData {
@@ -139,4 +150,9 @@ export interface MultiYearScenarioData {
   residentState?: StateCode;
   futureResidentState?: StateCode;
   stateRelocationYear?: number;
+  compareMfjVsMfs?: boolean; 
+  beneficiaryAge?: number;
+  beneficiaryIncomeTaxRate?: number;
+  includeBeneficiary?: boolean;
+  charitableAmount?: number;
 }
