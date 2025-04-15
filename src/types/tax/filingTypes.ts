@@ -1,10 +1,16 @@
+
 /**
  * Unified type definitions for tax filing
  */
 import { StateCode } from "../../utils/stateTaxData";
 
 // Ensure FilingStatusType is explicitly exported
-export type FilingStatusType = 'single' | 'married_joint' | 'married_separate' | 'head_of_household' | 'qualifying_widow';
+export type FilingStatusType = 
+  | 'single' 
+  | 'married_joint' 
+  | 'married_separate' 
+  | 'head_of_household' 
+  | 'qualifying_widow';
 
 // Alias to support older code still using 'married' instead of 'married_joint'
 export type LegacyFilingStatusType = 'single' | 'married' | 'married_separate' | 'head_of_household';
