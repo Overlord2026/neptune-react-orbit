@@ -3,10 +3,13 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import TaxTools from '@/components/tax-planning/TaxTools';
 import ImportFromTaxReturn from '@/components/tax-planning/ImportFromTaxReturn';
+import OnboardingModal from '@/components/tax-planning/OnboardingModal';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { useToast } from '@/hooks/use-toast';
 
 const TaxToolsPage: React.FC = () => {
   const { toast } = useToast();
+  const { showOnboarding, completeOnboarding } = useOnboarding();
   
   const handleDataImported = (data: any) => {
     console.log("Tax return data imported:", data);
@@ -54,6 +57,12 @@ const TaxToolsPage: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Onboarding Modal */}
+      <OnboardingModal 
+        isOpen={showOnboarding} 
+        onClose={completeOnboarding} 
+      />
     </div>
   );
 };

@@ -11,6 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import ShareFeature from '@/components/tax-planning/ShareFeature';
+import OnboardingModal from '@/components/tax-planning/OnboardingModal';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 interface TaxStrategy {
   id: string;
@@ -20,6 +22,8 @@ interface TaxStrategy {
 }
 
 const AdvancedTaxStrategiesPage = () => {
+  const { showOnboarding, completeOnboarding } = useOnboarding();
+  
   const strategies: TaxStrategy[] = [
     {
       id: "amt",
@@ -122,6 +126,12 @@ const AdvancedTaxStrategiesPage = () => {
           </div>
         </div>
       </Card>
+      
+      {/* Onboarding Modal */}
+      <OnboardingModal 
+        isOpen={showOnboarding} 
+        onClose={completeOnboarding} 
+      />
     </div>
   );
 };

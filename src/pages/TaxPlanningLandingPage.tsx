@@ -6,6 +6,8 @@ import EducationResources from '@/components/tax-planning/EducationResources';
 import TaxTools from '@/components/tax-planning/TaxTools';
 import TaxUpdateDemo from '@/components/tax/TaxUpdateDemo';
 import AccountingSoftwareIntegration from '@/components/tax-planning/AccountingSoftwareIntegration';
+import OnboardingModal from '@/components/tax-planning/OnboardingModal';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { Card, CardHeader, CardContent, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import ShareFeature from '@/components/tax-planning/ShareFeature';
@@ -14,6 +16,7 @@ import SubscriptionBanner from '@/components/tax-planning/SubscriptionBanner';
 const TaxPlanningLandingPage = () => {
   const [isEducationOpen, setIsEducationOpen] = useState<boolean>(true);
   const [isInTrial, setIsInTrial] = useState<boolean>(false);
+  const { showOnboarding, completeOnboarding } = useOnboarding();
   
   useEffect(() => {
     const trialStatus = localStorage.getItem('is_in_trial') === 'true';
@@ -119,6 +122,12 @@ const TaxPlanningLandingPage = () => {
           </CardFooter>
         </Card>
       )}
+      
+      {/* Onboarding Modal */}
+      <OnboardingModal 
+        isOpen={showOnboarding} 
+        onClose={completeOnboarding} 
+      />
     </div>
   );
 };
