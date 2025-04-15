@@ -45,9 +45,10 @@ export function useCharitableMultiYearIntegration() {
   const updateScenarioWithCharitable = useCallback((scenarioData: MultiYearScenarioData): Partial<MultiYearScenarioData> => {
     return {
       ...scenarioData,
-      useCharitablePlanning
+      includeCharitableGiving: useCharitablePlanning,
+      charitableAmount: charitableAmount
     };
-  }, [useCharitablePlanning]);
+  }, [useCharitablePlanning, charitableAmount]);
 
   return {
     useCharitablePlanning,
