@@ -2,7 +2,7 @@
 import React from 'react';
 import TaxTrapWarningsPanel from '@/components/tax/TaxTrapWarningsPanel';
 import TaxConsiderationWarning from '../common/TaxConsiderationWarning';
-import { YearlyResult, TrapAlert } from '../../types/ScenarioTypes';
+import { YearlyResult, TrapAlert } from '@/types/tax/rothConversionTypes';
 
 interface ScenarioWarningsProps {
   yearlyResults: YearlyResult[];
@@ -19,14 +19,23 @@ const ScenarioWarnings: React.FC<ScenarioWarningsProps> = ({
     return null;
   }
 
-  const latestWarnings: TrapAlert[] = yearlyResults.length > 0 
+  // Convert the severity values to match what TaxTrapWarningsPanel expects
+  const convertSeverity = (severity: 'low' | 'medium' | 'high'): "critical" | "warning" | "info" => {
+    switch (severity) {
+      case 'high': return 'critical';
+      case 'medium': return 'warning';
+      case 'low': return 'info';
+      default: return 'info';
+    }
+  };
+
+  const latestWarnings = yearlyResults.length > 0 
     ? yearlyResults[yearlyResults.length - 1].warnings.map(warning => ({
         title: warning.message || warning.type || '',
         message: warning.message || '',
         type: warning.type || warning.trapType || '',
         trapType: warning.trapType || warning.type || '',
-        severity: (warning.severity === 'high' ? 'critical' : 
-                 warning.severity === 'medium' ? 'warning' : 'info') as "critical" | "warning" | "info",
+        severity: convertSeverity(warning.severity),
         details: warning.message,
         description: warning.message
       }))

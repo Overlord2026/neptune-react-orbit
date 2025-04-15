@@ -67,6 +67,17 @@ export interface TaxResult {
     combined_tax: number;
     difference: number;
   };
+  
+  // Additional properties used in some components
+  total_income?: number;
+  ordinary_tax?: number;
+  capital_gains_tax?: number;
+  brackets_breakdown?: {
+    ordinary: { bracket: number; amount: number; tax: number }[];
+    capitalGains: { bracket: number; amount: number; tax: number }[];
+  };
+  tax_data_version?: string;
+  tax_data_is_current?: boolean;
 }
 
 export interface TaxScenario extends TaxResult {

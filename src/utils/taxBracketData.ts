@@ -1,110 +1,194 @@
-// Import the standardized FilingStatusType
-import { FilingStatusType } from '../types/tax/filingTypes';
 
-export { FilingStatusType };
+/**
+ * Tax bracket data and utilities
+ */
+import { FilingStatusType, convertLegacyFilingStatus, LegacyFilingStatusType } from '@/types/tax/filingTypes';
+import { formatCurrency, formatPercent } from './formatUtils';
 
-// Define the tax bracket data
-export interface TaxBracket {
+// Export formatters for backward compatibility
+export { formatCurrency, formatPercent } from './formatUtils';
+
+// Tax bracket types
+export type BracketType = "ordinary" | "ltcg";
+
+// Standard deduction values for 2023
+export const STANDARD_DEDUCTION = {
+  single: 13850,
+  marriedFilingJointly: 27700,
+  marriedFilingSeparately: 13850,
+  headOfHousehold: 20800
+};
+
+// Standard deduction by year and filing status
+export const STANDARD_DEDUCTION_BY_YEAR = {
+  2022: {
+    single: 12950,
+    married_joint: 25900, 
+    married_separate: 12950,
+    head_of_household: 19400,
+    qualifying_widow: 25900
+  },
+  2023: {
+    single: 13850,
+    married_joint: 27700,
+    married_separate: 13850,
+    head_of_household: 20800,
+    qualifying_widow: 27700
+  },
+  2024: {
+    single: 14600,
+    married_joint: 29200,
+    married_separate: 14600,
+    head_of_household: 21900,
+    qualifying_widow: 29200
+  }
+};
+
+// Helper function that maps legacy filing status to current filing status for bracket lookups
+export function getBrackets(year: number, filingStatus: FilingStatusType | LegacyFilingStatusType, bracketType: BracketType = "ordinary"): {
+  bracket_min: number;
+  bracket_max: number;
   rate: number;
-  singleThreshold: number;
-  marriedThreshold: number;
-  headOfHouseholdThreshold: number;
-  marriedSeparateThreshold: number;
-  label: string;
+}[] {
+  // Convert legacy filing status if needed
+  const normalizedFilingStatus = typeof filingStatus === 'string' && 
+    (filingStatus === 'married' || filingStatus === 'single' || 
+     filingStatus === 'married_separate' || filingStatus === 'head_of_household')
+    ? convertLegacyFilingStatus(filingStatus as LegacyFilingStatusType)
+    : filingStatus;
+
+  // Simple hard-coded brackets for demonstration
+  // In a real app this would come from a data source or API
+  const brackets = {
+    ordinary: {
+      single: [
+        { bracket_min: 0, bracket_max: 10275, rate: 0.1 },
+        { bracket_min: 10275, bracket_max: 41775, rate: 0.12 },
+        { bracket_min: 41775, bracket_max: 89075, rate: 0.22 },
+        { bracket_min: 89075, bracket_max: 170050, rate: 0.24 },
+        { bracket_min: 170050, bracket_max: 215950, rate: 0.32 },
+        { bracket_min: 215950, bracket_max: 539900, rate: 0.35 },
+        { bracket_min: 539900, bracket_max: Infinity, rate: 0.37 }
+      ],
+      married_joint: [
+        { bracket_min: 0, bracket_max: 20550, rate: 0.1 },
+        { bracket_min: 20550, bracket_max: 83550, rate: 0.12 },
+        { bracket_min: 83550, bracket_max: 178150, rate: 0.22 },
+        { bracket_min: 178150, bracket_max: 340100, rate: 0.24 },
+        { bracket_min: 340100, bracket_max: 431900, rate: 0.32 },
+        { bracket_min: 431900, bracket_max: 647850, rate: 0.35 },
+        { bracket_min: 647850, bracket_max: Infinity, rate: 0.37 }
+      ],
+      married_separate: [
+        { bracket_min: 0, bracket_max: 10275, rate: 0.1 },
+        { bracket_min: 10275, bracket_max: 41775, rate: 0.12 },
+        { bracket_min: 41775, bracket_max: 89075, rate: 0.22 },
+        { bracket_min: 89075, bracket_max: 170050, rate: 0.24 },
+        { bracket_min: 170050, bracket_max: 215950, rate: 0.32 },
+        { bracket_min: 215950, bracket_max: 323925, rate: 0.35 },
+        { bracket_min: 323925, bracket_max: Infinity, rate: 0.37 }
+      ],
+      head_of_household: [
+        { bracket_min: 0, bracket_max: 14650, rate: 0.1 },
+        { bracket_min: 14650, bracket_max: 55900, rate: 0.12 },
+        { bracket_min: 55900, bracket_max: 89050, rate: 0.22 },
+        { bracket_min: 89050, bracket_max: 170050, rate: 0.24 },
+        { bracket_min: 170050, bracket_max: 215950, rate: 0.32 },
+        { bracket_min: 215950, bracket_max: 539900, rate: 0.35 },
+        { bracket_min: 539900, bracket_max: Infinity, rate: 0.37 }
+      ],
+      qualifying_widow: [
+        { bracket_min: 0, bracket_max: 20550, rate: 0.1 },
+        { bracket_min: 20550, bracket_max: 83550, rate: 0.12 },
+        { bracket_min: 83550, bracket_max: 178150, rate: 0.22 },
+        { bracket_min: 178150, bracket_max: 340100, rate: 0.24 },
+        { bracket_min: 340100, bracket_max: 431900, rate: 0.32 },
+        { bracket_min: 431900, bracket_max: 647850, rate: 0.35 },
+        { bracket_min: 647850, bracket_max: Infinity, rate: 0.37 }
+      ]
+    },
+    ltcg: {
+      // Add long term capital gains brackets here
+      single: [
+        { bracket_min: 0, bracket_max: 41675, rate: 0 },
+        { bracket_min: 41675, bracket_max: 459750, rate: 0.15 },
+        { bracket_min: 459750, bracket_max: Infinity, rate: 0.20 }
+      ],
+      married_joint: [
+        { bracket_min: 0, bracket_max: 83350, rate: 0 },
+        { bracket_min: 83350, bracket_max: 517200, rate: 0.15 },
+        { bracket_min: 517200, bracket_max: Infinity, rate: 0.20 }
+      ],
+      married_separate: [
+        { bracket_min: 0, bracket_max: 41675, rate: 0 },
+        { bracket_min: 41675, bracket_max: 258600, rate: 0.15 },
+        { bracket_min: 258600, bracket_max: Infinity, rate: 0.20 }
+      ],
+      head_of_household: [
+        { bracket_min: 0, bracket_max: 55800, rate: 0 },
+        { bracket_min: 55800, bracket_max: 488500, rate: 0.15 },
+        { bracket_min: 488500, bracket_max: Infinity, rate: 0.20 }
+      ],
+      qualifying_widow: [
+        { bracket_min: 0, bracket_max: 83350, rate: 0 },
+        { bracket_min: 83350, bracket_max: 517200, rate: 0.15 },
+        { bracket_min: 517200, bracket_max: Infinity, rate: 0.20 }
+      ]
+    }
+  };
+
+  // Return the relevant brackets
+  return brackets[bracketType][normalizedFilingStatus as keyof typeof brackets[typeof bracketType]] || 
+         brackets[bracketType].single;  // Default to single if status not found
 }
 
-// Helper function for formatting percentages
-export const formatPercent = (value: number): string => {
-  return `${(value * 100).toFixed(1)}%`;
-};
-
-// Helper function to convert between legacy and new filing status types
-export function convertFilingStatusToNew(status: string): FilingStatusType {
-  if (status === 'married') return 'married_joint';
-  return status as FilingStatusType;
-}
-
-export function convertFilingStatusToLegacy(status: FilingStatusType): string {
-  if (status === 'married_joint') return 'married';
-  return status;
-}
-
-// Tax bracket data for different years
-export const taxBracketData: { [year: number]: TaxBracket[] } = {
-  2022: [
-    { rate: 0.10, singleThreshold: 0, marriedThreshold: 0, headOfHouseholdThreshold: 0, marriedSeparateThreshold: 0, label: "10%" },
-    { rate: 0.12, singleThreshold: 10275, marriedThreshold: 20550, headOfHouseholdThreshold: 14600, marriedSeparateThreshold: 10275, label: "12%" },
-    { rate: 0.22, singleThreshold: 41775, marriedThreshold: 83550, headOfHouseholdThreshold: 55925, marriedSeparateThreshold: 41775, label: "22%" },
-    { rate: 0.24, singleThreshold: 89075, marriedThreshold: 178150, headOfHouseholdThreshold: 118850, marriedSeparateThreshold: 89075, label: "24%" },
-    { rate: 0.32, singleThreshold: 170050, marriedThreshold: 340100, headOfHouseholdThreshold: 215950, marriedSeparateThreshold: 170050, label: "32%" },
-    { rate: 0.35, singleThreshold: 215950, marriedThreshold: 431900, headOfHouseholdThreshold: 539900, marriedSeparateThreshold: 215950, label: "35%" },
-    { rate: 0.37, singleThreshold: 539900, marriedThreshold: 647850, headOfHouseholdThreshold: 647850, marriedSeparateThreshold: 539900, label: "37%" }
-  ],
-  2023: [
-    { rate: 0.10, singleThreshold: 0, marriedThreshold: 0, headOfHouseholdThreshold: 0, marriedSeparateThreshold: 0, label: "10%" },
-    { rate: 0.12, singleThreshold: 11000, marriedThreshold: 22000, headOfHouseholdThreshold: 16500, marriedSeparateThreshold: 11000, label: "12%" },
-    { rate: 0.22, singleThreshold: 44725, marriedThreshold: 89450, headOfHouseholdThreshold: 59850, marriedSeparateThreshold: 44725, label: "22%" },
-    { rate: 0.24, singleThreshold: 95375, marriedThreshold: 190750, headOfHouseholdThreshold: 127750, marriedSeparateThreshold: 95375, label: "24%" },
-    { rate: 0.32, singleThreshold: 182100, marriedThreshold: 364200, headOfHouseholdThreshold: 231250, marriedSeparateThreshold: 182100, label: "32%" },
-    { rate: 0.35, singleThreshold: 231250, marriedThreshold: 462500, headOfHouseholdThreshold: 578125, marriedSeparateThreshold: 231250, label: "35%" },
-    { rate: 0.37, singleThreshold: 578125, marriedThreshold: 693750, headOfHouseholdThreshold: 693750, marriedSeparateThreshold: 578125, label: "37%" }
-  ],
-  2024: [
-    { rate: 0.10, singleThreshold: 0, marriedThreshold: 0, headOfHouseholdThreshold: 0, marriedSeparateThreshold: 0, label: "10%" },
-    { rate: 0.12, singleThreshold: 11600, marriedThreshold: 23200, headOfHouseholdThreshold: 17400, marriedSeparateThreshold: 11600, label: "12%" },
-    { rate: 0.22, singleThreshold: 47150, marriedThreshold: 94300, headOfHouseholdThreshold: 63100, marriedSeparateThreshold: 47150, label: "22%" },
-    { rate: 0.24, singleThreshold: 100525, marriedThreshold: 201050, headOfHouseholdThreshold: 134850, marriedSeparateThreshold: 100525, label: "24%" },
-    { rate: 0.32, singleThreshold: 191950, marriedThreshold: 383900, headOfHouseholdThreshold: 243700, marriedSeparateThreshold: 191950, label: "32%" },
-    { rate: 0.35, singleThreshold: 243700, marriedThreshold: 487400, headOfHouseholdThreshold: 609350, marriedSeparateThreshold: 243700, label: "35%" },
-    { rate: 0.37, singleThreshold: 609350, marriedThreshold: 731200, headOfHouseholdThreshold: 731200, marriedSeparateThreshold: 609350, label: "37%" }
-  ],
-};
-
-// Function to get the tax bracket for a given year, filing status, and income
-export const getTaxBracket = (
-  year: number,
-  filingStatus: FilingStatusType,
-  income: number
-): TaxBracket => {
-  const brackets = taxBracketData[year];
-  if (!brackets) {
-    console.warn(`No tax bracket data found for year ${year}. Using 2023 data.`);
-    return getTaxBracket(2023, filingStatus, income);
-  }
-
-  let thresholdKey: keyof TaxBracket;
-  switch (filingStatus) {
-    case "single":
-      thresholdKey = "singleThreshold";
-      break;
-    case "married_joint":
-      thresholdKey = "marriedThreshold";
-      break;
-    case "head_of_household":
-      thresholdKey = "headOfHouseholdThreshold";
-      break;
-    case "married_separate":
-      thresholdKey = "marriedSeparateThreshold";
-      break;
-    case "qualifying_widow":
-      thresholdKey = "marriedThreshold"; // Same as married jointly
-      break;
-    default:
-      console.error(`Unknown filing status: ${filingStatus}`);
-      return brackets[0];
-  }
-
+// For backward compatibility with getTaxBracket
+export function getTaxBracket(income: number, filingStatus: FilingStatusType | LegacyFilingStatusType = 'single'): string {
+  const normalizedFilingStatus = typeof filingStatus === 'string' && 
+    (filingStatus === 'married' || filingStatus === 'single' || 
+     filingStatus === 'married_separate' || filingStatus === 'head_of_household')
+    ? convertLegacyFilingStatus(filingStatus as LegacyFilingStatusType)
+    : filingStatus;
+    
+  const brackets = getBrackets(new Date().getFullYear(), normalizedFilingStatus);
+  
+  // Find the bracket for this income
   for (let i = brackets.length - 1; i >= 0; i--) {
-    if (income > brackets[i][thresholdKey]) {
-      return brackets[i];
+    if (income >= brackets[i].bracket_min) {
+      return `${(brackets[i].rate * 100).toFixed(0)}%`;
     }
   }
+  
+  return "0%";
+}
 
-  return brackets[0];
-};
+// Export the function to get distance to next bracket
+export function getDistanceToNextBracket(income: number, filingStatus: FilingStatusType | LegacyFilingStatusType = 'single'): {
+  nextThreshold: number;
+  distance: number;
+} {
+  const normalizedFilingStatus = typeof filingStatus === 'string' && 
+    (filingStatus === 'married' || filingStatus === 'single' || 
+     filingStatus === 'married_separate' || filingStatus === 'head_of_household')
+    ? convertLegacyFilingStatus(filingStatus as LegacyFilingStatusType)
+    : filingStatus;
 
-// Function to get the tax bracket rate for a given income
-export const getTaxBracketRate = (income: number, year: number = 2023, filingStatus: FilingStatusType = "single"): string => {
-  const bracket = getTaxBracket(year, filingStatus, income);
-  return bracket.label;
-};
+  const brackets = getBrackets(new Date().getFullYear(), normalizedFilingStatus);
+  
+  // Find the current bracket and calculate distance to next
+  for (let i = 0; i < brackets.length; i++) {
+    const bracket = brackets[i];
+    if (income >= bracket.bracket_min && income < bracket.bracket_max) {
+      return {
+        nextThreshold: bracket.bracket_max,
+        distance: bracket.bracket_max - income
+      };
+    }
+  }
+  
+  // If we're in the highest bracket
+  return {
+    nextThreshold: Infinity,
+    distance: Infinity
+  };
+}

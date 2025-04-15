@@ -101,6 +101,10 @@ export interface MultiYearScenarioData {
     bunchingYears: number;
     bunchingAmount: number;
   };
+  // Additional fields needed for SpouseDetailsStep
+  spouseFirstName?: string;
+  spouseLastName?: string;
+  combinedIRAApproach?: 'separate' | 'primary-first' | 'spouse-first' | 'proportional';
 }
 
 // Yearly Result for Multi-Year Scenarios
@@ -131,6 +135,10 @@ export interface YearlyResult {
     spouse2Tax: number;
     combinedMfsTax: number;
     taxDifference: number;
+    mfjIrmaa?: number;
+    spouse1Irmaa?: number;
+    spouse2Irmaa?: number;
+    combinedMfsIrmaa?: number;
   };
   charitableContribution?: {
     amount: number;
@@ -167,8 +175,16 @@ export interface TrapAlert {
   type: string;
   message: string;
   severity: 'low' | 'medium' | 'high';
-  trapType: string;
+  trapType?: string;
 }
 
 // Conversion strategy type
 export type ConversionStrategyType = 'fixed' | 'bracket_12' | 'bracket_22' | 'bracket_12_22';
+
+// TrapAvoidance type - missing but used in the code
+export interface TrapAvoidance {
+  type: string;
+  title: string;
+  description: string;
+  savings: number;
+}

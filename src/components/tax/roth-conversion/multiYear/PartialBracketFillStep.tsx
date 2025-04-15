@@ -3,7 +3,7 @@ import React from 'react';
 import BasicInformationCard from './cards/BasicInformationCard';
 import IncomeInformationCard from './cards/IncomeInformationCard';
 import TaxConsiderationWarning from './common/TaxConsiderationWarning';
-import { MultiYearScenarioData } from '../types/ScenarioTypes';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -42,7 +42,7 @@ const PartialBracketFillStep: React.FC<PartialBracketFillStepProps> = ({
           <CardTitle>Filing & Community Property Options</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {scenarioData.filingStatus === 'married' && (
+          {scenarioData.filingStatus === 'married_joint' && (
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="compare-mfj-mfs" className="font-medium">
@@ -60,7 +60,7 @@ const PartialBracketFillStep: React.FC<PartialBracketFillStepProps> = ({
             </div>
           )}
 
-          {scenarioData.filingStatus === 'married' && (
+          {scenarioData.filingStatus === 'married_joint' && (
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="community-property" className="font-medium">

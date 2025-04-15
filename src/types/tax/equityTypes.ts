@@ -61,7 +61,7 @@ export interface EquityCompEvent {
   amtImpact: number;
   ordinaryIncome: number;
   isDisqualifyingDisposition?: boolean;
-  // Add missing required fields
+  // Required fields that were missing
   incomeRecognized: number;
   taxRate: number;
   taxesPaid: number;
@@ -102,7 +102,7 @@ export interface YearlyTaxImpact {
   federalTax?: number;
 }
 
-// Unified EquityScenario
+// Unified EquityScenario - includes TaxResult properties
 export interface EquityScenario extends TaxResult {
   id?: string;
   type: string;
@@ -111,6 +111,7 @@ export interface EquityScenario extends TaxResult {
   amtImpact?: number;
   deferralBenefit?: number;
   scenario_name: string;
+  total_income?: number; // Added for compatibility
 }
 
 // Add TaxImpactResult type that was missing

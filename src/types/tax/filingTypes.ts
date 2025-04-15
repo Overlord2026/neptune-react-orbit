@@ -10,6 +10,11 @@ export type FilingStatusType = 'single' | 'married_joint' | 'married_separate' |
 // Alias to support older code still using 'married' instead of 'married_joint'
 export type LegacyFilingStatusType = 'single' | 'married' | 'married_separate' | 'head_of_household';
 
+// A mapping to convert from legacy to current filing status types
+export const convertLegacyFilingStatus = (status: LegacyFilingStatusType): FilingStatusType => {
+  return status === 'married' ? 'married_joint' : status;
+};
+
 // Unified W2Form
 export interface W2Form {
   employerName: string;

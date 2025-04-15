@@ -8,30 +8,13 @@ import {
   CardDescription
 } from "@/components/ui/card";
 import { Check, X, AlertTriangle, TrendingDown, TrendingUp } from "lucide-react";
-import { YearlyResult } from '../../types/ScenarioTypes';
+import { YearlyResult } from '@/types/tax/rothConversionTypes';
+import { formatCurrency, formatPercent } from '@/utils/formatUtils';
 
 interface FilingStatusComparisonProps {
   yearlyResults: YearlyResult[];
   showMfsComparison: boolean;
 }
-
-// Format currency values
-const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0
-  }).format(amount);
-};
-
-// Format percentage values
-const formatPercent = (decimal: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'percent',
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1
-  }).format(decimal);
-};
 
 const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({ 
   yearlyResults,
@@ -54,15 +37,17 @@ const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({
     spouse1Tax, 
     spouse2Tax, 
     combinedMfsTax,
-    taxDifference,
-    mfjIrmaa,
-    spouse1Irmaa,
-    spouse2Irmaa,
-    combinedMfsIrmaa
+    taxDifference
   } = currentResult.mfsComparison;
+
+  // Optional IRMAA properties - they might not exist in some implementations
+  const mfjIrmaa = currentResult.mfsComparison.mfjIrmaa || 0;
+  const spouse1Irmaa = currentResult.mfsComparison.spouse1Irmaa || 0;
+  const spouse2Irmaa = currentResult.mfsComparison.spouse2Irmaa || 0;
+  const combinedMfsIrmaa = currentResult.mfsComparison.combinedMfsIrmaa || 0;
   
   const isMfjBetter = combinedMfsTax > mfjTotalTax;
-  const totalMfjCost = mfjTotalTax + (mfjIrmaa || 0);
+  const totalMfjCost = mfjTotalTax + mfjIrmaa;
   const totalMfsCost = combinedMfsTax + (combinedMfsIrmaa || 0);
   const isMfjBetterWithIrmaa = totalMfsCost > totalMfjCost;
   
@@ -91,14 +76,14 @@ const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({
                 <span className="font-medium">{formatCurrency(mfjTotalTax)}</span>
               </div>
               
-              {mfjIrmaa !== undefined && (
+              {mfjIrmaa > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">IRMAA Surcharge:</span>
                   <span className="font-medium text-amber-500">{formatCurrency(mfjIrmaa)}</span>
                 </div>
               )}
               
-              {(mfjIrmaa !== undefined) && (
+              {(mfjIrmaa > 0) && (
                 <div className="flex justify-between border-t border-muted pt-1 mt-1">
                   <span className="font-medium">Total Cost:</span>
                   <span className="font-medium">{formatCurrency(totalMfjCost)}</span>
@@ -133,7 +118,7 @@ const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({
                 <span className="font-medium">{formatCurrency(combinedMfsTax)}</span>
               </div>
               
-              {spouse1Irmaa !== undefined && spouse2Irmaa !== undefined && (
+              {(spouse1Irmaa > 0 || spouse2Irmaa > 0) && (
                 <>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Spouse 1 IRMAA:</span>
@@ -173,7 +158,7 @@ const FilingStatusComparison: React.FC<FilingStatusComparisonProps> = ({
           ) : (
             <p className="text-sm">
               <span className="font-medium">Analysis:</span> Filing {isMfjBetterWithIrmaa ? 'jointly' : 'separately'} saves approximately {formatCurrency(taxSavings)} 
-              {isMfjBetterWithIrmaa && mfjIrmaa !== undefined && combinedMfsIrmaa !== undefined ? ' (including IRMAA surcharges)' : ''}.
+              {isMfjBetterWithIrmaa && mfjIrmaa > 0 && combinedMfsIrmaa > 0 ? ' (including IRMAA surcharges)' : ''}.
             </p>
           )}
         </div>

@@ -1,22 +1,28 @@
 
 /**
- * Shared Format Utilities
- * 
- * Common formatting functions used throughout the application
+ * Utility functions for formatting values
  */
 
-export const formatCurrency = (amount: number) => {
+/**
+ * Format a number as currency
+ */
+export const formatCurrency = (amount: number, options: Intl.NumberFormatOptions = {}): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
+    ...options
   }).format(amount);
 };
 
-export const formatPercent = (value: number) => {
+/**
+ * Format a number as percentage
+ */
+export const formatPercent = (decimal: number, options: Intl.NumberFormatOptions = {}): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'percent',
     minimumFractionDigits: 1,
-    maximumFractionDigits: 1
-  }).format(value);
+    maximumFractionDigits: 1,
+    ...options
+  }).format(decimal);
 };

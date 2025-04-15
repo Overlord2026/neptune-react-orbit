@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, Calculator, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { FilingStatusType } from '@/utils/taxCalculator';
+import { LegacyFilingStatusType } from '@/types/tax/filingTypes';
 import InfoTooltip from '@/components/tax/InfoTooltip';
 import { TaxTrapChecker } from '@/components/tax/TaxTrapChecker';
 import { useToast } from "@/hooks/use-toast";
@@ -26,7 +26,7 @@ interface ConversionResult {
 const SingleYearRothConversion = () => {
   const [income, setIncome] = useState<number>(80000);
   const [iraBalance, setIraBalance] = useState<number>(500000);
-  const [filingStatus, setFilingStatus] = useState<FilingStatusType>("single");
+  const [filingStatus, setFilingStatus] = useState<LegacyFilingStatusType>("single");
   const [conversionAmount, setConversionAmount] = useState<number>(20000);
   const [useBracketFill, setUseBracketFill] = useState<boolean>(false);
   const [bracketFillPercentage, setBracketFillPercentage] = useState<number>(75);
@@ -104,7 +104,7 @@ const SingleYearRothConversion = () => {
     }, 1200);
   };
 
-  const calculateBracketFillAmount = (income: number, filingStatus: FilingStatusType, percentage: number) => {
+  const calculateBracketFillAmount = (income: number, filingStatus: LegacyFilingStatusType, percentage: number) => {
     // This is a simplified calculation - would be replaced with actual bracket calculation
     const brackets = {
       single: [10275, 41775, 89075, 170050, 215950, 539900],
@@ -129,7 +129,7 @@ const SingleYearRothConversion = () => {
     return Math.min(fillAmount, iraBalance);
   };
 
-  const estimateMarginalRate = (totalIncome: number, filingStatus: FilingStatusType) => {
+  const estimateMarginalRate = (totalIncome: number, filingStatus: LegacyFilingStatusType) => {
     // Simplified marginal rate estimation
     const rates = {
       single: [
@@ -216,7 +216,7 @@ const SingleYearRothConversion = () => {
           
           <div>
             <Label htmlFor="filingStatus">Filing Status</Label>
-            <Select value={filingStatus} onValueChange={(value) => setFilingStatus(value as FilingStatusType)}>
+            <Select value={filingStatus} onValueChange={(value) => setFilingStatus(value as LegacyFilingStatusType)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select filing status" />
               </SelectTrigger>
