@@ -64,7 +64,6 @@ export const calculateMultiYearScenario = async (
       spouseConversionAmount,
       taxResult,
       noConversionTaxResult,
-      charitableContribution,
       warnings
     } = yearResult;
 
@@ -123,6 +122,13 @@ export const calculateMultiYearScenario = async (
         };
       }
     }
+    
+    // Extract charitable contribution info from yearResult if available
+    const charitableContribution = yearResult.charitableContribution || {
+      amount: 0,
+      useQcd: false,
+      isBunching: false
+    };
     
     // Add this year's results to the array
     results.push({

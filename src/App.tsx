@@ -5,6 +5,7 @@ import Layout from "./components/Layout";
 import HomePage from "./pages/Index";
 import TaxPlanningPage from "./pages/TaxPlanningLandingPage";
 import TaxFilingPage from "./pages/FileMyTaxesPage";
+import TaxFilingOptionsPage from "./pages/TaxFilingOptionsPage";
 import TaxVaultPage from "./pages/TaxVaultPage";
 import TaxToolsPage from "./pages/TaxToolsPage";
 import RothConversionPage from "./pages/RothConversionPage";
@@ -32,6 +33,10 @@ function AppRoutes() {
     },
     {
       path: "/tax-filing",
+      element: <Layout><TaxFilingOptionsPage /></Layout>
+    },
+    {
+      path: "/file-my-taxes",
       element: <Layout><TaxFilingPage /></Layout>
     },
     {

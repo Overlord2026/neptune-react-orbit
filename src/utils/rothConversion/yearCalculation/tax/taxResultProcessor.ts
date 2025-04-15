@@ -7,6 +7,7 @@
 
 import { TaxInput, calculateTaxScenario } from '../../../taxCalculator';
 import { calculateCharitableImpact } from '../../charitableImpactUtils';
+import { TaxTrapResult } from '@/utils/taxTraps';
 
 interface TaxResultsParams {
   yearTaxInput: TaxInput;
@@ -75,7 +76,7 @@ export function processTaxResults({
       taxResult.marginal_rate, // Use actual marginal rate
       rmdAmount,
       yearTaxInput.wages + (yearTaxInput.ira_distributions || 0) + (yearTaxInput.roth_conversion || 0),
-      { warnings: [] } // Simplified for recalculation
+      { scenario_id: `${scenarioName}_charitable`, warnings: [] } as TaxTrapResult // Provide a valid TaxTrapResult
     );
   }
   
@@ -84,6 +85,7 @@ export function processTaxResults({
     taxResult,
     noConversionTaxResult,
     charitableImpact: updatedCharitableImpact,
-    warnings: updatedWarnings
+    warnings: updatedWarnings,
+    charitableContribution
   };
 }
