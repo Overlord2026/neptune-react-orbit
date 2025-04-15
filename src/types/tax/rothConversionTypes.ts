@@ -1,4 +1,3 @@
-
 export interface RothConversionInput {
   traditionalIRABalance: number;
   rothIRABalance: number;
@@ -90,10 +89,14 @@ export interface MultiYearScenarioData {
 }
 
 export interface CharitableContribution {
-  year: number;
+  year?: number;
   amount: number;
-  strategy: string;
-  taxSavings: number;
+  strategy?: string;
+  taxSavings?: number;
+  isQcd?: boolean;  // Added property
+  isBunching?: boolean;  // Added property
+  useQcd?: boolean;  // Add this to maintain compatibility with other parts of the code
+  years?: number[];  // Optional years for bunching contributions
 }
 
 export interface TrapAlert {
