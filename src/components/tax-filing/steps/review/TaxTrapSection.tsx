@@ -3,6 +3,7 @@ import React from 'react';
 import { TaxReturnData } from '../../types/TaxReturnTypes';
 import { TaxTrapAdapter } from '@/components/tax/TaxTrapAdapter';
 import { Card } from '@/components/ui/card';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 
 interface TaxTrapSectionProps {
   data: TaxReturnData;
@@ -15,6 +16,12 @@ const TaxTrapSection: React.FC<TaxTrapSectionProps> = ({
   calculatedAGI, 
   calculatedTaxableIncome 
 }) => {
+  // Convert legacy filing status to the standardized format if needed
+  const convertFilingStatus = (status: string): FilingStatusType => {
+    if (status === 'married') return 'married_joint';
+    return status as FilingStatusType;
+  };
+
   return (
     <div className="space-y-2">
       <h4 className="font-medium">Potential Tax Considerations</h4>
@@ -23,7 +30,7 @@ const TaxTrapSection: React.FC<TaxTrapSectionProps> = ({
           scenarioId="tax-filing-review"
           scenarioData={{
             year: 2023, // Using current tax year for filing
-            filing_status: data.filingStatus as any,
+            filing_status: convertFilingStatus(data.filingStatus),
             agi: calculatedAGI,
             total_income: calculatedAGI,
             taxable_income: calculatedTaxableIncome,
@@ -33,7 +40,6 @@ const TaxTrapSection: React.FC<TaxTrapSectionProps> = ({
             household_size: data.dependents.length + 1,
             medicare_enrollment: data.isOver65 || false,
             aca_enrollment: data.hasHealthInsurance || false
-            // Remove the state_of_residence field
           }}
           className="mb-4"
         />

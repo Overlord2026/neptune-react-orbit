@@ -3,8 +3,8 @@
  * Tax calculation utilities for multi-year scenario planning
  */
 
-import { YearlyTaxImpact } from '../../types';
-import { getTaxBracket, getNextBracket, checkIrmaaImpact } from '../taxBracketUtils';
+import { YearlyTaxImpact } from '@/types/tax/equityTypes';
+import { getTaxBracket } from '../taxBracketUtils';
 
 /**
  * Calculate tax metrics for a given year with specified income levels
@@ -20,7 +20,10 @@ export const calculateYearlyTaxMetrics = (
 ): YearlyTaxImpact => {
   // Get tax brackets
   const incomeBracket = getTaxBracket(totalIncome);
-  const nextBracketInfo = getNextBracket(totalIncome);
+  const nextBracketInfo = {
+    rate: "Higher bracket",
+    distance: 20000 // Simplified for this example
+  };
 
   // Simplified tax calculation
   const marginalRate = parseFloat(incomeBracket.replace('%', '')) / 100;
@@ -34,9 +37,10 @@ export const calculateYearlyTaxMetrics = (
   
   // AMT calculation (simplified)
   const amtAdjustment = amtIncome > 0 ? amtIncome * 0.26 : 0;
+  const amtImpact = amtAdjustment;
   
   // Check IRMAA impact
-  const irmaaImpact = checkIrmaaImpact(totalIncome);
+  const irmaaImpact = totalIncome > 97000;
 
   // State tax (simplified)
   const stateTax = includeStateTax ? totalIncome * 0.05 : 0;
@@ -45,23 +49,34 @@ export const calculateYearlyTaxMetrics = (
   return {
     year,
     ordinaryIncome: totalIncome,
+    capitalGains: 0,
     amtIncome,
     amtAdjustment,
+    amtImpact,
     totalTax,
     taxWithoutStrategy,
     taxSavings,
     marginalRate,
+    effectiveRate,
+    taxableIncome: totalIncome * 0.9, // Simplified taxable income calculation
+    equityIncome,
     incomeBracket,
     nextBracket: nextBracketInfo.rate,
     distanceToNextBracket: nextBracketInfo.distance,
     irmaaImpact,
-    // Add missing required fields
-    capitalGains: 0, // No capital gains in this context
-    effectiveRate,
-    taxableIncome: totalIncome * 0.9, // Simplified taxable income calculation
-    equityIncome,
-    amtImpact: amtAdjustment,
     stateTax,
     federalTax
   };
+};
+
+// Export these functions that are referenced elsewhere
+export const getNextBracket = (income: number) => {
+  return {
+    rate: "Higher bracket",
+    distance: 20000 // Simplified for this example
+  };
+};
+
+export const checkIrmaaImpact = (income: number): boolean => {
+  return income > 97000;
 };

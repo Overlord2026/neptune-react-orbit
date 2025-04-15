@@ -21,9 +21,10 @@ interface ScenarioData {
 interface TaxTrapAdapterProps {
   scenarioId: string;
   scenarioData: ScenarioData;
+  className?: string;
 }
 
-export const TaxTrapAdapter: React.FC<TaxTrapAdapterProps> = ({ scenarioId, scenarioData }) => {
+export const TaxTrapAdapter: React.FC<TaxTrapAdapterProps> = ({ scenarioId, scenarioData, className }) => {
   // Sample traps based on scenario data
   const generateTraps = (): TrapAlert[] => {
     const traps: TrapAlert[] = [];
@@ -80,5 +81,5 @@ export const TaxTrapAdapter: React.FC<TaxTrapAdapterProps> = ({ scenarioId, scen
   
   const trapAlerts = generateTraps();
   
-  return <TaxTrapAlerts alerts={trapAlerts} />;
+  return <TaxTrapAlerts alerts={trapAlerts} className={className} />;
 };

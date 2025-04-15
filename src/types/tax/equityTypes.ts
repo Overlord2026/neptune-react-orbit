@@ -1,100 +1,82 @@
+
 /**
- * Type definitions for equity calculations
+ * Equity types for tax calculations
  */
-import { TaxResult } from './taxCalculationTypes';
 
-export type EquityType = 'NSO' | 'ISO' | 'RSU' | 'ESPP' | '';
+import { FilingStatusType } from './filingTypes';
 
-// Form state for equity calculations
+// Equity types
+export type EquityType = "NSO" | "ISO" | "RSU";
+
+// Form state for equity compensation
 export interface EquityFormState {
-  equityType?: EquityType;
-  grantedShares?: number;
-  exercisedShares?: number;
-  grantPrice?: number;
-  fairMarketValue?: number;
-  isDisqualifyingDisposition?: boolean;
-  hasDeferredComp?: boolean;
-  bonusAmount?: number;
-  deferralAmount?: number;
-  deferralPeriod?: number;
-  deferralGrowthRate?: number;
-  planningApproach?: 'single-year' | 'multi-year';
-  includeAMT?: boolean;
-  baseIncome?: number;
-  filingStatus?: 'single' | 'married_joint' | 'married_separate' | 'head_of_household';
-  state?: string;
-  includeStateTax?: boolean;
+  // Basic information
+  bonusAmount: number;
+  equityType: EquityType | "none";
+  hasDeferredComp: boolean;
+  includeStateTax: boolean;
   residentState?: string;
   
-  // Additional fields referenced in components
-  exerciseStrategy?: 'full' | 'partial' | 'split';
-  vestedShares?: number;
-  partialShares?: number;
-  strikePrice?: number;
-  splitYears?: number;
-  deferralStrategy?: 'next-year' | 'multi-year' | 'staggered';
+  // Equity details
+  sharePrice: number;
+  grantPrice: number;
+  numShares: number;
+  isDisqualifyingDisposition: boolean;
+  
+  // Strategy options
+  deferralAmount: number;
+  deferralStrategy: "next-year" | "multi-year";
   deferralYears?: number;
-  
-  // Additional fields referenced in context and steps
-  employer?: string;
-  shareCount?: number;
-  sabbaticalYear?: number;
-  retirementYear?: number;
-  holdingPeriod?: 'unknown' | 'less-than-year' | 'more-than-year';
-  
-  // Multi-year approach fields
-  year1Exercise?: number;
-  year2Exercise?: number;
-  year1Deferral?: number;
-  year2Deferral?: number;
-  
-  // Optional fields with default values
-  unvestedShares?: number;
+  exerciseStrategy: "all-now" | "split" | "all-later";
+  splitYears?: number;
+  splitRatio?: number;
+  planningApproach: "single-year" | "multi-year";
 }
 
-// Yearly impact of tax events
-export interface YearlyTaxImpact {
-  year: number;
-  totalIncome: number;
-  taxableIncome: number;
-  taxPaid: number;
-  marginalRate: number;
-  effectiveRate: number;
-  // Add missing fields
-  amtIncome?: number; // Added for equityCalculations
-  equityEvents?: EquityCompEvent[];
+// Equity scenario
+export interface EquityScenario {
+  id: string;
+  name: string;
+  formState: EquityFormState;
+  result: TaxImpactResult;
 }
 
 // Equity compensation event
 export interface EquityCompEvent {
   year: number;
   sharesExercised: number;
-  spread: number;
-  incomeRecognized: number;
-  taxRate: number;
-  taxesPaid: number;
-  // Add missing fields used in the codebase
-  type?: string; // equity type (NSO, ISO, etc)
-  amtImpact?: number;
-  ordinaryIncome?: number;
-  isDisqualifyingDisposition?: boolean;
+  income: number;
+  tax: number;
 }
 
 // Deferral event
 export interface DeferralEvent {
   year: number;
-  event: string;
   amount: number;
-  tax: number;
-  netAmount: number;
-  
-  // Add additional fields referenced in components
-  fromYear?: number;
-  toYear?: number;
   taxSavings?: number;
-  amountDeferred?: number;
-  taxRate?: number;
-  taxesSaved?: number;
+}
+
+// Yearly tax impact
+export interface YearlyTaxImpact {
+  year: number;
+  ordinaryIncome: number;
+  capitalGains: number;
+  amtIncome?: number;
+  amtAdjustment?: number;
+  amtImpact?: number;
+  taxableIncome: number;
+  marginalRate: number;
+  effectiveRate: number;
+  totalTax: number;
+  taxWithoutStrategy?: number;
+  taxSavings?: number;
+  incomeBracket?: string;
+  nextBracket?: string;
+  distanceToNextBracket?: number;
+  irmaaImpact?: boolean;
+  federalTax?: number;
+  stateTax?: number;
+  equityIncome?: number;
 }
 
 // Tax impact result
@@ -115,22 +97,4 @@ export interface TaxImpactResult {
   multiYearImpact: YearlyTaxImpact[];
   equityEvents: EquityCompEvent[];
   deferralEvents: DeferralEvent[];
-}
-
-// Equity scenario
-export interface EquityScenario extends TaxResult {
-  type: string;
-  scenario_name: string;
-  formState: EquityFormState;
-  results: YearlyTaxImpact[];
-  amtImpact: number;
-  deferralBenefit: number;
-  // Added missing fields that are referenced in the code
-  standard_deduction: number;
-  federal_tax: number;
-  brackets: any[];
-  updated_at: Date;
-  tax_data_is_current: boolean;
-  year?: number;
-  filing_status?: string;
 }
