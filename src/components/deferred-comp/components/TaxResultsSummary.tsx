@@ -6,6 +6,7 @@ import { YearSelector } from "./tax-summary/YearSelector";
 import { TaxBreakdownSection } from "./tax-summary/TaxBreakdownSection";
 import { WarningsSection } from "./tax-summary/WarningsSection";
 import { calculateTaxImpact } from "./tax-summary/TaxCalculation";
+import { StateCode } from "@/utils/stateTax";
 import type { EquityFormState } from "../types";
 
 export const TaxResultsSummary: React.FC = () => {
@@ -74,7 +75,7 @@ export const TaxResultsSummary: React.FC = () => {
               nextYearIncome={taxImpact.nextYearIncome}
               hasStateTax={hasStateTax}
               stateTaxInfo={hasStateTax && yearlyData?.stateTax ? {
-                stateCode: formState.residentState,
+                stateCode: formState.residentState as StateCode,
                 stateTax: yearlyData.stateTax || 0,
                 federalTax: yearlyData.federalTax || 0
               } : undefined}

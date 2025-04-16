@@ -1,7 +1,8 @@
-import { calculateStateTax } from '@/utils/stateTaxData';
+
+import { calculateStateTax } from '@/utils/stateTax';
 import { TaxInput } from '@/types/tax/taxCalculationTypes';
 import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
-import { StateCode } from '@/utils/stateTaxData';
+import { StateCode } from '@/utils/stateTax';
 
 /**
  * Apply state tax information to a tax input based on multi-year scenario data

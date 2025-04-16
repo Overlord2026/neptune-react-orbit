@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowDown, ArrowUp } from 'lucide-react';
-import { StateCode } from '@/utils/stateTaxData';
+import { StateCode } from '@/utils/stateTax';
 
 interface ReviewSummaryCardProps {
   refund: number;

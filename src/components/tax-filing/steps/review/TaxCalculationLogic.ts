@@ -1,6 +1,6 @@
 
 import { TaxReturnData } from '../../types/TaxReturnTypes';
-import { calculateStateTax, StateCode } from '@/utils/stateTaxData';
+import { calculateStateTax, StateCode } from '@/utils/stateTax';
 
 export const calculateTaxValues = (data: TaxReturnData): {
   calculatedRefund: number;
