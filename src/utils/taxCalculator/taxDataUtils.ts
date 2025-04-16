@@ -14,7 +14,7 @@ export const checkTaxDataBeforeCalculation = (year: number, sessionId: string = 
   // This would normally involve checking a cache or timestamp
   // For now, we'll just return a simple object
   return {
-    dataUpdatedAt: new Date(),  // Keep as Date since it gets converted to string in taxScenarioCalculator
+    dataUpdatedAt: new Date(),  // This is a Date object, it gets converted to string elsewhere
     isCurrent: true,
     sessionId
   };

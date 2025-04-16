@@ -54,7 +54,7 @@ export function calculateTaxScenario(
     federal_tax: total_tax,
     state_tax,
     state_code: input.residentState,
-    tax_data_updated_at: taxDataInfo.dataUpdatedAt.toISOString(), // Convert Date to string
+    tax_data_updated_at: new Date(taxDataInfo.dataUpdatedAt).toISOString(), // Fix: convert Date to string
     tax_data_is_current: taxDataInfo.isCurrent
   };
 }
