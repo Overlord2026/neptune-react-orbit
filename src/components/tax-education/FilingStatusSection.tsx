@@ -37,7 +37,7 @@ const FilingStatusSection: React.FC<FilingStatusSectionProps> = ({
 }) => {
   // Get example brackets for comparison
   const singleBrackets = getBrackets(selectedYear, "single", "ordinary");
-  const marriedBrackets = getBrackets(selectedYear, "married_joint", "ordinary");
+  const marriedBrackets = getBrackets(selectedYear, "married", "ordinary"); // Fixed: changed from married_joint to married
   const hohBrackets = getBrackets(selectedYear, "head_of_household", "ordinary");
   
   const contentOptions = {
@@ -87,7 +87,7 @@ const FilingStatusSection: React.FC<FilingStatusSectionProps> = ({
                 <li>Generally most tax-advantageous</li>
                 <li>
                   Standard Deduction: <DynamicContentText 
-                    options={{...contentOptions, filingStatus: 'married_joint'}}
+                    options={{...contentOptions, filingStatus: 'married'}} // Fixed: changed from married_joint to married
                   >
                     {`current_standard_deduction`}
                   </DynamicContentText>

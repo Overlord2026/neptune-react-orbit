@@ -108,7 +108,7 @@ const SingleYearRothConversion = () => {
     // This is a simplified calculation - would be replaced with actual bracket calculation
     const brackets = {
       single: [10275, 41775, 89075, 170050, 215950, 539900],
-      married_joint: [20550, 83550, 178150, 340100, 431900, 647850],
+      married: [20550, 83550, 178150, 340100, 431900, 647850],
       married_separate: [10275, 41775, 89075, 170050, 215950, 323925],
       head_of_household: [14650, 55900, 89050, 170050, 215950, 539900]
     };
@@ -142,7 +142,7 @@ const SingleYearRothConversion = () => {
         { threshold: 215950, rate: 0.35 },
         { threshold: 539900, rate: 0.37 }
       ],
-      married_joint: [
+      married: [
         { threshold: 0, rate: 0.10 },
         { threshold: 20550, rate: 0.12 },
         { threshold: 83550, rate: 0.22 },
@@ -232,7 +232,7 @@ const SingleYearRothConversion = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="single">Single</SelectItem>
-                <SelectItem value="married_joint">Married Filing Jointly</SelectItem>
+                <SelectItem value="married">Married Filing Jointly</SelectItem>
                 <SelectItem value="married_separate">Married Filing Separately</SelectItem>
                 <SelectItem value="head_of_household">Head of Household</SelectItem>
               </SelectContent>

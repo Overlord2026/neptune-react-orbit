@@ -57,14 +57,16 @@ interface BusinessInfoStepProps {
   businessInput: BusinessIncomeInput;
   updateBusinessInput: (newData: Partial<BusinessIncomeInput>) => void;
   onNext: () => void;
+  setShowComparison: (show: boolean) => void; // Added missing prop
+  setShowMultiYear: (show: boolean) => void;  // Added missing prop
 }
 
 interface ExpensesStepProps {
   businessInput: BusinessIncomeInput;
   updateBusinessInput: (newData: Partial<BusinessIncomeInput>) => void;
-  updateExpense: (expenseKey: string, value: number) => void;
   onNext: () => void;
   onPrev: () => void;
+  // Removed updateExpense property as it doesn't exist in the component props
 }
 
 interface EntityComparisonStepProps {
@@ -87,6 +89,8 @@ const BusinessIncomeWizard: React.FC = () => {
   const [businessInput, setBusinessInput] = useState<BusinessIncomeInput>(initialBusinessInput);
   const [taxResult, setTaxResult] = useState<BusinessTaxResult>(initialTaxResult);
   const [isSaving, setIsSaving] = useState(false);
+  const [showComparison, setShowComparison] = useState(false); // Added missing state
+  const [showMultiYear, setShowMultiYear] = useState(false);   // Added missing state
 
   // Handle step changes
   const goToNext = () => {
@@ -167,6 +171,8 @@ const BusinessIncomeWizard: React.FC = () => {
             businessInput={businessInput}
             updateBusinessInput={updateBusinessInput}
             onNext={goToNext}
+            setShowComparison={setShowComparison}
+            setShowMultiYear={setShowMultiYear}
           />
         );
       case 'expenses':
@@ -174,7 +180,6 @@ const BusinessIncomeWizard: React.FC = () => {
           <ExpensesStep 
             businessInput={businessInput}
             updateBusinessInput={updateBusinessInput}
-            updateExpense={updateExpense}
             onNext={goToNext}
             onPrev={goToPrev}
           />
@@ -227,10 +232,11 @@ const BusinessIncomeWizard: React.FC = () => {
             capital_gains_tax: 0,
             total_tax: taxResult.selfEmploymentTax + (taxResult.netTaxableIncome * (businessInput.taxRate || 0.22)),
             marginal_rate: businessInput.taxRate || 0.22,
-            effective_rate: taxResult.effectiveTaxRate
+            effective_rate: taxResult.effectiveTaxRate,
+            scenario_name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`
           },
-          created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
+          // Removed created_at property which doesn't exist in TaxScenario interface
         };
         
         return (

@@ -10,11 +10,13 @@ import {
   TaxImpactResult,
   EquityScenario 
 } from '../../types/tax/equityTypes';
+
+// Import from the types folder to avoid circular dependencies
 import { 
   TaxInput, 
   TaxResult, 
   TaxScenario 
-} from '../taxCalculatorTypes';
+} from '../../types/tax/taxCalculationTypes';
 
 export type { 
   EquityFormState, 

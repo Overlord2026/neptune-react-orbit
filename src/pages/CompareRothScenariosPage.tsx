@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TaxResult } from "@/utils/taxCalculatorTypes";
@@ -45,9 +46,9 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.114,
-    filing_status: "married_joint" as FilingStatusType,
+    filing_status: "married" as FilingStatusType, // Fixed: changed from married_joint to married
     updated_at: new Date().toISOString(),
-    tax_data_updated_at: new Date().toISOString(),
+    // Remove tax_data_updated_at which doesn't exist in TaxResult
     tax_data_is_current: true,
     brackets_breakdown: {
       ordinary: [
@@ -71,9 +72,9 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.126,
-    filing_status: "married_joint" as FilingStatusType,
+    filing_status: "married" as FilingStatusType, // Fixed: changed from married_joint to married
     updated_at: new Date().toISOString(),
-    tax_data_updated_at: new Date().toISOString(),
+    // Remove tax_data_updated_at which doesn't exist in TaxResult
     tax_data_is_current: true,
     brackets_breakdown: {
       ordinary: [
@@ -97,9 +98,9 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_rate: 0.22,
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.135,
-    filing_status: "married_joint" as FilingStatusType,
+    filing_status: "married" as FilingStatusType, // Fixed: changed from married_joint to married
     updated_at: new Date().toISOString(),
-    tax_data_updated_at: new Date().toISOString(),
+    // Remove tax_data_updated_at which doesn't exist in TaxResult
     tax_data_is_current: true,
     brackets_breakdown: {
       ordinary: [

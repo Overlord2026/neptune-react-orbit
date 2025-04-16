@@ -1,4 +1,11 @@
-import { CharitableContribution, MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
+import { CharitableContribution, MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
+
+// Define an interface for DAF bunching configuration
+interface DAFBunchingConfig {
+  enabled: boolean;
+  bunchingYears: number;
+  bunchingAmount: number;
+}
 
 /**
  * Get charitable contribution for a specific year
@@ -25,7 +32,7 @@ export const getCharitableContributionForYear = (
   }
 
   // Otherwise, check if we should apply DAF bunching logic
-  if (scenarioData.dafBunching?.enabled) {
+  if (scenarioData.dafBunching && typeof scenarioData.dafBunching === 'object' && scenarioData.dafBunching.enabled) {
     const startYear = scenarioData.startYear;
     const yearIndex = currentYear - startYear;
     const cyclePosition = yearIndex % (scenarioData.dafBunching.bunchingYears || 1);
