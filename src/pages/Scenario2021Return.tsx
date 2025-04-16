@@ -1,3 +1,5 @@
+
+// Modifying only the problematic part:
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -109,11 +111,26 @@ const Scenario2021Return = () => {
         filing_status: data.filingStatus as FilingStatusType,
       }, "2021 Base Scenario");
       
+      // Fix: Create a properly formed TaxScenario object
       const scenarioToSave = {
         id: `scenario-${Date.now()}`,
         name: "2021 Base Scenario",
+        scenario_name: "2021 Base Scenario",
+        year: 2021,
+        filing_status: data.filingStatus as FilingStatusType,
+        is_baseline: true,
+        total_income: result.total_income || 0,
+        agi: result.agi || 0,
+        taxable_income: result.taxable_income,
+        total_tax: result.total_tax,
+        ordinary_tax: result.ordinary_tax,
+        capital_gains_tax: result.capital_gains_tax,
+        marginal_rate: result.marginal_rate,
+        effective_rate: result.effective_rate,
+        marginal_capital_gains_rate: result.marginal_capital_gains_rate || 0,
+        federal_tax: result.federal_tax || result.total_tax,
         result: result,
-        is_baseline: true
+        updated_at: new Date()
       };
       
       await saveScenario(scenarioToSave);

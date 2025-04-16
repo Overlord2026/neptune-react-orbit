@@ -8,7 +8,7 @@
 import { FilingStatusType } from '../taxBracketData';
 import { TaxInput, TaxResult } from '../taxCalculatorTypes';
 import { calculateBasicScenarioResult } from './calculatorCore';
-import { calculateSafeHarbor, SafeHarborInput } from '../safeHarborUtils';
+import { calculateSafeHarbor, SafeHarborInput, SafeHarborResult } from '../safeHarborUtils';
 
 /**
  * Calculate tax scenario based on inputs
@@ -44,6 +44,10 @@ export function calculateTaxScenarioWithSafeHarbor(
   // Return the combined result
   return {
     ...basicResult,
-    safe_harbor: safeHarborResult
+    safe_harbor: {
+      required_payment: safeHarborResult.requiredPayment || 0,
+      is_compliant: safeHarborResult.isCompliant || false,
+      method_used: safeHarborResult.methodUsed || ''
+    }
   };
 }

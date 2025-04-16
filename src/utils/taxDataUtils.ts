@@ -1,3 +1,4 @@
+
 /**
  * Tax Data Utilities
  * 
@@ -5,7 +6,7 @@
  */
 
 import { TaxDataCacheInfo } from './taxCalculatorTypes';
-import { taxData2023 } from './taxBracketData';
+import { taxBracketData2023 as taxData2023 } from './taxBracketData';
 import { taxData2024 } from './taxBracketData2024';
 import { taxData2025 } from './taxBracketData2025';
 
@@ -62,7 +63,7 @@ export function checkTaxDataBeforeCalculation(sessionId: string = "default"): Ta
   return {
     dataUpdatedAt,
     isCurrent,
-    sessionId // Added missing sessionId
+    sessionId
   };
 }
 
@@ -83,7 +84,8 @@ export function refreshTaxData(sessionId: string = "default"): void {
  */
 export function getTaxDataVersionForScenario(year: number, scenarioDate?: Date): { version: string; data: any } | undefined {
   const yearStr = String(year);
-  return TAX_DATA_VERSIONS[yearStr as keyof typeof TAX_DATA_VERSIONS];
+  // @ts-ignore - We know that TAX_DATA_VERSIONS has these keys
+  return TAX_DATA_VERSIONS[yearStr];
 }
 
 /**
@@ -91,7 +93,8 @@ export function getTaxDataVersionForScenario(year: number, scenarioDate?: Date):
  */
 export function hasMidYearUpdates(year: number): boolean {
   const yearStr = String(year);
-  return !!MID_YEAR_UPDATES[yearStr as keyof typeof MID_YEAR_UPDATES];
+  // @ts-ignore - We know that MID_YEAR_UPDATES has these keys
+  return !!MID_YEAR_UPDATES[yearStr];
 }
 
 /**
@@ -99,5 +102,6 @@ export function hasMidYearUpdates(year: number): boolean {
  */
 export function getMidYearUpdateWarning(year: number): string | undefined {
   const yearStr = String(year);
-  return MID_YEAR_UPDATE_MESSAGE[yearStr as keyof typeof MID_YEAR_UPDATE_MESSAGE];
+  // @ts-ignore - We know that MID_YEAR_UPDATE_MESSAGE has these keys
+  return MID_YEAR_UPDATE_MESSAGE[yearStr];
 }

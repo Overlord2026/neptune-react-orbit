@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BusinessIncomeInput, BusinessTaxResult, calculateSmallBusinessTax } from '@/utils/tax/businessTaxCalculator';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +6,7 @@ import ExpensesStep from './steps/ExpensesStep';
 import EntityComparisonStep from './steps/EntityComparisonStep';
 import MultiYearPlanStep from './steps/MultiYearPlanStep';
 import ResultsSummary from './steps/ResultsSummary';
-import { TaxScenario } from '@/utils/taxCalculatorTypes';
+import { TaxScenario } from '@/types/tax/taxCalculationTypes';
 
 // Type for the steps in the wizard
 type BusinessWizardStep = 'business-info' | 'expenses' | 'entity-comparison' | 'multi-year-plan' | 'results';
@@ -208,10 +207,11 @@ const BusinessIncomeWizard: React.FC = () => {
         const scenarioData: TaxScenario = {
           id: `business-${Date.now()}`,
           name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`,
+          description: `Business tax analysis for ${businessInput.businessType}`,
+          is_baseline: false,
           scenario_name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`,
           year: businessInput.year,
           filing_status: "single",
-          is_baseline: false,
           total_income: businessInput.income,
           agi: businessInput.income - taxResult.selfEmploymentTaxDeduction,
           taxable_income: taxResult.netTaxableIncome,
@@ -221,9 +221,11 @@ const BusinessIncomeWizard: React.FC = () => {
           marginal_rate: businessInput.taxRate || 0.22,
           effective_rate: taxResult.effectiveTaxRate,
           marginal_capital_gains_rate: 0,
-          federal_tax: 0,
+          federal_tax: taxResult.selfEmploymentTax + (taxResult.netTaxableIncome * (businessInput.taxRate || 0.22)),
+          state_tax: 0,
+          updated_at: new Date(),
           result: {
-            // Minimal implementation to satisfy the type
+            scenario_name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`,
             year: businessInput.year,
             filing_status: "single",
             total_income: businessInput.income,
@@ -233,10 +235,10 @@ const BusinessIncomeWizard: React.FC = () => {
             total_tax: taxResult.selfEmploymentTax + (taxResult.netTaxableIncome * (businessInput.taxRate || 0.22)),
             marginal_rate: businessInput.taxRate || 0.22,
             effective_rate: taxResult.effectiveTaxRate,
-            scenario_name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`
-          },
-          updated_at: new Date().toISOString()
-          // Removed created_at property which doesn't exist in TaxScenario interface
+            updated_at: new Date(),
+            agi: businessInput.income - taxResult.selfEmploymentTaxDeduction,
+            federal_tax: taxResult.selfEmploymentTax + (taxResult.netTaxableIncome * (businessInput.taxRate || 0.22)),
+          }
         };
         
         return (
