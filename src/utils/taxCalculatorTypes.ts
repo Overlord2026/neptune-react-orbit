@@ -1,88 +1,98 @@
 
-import { FilingStatusType } from './taxBracketData';
-import { StateCode } from './stateTaxData';
+/**
+ * Core tax calculator types
+ */
 
+import { FilingStatusType } from '../types/tax/filingTypes';
+
+/**
+ * Input parameters for tax calculation
+ */
 export interface TaxInput {
   year: number;
-  wages: number;
-  interest: number;
-  dividends: number;
-  capital_gains: number;
-  ira_distributions: number;
-  roth_conversion: number;
-  social_security: number;
-  filing_status: FilingStatusType;
+  filingStatus: FilingStatusType;
+  income: number;
+  capitalGains?: number;
+  adjustments?: number;
+  deductions?: number;
+  credits?: number;
   isItemizedDeduction?: boolean;
   itemizedDeductionAmount?: number;
-  scenarioDate?: Date;
-  
-  // Spouse income fields
-  spouseWages?: number;
-  spouseInterest?: number;
-  spouseDividends?: number;
-  spouseCapitalGains?: number;
-  spouseIraDistributions?: number;
-  spouseRothConversion?: number;
-  spouseSocialSecurity?: number;
-  
-  // Community property related fields
-  isInCommunityPropertyState?: boolean;
-  splitCommunityIncome?: boolean;
-  
-  // State tax related fields
+  taxableIncome?: number;
+  residentState?: string;
   includeStateTax?: boolean;
-  residentState?: StateCode;
+  isAMTApplicable?: boolean;
+  directInputMode?: boolean; // Allows direct input of taxable income
 }
 
-export interface TaxDataCacheInfo {
-  isCurrent: boolean;
-  dataUpdatedAt: Date;
-  sessionId: string;
+/**
+ * Tax bracket breakdown item
+ */
+export interface BracketItem {
+  bracket: number;
+  amount: number;
+  tax: number;
 }
 
+/**
+ * Tax calculation result
+ */
 export interface TaxResult {
-  scenario_name: string;
   year: number;
   filing_status: FilingStatusType;
   total_income: number;
-  agi: number;
   taxable_income: number;
-  federal_tax: number;
-  state_tax: number;
-  state_code?: StateCode;
-  total_tax: number;
   ordinary_tax: number;
   capital_gains_tax: number;
+  total_tax: number;
   marginal_rate: number;
-  marginal_capital_gains_rate: number;
   effective_rate: number;
-  brackets_breakdown?: Record<string, number>;
-  updated_at: Date;
-  tax_data_updated_at?: Date;
-  tax_data_is_current?: boolean;
-  tax_data_version?: string;
-  tax_data_warning?: string;
-  mfs_comparison?: {
-    primary_tax: number;
-    spouse_tax: number;
-    combined_tax: number;
-    difference?: number;
+  standard_deduction?: number;
+  agi?: number;
+  marginal_capital_gains_rate?: number;
+  brackets_breakdown?: {
+    ordinary: BracketItem[];
+    capitalGains: BracketItem[];
   };
+  tax_data_version?: string;
+  federal_tax?: number;
+  state_tax?: number;
+  state_name?: string;
+  state_code?: string;
+  warnings?: string[];
   safe_harbor?: {
     required_payment: number;
     is_compliant: boolean;
     method_used: string;
   };
-  standard_deduction?: number;
-  brackets?: any;
+  scenario_name?: string;
+  is_baseline?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  taxIncomeBreakdown?: {
+    wages?: number;
+    interest?: number;
+    dividends?: number;
+    business?: number;
+    other?: number;
+  };
 }
 
-export interface TaxScenario extends TaxResult {
+/**
+ * Tax data currency info
+ */
+export interface TaxDataCacheInfo {
+  dataUpdatedAt: Date;
+  isCurrent: boolean;
+  sessionId: string;
+}
+
+/**
+ * Tax scenario definition
+ */
+export interface TaxScenario {
   id: string;
   name: string;
-  created_at: Date;
-  updated_at: Date;
-  inputs: TaxInput;
-  is_favorite: boolean;
-  tags?: string[];
+  result: TaxResult;
+  is_baseline: boolean;
 }

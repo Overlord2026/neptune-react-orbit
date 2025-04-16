@@ -28,12 +28,12 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
   const isFutureProjection = scenario.year > currentYear;
   
   // Helper function to safely calculate sum of bracket amounts
-  const sumBracketAmounts = (brackets: BracketItem[] | undefined): number => {
+  const sumBracketAmounts = (brackets: BracketItem[] | undefined | number): number => {
     if (!Array.isArray(brackets)) return 0;
     return brackets.reduce((sum, bracket) => sum + bracket.amount, 0);
   };
   
-  const renderBrackets = (brackets: BracketItem[] | undefined) => {
+  const renderBrackets = (brackets: BracketItem[] | undefined | number) => {
     if (!brackets || !Array.isArray(brackets)) return null;
     
     return (
@@ -88,11 +88,11 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {renderBrackets(scenario.brackets_breakdown?.ordinary as BracketItem[] | undefined)}
+                      {renderBrackets(scenario.brackets_breakdown?.ordinary)}
                       <tr className="bg-muted/30">
                         <td className="px-3 py-2 text-sm font-medium">Total</td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
-                          {formatCurrency(sumBracketAmounts(scenario.brackets_breakdown?.ordinary as BracketItem[] | undefined))}
+                          {formatCurrency(sumBracketAmounts(scenario.brackets_breakdown?.ordinary))}
                         </td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
                           {formatCurrency(scenario.ordinary_tax)}
@@ -117,11 +117,11 @@ const BracketSummary: React.FC<BracketSummaryProps> = ({ scenario }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {renderBrackets(scenario.brackets_breakdown?.capitalGains as BracketItem[] | undefined)}
+                      {renderBrackets(scenario.brackets_breakdown?.capitalGains)}
                       <tr className="bg-muted/30">
                         <td className="px-3 py-2 text-sm font-medium">Total</td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
-                          {formatCurrency(sumBracketAmounts(scenario.brackets_breakdown?.capitalGains as BracketItem[] | undefined))}
+                          {formatCurrency(sumBracketAmounts(scenario.brackets_breakdown?.capitalGains))}
                         </td>
                         <td className="px-3 py-2 text-sm text-right font-medium">
                           {formatCurrency(scenario.capital_gains_tax)}

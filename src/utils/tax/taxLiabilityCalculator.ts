@@ -11,6 +11,7 @@ import {
   getBrackets
 } from '../taxBracketData';
 import { calculateTaxableIncome } from './taxableIncomeCalculator';
+import { BracketItem } from '../taxCalculatorTypes';
 
 /**
  * Calculate total tax liability (ordinary income + capital gains)
@@ -30,8 +31,8 @@ export const calculateTotalTaxLiability = (
   marginalOrdinaryRate: number;
   marginalCapitalGainsRate: number;
   bracketsBreakdown: {
-    ordinary: { bracket: number; amount: number; tax: number }[];
-    capitalGains: { bracket: number; amount: number; tax: number }[];
+    ordinary: BracketItem[];
+    capitalGains: BracketItem[];
   }
 } => {
   // Calculate taxable income
@@ -51,7 +52,7 @@ export const calculateTotalTaxLiability = (
   // Track income in each bracket for breakdown
   let remainingOrdinaryIncome = ordinaryTaxableIncome;
   let ordinaryTax = 0;
-  const ordinaryBreakdown: { bracket: number; amount: number; tax: number }[] = [];
+  const ordinaryBreakdown: BracketItem[] = [];
   
   for (const bracket of ordinaryBrackets) {
     if (remainingOrdinaryIncome <= 0) break;
@@ -79,7 +80,7 @@ export const calculateTotalTaxLiability = (
   // This determines what LTCG bracket to start with
   let remainingCapitalGains = capitalGainsTaxableIncome;
   let capitalGainsTax = 0;
-  const capitalGainsBreakdown: { bracket: number; amount: number; tax: number }[] = [];
+  const capitalGainsBreakdown: BracketItem[] = [];
   
   // First, skip any brackets that are fully consumed by ordinary income
   let effectiveOrdinaryIncome = ordinaryTaxableIncome;
