@@ -7,34 +7,31 @@
  */
 
 // Re-export types from the centralized type export
-import { FilingStatusType } from '../types/tax/filingTypes';
-export type { TaxInput, TaxResult, TaxDataCacheInfo } from './taxCalculatorTypes';
+import { FilingStatusType } from '@/types/tax/filingTypes';
+export type { TaxInput, TaxResult, TaxDataCacheInfo } from '../taxCalculatorTypes';
 export type { FilingStatusType };
 
 // Re-export constants
-export { STANDARD_DEDUCTION } from './taxBracketData';
+export { STANDARD_DEDUCTION } from '../taxBracketData';
 
-// Import from the new modular structure
+// Import specialized modules
+import { calculateTaxableIncome } from './taxableIncomeCalculator';
+import { checkTaxDataBeforeCalculation, refreshTaxData } from './taxDataUtils';
 import { 
-  checkTaxDataBeforeCalculation as checkTaxData,
-  refreshTaxData as refreshData
-} from './taxCalculator/taxDataUtils';
-
-import {
   calculateTaxScenario as calcTaxScenario,
-  calculateTaxScenarioWithSafeHarbor as calcWithSafeHarbor,
-} from './taxCalculator/taxScenarioCalculator';
-
-import {
+  calculateTaxScenarioWithSafeHarbor as calcWithSafeHarbor
+} from './taxScenarioCalculator';
+import { 
   saveTaxScenario as saveTaxScenarioFunc,
-  getSavedScenarios as fetchTaxScenariosFunc,
-} from './taxScenario/storage';
+  getSavedScenarios as fetchTaxScenariosFunc 
+} from '../taxScenario/storage';
 
-// Re-export functions from modules with their original names
-export const checkTaxDataBeforeCalculation = checkTaxData;
-export const refreshTaxData = refreshData;
+// Re-export functions with their original names
+export const calculateTaxableIncome = calculateTaxableIncome;
+export const checkTaxDataBeforeCalculation = checkTaxDataBeforeCalculation;
+export const refreshTaxData = refreshTaxData;
 
-// Adapter function to handle different TaxInput formats
+// Main calculation function with adapter for different input formats
 export const calculateTaxScenario = (input: any, scenarioName: string, sessionId?: string) => {
   // Adapt input to the format expected by the core calculator
   const adaptedInput = {
@@ -67,7 +64,7 @@ export const saveScenario = saveTaxScenarioFunc;
 export const fetchScenarios = fetchTaxScenariosFunc;
 
 // Re-export utility functions that are part of the public API
-export { calculateSafeHarbor } from './safeHarborUtils';
-export { calculateMultiYearScenario } from './rothConversion';
-export { calculateRMD } from './rmdCalculationUtils';
-export { getMaxConversionAmount } from './conversionStrategyUtils';
+export { calculateSafeHarbor } from '../safeHarborUtils';
+export { calculateMultiYearScenario } from '../rothConversion/calculateMultiYearScenario';
+export { calculateRMD } from '../rmdCalculationUtils';
+export { getMaxConversionAmount } from '../conversionStrategyUtils';
