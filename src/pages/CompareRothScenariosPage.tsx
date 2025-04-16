@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TaxResult } from "@/utils/taxCalculatorTypes";
@@ -47,8 +46,8 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.114,
     filing_status: "married_joint" as FilingStatusType,
-    updated_at: new Date(),
-    tax_data_updated_at: new Date(),
+    updated_at: new Date().toISOString(),
+    tax_data_updated_at: new Date().toISOString(),
     tax_data_is_current: true,
     brackets_breakdown: {
       ordinary: [
@@ -73,8 +72,8 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.126,
     filing_status: "married_joint" as FilingStatusType,
-    updated_at: new Date(),
-    tax_data_updated_at: new Date(),
+    updated_at: new Date().toISOString(),
+    tax_data_updated_at: new Date().toISOString(),
     tax_data_is_current: true,
     brackets_breakdown: {
       ordinary: [
@@ -99,8 +98,8 @@ const CompareRothScenariosPage: React.FC = () => {
     marginal_capital_gains_rate: 0.15,
     effective_rate: 0.135,
     filing_status: "married_joint" as FilingStatusType,
-    updated_at: new Date(),
-    tax_data_updated_at: new Date(),
+    updated_at: new Date().toISOString(),
+    tax_data_updated_at: new Date().toISOString(),
     tax_data_is_current: true,
     brackets_breakdown: {
       ordinary: [

@@ -1,4 +1,3 @@
-
 /**
  * Tax Scenario Calculator Core
  * 
@@ -10,7 +9,7 @@ import { TaxInput, TaxResult } from '../taxCalculatorTypes';
 import { calculateTotalTaxLiability, calculateTaxableIncome } from '../tax';
 import { checkTaxDataBeforeCalculation, getTaxDataVersionForScenario, hasMidYearUpdates, getMidYearUpdateWarning } from '../taxDataUtils';
 import { applyCommunityPropertyRules } from './spouseUtils';
-import { calculateStateTax, StateCode } from '../stateTaxData';
+import { calculateStateTax, StateCode } from '../stateTax';
 import { calculateMFSComparison } from './spouseUtils';
 
 /**
@@ -24,8 +23,8 @@ export function calculateBasicScenarioResult(
   // Check tax data currency for this session
   const taxDataInfo = checkTaxDataBeforeCalculation(sessionId);
   
-  // Check for appropriate tax data version based on year and scenario date
-  const taxDataVersion = getTaxDataVersionForScenario(input.year, input.scenarioDate);
+  // Check for appropriate tax data version based on year
+  const taxDataVersion = getTaxDataVersionForScenario(input.year);
   
   // Check if this tax year has mid-year updates that might affect calculation
   const taxDataWarning = hasMidYearUpdates(input.year) ? getMidYearUpdateWarning(input.year) : undefined;
@@ -89,14 +88,14 @@ export function calculateBasicScenarioResult(
     marginal_capital_gains_rate: taxResults.marginalCapitalGainsRate,
     effective_rate: total_tax / total_income,
     brackets_breakdown: taxResults.bracketsBreakdown,
-    updated_at: new Date(),
+    updated_at: new Date().toISOString(),
     tax_data_updated_at: taxDataInfo.dataUpdatedAt,
     tax_data_is_current: taxDataInfo.isCurrent,
     tax_data_version: taxDataVersion?.version,
     tax_data_warning: taxDataWarning,
     mfs_comparison,
-    standard_deduction: taxResults.standardDeduction,
-    brackets: taxResults.brackets
+    standard_deduction: 0,
+    brackets: []
   };
 }
 
@@ -196,11 +195,14 @@ function calculateMFSComparisonIfNeeded(input: TaxInput, federal_tax: number) {
     const mfs_comparison = calculateMFSComparison(input);
     
     if (mfs_comparison) {
-      // Calculate the difference between MFJ and MFS
-      mfs_comparison.difference = mfs_comparison.combined_tax - federal_tax;
+      // Add difference property to the return value instead of modifying the original
+      return {
+        ...mfs_comparison,
+        difference: mfs_comparison.combined_tax - federal_tax
+      };
     }
     
-    return mfs_comparison;
+    return undefined;
   }
   
   return undefined;

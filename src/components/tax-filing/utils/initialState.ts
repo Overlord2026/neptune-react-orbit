@@ -7,7 +7,7 @@ export const getInitialTaxData = (): TaxReturnData => {
     firstName: '',
     lastName: '',
     ssn: '',
-    dateOfBirth: '',
+    birthDate: '', // Changed from dateOfBirth to birthDate as per type definition
     occupation: '',
     filingStatus: 'single',
     

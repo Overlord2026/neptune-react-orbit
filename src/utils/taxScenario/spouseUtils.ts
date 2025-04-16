@@ -60,6 +60,7 @@ export function calculateMFSComparison(input: TaxInput) {
   const primaryInput: TaxInput = {
     ...input,
     filing_status: "married_separate",
+    filingStatus: "married_separate", // Adding filingStatus for compatibility 
     // Remove spouse fields
     spouseWages: undefined,
     spouseInterest: undefined,
@@ -73,6 +74,7 @@ export function calculateMFSComparison(input: TaxInput) {
   const spouseInput: TaxInput = {
     year: input.year,
     filing_status: "married_separate",
+    filingStatus: "married_separate", // Adding filingStatus for compatibility
     wages: input.spouseWages || 0,
     interest: input.spouseInterest || 0,
     dividends: input.spouseDividends || 0,

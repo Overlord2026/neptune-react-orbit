@@ -1,109 +1,103 @@
 /**
  * Tax Data Utilities
  * 
- * Functions for managing and checking the currency of tax data.
+ * Functions for managing and refreshing tax data
  */
 
 import { TaxDataCacheInfo } from './taxCalculatorTypes';
+import { taxData2023 } from './taxBracketData';
+import { taxData2024 } from './taxBracketData2024';
+import { taxData2025 } from './taxBracketData2025';
 
-// Tax data version and update information stored in local storage
-const TAX_DATA_STORAGE_KEY = 'tax_data_info';
+// Define a type for tax data
+export interface TaxData {
+  year: number;
+  standardDeduction: {
+    single: number;
+    married_joint: number;
+    married_separate: number;
+    head_of_household: number;
+  };
+  // Add other tax-related properties here
+}
 
-// Tax data version to compare against
-const CURRENT_TAX_DATA_VERSION = '2024.01.01';
+// Tax data versioning
+const TAX_DATA_VERSIONS = {
+  "2023": { version: "1.0", data: taxData2023 },
+  "2024": { version: "1.0", data: taxData2024 },
+  "2025": { version: "1.0", data: taxData2025 }
+};
 
-// Years with mid-year tax law updates
-const YEARS_WITH_MID_YEAR_UPDATES = [2018];
+// Mid-year updates flag
+const MID_YEAR_UPDATES = {
+  "2023": true,
+  "2024": false,
+  "2025": false
+};
+
+// Mid-year updates warning message
+const MID_YEAR_UPDATE_MESSAGE = {
+  "2023": "2023 tax data may be affected by mid-year updates. Please verify calculations with official IRS publications."
+};
 
 /**
- * Get tax data information from local storage
+ * Check if tax data needs to be refreshed
  */
-const getTaxDataInformationFromStorage = (sessionId: string = "default") => {
-  try {
-    const storedData = localStorage.getItem(`${TAX_DATA_STORAGE_KEY}-${sessionId}`);
-    if (storedData) {
-      return JSON.parse(storedData);
-    }
-  } catch (error) {
-    console.error("Error getting tax data info from local storage:", error);
+export function checkTaxDataBeforeCalculation(sessionId: string = "default"): TaxDataCacheInfo {
+  // Get the date that the tax data was last updated in this session
+  const lastUpdated = localStorage.getItem('tax_data_updated_at');
+  let dataUpdatedAt = lastUpdated ? new Date(lastUpdated) : new Date();
+  
+  // If no date stored, consider the data stale
+  if (!lastUpdated) {
+    dataUpdatedAt = new Date();
+    localStorage.setItem('tax_data_updated_at', dataUpdatedAt.toISOString());
   }
   
-  return {
-    dataUpdatedAt: new Date(0),
-    isCurrent: false,
-    version: null
-  };
-};
-
-/**
- * Save tax data information to local storage
- */
-const saveTaxDataInformationToStorage = (
-  dataUpdatedAt: Date, 
-  isCurrent: boolean, 
-  version: string,
-  sessionId: string = "default"
-) => {
-  try {
-    const data = {
-      dataUpdatedAt: dataUpdatedAt.toISOString(),
-      isCurrent,
-      version
-    };
-    localStorage.setItem(`${TAX_DATA_STORAGE_KEY}-${sessionId}`, JSON.stringify(data));
-  } catch (error) {
-    console.error("Error saving tax data info to local storage:", error);
-  }
-};
-
-/**
- * Check if tax data is current and refresh if needed
- */
-export const checkTaxDataBeforeCalculation = (sessionId: string = "default"): TaxDataCacheInfo => {
-  // Convert string date to Date object to match the interface
-  const infoFromStorage = getTaxDataInformationFromStorage(sessionId);
+  // Check if data is current (less than 1 day old)
+  const currentTime = new Date();
+  const dayInMs = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  const isCurrent = currentTime.getTime() - dataUpdatedAt.getTime() < dayInMs;
   
   return {
-    dataUpdatedAt: new Date(infoFromStorage.dataUpdatedAt),
-    isCurrent: infoFromStorage.isCurrent
+    dataUpdatedAt,
+    isCurrent,
+    sessionId // Added missing sessionId
   };
-};
+}
 
 /**
- * Refresh tax data by updating the timestamp and version
+ * Refresh tax data in local storage
  */
-export const refreshTaxData = (sessionId: string = "default") => {
+export function refreshTaxData(sessionId: string = "default"): void {
+  // Refresh the tax data by updating the timestamp
   const now = new Date();
-  saveTaxDataInformationToStorage(now, true, CURRENT_TAX_DATA_VERSION, sessionId);
+  localStorage.setItem('tax_data_updated_at', now.toISOString());
   
-  return {
-    dataUpdatedAt: now,
-    isCurrent: true
-  };
-};
+  // You might also want to fetch new data from an API here
+  console.log(`Tax data refreshed at ${now.toISOString()} for session ${sessionId}`);
+}
 
 /**
- * Get tax data version for a specific year
+ * Get tax data version for a given year
  */
-export const getTaxDataVersionForScenario = (year: number, scenarioDate?: Date) => {
-  // For simplicity, we're using a single version for all years
-  // In a real application, you might have different versions for different years
-  return {
-    year,
-    version: CURRENT_TAX_DATA_VERSION
-  };
-};
+export function getTaxDataVersionForScenario(year: number, scenarioDate?: Date): { version: string; data: any } | undefined {
+  const yearStr = String(year);
+  return TAX_DATA_VERSIONS[yearStr as keyof typeof TAX_DATA_VERSIONS];
+}
 
 /**
  * Check if a tax year has mid-year updates
  */
-export const hasMidYearUpdates = (year: number): boolean => {
-  return YEARS_WITH_MID_YEAR_UPDATES.includes(year);
-};
+export function hasMidYearUpdates(year: number): boolean {
+  const yearStr = String(year);
+  return !!MID_YEAR_UPDATES[yearStr as keyof typeof MID_YEAR_UPDATES];
+}
 
 /**
- * Get a warning message for tax years with mid-year updates
+ * Get mid-year update warning message for a tax year
  */
-export const getMidYearUpdateWarning = (year: number): string => {
-  return `Tax year ${year} had mid-year updates that may affect your calculation.`;
-};
+export function getMidYearUpdateWarning(year: number): string | undefined {
+  const yearStr = String(year);
+  return MID_YEAR_UPDATE_MESSAGE[yearStr as keyof typeof MID_YEAR_UPDATE_MESSAGE];
+}

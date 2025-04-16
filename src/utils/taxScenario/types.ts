@@ -14,7 +14,7 @@ import {
   TaxInput, 
   TaxResult, 
   TaxScenario 
-} from '../../types/tax/taxCalculationTypes';
+} from '../taxCalculatorTypes';
 
 export type { 
   EquityFormState, 

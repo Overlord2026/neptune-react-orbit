@@ -7,6 +7,7 @@ import ExpensesStep from './steps/ExpensesStep';
 import EntityComparisonStep from './steps/EntityComparisonStep';
 import MultiYearPlanStep from './steps/MultiYearPlanStep';
 import ResultsSummary from './steps/ResultsSummary';
+import { TaxScenario } from '@/utils/taxCalculatorTypes';
 
 // Type for the steps in the wizard
 type BusinessWizardStep = 'business-info' | 'expenses' | 'entity-comparison' | 'multi-year-plan' | 'results';
@@ -50,6 +51,36 @@ const initialTaxResult: BusinessTaxResult = {
   effectiveTaxRate: 0,
   warnings: []
 };
+
+// Define props for the step components to fix TS errors
+interface BusinessInfoStepProps {
+  businessInput: BusinessIncomeInput;
+  updateBusinessInput: (newData: Partial<BusinessIncomeInput>) => void;
+  onNext: () => void;
+}
+
+interface ExpensesStepProps {
+  businessInput: BusinessIncomeInput;
+  updateBusinessInput: (newData: Partial<BusinessIncomeInput>) => void;
+  updateExpense: (expenseKey: string, value: number) => void;
+  onNext: () => void;
+  onPrev: () => void;
+}
+
+interface EntityComparisonStepProps {
+  businessInput: BusinessIncomeInput;
+  taxResult: BusinessTaxResult;
+  updateBusinessInput: (newData: Partial<BusinessIncomeInput>) => void;
+  onNext: () => void;
+  onPrev: () => void;
+}
+
+interface MultiYearPlanStepProps {
+  businessInput: BusinessIncomeInput;
+  updateBusinessInput: (newData: Partial<BusinessIncomeInput>) => void;
+  onNext: () => void;
+  onPrev: () => void;
+}
 
 const BusinessIncomeWizard: React.FC = () => {
   const [step, setStep] = useState<BusinessWizardStep>('business-info');
@@ -134,7 +165,7 @@ const BusinessIncomeWizard: React.FC = () => {
         return (
           <BusinessInfoStep 
             businessInput={businessInput}
-            onChange={updateBusinessInput}
+            updateBusinessInput={updateBusinessInput}
             onNext={goToNext}
           />
         );
@@ -142,7 +173,7 @@ const BusinessIncomeWizard: React.FC = () => {
         return (
           <ExpensesStep 
             businessInput={businessInput}
-            onChange={updateBusinessInput}
+            updateBusinessInput={updateBusinessInput}
             updateExpense={updateExpense}
             onNext={goToNext}
             onPrev={goToPrev}
@@ -153,7 +184,7 @@ const BusinessIncomeWizard: React.FC = () => {
           <EntityComparisonStep 
             businessInput={businessInput}
             taxResult={taxResult}
-            onChange={updateBusinessInput}
+            updateBusinessInput={updateBusinessInput}
             onNext={goToNext}
             onPrev={goToPrev}
           />
@@ -162,15 +193,16 @@ const BusinessIncomeWizard: React.FC = () => {
         return (
           <MultiYearPlanStep 
             businessInput={businessInput}
-            onChange={updateBusinessInput}
+            updateBusinessInput={updateBusinessInput}
             onNext={goToNext}
             onPrev={goToPrev}
           />
         );
       case 'results':
         // Convert business tax result to TaxScenario format for the ResultsSummary component
-        const scenarioData = {
+        const scenarioData: TaxScenario = {
           id: `business-${Date.now()}`,
+          name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`,
           scenario_name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`,
           year: businessInput.year,
           filing_status: "single",
@@ -183,6 +215,20 @@ const BusinessIncomeWizard: React.FC = () => {
           capital_gains_tax: 0,
           marginal_rate: businessInput.taxRate || 0.22,
           effective_rate: taxResult.effectiveTaxRate,
+          marginal_capital_gains_rate: 0,
+          federal_tax: 0,
+          result: {
+            // Minimal implementation to satisfy the type
+            year: businessInput.year,
+            filing_status: "single",
+            total_income: businessInput.income,
+            taxable_income: taxResult.netTaxableIncome,
+            ordinary_tax: taxResult.netTaxableIncome * (businessInput.taxRate || 0.22),
+            capital_gains_tax: 0,
+            total_tax: taxResult.selfEmploymentTax + (taxResult.netTaxableIncome * (businessInput.taxRate || 0.22)),
+            marginal_rate: businessInput.taxRate || 0.22,
+            effective_rate: taxResult.effectiveTaxRate
+          },
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };

@@ -48,7 +48,15 @@ export const calculateTaxScenario = (input: any, scenarioName: string, sessionId
     isItemizedDeduction: input.isItemizedDeduction || false,
     itemizedDeductionAmount: input.itemizedDeductionAmount || 0,
     residentState: input.residentState,
-    includeStateTax: input.includeStateTax || false
+    includeStateTax: input.includeStateTax || false,
+    filing_status: input.filingStatus || input.filing_status, // Keep both for backwards compatibility
+    capital_gains: input.capitalGains || input.capital_gains || 0, // Keep both for backwards compatibility
+    wages: input.wages || 0,
+    interest: input.interest || 0,
+    dividends: input.dividends || 0,
+    ira_distributions: input.ira_distributions || 0,
+    roth_conversion: input.roth_conversion || 0,
+    social_security: input.social_security || 0
   };
 
   return calcTaxScenario(adaptedInput, scenarioName, sessionId || "default");

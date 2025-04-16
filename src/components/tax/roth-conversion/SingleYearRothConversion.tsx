@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -111,8 +110,7 @@ const SingleYearRothConversion = () => {
       single: [10275, 41775, 89075, 170050, 215950, 539900],
       married_joint: [20550, 83550, 178150, 340100, 431900, 647850],
       married_separate: [10275, 41775, 89075, 170050, 215950, 323925],
-      head_of_household: [14650, 55900, 89050, 170050, 215950, 539900],
-      qualifying_widow: [20550, 83550, 178150, 340100, 431900, 647850]
+      head_of_household: [14650, 55900, 89050, 170050, 215950, 539900]
     };
 
     // Find next bracket threshold
@@ -170,15 +168,6 @@ const SingleYearRothConversion = () => {
         { threshold: 170050, rate: 0.32 },
         { threshold: 215950, rate: 0.35 },
         { threshold: 539900, rate: 0.37 }
-      ],
-      qualifying_widow: [
-        { threshold: 0, rate: 0.10 },
-        { threshold: 20550, rate: 0.12 },
-        { threshold: 83550, rate: 0.22 },
-        { threshold: 178150, rate: 0.24 },
-        { threshold: 340100, rate: 0.32 },
-        { threshold: 431900, rate: 0.35 },
-        { threshold: 647850, rate: 0.37 }
       ]
     };
 
@@ -246,7 +235,6 @@ const SingleYearRothConversion = () => {
                 <SelectItem value="married_joint">Married Filing Jointly</SelectItem>
                 <SelectItem value="married_separate">Married Filing Separately</SelectItem>
                 <SelectItem value="head_of_household">Head of Household</SelectItem>
-                <SelectItem value="qualifying_widow">Qualifying Widow(er)</SelectItem>
               </SelectContent>
             </Select>
           </div>

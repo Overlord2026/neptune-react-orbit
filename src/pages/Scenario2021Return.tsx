@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +20,6 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { calculateTaxScenario, saveScenario, FilingStatusType } from '@/utils/taxCalculator';
 
-// Define the form schema with zod
 const formSchema = z.object({
   wages: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
     message: "Wages must be a non-negative number",
@@ -88,7 +86,6 @@ const Scenario2021Return = () => {
     setIsLoading(true);
     
     try {
-      // Convert string inputs to numbers
       const wages = Number(data.wages);
       const interest = Number(data.interest);
       const dividends = Number(data.qualifiedDividends);
@@ -98,7 +95,6 @@ const Scenario2021Return = () => {
       const capital_gains = Number(data.capitalGains);
       const itemizedDeductionAmount = data.itemizedDeduction ? Number(data.itemizedDeduction) : 0;
       
-      // Use the tax calculator utility
       const result = calculateTaxScenario({
         year: 2021,
         wages,
@@ -113,16 +109,20 @@ const Scenario2021Return = () => {
         filing_status: data.filingStatus as FilingStatusType,
       }, "2021 Base Scenario");
       
-      // Save the result
-      await saveScenario(result);
+      const scenarioToSave = {
+        id: `scenario-${Date.now()}`,
+        name: "2021 Base Scenario",
+        result: result,
+        is_baseline: true
+      };
       
-      // Assuming withholding based on a simple calculation (40% of total income tax for demo purposes)
+      await saveScenario(scenarioToSave);
+      
       const assumedWithholding = result.total_tax * 0.4;
       const refundOrOwed = assumedWithholding - result.total_tax;
       
-      // Update the UI with results
       setResults({
-        agi: result.agi,
+        agi: result.agi || 0,
         taxable_income: result.taxable_income,
         total_tax: result.total_tax,
         marginal_rate: result.marginal_rate,
@@ -450,7 +450,6 @@ const Scenario2021Return = () => {
         </div>
       </div>
       
-      {/* Disclaimer and Data Privacy Section */}
       <Card className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 mt-8">
         <CardContent className="pt-6">
           <div className="space-y-4">
