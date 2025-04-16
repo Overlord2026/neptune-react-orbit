@@ -23,7 +23,7 @@ export {
   processTaxableIncome,
   calculateCharitableEffect,
   prepareTaxInput,
-  calculateStateTax,
+  // Remove calculateStateTax since it doesn't exist
   checkForTaxTraps,
   processTaxResults,
   applyStateTaxInfo

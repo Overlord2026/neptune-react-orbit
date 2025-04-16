@@ -17,7 +17,7 @@ export { calculateCharitableEffect } from './charitable/charitableProcessor';
 
 // Tax modules
 export { prepareTaxInput } from './tax/taxInputPreparation';
-export { calculateStateTax } from './tax/stateTaxUtils';
+// Remove the calculateStateTax export since it doesn't exist
 export { checkForTaxTraps } from './tax/taxTrapUtils';
 export { processTaxResults } from './tax/taxResultProcessor';
 
