@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useMultiYearContext } from './context/MultiYearContext';
 import StepNavigation from './navigation/StepNavigation';
 import PartialBracketFillStep from './PartialBracketFillStep';
@@ -35,7 +35,7 @@ const TabContentManager: React.FC<TabContentManagerProps> = ({
   };
 
   return (
-    <>
+    <Tabs value={currentStep} defaultValue="bracket-fill">
       <TabsContent value="bracket-fill" className="mt-0 space-y-4">
         <PartialBracketFillStep 
           scenarioData={scenarioData} 
@@ -101,7 +101,7 @@ const TabContentManager: React.FC<TabContentManagerProps> = ({
           onNavigate={onNavigate}
         />
       </TabsContent>
-    </>
+    </Tabs>
   );
 };
 
