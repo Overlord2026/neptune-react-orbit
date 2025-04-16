@@ -71,6 +71,7 @@ export function calculateBasicScenarioResult(
   const total_tax = federal_tax + state_tax;
   
   // Return result with enhanced data including tax data currency and version information
+  // Only include properties that exist in the TaxResult interface
   return {
     scenario_name,
     year: input.year,
@@ -88,9 +89,7 @@ export function calculateBasicScenarioResult(
     marginal_capital_gains_rate: taxResults.marginalCapitalGainsRate,
     effective_rate: total_tax / total_income,
     brackets_breakdown: taxResults.bracketsBreakdown,
-    updated_at: new Date().toISOString(),
-    tax_data_updated_at: taxDataInfo.dataUpdatedAt,
-    tax_data_is_current: taxDataInfo.isCurrent,
+    updated_at: new Date(),
     tax_data_version: taxDataVersion?.version,
     tax_data_warning: taxDataWarning,
     mfs_comparison,
@@ -190,12 +189,10 @@ function calculateStateTaxComponent(input: TaxInput, taxable_income: number): {
  * Calculate MFS comparison if needed
  */
 function calculateMFSComparisonIfNeeded(input: TaxInput, federal_tax: number) {
-  // Only calculate for married filing jointly
   if (input.filing_status === "married_joint") {
     const mfs_comparison = calculateMFSComparison(input);
     
     if (mfs_comparison) {
-      // Add difference property to the return value instead of modifying the original
       return {
         ...mfs_comparison,
         difference: mfs_comparison.combined_tax - federal_tax

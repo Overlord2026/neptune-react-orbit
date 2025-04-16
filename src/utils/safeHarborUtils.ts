@@ -1,58 +1,67 @@
 
 /**
- * Safe Harbor Calculation Utilities
+ * Safe Harbor Utilities
  * 
- * Functions for calculating safe harbor requirements to avoid underpayment penalties.
+ * Functions for calculating safe harbor tax payment requirements
  */
 
 export interface SafeHarborInput {
-  current_withholding: number;
-  estimated_remaining_withholding: number;
-  prior_year_tax: number;
+  prior_year_tax?: number;
   current_year_tax: number;
-  high_income?: boolean; // For the 110% rule if AGI > $150,000
+  agi?: number;
+  withholding?: number;
+  estimated_payments?: number;
+  is_high_income?: boolean;
 }
 
 export interface SafeHarborResult {
-  total_projected_payments: number;
-  safe_harbor_minimum: number;
-  meets_safe_harbor: boolean;
-  shortfall: number;
-  recommended_additional_withholding: number;
+  required_payment: number;
+  is_compliant: boolean;
+  method_used: string;
 }
 
-/**
- * Calculate safe harbor requirements to avoid underpayment penalties
- */
 export function calculateSafeHarbor(input: SafeHarborInput): SafeHarborResult {
-  // Calculate total projected payments for the year
-  const total_projected_payments = input.current_withholding + input.estimated_remaining_withholding;
+  const { 
+    prior_year_tax = 0, 
+    current_year_tax = 0, 
+    agi = 0,
+    withholding = 0,
+    estimated_payments = 0,
+    is_high_income = false
+  } = input;
   
-  // Calculate safe harbor minimum based on IRS rules:
-  // - 90% of current year's tax, or
-  // - 100% of prior year's tax (or 110% if high income)
-  const current_year_minimum = input.current_year_tax * 0.9;
-  const prior_year_minimum = input.prior_year_tax * (input.high_income ? 1.1 : 1.0);
+  const totalPayments = withholding + estimated_payments;
   
-  // Safe harbor is the lower of the two requirements
-  const safe_harbor_minimum = Math.min(current_year_minimum, prior_year_minimum);
+  // Calculate safe harbor amounts using different methods
+  const priorYearPercentage = is_high_income ? 1.1 : 1.0;
+  const priorYearAmount = prior_year_tax * priorYearPercentage;
   
-  // Check if current withholding meets safe harbor
-  const meets_safe_harbor = total_projected_payments >= safe_harbor_minimum;
+  // 90% of current year tax liability
+  const currentYearAmount = current_year_tax * 0.9;
   
-  // Calculate shortfall if any
-  const shortfall = meets_safe_harbor ? 0 : (safe_harbor_minimum - total_projected_payments);
+  // Determine the applicable safe harbor amount (the lesser of the two)
+  let safeHarborAmount = Math.min(priorYearAmount, currentYearAmount);
   
-  // Recommended additional withholding (round up to nearest $100)
-  const recommended_additional_withholding = shortfall > 0 
-    ? Math.ceil(shortfall / 100) * 100 
-    : 0;
-
+  // If lower than $1,000, use the fixed amount
+  if (current_year_tax - withholding < 1000) {
+    safeHarborAmount = current_year_tax;
+  }
+  
+  // Determine which method was used
+  let method_used = '';
+  if (safeHarborAmount === priorYearAmount) {
+    method_used = is_high_income ? '110% of Prior Year' : '100% of Prior Year';
+  } else if (safeHarborAmount === currentYearAmount) {
+    method_used = '90% of Current Year';
+  } else {
+    method_used = '$1,000 Remaining Tax Rule';
+  }
+  
+  const is_compliant = totalPayments >= safeHarborAmount;
+  
   return {
-    total_projected_payments,
-    safe_harbor_minimum,
-    meets_safe_harbor,
-    shortfall,
-    recommended_additional_withholding
+    required_payment: safeHarborAmount,
+    is_compliant,
+    method_used
   };
 }

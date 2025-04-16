@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
 import { BookOpen } from 'lucide-react';
 import { STANDARD_DEDUCTION_BY_YEAR } from '@/utils/taxBracketData';
 import { getTaxYears } from '@/utils/taxYearUtils';
 import { FilingStatusType } from '@/types/tax/filingTypes';
 
-// Import all the new component sections
 import YearFilingSelector from '@/components/tax-education/YearFilingSelector';
 import TaxBracketsSection from '@/components/tax-education/TaxBracketsSection';
 import FilingStatusSection from '@/components/tax-education/FilingStatusSection';
@@ -18,10 +16,9 @@ import FilingStatusOverviewSection from '@/components/tax-education/FilingStatus
 import NavigationButtons from '@/components/tax-education/NavigationButtons';
 
 const BasicTaxEducationPage = () => {
-  const [selectedYear, setSelectedYear] = useState<number>(2025); // Default year set to 2025
-  const [selectedFilingStatus, setSelectedFilingStatus] = useState<FilingStatusType>('single');
+  const [selectedYear, setSelectedYear] = useState<number>(2025);
+  const [selectedFilingStatus, setSelectedFilingStatus] = useState<string>('single');
   
-  // Get available years from tax data and our utility
   const availableYears = getTaxYears().sort((a, b) => b - a);
   
   return (
@@ -43,52 +40,42 @@ const BasicTaxEducationPage = () => {
         </div>
       </div>
       
-      {/* Year and Filing Status Selectors */}
       <YearFilingSelector
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}
         selectedFilingStatus={selectedFilingStatus}
-        setSelectedFilingStatus={(status) => setSelectedFilingStatus(status as FilingStatusType)}
+        setSelectedFilingStatus={(status) => setSelectedFilingStatus(status)}
         availableYears={availableYears}
       />
 
       <div className="grid gap-6 py-6">
-        {/* Tax Brackets Section */}
         <TaxBracketsSection
           selectedYear={selectedYear}
           selectedFilingStatus={selectedFilingStatus}
         />
 
-        {/* Filing Status & Tax Brackets */}
         <FilingStatusSection
           selectedYear={selectedYear}
           selectedFilingStatus={selectedFilingStatus}
         />
 
-        {/* Common Tax Forms Section */}
         <TaxFormsSection />
 
-        {/* Deductions vs. Credits Section */}
         <DeductionsVsCreditsSection />
 
-        {/* Marginal vs. Effective Tax Rates */}
         <TaxRatesSection selectedYear={selectedYear} />
 
-        {/* Capital Gains Basics */}
         <CapitalGainsSection
           selectedYear={selectedYear}
           selectedFilingStatus={selectedFilingStatus}
         />
 
-        {/* Roth vs. Traditional Accounts */}
         <RothVsTraditionalSection
           selectedYear={selectedYear}
         />
 
-        {/* Filing Status Overview */}
         <FilingStatusOverviewSection />
 
-        {/* Navigation Buttons */}
         <NavigationButtons />
       </div>
     </div>

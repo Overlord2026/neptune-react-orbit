@@ -56,8 +56,8 @@ interface BusinessInfoStepProps {
   businessInput: BusinessIncomeInput;
   updateBusinessInput: (newData: Partial<BusinessIncomeInput>) => void;
   onNext: () => void;
-  setShowComparison: (show: boolean) => void; // Added missing prop
-  setShowMultiYear: (show: boolean) => void;  // Added missing prop
+  setShowComparison: (show: boolean) => void;
+  setShowMultiYear: (show: boolean) => void;
 }
 
 interface ExpensesStepProps {
@@ -65,7 +65,6 @@ interface ExpensesStepProps {
   updateBusinessInput: (newData: Partial<BusinessIncomeInput>) => void;
   onNext: () => void;
   onPrev: () => void;
-  // Removed updateExpense property as it doesn't exist in the component props
 }
 
 interface EntityComparisonStepProps {
@@ -88,8 +87,8 @@ const BusinessIncomeWizard: React.FC = () => {
   const [businessInput, setBusinessInput] = useState<BusinessIncomeInput>(initialBusinessInput);
   const [taxResult, setTaxResult] = useState<BusinessTaxResult>(initialTaxResult);
   const [isSaving, setIsSaving] = useState(false);
-  const [showComparison, setShowComparison] = useState(false); // Added missing state
-  const [showMultiYear, setShowMultiYear] = useState(false);   // Added missing state
+  const [showComparison, setShowComparison] = useState(false);
+  const [showMultiYear, setShowMultiYear] = useState(false);
 
   // Handle step changes
   const goToNext = () => {
@@ -136,13 +135,11 @@ const BusinessIncomeWizard: React.FC = () => {
     setStep('business-info');
   };
 
-  // Calculate tax results based on inputs
   const calculateTaxResults = () => {
     const result = calculateSmallBusinessTax(businessInput);
     setTaxResult(result);
   };
 
-  // Update business input state
   const updateBusinessInput = (newData: Partial<BusinessIncomeInput>) => {
     setBusinessInput(prev => ({
       ...prev,
@@ -150,7 +147,6 @@ const BusinessIncomeWizard: React.FC = () => {
     }));
   };
 
-  // Update expense in business input
   const updateExpense = (expenseKey: string, value: number) => {
     setBusinessInput(prev => ({
       ...prev,
@@ -161,7 +157,6 @@ const BusinessIncomeWizard: React.FC = () => {
     }));
   };
 
-  // Render content based on current step
   const renderStepContent = () => {
     switch (step) {
       case 'business-info':
@@ -203,7 +198,6 @@ const BusinessIncomeWizard: React.FC = () => {
           />
         );
       case 'results':
-        // Convert business tax result to TaxScenario format for the ResultsSummary component
         const scenarioData: TaxScenario = {
           id: `business-${Date.now()}`,
           name: `${businessInput.businessType} Business ${new Date().toLocaleDateString()}`,
@@ -238,6 +232,7 @@ const BusinessIncomeWizard: React.FC = () => {
             updated_at: new Date(),
             agi: businessInput.income - taxResult.selfEmploymentTaxDeduction,
             federal_tax: taxResult.selfEmploymentTax + (taxResult.netTaxableIncome * (businessInput.taxRate || 0.22)),
+            marginal_capital_gains_rate: 0
           }
         };
         

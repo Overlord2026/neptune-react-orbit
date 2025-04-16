@@ -45,9 +45,9 @@ export function calculateTaxScenarioWithSafeHarbor(
   return {
     ...basicResult,
     safe_harbor: {
-      required_payment: safeHarborResult.requiredPayment || 0,
-      is_compliant: safeHarborResult.isCompliant || false,
-      method_used: safeHarborResult.methodUsed || ''
+      required_payment: safeHarborResult.required_payment || 0,
+      is_compliant: safeHarborResult.is_compliant || false,
+      method_used: safeHarborResult.method_used || ''
     }
   };
 }

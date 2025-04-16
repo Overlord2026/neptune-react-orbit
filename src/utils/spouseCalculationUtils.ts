@@ -86,8 +86,8 @@ export function calculateMFSComparison(input: TaxInput) {
     social_security: input.social_security || 0,
     isItemizedDeduction: input.isItemizedDeduction,
     itemizedDeductionAmount: input.itemizedDeductionAmount ? input.itemizedDeductionAmount / 2 : undefined,
-    filing_status: "married_separate",
-    scenarioDate: input.scenarioDate
+    filing_status: "married_separate"
+    // Removed scenarioDate as it doesn't exist in TaxInput
   };
   
   const spouseInput: TaxInput = {
@@ -101,8 +101,8 @@ export function calculateMFSComparison(input: TaxInput) {
     social_security: input.spouseSocialSecurity || 0,
     isItemizedDeduction: input.isItemizedDeduction,
     itemizedDeductionAmount: input.itemizedDeductionAmount ? input.itemizedDeductionAmount / 2 : undefined,
-    filing_status: "married_separate",
-    scenarioDate: input.scenarioDate
+    filing_status: "married_separate"
+    // Removed scenarioDate as it doesn't exist in TaxInput
   };
   
   // Calculate taxes for primary taxpayer and spouse as MFS

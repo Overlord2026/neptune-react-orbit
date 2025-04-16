@@ -41,13 +41,12 @@ export function determineConversionAmounts({
   
   if (scenarioData.combinedIRAApproach && scenarioData.includeSpouse) {
     // Combined approach for both IRAs
-    const totalMaxConversion = getMaxConversionAmount(
-      scenarioData.conversionStrategy,
-      totalPreConversionIncome,
-      currentYear,
-      scenarioData.filingStatus,
-      scenarioData.fixedConversionAmount
-    );
+    // Use the updated function with only the required arguments
+    const totalMaxConversion = getMaxConversionAmount({
+      strategy: scenarioData.conversionStrategy,
+      income: totalPreConversionIncome,
+      fixedAmount: scenarioData.fixedConversionAmount
+    });
     
     // Split the conversion between spouses based on their proportional IRA balances
     const totalTraditionalBalance = traditionalIRABalance + spouseTraditionalIRABalance;
@@ -66,25 +65,21 @@ export function determineConversionAmounts({
     // Separate approach for each IRA
     conversionAmount = Math.min(
       traditionalIRABalance,
-      getMaxConversionAmount(
-        scenarioData.conversionStrategy,
-        baseIncome + rmdAmount,
-        currentYear,
-        scenarioData.filingStatus,
-        scenarioData.fixedConversionAmount
-      )
+      getMaxConversionAmount({
+        strategy: scenarioData.conversionStrategy,
+        income: baseIncome + rmdAmount,
+        fixedAmount: scenarioData.fixedConversionAmount
+      })
     );
     
     if (scenarioData.includeSpouse) {
       spouseConversionAmount = Math.min(
         spouseTraditionalIRABalance,
-        getMaxConversionAmount(
-          scenarioData.conversionStrategy,
-          spouseBaseIncome + spouseRmdAmount,
-          currentYear,
-          scenarioData.filingStatus === 'married_separate' ? 'single' : scenarioData.filingStatus,
-          scenarioData.fixedConversionAmount
-        )
+        getMaxConversionAmount({
+          strategy: scenarioData.conversionStrategy,
+          income: spouseBaseIncome + spouseRmdAmount,
+          fixedAmount: scenarioData.fixedConversionAmount
+        })
       );
     }
   }
