@@ -21,5 +21,6 @@ export { calculateStateTax } from './tax/stateTaxUtils';
 export { checkForTaxTraps } from './tax/taxTrapUtils';
 export { processTaxResults } from './tax/taxResultProcessor';
 
-// Explicitly re-export default export if any module has one
-// export { default as DefaultModuleName } from './path/to/module';
+// Add the applyStateTaxInfo function from stateTaxUtils
+export { applyStateTaxInfo } from './tax/stateTaxUtils';
+
