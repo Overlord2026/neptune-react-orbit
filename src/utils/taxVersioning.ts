@@ -32,5 +32,12 @@ export function getYearSpecificTaxBracket(
   income: number
 ): TaxBracket | null {
   // Use the core getTaxBracket function with the year parameter
-  return getTaxBracket(income, filingStatus as any);
+  const bracket = getTaxBracket(income, filingStatus as any);
+  
+  // Convert string to TaxBracket object if needed
+  if (bracket && typeof bracket !== 'string') {
+    return bracket;
+  }
+  
+  return null;
 }

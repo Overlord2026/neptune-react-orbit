@@ -43,8 +43,7 @@ export function determineConversionAmounts({
     // Combined approach for both IRAs
     const totalMaxConversion = getMaxConversionAmount(
       scenarioData.conversionStrategy,
-      totalPreConversionIncome,
-      scenarioData.fixedConversionAmount
+      totalPreConversionIncome
     );
     
     // Split the conversion between spouses based on their proportional IRA balances
@@ -66,8 +65,7 @@ export function determineConversionAmounts({
       traditionalIRABalance,
       getMaxConversionAmount(
         scenarioData.conversionStrategy,
-        baseIncome + rmdAmount,
-        scenarioData.fixedConversionAmount
+        baseIncome + rmdAmount
       )
     );
     
@@ -76,8 +74,7 @@ export function determineConversionAmounts({
         spouseTraditionalIRABalance,
         getMaxConversionAmount(
           scenarioData.conversionStrategy,
-          spouseBaseIncome + spouseRmdAmount,
-          scenarioData.fixedConversionAmount
+          spouseBaseIncome + spouseRmdAmount
         )
       );
     }

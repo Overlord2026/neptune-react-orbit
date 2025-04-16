@@ -44,20 +44,20 @@ const BasicTaxEducationPage = () => {
       <YearFilingSelector
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}
-        selectedFilingStatus={selectedFilingStatus as FilingStatusType}
-        setSelectedFilingStatus={(status) => setSelectedFilingStatus(status as FilingStatusType)}
+        selectedFilingStatus={selectedFilingStatus}
+        setSelectedFilingStatus={setSelectedFilingStatus}
         availableYears={availableYears}
       />
 
       <div className="grid gap-6 py-6">
         <TaxBracketsSection
           selectedYear={selectedYear}
-          selectedFilingStatus={selectedFilingStatus as FilingStatusType}
+          selectedFilingStatus={selectedFilingStatus}
         />
 
         <FilingStatusSection
           selectedYear={selectedYear}
-          selectedFilingStatus={selectedFilingStatus as FilingStatusType}
+          selectedFilingStatus={selectedFilingStatus}
         />
 
         <TaxFormsSection />
@@ -68,7 +68,7 @@ const BasicTaxEducationPage = () => {
 
         <CapitalGainsSection
           selectedYear={selectedYear}
-          selectedFilingStatus={selectedFilingStatus as FilingStatusType}
+          selectedFilingStatus={selectedFilingStatus}
         />
 
         <RothVsTraditionalSection

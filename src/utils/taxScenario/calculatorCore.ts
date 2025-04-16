@@ -22,7 +22,7 @@ export function calculateBasicScenarioResult(
     total_income,
     agi,
     taxable_income,
-    ordinary_income,
+    ordinary_income: ordinaryIncome,  // Rename to match TaxResult type
     capital_gains,
     ordinary_tax,
     capital_gains_tax,
@@ -34,7 +34,7 @@ export function calculateBasicScenarioResult(
   const marginal_rate = calculateMarginalRate(taxable_income, input.year, input.filing_status);
   const effective_rate = total_income > 0 ? total_tax / total_income : 0;
   const marginal_capital_gains_rate = calculateMarginalCapitalGainsRate(
-    ordinary_income, 
+    ordinaryIncome, 
     capital_gains, 
     input.year, 
     input.filing_status
@@ -52,7 +52,7 @@ export function calculateBasicScenarioResult(
     total_income,
     agi,
     taxable_income,
-    ordinary_income,
+    // Don't include ordinary_income as it's not in TaxResult type
     capital_gains,
     ordinary_tax,
     capital_gains_tax,

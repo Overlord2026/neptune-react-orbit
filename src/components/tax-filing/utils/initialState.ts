@@ -7,7 +7,7 @@ export const getInitialTaxData = (): TaxReturnData => {
     firstName: '',
     lastName: '',
     ssn: '',
-    occupation: '',
+    // occupation property needs to be removed as it doesn't exist in TaxReturnData
     filingStatus: 'single',
     
     // Contact Information
