@@ -1,3 +1,4 @@
+
 import { TaxReturnData } from '../types/TaxReturnTypes';
 
 export const getInitialTaxData = (): TaxReturnData => {
@@ -6,7 +7,6 @@ export const getInitialTaxData = (): TaxReturnData => {
     firstName: '',
     lastName: '',
     ssn: '',
-    dateOfBirth: '', // Changed from birthDate to dateOfBirth to match TaxReturnData type
     occupation: '',
     filingStatus: 'single',
     

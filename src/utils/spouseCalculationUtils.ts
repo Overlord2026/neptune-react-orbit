@@ -77,6 +77,7 @@ export function calculateMFSComparison(input: TaxInput) {
   // Create inputs for primary taxpayer and spouse
   const primaryInput: TaxInput = {
     year: input.year,
+    filingStatus: "married_separate", // Add filingStatus for TaxInput compatibility
     wages: input.wages || 0,
     interest: input.interest || 0,
     dividends: input.dividends || 0,
@@ -87,11 +88,11 @@ export function calculateMFSComparison(input: TaxInput) {
     isItemizedDeduction: input.isItemizedDeduction,
     itemizedDeductionAmount: input.itemizedDeductionAmount ? input.itemizedDeductionAmount / 2 : undefined,
     filing_status: "married_separate"
-    // Removed scenarioDate as it doesn't exist in TaxInput
   };
   
   const spouseInput: TaxInput = {
     year: input.year,
+    filingStatus: "married_separate", // Add filingStatus for TaxInput compatibility
     wages: input.spouseWages || 0,
     interest: input.spouseInterest || 0,
     dividends: input.spouseDividends || 0,
@@ -102,7 +103,6 @@ export function calculateMFSComparison(input: TaxInput) {
     isItemizedDeduction: input.isItemizedDeduction,
     itemizedDeductionAmount: input.itemizedDeductionAmount ? input.itemizedDeductionAmount / 2 : undefined,
     filing_status: "married_separate"
-    // Removed scenarioDate as it doesn't exist in TaxInput
   };
   
   // Calculate taxes for primary taxpayer and spouse as MFS

@@ -17,7 +17,6 @@ export { STANDARD_DEDUCTION } from './taxBracketData';
 // Import from the new modular structure
 import { 
   checkTaxDataBeforeCalculation as checkTaxData,
-  refreshTaxData as refreshData,
 } from './taxDataUtils';
 
 import {
@@ -32,7 +31,7 @@ import {
 
 // Re-export functions from modules with their original names
 export const checkTaxDataBeforeCalculation = checkTaxData;
-export const refreshTaxData = refreshData;
+// Remove refreshTaxData as it doesn't exist
 
 // Adapter function to handle different TaxInput formats
 export const calculateTaxScenario = (input: any, scenarioName: string, sessionId?: string) => {

@@ -32,5 +32,5 @@ export function getYearSpecificTaxBracket(
   income: number
 ): TaxBracket | null {
   // Use the core getTaxBracket function with the year parameter
-  return getTaxBracket(income, filingStatus);
+  return getTaxBracket(income, filingStatus as any);
 }

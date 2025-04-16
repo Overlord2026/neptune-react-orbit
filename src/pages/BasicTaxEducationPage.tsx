@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BookOpen } from 'lucide-react';
 import { STANDARD_DEDUCTION_BY_YEAR } from '@/utils/taxBracketData';
@@ -17,7 +18,7 @@ import NavigationButtons from '@/components/tax-education/NavigationButtons';
 
 const BasicTaxEducationPage = () => {
   const [selectedYear, setSelectedYear] = useState<number>(2025);
-  const [selectedFilingStatus, setSelectedFilingStatus] = useState<string>('single');
+  const [selectedFilingStatus, setSelectedFilingStatus] = useState<FilingStatusType>('single');
   
   const availableYears = getTaxYears().sort((a, b) => b - a);
   
@@ -43,20 +44,20 @@ const BasicTaxEducationPage = () => {
       <YearFilingSelector
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}
-        selectedFilingStatus={selectedFilingStatus}
-        setSelectedFilingStatus={(status) => setSelectedFilingStatus(status)}
+        selectedFilingStatus={selectedFilingStatus as FilingStatusType}
+        setSelectedFilingStatus={(status) => setSelectedFilingStatus(status as FilingStatusType)}
         availableYears={availableYears}
       />
 
       <div className="grid gap-6 py-6">
         <TaxBracketsSection
           selectedYear={selectedYear}
-          selectedFilingStatus={selectedFilingStatus}
+          selectedFilingStatus={selectedFilingStatus as FilingStatusType}
         />
 
         <FilingStatusSection
           selectedYear={selectedYear}
-          selectedFilingStatus={selectedFilingStatus}
+          selectedFilingStatus={selectedFilingStatus as FilingStatusType}
         />
 
         <TaxFormsSection />
@@ -67,7 +68,7 @@ const BasicTaxEducationPage = () => {
 
         <CapitalGainsSection
           selectedYear={selectedYear}
-          selectedFilingStatus={selectedFilingStatus}
+          selectedFilingStatus={selectedFilingStatus as FilingStatusType}
         />
 
         <RothVsTraditionalSection

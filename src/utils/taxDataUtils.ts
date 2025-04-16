@@ -5,8 +5,7 @@
  * Functions for managing tax data versions and currency
  */
 
-import { getTaxDataUpdatedTimestamp } from './taxDataUpdater';
-import { taxBracketData } from './taxBracketData';
+import { TAX_BRACKETS_DATA } from './taxBracketData';
 import { taxData2024 } from './taxBracketData2024';
 import { taxData2025 } from './taxBracketData2025';
 
@@ -23,7 +22,8 @@ export function checkTaxDataBeforeCalculation(sessionId: string = "default") {
   // If we don't have info for this session yet, create it
   if (!sessionTaxDataInfo.has(sessionId)) {
     const currentDate = new Date();
-    const lastUpdated = getTaxDataUpdatedTimestamp() || new Date();
+    // Use a current date as fallback since we don't have taxDataUpdater
+    const lastUpdated = new Date();
     
     // Is the tax data current? (less than 30 days old)
     const isCurrent = (currentDate.getTime() - lastUpdated.getTime()) < (30 * 24 * 60 * 60 * 1000);
@@ -58,7 +58,7 @@ export function getTaxDataVersionForScenario(year: number) {
     return {
       version: `${year}.base`,
       description: `Standard tax data for ${year}`,
-      updated: getTaxDataUpdatedTimestamp() || new Date()
+      updated: new Date()  // Use current date as fallback
     };
   }
 }

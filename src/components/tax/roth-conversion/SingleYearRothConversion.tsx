@@ -23,6 +23,13 @@ interface ConversionResult {
   effectiveRate: number;
 }
 
+const filingStatusOptions: FilingStatusType[] = [
+  'single',
+  'married_joint',
+  'married_separate',
+  'head_of_household'
+];
+
 const SingleYearRothConversion = () => {
   const [income, setIncome] = useState<number>(80000);
   const [iraBalance, setIraBalance] = useState<number>(500000);
@@ -231,10 +238,9 @@ const SingleYearRothConversion = () => {
                 <SelectValue placeholder="Select filing status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="single">Single</SelectItem>
-                <SelectItem value="married">Married Filing Jointly</SelectItem>
-                <SelectItem value="married_separate">Married Filing Separately</SelectItem>
-                <SelectItem value="head_of_household">Head of Household</SelectItem>
+                {filingStatusOptions.map(option => (
+                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

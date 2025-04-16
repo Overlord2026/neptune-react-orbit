@@ -19,6 +19,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { calculateTaxScenario, saveScenario, FilingStatusType } from '@/utils/taxCalculator';
+import { TaxScenario } from '@/utils/taxScenario/types';
 
 const formSchema = z.object({
   wages: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
@@ -95,6 +96,12 @@ const Scenario2021Return = () => {
       const capital_gains = Number(data.capitalGains);
       const itemizedDeductionAmount = data.itemizedDeduction ? Number(data.itemizedDeduction) : 0;
       
+      const filingStatusMap: Record<string, FilingStatusType> = {
+        'single': 'single',
+        'married': 'married_joint',
+        'head_of_household': 'head_of_household'
+      };
+      
       const result = calculateTaxScenario({
         year: 2021,
         wages,
@@ -106,17 +113,16 @@ const Scenario2021Return = () => {
         social_security,
         isItemizedDeduction: data.deductionType === "itemized",
         itemizedDeductionAmount: data.deductionType === "itemized" ? itemizedDeductionAmount : undefined,
-        filing_status: data.filingStatus as FilingStatusType,
+        filing_status: filingStatusMap[data.filingStatus],
       }, "2021 Base Scenario");
       
-      const scenarioToSave = {
+      const scenarioToSave: TaxScenario = {
         id: `scenario-${Date.now()}`,
         name: "2021 Base Scenario",
         is_baseline: true,
-        result: result,
         scenario_name: "2021 Base Scenario",
         year: 2021,
-        filing_status: data.filingStatus as FilingStatusType,
+        filing_status: filingStatusMap[data.filingStatus],
         total_income: result.total_income || 0,
         agi: result.agi || 0,
         taxable_income: result.taxable_income,

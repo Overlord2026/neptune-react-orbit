@@ -33,32 +33,28 @@ export const getCharitableContributionForYear = (
 
   // Otherwise, check if we should apply DAF bunching logic
   if (scenarioData.dafBunching && 
-      typeof scenarioData.dafBunching === 'object' && 
-      scenarioData.dafBunching.enabled) {
+      typeof scenarioData.dafBunching === 'object') {
     
-    const startYear = scenarioData.startYear;
-    const yearIndex = currentYear - startYear;
+    const dafConfig = scenarioData.dafBunching as DAFBunchingConfig;
     
-    // Check if the dafBunching object has the bunchingYears property
-    const bunchingYears = scenarioData.dafBunching && 
-                         'bunchingYears' in scenarioData.dafBunching ? 
-                         scenarioData.dafBunching.bunchingYears as number : 1;
-    
-    const cyclePosition = yearIndex % bunchingYears;
-    
-    // If we're at the start of a bunching cycle, use bunching amount
-    if (cyclePosition === 0 && 
-        scenarioData.dafBunching && 
-        'bunchingAmount' in scenarioData.dafBunching) {
+    if (dafConfig.enabled) {
+      const startYear = scenarioData.startYear;
+      const yearIndex = currentYear - startYear;
       
-      return { 
-        amount: (scenarioData.dafBunching.bunchingAmount as number) || 0,
-        useQcd: false, // Bunching typically done with cash contributions
-        isBunching: true
-      };
+      const bunchingYears = dafConfig.bunchingYears || 1;
+      const cyclePosition = yearIndex % bunchingYears;
+      
+      // If we're at the start of a bunching cycle, use bunching amount
+      if (cyclePosition === 0) {
+        return { 
+          amount: dafConfig.bunchingAmount || 0,
+          useQcd: false, // Bunching typically done with cash contributions
+          isBunching: true
+        };
+      }
+      // Otherwise, no contribution in non-bunching years
+      return { amount: 0, useQcd: false, isBunching: false };
     }
-    // Otherwise, no contribution in non-bunching years
-    return { amount: 0, useQcd: false, isBunching: false };
   }
 
   // Default case (no contribution)
