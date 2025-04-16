@@ -55,8 +55,8 @@ import {
 } from '@/components/ui/accordion';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { AuditLogEntry } from '@/utils/dataFeed/types';
-import { getAuditLogs, performRollback, getCurrentUserId, hasAdminPermission } from '@/utils/auditLogUtils';
+import { AuditLogEntry } from '@/utils/audit/types';
+import { getAuditLogs, performRollback, getCurrentUserId, hasAdminPermission } from '@/utils/audit';
 import { getDataFeeds } from '@/utils/dataFeedUtils';
 import { toast } from 'sonner';
 

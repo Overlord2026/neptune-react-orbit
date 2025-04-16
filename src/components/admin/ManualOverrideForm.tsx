@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { recordManualOverride, getCurrentUserId } from '@/utils/auditLogUtils';
+import { recordManualOverride, getCurrentUserId } from '@/utils/audit';
 import { toast } from 'sonner';
 
 interface ManualOverrideFormProps {
