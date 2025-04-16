@@ -1,6 +1,6 @@
 
 import { calculateStateTax } from '@/utils/stateTax';
-import { TaxInput } from '@/types/tax/taxCalculationTypes';
+import { TaxInput } from '@/utils/taxCalculator';
 import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 import { StateCode } from '@/utils/stateTax';
 

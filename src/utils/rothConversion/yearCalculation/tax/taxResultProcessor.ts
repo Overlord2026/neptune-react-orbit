@@ -71,11 +71,11 @@ export function processTaxResults({
       charitableContribution.amount,
       charitableContribution.useQcd,
       charitableContribution.isBunching,
-      yearTaxInput.filing_status,
+      yearTaxInput.filingStatus,
       yearTaxInput.year,
       taxResult.marginal_rate, // Use actual marginal rate
       rmdAmount,
-      yearTaxInput.wages + (yearTaxInput.ira_distributions || 0) + (yearTaxInput.roth_conversion || 0),
+      (yearTaxInput.wages || 0) + (yearTaxInput.ira_distributions || 0) + (yearTaxInput.roth_conversion || 0),
       { scenario_id: `${scenarioName}_charitable`, warnings: [] } as TaxTrapResult // Provide a valid TaxTrapResult
     );
   }

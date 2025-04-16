@@ -51,11 +51,11 @@ const RealTimeBracketPreview: React.FC<RealTimeBracketPreviewProps> = ({
     // Calculate new tax scenario with current conversion amount
     const taxInput: TaxInput = {
       year,
-      filing_status: filingStatus,
+      filingStatus: filingStatus,
       wages: baseIncome,
       interest: 0,
       dividends: 0,
-      capital_gains: capitalGains,
+      capitalGains: capitalGains,
       ira_distributions: 0,
       roth_conversion: debouncedConversion,
       social_security: 0,

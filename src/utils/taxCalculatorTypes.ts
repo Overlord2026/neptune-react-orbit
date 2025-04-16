@@ -4,6 +4,7 @@
  */
 
 import { FilingStatusType } from '../types/tax/filingTypes';
+import { StateCode } from './stateTax'; 
 
 /**
  * Input parameters for tax calculation
@@ -11,8 +12,14 @@ import { FilingStatusType } from '../types/tax/filingTypes';
 export interface TaxInput {
   year: number;
   filingStatus: FilingStatusType;
-  income: number;
+  wages?: number;
+  interest?: number;
+  dividends?: number;
   capitalGains?: number;
+  ira_distributions?: number;
+  roth_conversion?: number;
+  social_security?: number;
+  income?: number;
   adjustments?: number;
   deductions?: number;
   credits?: number;
@@ -23,6 +30,17 @@ export interface TaxInput {
   includeStateTax?: boolean;
   isAMTApplicable?: boolean;
   directInputMode?: boolean; // Allows direct input of taxable income
+  spouseWages?: number;
+  spouseInterest?: number;
+  spouseDividends?: number;
+  spouseCapitalGains?: number;
+  spouseIraDistributions?: number;
+  spouseRothConversion?: number;
+  spouseSocialSecurity?: number;
+  isInCommunityPropertyState?: boolean;
+  splitCommunityIncome?: boolean;
+  filing_status?: FilingStatusType; // For backward compatibility
+  capital_gains?: number; // For backward compatibility
 }
 
 /**
@@ -69,6 +87,7 @@ export interface TaxResult {
   is_baseline?: boolean;
   created_at?: string;
   updated_at?: string;
+  mfs_comparison?: any;
   taxIncomeBreakdown?: {
     wages?: number;
     interest?: number;
@@ -95,4 +114,19 @@ export interface TaxScenario {
   name: string;
   result: TaxResult;
   is_baseline: boolean;
+  scenario_name?: string;
+  year?: number;
+  filing_status?: FilingStatusType;
+  total_income?: number;
+  agi?: number;
+  taxable_income?: number;
+  total_tax?: number;
+  ordinary_tax?: number;
+  capital_gains_tax?: number;
+  marginal_rate?: number;
+  effective_rate?: number;
+  marginal_capital_gains_rate?: number;
+  federal_tax?: number;
+  state_tax?: number;
+  updated_at?: string | Date;
 }

@@ -31,7 +31,7 @@ const PersonalInfoReview: React.FC<PersonalInfoReviewProps> = ({ data }) => {
           </div>
           <div className="flex justify-between md:block">
             <dt className="font-medium text-muted-foreground">Address:</dt>
-            <dd>{data.address.street}, {data.address.city}, {data.address.state} {data.address.zip}</dd>
+            <dd>{data.address.street}, {data.address.city}, {data.address.state} {data.address.zipCode}</dd>
           </div>
         </dl>
       </Card>

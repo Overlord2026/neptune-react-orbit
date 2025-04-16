@@ -18,7 +18,7 @@ export const getInitialTaxData = (): TaxReturnData => {
       street: '',
       city: '',
       state: '',
-      zip: ''
+      zipCode: ''
     },
     
     // Dependents

@@ -15,16 +15,16 @@ import { FilingStatusType } from '@/types/tax/filingTypes';
 
 const INITIAL_TAX_INPUT: TaxInput = {
   year: 2025,
+  filingStatus: 'married_joint',
   wages: 120000,
   interest: 5000,
   dividends: 8000,
-  capital_gains: 15000,
+  capitalGains: 15000,
   ira_distributions: 0,
   roth_conversion: 0,
   social_security: 30000,
   isItemizedDeduction: false,
   itemizedDeductionAmount: 0,
-  filing_status: 'married_joint',
 };
 
 const SCENARIO_ID = "2025-base-scenario";
@@ -72,8 +72,8 @@ const Scenario2025Return: React.FC = () => {
         <RealTimeBracketPreview
           baseIncome={taxInput.wages + taxInput.interest + taxInput.dividends + taxInput.ira_distributions + 0.85 * taxInput.social_security} 
           year={taxInput.year} 
-          filingStatus={taxInput.filing_status}
-          capitalGains={taxInput.capital_gains}
+          filingStatus={taxInput.filingStatus}
+          capitalGains={taxInput.capitalGains}
           maxConversion={300000}
           onChange={handleRothConversionChange}
         />
@@ -91,9 +91,9 @@ const Scenario2025Return: React.FC = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Filing Status:</span>
                   <span className="font-medium">
-                    {taxInput.filing_status === 'married_joint' ? 'Married Filing Jointly' : 
-                     taxInput.filing_status === 'single' ? 'Single' : 
-                     taxInput.filing_status === 'head_of_household' ? 'Head of Household' : 'Married Filing Separately'}
+                    {taxInput.filingStatus === 'married_joint' ? 'Married Filing Jointly' : 
+                     taxInput.filingStatus === 'single' ? 'Single' : 
+                     taxInput.filingStatus === 'head_of_household' ? 'Head of Household' : 'Married Filing Separately'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -110,7 +110,7 @@ const Scenario2025Return: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Capital Gains:</span>
-                  <span className="font-medium">${taxInput.capital_gains.toLocaleString()}</span>
+                  <span className="font-medium">${taxInput.capitalGains.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Social Security:</span>
@@ -182,11 +182,11 @@ const Scenario2025Return: React.FC = () => {
             scenarioId={SCENARIO_ID} 
             scenarioData={{
               year: taxInput.year,
-              filing_status: taxInput.filing_status,
+              filing_status: taxInput.filingStatus,
               agi: taxResult.agi,
               total_income: taxResult.total_income || 0,
               taxable_income: taxResult.taxable_income,
-              capital_gains_long: taxInput.capital_gains,
+              capital_gains_long: taxInput.capitalGains,
               capital_gains_short: 0,
               social_security_amount: taxInput.social_security,
               household_size: 2,

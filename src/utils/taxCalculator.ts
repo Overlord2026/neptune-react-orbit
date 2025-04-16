@@ -33,7 +33,27 @@ import {
 // Re-export functions from modules with their original names
 export const checkTaxDataBeforeCalculation = checkTaxData;
 export const refreshTaxData = refreshData;
-export const calculateTaxScenario = calcTaxScenario;
+
+// Adapter function to handle different TaxInput formats
+export const calculateTaxScenario = (input: any, scenarioName: string, sessionId?: string) => {
+  // Adapt input to the format expected by the core calculator
+  const adaptedInput = {
+    year: input.year,
+    filingStatus: input.filingStatus || input.filing_status,
+    income: input.wages || 0, 
+    capitalGains: input.capitalGains || input.capital_gains || 0,
+    adjustments: 0,
+    deductions: 0,
+    credits: 0,
+    isItemizedDeduction: input.isItemizedDeduction || false,
+    itemizedDeductionAmount: input.itemizedDeductionAmount || 0,
+    residentState: input.residentState,
+    includeStateTax: input.includeStateTax || false
+  };
+
+  return calcTaxScenario(adaptedInput, scenarioName, sessionId || "default");
+};
+
 export const calculateTaxScenarioWithSafeHarbor = calcWithSafeHarbor;
 export const saveScenario = saveTaxScenarioFunc;
 export const fetchScenarios = fetchTaxScenariosFunc;
