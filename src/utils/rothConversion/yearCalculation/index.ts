@@ -1,3 +1,4 @@
+
 /**
  * Year Calculation Utilities
  * 
@@ -16,12 +17,8 @@ export { calculateCharitableEffect } from './charitable/charitableProcessor';
 
 // Tax modules
 export { prepareTaxInput } from './tax/taxInputPreparation';
-// Remove the calculateStateTax export since it doesn't exist
 export { checkForTaxTraps } from './tax/taxTrapUtils';
 export { processTaxResults } from './tax/taxResultProcessor';
 
 // Add the applyStateTaxInfo function from stateTaxUtils
-export { applyStateTaxInfo } from './tax/stateTaxUtils';
-
-// Re-export the calculateStateTax function
-export { calculateStateTax } from './tax/stateTaxUtils';
+export { applyStateTaxInfo, calculateStateTax } from './tax/stateTaxUtils';

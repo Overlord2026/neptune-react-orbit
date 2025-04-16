@@ -1,8 +1,8 @@
 
-import { calculateStateTax } from '@/utils/stateTax';
+import { calculateStateTax } from '@/utils/stateTax/calculations';
 import { TaxInput } from '@/utils/taxCalculatorTypes';
 import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
-import { StateCode } from '@/utils/stateTax'; // Updated import path
+import { StateCode } from '@/utils/stateTax/types';
 
 /**
  * Apply state tax information to a tax input based on multi-year scenario data
@@ -35,5 +35,5 @@ function determineStateForYear(scenarioData: MultiYearScenarioData): StateCode |
   }
 }
 
-// Export calculateStateTax from stateTax module
+// Re-export calculateStateTax from stateTax/calculations module
 export { calculateStateTax };
