@@ -1,4 +1,3 @@
-
 /**
  * Single Year Calculation Utilities
  * 
@@ -16,7 +15,7 @@ import { determineConversionAmounts } from './conversionUtils';
 import { processTaxableIncome } from './yearCalculation/income/taxableIncomeProcessor';
 import { calculateCharitableEffect } from './yearCalculation/charitable/charitableProcessor';
 import { prepareTaxInput } from './yearCalculation/tax/taxInputPreparation';
-import { calculateStateTax } from './yearCalculation/tax/stateTaxUtils';
+import { applyStateTaxInfo } from './yearCalculation/tax/stateTaxUtils';
 import { processTaxResults } from './yearCalculation/tax/taxResultProcessor';
 import { checkForTaxTraps } from './yearCalculation/tax/taxTrapUtils';
 
@@ -131,11 +130,7 @@ export function processSingleYearCalculation({
   });
   
   // Apply state tax information if applicable
-  const yearTaxInputWithStateTax = {
-    ...yearTaxInput,
-    includeStateTax: scenarioData.includeStateTax,
-    residentState: scenarioData.residentState
-  };
+  const yearTaxInputWithStateTax = applyStateTaxInfo(yearTaxInput, scenarioData);
   
   // Calculate tax results for this scenario and no-conversion scenario
   const results = processTaxResults({

@@ -25,5 +25,6 @@ export {
   prepareTaxInput,
   calculateStateTax,
   checkForTaxTraps,
-  processTaxResults
+  processTaxResults,
+  applyStateTaxInfo
 } from './yearCalculation/index';

@@ -34,4 +34,3 @@ function determineStateForYear(scenarioData: MultiYearScenarioData): StateCode |
     return scenarioData.residentState;
   }
 }
-

@@ -23,4 +23,3 @@ export { processTaxResults } from './tax/taxResultProcessor';
 
 // Add the applyStateTaxInfo function from stateTaxUtils
 export { applyStateTaxInfo } from './tax/stateTaxUtils';
-
