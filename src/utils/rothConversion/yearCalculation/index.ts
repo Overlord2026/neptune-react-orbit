@@ -1,4 +1,3 @@
-
 /**
  * Year Calculation Utilities
  * 
@@ -23,3 +22,6 @@ export { processTaxResults } from './tax/taxResultProcessor';
 
 // Add the applyStateTaxInfo function from stateTaxUtils
 export { applyStateTaxInfo } from './tax/stateTaxUtils';
+
+// Re-export the calculateStateTax function
+export { calculateStateTax } from './tax/stateTaxUtils';
