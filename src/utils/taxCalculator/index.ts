@@ -15,8 +15,8 @@ export type { FilingStatusType };
 export { STANDARD_DEDUCTION } from '../taxBracketData';
 
 // Import specialized modules
-import { calculateTaxableIncome } from './taxableIncomeCalculator';
-import { checkTaxDataBeforeCalculation, refreshTaxData } from './taxDataUtils';
+import { calculateTaxableIncome as calcTaxable } from './taxableIncomeCalculator';
+import { checkTaxDataBeforeCalculation as checkTaxData, refreshTaxData as refreshData } from './taxDataUtils';
 import { 
   calculateTaxScenario as calcTaxScenario,
   calculateTaxScenarioWithSafeHarbor as calcWithSafeHarbor
@@ -26,10 +26,10 @@ import {
   getSavedScenarios as fetchTaxScenariosFunc 
 } from '../taxScenario/storage';
 
-// Re-export functions with their original names
-export const calculateTaxableIncome = calculateTaxableIncome;
-export const checkTaxDataBeforeCalculation = checkTaxDataBeforeCalculation;
-export const refreshTaxData = refreshTaxData;
+// Re-export functions with renamed variables to avoid conflicts
+export const calculateTaxableIncome = calcTaxable;
+export const checkTaxDataBeforeCalculation = checkTaxData;
+export const refreshTaxData = refreshData;
 
 // Main calculation function with adapter for different input formats
 export const calculateTaxScenario = (input: any, scenarioName: string, sessionId?: string) => {

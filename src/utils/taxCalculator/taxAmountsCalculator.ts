@@ -82,8 +82,16 @@ export function calculateTaxAmounts(input: TaxInput) {
   }
   
   // Calculate marginal and effective rates
-  const marginal_rate = getMarginalRate(taxable_income, input.year, input.filingStatus || input.filing_status as FilingStatusType);
-  const marginal_capital_gains_rate = getMarginalCapitalGainsRate(ordinary_income, capital_gains, input.year, input.filingStatus || input.filing_status as FilingStatusType);
+  const marginal_rate_data = getTaxBracket(taxable_income, input.filingStatus || input.filing_status as FilingStatusType);
+  const marginal_rate = typeof marginal_rate_data === 'string' 
+    ? parseFloat(marginal_rate_data) / 100 
+    : marginal_rate_data.rate;
+    
+  const marginal_capital_gains_data = getCapitalGainsBracket(ordinary_income + capital_gains, input.filingStatus || input.filing_status as FilingStatusType);
+  const marginal_capital_gains_rate = typeof marginal_capital_gains_data === 'string' 
+    ? parseFloat(marginal_capital_gains_data) / 100 
+    : marginal_capital_gains_data.rate;
+    
   const effective_rate = total_income > 0 ? total_tax / total_income : 0;
   
   return {
@@ -177,7 +185,7 @@ function calculateCapitalGainsTax(
  */
 function getMarginalRate(taxableIncome: number, year: number, filingStatus: FilingStatusType): number {
   const bracket = getTaxBracket(taxableIncome, filingStatus);
-  return bracket?.rate || 0;
+  return typeof bracket === 'string' ? parseFloat(bracket) / 100 : bracket.rate;
 }
 
 /**
@@ -191,7 +199,7 @@ function getMarginalCapitalGainsRate(
 ): number {
   const totalIncome = ordinaryIncome + capitalGains;
   const bracket = getCapitalGainsBracket(totalIncome, filingStatus);
-  return bracket?.rate || 0;
+  return typeof bracket === 'string' ? parseFloat(bracket) / 100 : bracket.rate;
 }
 
 /**

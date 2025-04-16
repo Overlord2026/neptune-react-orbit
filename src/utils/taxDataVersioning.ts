@@ -1,3 +1,4 @@
+
 /**
  * Tax Data Versioning
  * 
@@ -11,6 +12,19 @@ export interface TaxBracket {
   min: number;
   max: number;
   rate: number;
+}
+
+// Define TaxDataVersion interface
+export interface TaxDataVersion {
+  id: string;
+  year: number;
+  version: string;
+  effective_date: string;
+  published_date: string;
+  description: string;
+  is_projected: boolean;
+  is_correction: boolean;
+  legislation_reference: string;
 }
 
 /**

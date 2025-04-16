@@ -1,4 +1,3 @@
-
 /**
  * Core calculator for tax scenarios
  * 
@@ -6,8 +5,8 @@
  */
 
 import { TaxInput, TaxResult } from '../taxCalculatorTypes';
-import { getTaxDataVersionForScenario } from '../taxDataUtils';
-import { hasMidYearUpdates, getMidYearUpdateWarning } from '../taxDataUtils';
+import { getTaxDataVersionForScenario } from '../taxDataVersioning';
+import { hasMidYearUpdates, getMidYearUpdateWarning } from '../taxDataVersioning';
 
 /**
  * Calculate a basic tax scenario result
@@ -53,7 +52,7 @@ export function calculateBasicScenarioResult(
     agi,
     taxable_income,
     // Don't include ordinary_income as it's not in TaxResult type
-    capital_gains,
+    capital_gains_tax,
     ordinary_tax,
     capital_gains_tax,
     total_tax,

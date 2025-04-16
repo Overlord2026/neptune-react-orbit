@@ -1,4 +1,3 @@
-
 /**
  * Tax bracket data and utilities
  */
@@ -120,9 +119,9 @@ export const TAX_BRACKETS_DATA = {
 };
 
 // Helper function to convert modern filing status to legacy
-export const convertFilingStatusToLegacy = (status: FilingStatusType): LegacyFilingStatusType => {
-  if (status === 'married_joint') return 'married';
-  return status as LegacyFilingStatusType;
+export const convertFilingStatusToLegacy = (filingStatus: FilingStatusType): LegacyFilingStatusType => {
+  if (filingStatus === 'married_joint') return 'married';
+  return filingStatus as LegacyFilingStatusType;
 };
 
 // Helper function that maps legacy filing status to current filing status for bracket lookups
@@ -246,8 +245,10 @@ export function calculateEffectiveRate(tax: number, income: number): number {
   return tax / income;
 }
 
-// For backward compatibility with getTaxBracket
-export function getTaxBracket(income: number, filingStatus: FilingStatusType | LegacyFilingStatusType = 'single'): string {
+/**
+ * Get the tax bracket for a given income and filing status
+ */
+export function getTaxBracket(income: number, filingStatus: FilingStatusType | LegacyFilingStatusType = 'single'): any {
   const normalizedFilingStatus = typeof filingStatus === 'string' && 
     (filingStatus === 'married' || filingStatus === 'single' || 
      filingStatus === 'married_separate' || filingStatus === 'head_of_household')
@@ -259,11 +260,33 @@ export function getTaxBracket(income: number, filingStatus: FilingStatusType | L
   // Find the bracket for this income
   for (let i = brackets.length - 1; i >= 0; i--) {
     if (income >= brackets[i].bracket_min) {
-      return `${(brackets[i].rate * 100).toFixed(0)}%`;
+      return brackets[i];
     }
   }
   
-  return "0%";
+  return brackets[0];
+}
+
+/**
+ * Get the capital gains bracket for a given income and filing status
+ */
+export function getCapitalGainsBracket(income: number, filingStatus: FilingStatusType | LegacyFilingStatusType = 'single'): any {
+  const normalizedFilingStatus = typeof filingStatus === 'string' && 
+    (filingStatus === 'married' || filingStatus === 'single' || 
+     filingStatus === 'married_separate' || filingStatus === 'head_of_household')
+    ? convertLegacyFilingStatus(filingStatus as LegacyFilingStatusType)
+    : filingStatus;
+    
+  const brackets = getBrackets(new Date().getFullYear(), normalizedFilingStatus, "ltcg");
+  
+  // Find the bracket for this income
+  for (let i = brackets.length - 1; i >= 0; i--) {
+    if (income >= brackets[i].bracket_min) {
+      return brackets[i];
+    }
+  }
+  
+  return brackets[0];
 }
 
 // Export the function to get distance to next bracket

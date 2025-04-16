@@ -50,11 +50,11 @@ export function calculateTaxScenario(
     marginal_rate,
     marginal_capital_gains_rate,
     effective_rate,
-    updated_at: new Date(),
+    updated_at: new Date().toISOString(), // Convert Date to string
     federal_tax: total_tax,
     state_tax,
     state_code: input.residentState,
-    tax_data_updated_at: taxDataInfo.dataUpdatedAt,
+    tax_data_updated_at: taxDataInfo.dataUpdatedAt.toISOString(), // Convert Date to string
     tax_data_is_current: taxDataInfo.isCurrent
   };
 }
