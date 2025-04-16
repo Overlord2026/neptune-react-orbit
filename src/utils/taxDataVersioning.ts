@@ -1,4 +1,3 @@
-
 /**
  * Tax Data Versioning
  * 
@@ -56,6 +55,38 @@ export function getTaxDataVersionForScenario(year: number) {
     updated: new Date(),
     isProvisional: year >= new Date().getFullYear()
   };
+}
+
+/**
+ * Get tax data versions for a specific year
+ */
+export function getTaxDataVersionsForYear(year: number): TaxDataVersion[] {
+  // Mock implementation that returns versions for a given year
+  // In a real app, this would fetch from a data source
+  return [
+    {
+      id: `version-${year}-01`,
+      year: year,
+      version: `${year}.1.0`,
+      effective_date: new Date().toISOString(),
+      published_date: new Date().toISOString(),
+      description: `Tax data version for ${year}`,
+      is_projected: year >= new Date().getFullYear(),
+      is_correction: false,
+      legislation_reference: `Tax Act ${year}`
+    }
+  ];
+}
+
+/**
+ * Get all tax data versions
+ */
+export function getAllTaxDataVersions(): TaxDataVersion[] {
+  // Collect versions from multiple years
+  const currentYear = new Date().getFullYear();
+  const years = [currentYear - 1, currentYear, currentYear + 1];
+  
+  return years.flatMap(year => getTaxDataVersionsForYear(year));
 }
 
 /**

@@ -1,7 +1,6 @@
-
 import { AuditLogEntry } from './dataFeed/types';
 import { toast } from "sonner";
-import { getTaxDataVersionsForYear } from './taxDataVersioning';
+import { getTaxDataVersionsForYear } from '@/utils/taxDataVersioning';
 
 // Mock database for audit logs (in a real app, this would be in a database)
 let auditLogs: AuditLogEntry[] = [
