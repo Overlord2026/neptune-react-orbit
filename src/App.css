@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,38 +6,98 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Header and navigation improvements */
+.header {
+  @apply bg-[#0f172a] border-b border-[#334155] py-4;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.nav-link {
+  @apply text-[#94a3b8] hover:text-[#f8fafc] px-3 py-2 transition-colors;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.nav-link.active {
+  @apply text-[#f8fafc] font-medium border-b-2 border-[#0284c7];
 }
 
-.card {
-  padding: 2em;
+/* Page containers */
+.page-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6;
 }
 
-.read-the-docs {
-  color: #888;
+.section-container {
+  @apply mb-8;
+}
+
+/* Card variations */
+.feature-card {
+  @apply bg-[#1e293b] border border-[#334155] rounded-lg p-6 transition-all duration-300;
+}
+
+.feature-card:hover {
+  @apply border-[#0284c7] shadow-lg shadow-[#0284c7]/10;
+}
+
+.analysis-card {
+  @apply bg-[#1e293b] border border-[#334155] rounded-lg p-6;
+}
+
+.summary-card {
+  @apply bg-[#273549] border border-[#334155] rounded-lg p-6;
+}
+
+/* Form layout improvements */
+.form-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+}
+
+.form-group {
+  @apply mb-4;
+}
+
+/* Tool cards */
+.tool-card {
+  @apply bg-[#1e293b] border border-[#334155] rounded-lg overflow-hidden transition-all duration-300;
+}
+
+.tool-card-header {
+  @apply bg-[#273549] p-4 border-b border-[#334155];
+}
+
+.tool-card-body {
+  @apply p-6;
+}
+
+.tool-card:hover {
+  @apply border-[#0284c7] shadow-lg;
+}
+
+/* Data display enhancements */
+.data-table-wrapper {
+  @apply overflow-x-auto rounded-lg border border-[#334155];
+}
+
+.data-table {
+  @apply w-full whitespace-nowrap;
+}
+
+.data-table th {
+  @apply bg-[#273549] text-left p-3 text-[#e2e8f0] font-medium;
+}
+
+.data-table td {
+  @apply p-3 border-t border-[#334155];
+}
+
+.data-table tr:hover {
+  @apply bg-[#273549]/50;
+}
+
+/* Read more expandable text */
+.read-more-text {
+  @apply relative overflow-hidden transition-all duration-300;
+}
+
+/* Better spacing for content */
+.content-section {
+  @apply space-y-4;
 }

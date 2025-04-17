@@ -26,11 +26,11 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#0056b3',
+          DEFAULT: '#0284c7',
           foreground: '#FFFFFF',
-          hover: '#003d7a',
-          light: '#e6f2ff',
-          dark: '#003d7a'
+          hover: '#0369a1',
+          light: '#e0f2fe',
+          dark: '#075985'
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -45,8 +45,9 @@ export default {
           foreground: 'hsl(var(--muted-foreground))'
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))'
+          DEFAULT: '#fbbf24',
+          foreground: '#0f172a',
+          hover: '#f59e0b',
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
@@ -57,16 +58,16 @@ export default {
           foreground: 'hsl(var(--card-foreground))'
         },
         sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))'
+          DEFAULT: '#0f172a',
+          foreground: '#f8fafc',
+          primary: '#0284c7',
+          'primary-foreground': '#ffffff',
+          accent: '#fbbf24',
+          'accent-foreground': '#0f172a',
+          border: '#334155',
+          ring: '#0284c7'
         },
-        neptune: {
+        navy: {
           50: '#f0f9ff',
           100: '#e0f2fe',
           200: '#bae6fd',
@@ -81,31 +82,19 @@ export default {
         },
         custom: {
           background: {
-            primary: '#FFFFFF',
-            secondary: '#f8f9fa',
-            tertiary: '#e9ecef',
+            primary: '#0f172a',
+            secondary: '#1e293b',
+            tertiary: '#273549',
           },
           text: {
-            primary: '#212529',
-            secondary: '#495057',
-            muted: '#6c757d',
+            primary: '#f8fafc',
+            secondary: '#e2e8f0',
+            muted: '#94a3b8',
           },
           accent: {
-            green: '#28a745',
+            gold: '#fbbf24',
           }
         },
-        blue: {
-          50: '#e6f2ff',
-          100: '#cce5ff',
-          200: '#99cbff',
-          300: '#66b0ff',
-          400: '#3395ff',
-          500: '#0056b3',
-          600: '#003d7a',
-          700: '#00326e',
-          800: '#002857',
-          900: '#001f45',
-        }
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -151,6 +140,37 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'Arial', 'sans-serif'],
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            color: '#f8fafc',
+            h1: {
+              color: '#f8fafc',
+            },
+            h2: {
+              color: '#f8fafc',
+            },
+            h3: {
+              color: '#f8fafc',
+            },
+            strong: {
+              color: '#f8fafc',
+            },
+            a: {
+              color: '#0284c7',
+              '&:hover': {
+                color: '#0369a1',
+              },
+            },
+            code: {
+              color: '#e2e8f0',
+              backgroundColor: '#273549',
+              padding: '0.2em 0.4em',
+              borderRadius: '0.25rem',
+            },
+          },
+        },
       },
     },
   },

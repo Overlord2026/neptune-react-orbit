@@ -13,14 +13,16 @@ const WarningsWrapper: React.FC = () => {
       ...warning,
       year: result.year,
       message: warning.message || `Warning for ${result.year}`,
-      details: warning.message || '',
+      details: warning.details || warning.message || '',
       severity: warning.severity || 'medium', // Ensure severity always has a value
       trapType: warning.trapType || 'unknown' // Ensure trapType is always defined
     })) || []
   ) || [];
   
   return (
-    <ScenarioWarnings warnings={allWarnings as TrapAlert[]} />
+    <div className="warnings-container mt-6 rounded-lg overflow-hidden">
+      <ScenarioWarnings warnings={allWarnings as TrapAlert[]} />
+    </div>
   );
 };
 

@@ -1,36 +1,37 @@
 
 /**
- * Project Neptune Global Styles
+ * Project Neptune Global Styles - Enhanced for Readability
  */
 
-/* Import system fonts if needed (or add link in index.html) */
+/* Import system fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* CSS Variables */
 :root {
   /* Background Colors */
-  --bg-primary: #111111;
-  --bg-secondary: #1E1E1E;
-  --bg-tertiary: #222222;
-  --bg-sidebar: #0F0F0F;
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #273549;
+  --bg-sidebar: #0f172a;
   
   /* Text Colors */
-  --text-primary: #FFFFFF;
-  --text-secondary: #A0A0A0;
-  --text-accent: #FFD700;
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-accent: #fbbf24;
   
   /* Accent Color */
-  --accent: #FFD700;
+  --accent: #0284c7;
+  --accent-gold: #fbbf24;
   
   /* Status Colors */
-  --success: #4CAF50;
-  --warning: #FFA500;
-  --error: #FF4D4D;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --error: #f87171;
   
   /* Card/Container */
-  --card-bg: #1E1E1E;
-  --card-border: #333333;
-  --card-hover: #2A2A2A;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --card-hover: #273549;
   
   /* Border Radius */
   --radius-sm: 4px;
@@ -65,35 +66,41 @@ html, body {
 
 /* Typography */
 h1, .h1 {
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: var(--space-md);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
 }
 
 h2, .h2 {
-  font-size: 1.6rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  color: var(--text-accent);
+  color: var(--text-primary);
   margin-bottom: var(--space-md);
+  line-height: 1.3;
 }
 
 h3, .h3 {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: var(--space-sm);
+  line-height: 1.4;
 }
 
 h4, .h4 {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-accent);
+  color: var(--text-primary);
   margin-bottom: var(--space-sm);
+  line-height: 1.4;
 }
 
 p {
   margin-bottom: var(--space-md);
+  color: var(--text-secondary);
 }
 
 a {
@@ -114,7 +121,7 @@ a:hover {
   padding: 0 var(--space-lg);
 }
 
-/* Card */
+/* Card with enhanced contrast */
 .card {
   background-color: var(--card-bg);
   border-radius: var(--radius-md);
@@ -129,12 +136,19 @@ a:hover {
 }
 
 .card-title {
-  color: var(--text-accent);
+  color: var(--text-primary);
   margin-top: 0;
+  margin-bottom: var(--space-md);
+  font-weight: 600;
+}
+
+.card-header {
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--card-border);
   margin-bottom: var(--space-md);
 }
 
-/* Buttons */
+/* Buttons with enhanced visibility */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -151,11 +165,11 @@ a:hover {
 
 .btn-primary {
   background-color: var(--accent);
-  color: #000000;
+  color: #FFFFFF;
 }
 
 .btn-primary:hover {
-  background-color: #E5C100;
+  background-color: #0369a1;
   text-decoration: none;
 }
 
@@ -166,7 +180,17 @@ a:hover {
 }
 
 .btn-secondary:hover {
-  background-color: rgba(255, 215, 0, 0.1);
+  background-color: rgba(2, 132, 199, 0.1);
+  text-decoration: none;
+}
+
+.btn-accent {
+  background-color: var(--accent-gold);
+  color: var(--bg-primary);
+}
+
+.btn-accent:hover {
+  background-color: #f59e0b;
   text-decoration: none;
 }
 
@@ -176,7 +200,7 @@ a:hover {
 }
 
 .btn-danger:hover {
-  background-color: #E04444;
+  background-color: #ef4444;
   text-decoration: none;
 }
 
@@ -185,7 +209,7 @@ a:hover {
   cursor: not-allowed;
 }
 
-/* Form elements */
+/* Form elements with better contrast */
 .form-group {
   margin-bottom: var(--space-lg);
 }
@@ -194,6 +218,7 @@ a:hover {
   display: block;
   margin-bottom: var(--space-xs);
   color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .form-control {
@@ -201,8 +226,8 @@ a:hover {
   width: 100%;
   padding: var(--space-sm) var(--space-md);
   font-size: 1rem;
-  background-color: #2A2A2A;
-  border: 1px solid #444444;
+  background-color: var(--bg-primary);
+  border: 2px solid var(--card-border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   transition: border-color 0.3s ease;
@@ -213,9 +238,26 @@ a:hover {
   border-color: var(--accent);
 }
 
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+/* Improved select styling for better visibility */
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
 /* Utilities */
 .text-accent {
   color: var(--accent);
+}
+
+.text-gold {
+  color: var(--accent-gold);
 }
 
 .text-muted {
@@ -242,6 +284,19 @@ a:hover {
   border-color: var(--accent) !important;
 }
 
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Layout utilities */
 .flex {
   display: flex;
 }
@@ -266,42 +321,63 @@ a:hover {
   width: 100%;
 }
 
-/* Sidebar/Nav Styling */
+/* Sidebar/Nav Styling with better contrast */
 .sidebar {
   background-color: var(--bg-sidebar);
-  border-right: 1px solid #333333;
+  border-right: 1px solid #334155;
 }
 
 .sidebar-item {
   padding: var(--space-md);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   transition: all 0.3s ease;
+  border-left: 3px solid transparent;
 }
 
 .sidebar-item:hover {
   background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
 }
 
 .sidebar-item.active {
   border-left: 3px solid var(--accent);
-  background-color: rgba(255, 215, 0, 0.05);
-  color: var(--accent);
+  background-color: rgba(2, 132, 199, 0.1);
+  color: var(--text-primary);
 }
 
-/* Special Neptune-specific styling */
-.neptune-gold {
-  color: #FFD700;
+/* Alert/notification styling */
+.alert {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  border-left: 4px solid transparent;
 }
 
-.neptune-bg {
-  background-color: #111111;
+.alert-info {
+  background-color: rgba(2, 132, 199, 0.1);
+  border-left-color: var(--accent);
+  color: var(--text-secondary);
 }
 
-.neptune-border {
-  border-color: #FFD700;
+.alert-success {
+  background-color: rgba(74, 222, 128, 0.1);
+  border-left-color: var(--success);
+  color: var(--text-secondary);
+}
+
+.alert-warning {
+  background-color: rgba(251, 191, 36, 0.1);
+  border-left-color: var(--warning);
+  color: var(--text-secondary);
+}
+
+.alert-danger {
+  background-color: rgba(248, 113, 113, 0.1);
+  border-left-color: var(--error);
+  color: var(--text-secondary);
 }
 
 /* Animation utility classes */
@@ -326,14 +402,58 @@ a:hover {
 /* Responsive helpers */
 @media (max-width: 768px) {
   h1, .h1 {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
   }
   
   h2, .h2 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
   }
   
   .container {
     padding: 0 var(--space-md);
   }
+}
+
+/* Data visualization improvements */
+.chart-container {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+/* Table with better contrast */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--card-border);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--card-border);
+}
+
+td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background-color: rgba(255, 255, 255, 0.03);
 }

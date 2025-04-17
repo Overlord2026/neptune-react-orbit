@@ -9,7 +9,7 @@ export interface TaxTrapWarning {
   id: string;
   trapType: string;
   message: string;
-  details?: string;
+  details: string;
   severity: 'low' | 'medium' | 'high';
   remediation?: string;
   threshold?: {
@@ -17,7 +17,7 @@ export interface TaxTrapWarning {
     units: string;
   };
   financial_impact?: number;
-  type: string;  // Make this required to fix type errors
+  type: string;
   title?: string;
   description?: string;
   impact?: number;
@@ -25,7 +25,7 @@ export interface TaxTrapWarning {
 
 export interface TaxTrapResult {
   warnings: TaxTrapWarning[];
-  scenario_id: string;  // Make this required to fix type errors
+  scenario_id?: string;
   irmaa_data?: {
     partB_surcharge: number;
     partD_surcharge: number;

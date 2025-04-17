@@ -1,77 +1,78 @@
+
 /**
- * Project Neptune Theme Configuration - Dark Theme
+ * Project Neptune Theme Configuration - Dark Theme with Enhanced Readability
  * This file contains the theme settings for the entire application
  */
 
 export const colors = {
-  // Base
+  // Base backgrounds
   background: {
-    primary: '#101521',
-    secondary: '#1A1F2C',
-    tertiary: '#242A38',
-    sidebar: '#101521',
+    primary: '#0f172a',      // Deep navy background
+    secondary: '#1e293b',    // Slightly lighter navy for cards
+    tertiary: '#273549',     // Even lighter navy for accents 
+    sidebar: '#0f172a',      // Sidebar background
   },
   
   // Main colors
   accent: {
-    primary: '#007BFF',
-    secondary: '#00C47C',
-    gold: '#FFD700',
+    primary: '#0284c7',      // Bright blue
+    secondary: '#00C47C',    // Green for success and positive indicators
+    gold: '#fbbf24',         // Gold for premium features/highlights
   },
   text: {
-    primary: '#FFFFFF',
-    secondary: '#E5E5E5',
-    muted: '#B0B0B0',
-    nav: '#9AA0AC',
+    primary: '#f8fafc',      // Very light gray, almost white for main text
+    secondary: '#e2e8f0',    // Light gray for secondary text
+    muted: '#94a3b8',        // Medium gray for less important text
+    nav: '#94a3b8',          // Navigation text
   },
   
   // Status colors
   status: {
-    success: '#4CAF50',
-    warning: '#FFA500',
-    error: '#FF4D4D',
+    success: '#4ade80',      // Green for success messages
+    warning: '#fbbf24',      // Amber for warnings
+    error: '#f87171',        // Red for errors
   },
   
   // Button variants
   button: {
     primary: {
-      background: '#007BFF',
+      background: '#0284c7', 
       text: '#FFFFFF',
-      hover: '#0069d9',
+      hover: '#0369a1',
     },
     secondary: {
       background: 'transparent',
-      text: '#007BFF',
-      border: '#007BFF',
-      hover: '#1A1F2C',
+      text: '#0284c7',
+      border: '#0284c7',
+      hover: '#1e293b',
     },
     green: {
-      background: '#00C47C',
+      background: '#10b981',
       text: '#FFFFFF',
-      hover: '#00a067',
+      hover: '#059669',
     },
     danger: {
-      background: '#FF4D4D',
+      background: '#f87171',
       text: '#FFFFFF',
-      hover: '#E04444',
+      hover: '#ef4444',
     },
   },
   
   // Card and container styling
   card: {
-    background: '#1A1F2C',
-    border: '#2a3142',
-    hover: '#242A38',
+    background: '#1e293b',   
+    border: '#334155',
+    hover: '#273549',
   },
   
   // Form elements
   form: {
     input: {
-      background: '#242A38',
-      border: '#353e52',
-      text: '#FFFFFF',
-      placeholder: '#9AA0AC',
-      focus: '#007BFF',
+      background: '#0f172a',
+      border: '#334155',
+      text: '#f8fafc',
+      placeholder: '#94a3b8',
+      focus: '#0284c7',
     },
   },
 };
@@ -80,55 +81,61 @@ export const typography = {
   fontFamily: 'Inter, system-ui, sans-serif',
   headings: {
     h1: {
-      fontSize: '2rem',
+      fontSize: '2.25rem',    // 36px
       fontWeight: 600,
       color: colors.text.primary,
+      lineHeight: 1.2,
     },
     h2: {
-      fontSize: '1.6rem',
+      fontSize: '1.75rem',    // 28px
       fontWeight: 600,
       color: colors.text.primary,
+      lineHeight: 1.3,
     },
     h3: {
-      fontSize: '1.3rem',
+      fontSize: '1.5rem',     // 24px
       fontWeight: 600,
       color: colors.text.primary,
+      lineHeight: 1.4,
     },
     h4: {
-      fontSize: '1.1rem',
+      fontSize: '1.25rem',    // 20px
       fontWeight: 600,
       color: colors.text.primary,
+      lineHeight: 1.4,
     },
   },
   body: {
     regular: {
-      fontSize: '1rem',
+      fontSize: '1rem',       // 16px
       fontWeight: 400,
       color: colors.text.secondary,
+      lineHeight: 1.6,
     },
     small: {
-      fontSize: '0.875rem',
+      fontSize: '0.875rem',   // 14px
       fontWeight: 400,
       color: colors.text.muted,
+      lineHeight: 1.5,
     },
   },
 };
 
 export const spacing = {
-  xs: '0.25rem',
-  sm: '0.5rem',
-  md: '1rem',
-  lg: '1.5rem',
-  xl: '2rem',
-  xxl: '3rem',
+  xs: '0.25rem',    // 4px
+  sm: '0.5rem',     // 8px
+  md: '1rem',       // 16px
+  lg: '1.5rem',     // 24px
+  xl: '2rem',       // 32px
+  xxl: '3rem',      // 48px
 };
 
 export const borders = {
   radius: {
-    sm: '4px',
-    md: '8px',
-    lg: '12px',
-    xl: '16px',
+    sm: '0.25rem',    // 4px
+    md: '0.375rem',   // 6px
+    lg: '0.5rem',     // 8px
+    xl: '1rem',       // 16px
     pill: '999px',
   },
   width: {
@@ -205,6 +212,10 @@ export const cssVariables = `
     --h4: ${typography.headings.h4.fontSize};
     --text-regular: ${typography.body.regular.fontSize};
     --text-small: ${typography.body.small.fontSize};
+    
+    /* Line Heights */
+    --lh-headings: 1.3;
+    --lh-body: 1.6;
   }
 `;
 

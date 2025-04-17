@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Inter font for better readability */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 /* Add highlight pulse animation for tool cards */
 @keyframes highlight-pulse {
   0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
@@ -16,74 +19,199 @@
 }
 
 :root {
-  --primary-color: #3b82f6;
-  --primary-hover: #2563eb;
-  --background-color: #111827;
-  --background-secondary: #1f2937;
-  --text-color: #ffffff;
-  --text-secondary: #e5e7eb;
-  --text-muted: #9ca3af;
-  --border-color: #374151;
+  /* Dark Theme Variables - High Contrast */
+  --primary-color: #0284c7;        /* Bright blue for primary actions */
+  --primary-hover: #0369a1;        /* Darker blue for hover states */
+  --background-color: #0f172a;     /* Deep navy background */
+  --background-secondary: #1e293b; /* Slightly lighter navy for cards */
+  --card-background: #1e293b;      /* Card background */
+  --card-border: #334155;          /* Border for cards */
+  --text-color: #f8fafc;           /* Very light gray, almost white */
+  --text-secondary: #e2e8f0;       /* Light gray text */
+  --text-muted: #94a3b8;           /* Muted text color */
+  --accent-color: #fbbf24;         /* Gold accent for important elements */
+  --warning-color: #f87171;        /* Warning color */
+  --success-color: #4ade80;        /* Success color */
+  --border-color: #334155;         /* Border color */
+}
+
+/* Base styles for better readability */
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  @apply bg-[#0f172a] text-[#f8fafc];
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-medium tracking-tight;
+  color: var(--text-color);
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  @apply text-3xl md:text-4xl;
+}
+
+h2 {
+  @apply text-2xl md:text-3xl;
+}
+
+h3 {
+  @apply text-xl md:text-2xl;
+}
+
+p, li, label, input, textarea, select, button {
+  @apply text-base leading-relaxed;
+}
+
+/* Improved card styling */
+.card {
+  @apply bg-[#1e293b] border border-[#334155] rounded-lg p-4 md:p-6 shadow-lg;
+}
+
+.card-header {
+  @apply border-b border-[#334155] pb-4 mb-4;
+}
+
+.card-title {
+  @apply text-xl font-medium text-[#f8fafc] mb-1;
+}
+
+/* Button styles with better contrast */
+.btn-primary {
+  @apply bg-[#0284c7] hover:bg-[#0369a1] text-white font-medium px-4 py-2 rounded-md transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-transparent border border-[#0284c7] text-[#0284c7] hover:bg-[#0284c7]/10 font-medium px-4 py-2 rounded-md transition-colors;
+}
+
+.btn-accent {
+  @apply bg-[#fbbf24] hover:bg-[#f59e0b] text-[#0f172a] font-medium px-4 py-2 rounded-md transition-colors;
+}
+
+/* Form elements with better contrast */
+.input {
+  @apply bg-[#0f172a] border-2 border-[#334155] text-[#f8fafc] px-4 py-2 rounded-md focus:outline-none focus:border-[#0284c7];
+}
+
+.label {
+  @apply text-[#e2e8f0] font-medium mb-2 block;
 }
 
 /* Dark mode classes for better contrast */
 .dark-card {
-  @apply bg-[#111827] border border-[#374151] text-white;
+  @apply bg-[#1e293b] border border-[#334155] text-[#f8fafc] rounded-lg;
 }
 
 .dark-card-header {
-  @apply bg-[#1f2937] border-b border-[#374151];
+  @apply bg-[#273549] border-b border-[#334155] p-4;
 }
 
 .dark-text-primary {
-  @apply text-white;
+  @apply text-[#f8fafc];
 }
 
 .dark-text-secondary {
-  @apply text-gray-300;
+  @apply text-[#e2e8f0];
 }
 
 .dark-button-primary {
-  @apply bg-[#3b82f6] text-white hover:bg-[#2563eb];
+  @apply bg-[#0284c7] text-white hover:bg-[#0369a1];
 }
 
 .dark-button-secondary {
-  @apply border border-[#3b82f6] text-[#3b82f6] bg-transparent hover:bg-[#3b82f6]/10;
+  @apply border border-[#0284c7] text-[#0284c7] bg-transparent hover:bg-[#0284c7]/10;
 }
 
 .dark-button-premium {
   @apply bg-[#8a76e4] text-white hover:bg-[#7c5fec];
 }
 
-.neptune-gold {
-  color: #e5e7eb;
+/* Additional utility classes */
+.text-accent {
+  color: var(--accent-color);
 }
 
-/* Premium feature styles with better contrast */
-.premium-feature-card {
-  @apply bg-[#111827] border-[#6366f1]/30;
+.bg-card {
+  background-color: var(--card-background);
 }
 
-.premium-header {
-  @apply bg-[#1f2937] text-white border-b border-[#374151];
+.border-card {
+  border-color: var(--card-border);
 }
 
-.premium-content {
-  @apply bg-[#1f2937] text-gray-300 border border-[#6366f1]/30;
+/* Improved spacing */
+.content-spacing {
+  @apply space-y-6;
 }
 
-.premium-list-item {
-  @apply text-gray-300;
+.section-spacing {
+  @apply py-6 md:py-10;
 }
 
-.premium-icon {
-  @apply text-[#a78bfa];
+/* Better table readability */
+table {
+  @apply w-full border-collapse;
 }
 
-.premium-button {
-  @apply bg-[#8a76e4] hover:bg-[#7c5fec] text-white;
+th {
+  @apply bg-[#273549] text-left p-3 text-[#e2e8f0] font-medium border-b border-[#334155];
 }
 
-.premium-link {
-  @apply text-[#3b82f6] hover:text-[#60a5fa];
+td {
+  @apply p-3 border-b border-[#334155] text-[#e2e8f0];
+}
+
+tr:hover {
+  @apply bg-[#273549]/50;
+}
+
+/* Focus states for accessibility */
+*:focus-visible {
+  @apply outline-none ring-2 ring-[#0284c7] ring-offset-2 ring-offset-[#0f172a];
+}
+
+/* Better notification/alert styling */
+.alert {
+  @apply p-4 rounded-md border mb-4;
+}
+
+.alert-info {
+  @apply bg-[#0284c7]/20 border-[#0284c7] text-[#e2e8f0];
+}
+
+.alert-warning {
+  @apply bg-[#f59e0b]/20 border-[#f59e0b] text-[#e2e8f0];
+}
+
+.alert-danger {
+  @apply bg-[#f87171]/20 border-[#f87171] text-[#e2e8f0];
+}
+
+.alert-success {
+  @apply bg-[#4ade80]/20 border-[#4ade80] text-[#e2e8f0];
+}
+
+/* Animation utility classes */
+.animate-fade {
+  animation: fade 0.3s ease-in;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
