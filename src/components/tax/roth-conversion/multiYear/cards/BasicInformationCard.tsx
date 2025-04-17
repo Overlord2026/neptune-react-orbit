@@ -19,7 +19,7 @@ const BasicInformationCard: React.FC<BasicInformationCardProps> = ({
   // Helper to format currency inputs
   const formatCurrency = (value: number | undefined) => {
     if (value === undefined) return '';
-    return value.toLocaleString(); // Use toLocaleString for better readability
+    return value.toLocaleString();
   };
 
   // Helper to handle currency inputs
@@ -33,13 +33,13 @@ const BasicInformationCard: React.FC<BasicInformationCardProps> = ({
   };
 
   return (
-    <Card className="bg-[#007BFF] border-[#0069d9] shadow-lg">
-      <CardHeader className="bg-[#0069d9] rounded-t-lg p-5">
+    <Card className="bg-[#0056b3] border-[#003d7a] shadow-lg">
+      <CardHeader className="bg-[#003d7a] rounded-t-lg p-5">
         <CardTitle className="text-2xl md:text-xl flex items-center gap-3 text-white">
           <Calculator className="h-6 w-6 text-white" />
           Basic Information
         </CardTitle>
-        <CardDescription className="text-white/80 text-base md:text-sm">
+        <CardDescription className="text-white/90 text-base md:text-sm">
           Enter your age and retirement account information
         </CardDescription>
       </CardHeader>
@@ -53,12 +53,11 @@ const BasicInformationCard: React.FC<BasicInformationCardProps> = ({
               min={0}
               max={120}
               value={scenarioData.startAge || ''}
-              className="bg-white text-black border-white/20 focus:ring-[#ffffff] text-base py-3"
+              className="bg-white text-[#212529] border-white/30 focus:ring-white text-base py-3"
               onChange={(e) => {
                 const age = parseInt(e.target.value);
                 onUpdateScenarioData({ 
                   startAge: isNaN(age) ? 0 : age,
-                  // Automatically set RMD age based on current age
                   rmdStartAge: isNaN(age) || age < 73 ? 73 : age
                 });
               }}
@@ -72,7 +71,7 @@ const BasicInformationCard: React.FC<BasicInformationCardProps> = ({
               min={2023}
               max={2050}
               value={scenarioData.startYear || ''}
-              className="bg-white text-black border-white/20 focus:ring-[#ffffff] text-base py-3"
+              className="bg-white text-[#212529] border-white/30 focus:ring-white text-base py-3"
               onChange={(e) => {
                 const year = parseInt(e.target.value);
                 onUpdateScenarioData({ startYear: isNaN(year) ? new Date().getFullYear() : year });
@@ -84,7 +83,7 @@ const BasicInformationCard: React.FC<BasicInformationCardProps> = ({
         <div className="space-y-3">
           <Label htmlFor="expectedAnnualReturn" className="text-white flex items-center text-base font-medium">
             Expected Annual Return
-            <Info className="inline-block ml-2 h-5 w-5 text-white/80" />
+            <Info className="inline-block ml-2 h-5 w-5 text-white/90" />
           </Label>
           <div className="flex items-center gap-4">
             <Slider 
@@ -98,11 +97,11 @@ const BasicInformationCard: React.FC<BasicInformationCardProps> = ({
               }}
               className="flex-grow"
             />
-            <span className="text-base font-semibold w-16 text-white bg-[#0069d9] px-3 py-1.5 rounded-md">
+            <span className="text-base font-semibold w-16 text-white bg-[#003d7a] px-3 py-1.5 rounded-md">
               {(scenarioData.expectedAnnualReturn * 100).toFixed(1)}%
             </span>
           </div>
-          <p className="text-sm text-white/80">
+          <p className="text-sm text-white/90">
             Estimated average annual return on investments
           </p>
         </div>
@@ -110,10 +109,10 @@ const BasicInformationCard: React.FC<BasicInformationCardProps> = ({
         <div className="space-y-3">
           <Label htmlFor="traditionalIRAStartBalance" className="text-white text-base font-medium">Traditional IRA Balance</Label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-black font-medium">$</span>
+            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#212529] font-medium">$</span>
             <Input 
               id="traditionalIRAStartBalance"
-              className="pl-8 bg-white text-black border-white/20 focus:ring-[#ffffff] text-base py-3"
+              className="pl-8 bg-white text-[#212529] border-white/30 focus:ring-white text-base py-3"
               value={formatCurrency(scenarioData.traditionalIRAStartBalance)}
               onChange={(e) => handleCurrencyChange('traditionalIRAStartBalance', e.target.value)}
             />
@@ -123,10 +122,10 @@ const BasicInformationCard: React.FC<BasicInformationCardProps> = ({
         <div className="space-y-3">
           <Label htmlFor="rothIRAStartBalance" className="text-white text-base font-medium">Roth IRA Balance</Label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-black font-medium">$</span>
+            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#212529] font-medium">$</span>
             <Input 
               id="rothIRAStartBalance"
-              className="pl-8 bg-white text-black border-white/20 focus:ring-[#ffffff] text-base py-3"
+              className="pl-8 bg-white text-[#212529] border-white/30 focus:ring-white text-base py-3"
               value={formatCurrency(scenarioData.rothIRAStartBalance)}
               onChange={(e) => handleCurrencyChange('rothIRAStartBalance', e.target.value)}
             />

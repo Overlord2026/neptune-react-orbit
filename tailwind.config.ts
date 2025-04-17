@@ -26,11 +26,11 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#007BFF',
+          DEFAULT: '#0056b3',
           foreground: '#FFFFFF',
-          hover: '#0069d9',
-          light: '#cce5ff',
-          dark: '#004a99'
+          hover: '#003d7a',
+          light: '#e6f2ff',
+          dark: '#003d7a'
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -100,11 +100,11 @@ export default {
           200: '#99cbff',
           300: '#66b0ff',
           400: '#3395ff',
-          500: '#007BFF',
-          600: '#0069d9',
-          700: '#0062cc',
-          800: '#0056b3',
-          900: '#004a99',
+          500: '#0056b3',
+          600: '#003d7a',
+          700: '#00326e',
+          800: '#002857',
+          900: '#001f45',
         }
       },
       borderRadius: {
