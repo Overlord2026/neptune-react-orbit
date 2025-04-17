@@ -24,10 +24,10 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
           value={step.id}
           onClick={() => goToStep(step.id)}
           className={cn(
-            "relative text-[#94a3b8] hover:text-white transition-colors",
-            "data-[state=active]:bg-[#0284c7] data-[state=active]:text-white",
+            "relative text-[#0c4a6e] hover:text-[#075985] transition-colors", // Dark blue text with darker hover
+            "data-[state=active]:bg-[#e0f2fe] data-[state=active]:text-[#0c4a6e]", // Light blue background with dark blue text when active
             "disabled:opacity-50 disabled:cursor-not-allowed",
-            step.id === currentStep ? "bg-[#273549]" : ""
+            step.id === currentStep ? "bg-[#f0f9ff]" : "" // Very light blue background for current step
           )}
           disabled={!completedSteps.includes(step.id) && step.id !== currentStep}
         >
