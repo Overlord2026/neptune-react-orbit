@@ -10,17 +10,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[#0056b3] text-white hover:bg-[#003d7a]",
+        default: "bg-[#0056b3] text-white hover:bg-[#003d7a] shadow-sm",
         destructive:
-          "bg-red-600 text-white hover:bg-red-700",
+          "bg-red-600 text-white hover:bg-red-700 shadow-sm",
         outline:
-          "border border-[#3b82f6] bg-transparent text-[#3b82f6] hover:bg-[#3b82f6]/10",
+          "border-2 border-[#3b82f6] bg-transparent text-[#3b82f6] hover:bg-[#3b82f6]/10",
         secondary:
-          "bg-[#1f2937] text-[#e5e7eb] border border-[#374151] hover:bg-[#374151] hover:border-[#4b5563]",
+          "bg-[#1f2937] text-white border border-[#374151] hover:bg-[#374151] hover:border-[#4b5563] shadow-sm",
         ghost: "text-[#3b82f6] hover:bg-[#3b82f6]/10 hover:text-[#60a5fa]",
         link: "text-[#3b82f6] underline-offset-4 hover:underline",
-        success: "bg-[#10b981] text-white hover:bg-[#059669]",
-        premium: "bg-[#8a76e4] hover:bg-[#7c5fec] text-white",
+        success: "bg-[#10b981] text-white hover:bg-[#059669] shadow-sm",
+        premium: "bg-[#8a76e4] hover:bg-[#7c5fec] text-white shadow-sm",
+        filter: "bg-transparent text-[#3b82f6] border border-[#3b82f6] hover:bg-[#3b82f6] hover:text-white transition-colors",
+        filterActive: "bg-[#3b82f6] text-white border border-[#3b82f6] hover:bg-[#2563eb]",
       },
       size: {
         default: "h-11 px-5 py-2.5",

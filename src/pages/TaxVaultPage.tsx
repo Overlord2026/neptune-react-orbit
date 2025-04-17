@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -104,22 +105,22 @@ const TaxVaultPage = () => {
     <div className="space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight neptune-gold">Tax Vault</h1>
-          <p className="text-muted-foreground">Securely store and organize your tax documents</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">Tax Vault</h1>
+          <p className="text-gray-300">Securely store and organize your tax documents</p>
         </div>
-        <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
+        <Link to="/tax-planning" className="border-2 border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back to Tax Planning
         </Link>
       </div>
 
-      <Card className="bg-card">
+      <Card className="bg-[#1f2937] border-[#374151]">
         <CardHeader>
-          <CardTitle className="text-lg">Filter by Tax Year</CardTitle>
+          <CardTitle className="text-lg text-white">Filter by Tax Year</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
           <Button 
-            variant={selectedTaxYear === null ? "default" : "outline"} 
+            variant={selectedTaxYear === null ? "filterActive" : "filter"} 
             onClick={() => setSelectedTaxYear(null)}
           >
             All Years
@@ -127,7 +128,7 @@ const TaxVaultPage = () => {
           {availableTaxYears.map(year => (
             <Button 
               key={year} 
-              variant={selectedTaxYear === year ? "default" : "outline"}
+              variant={selectedTaxYear === year ? "filterActive" : "filter"}
               onClick={() => setSelectedTaxYear(year)}
             >
               {year}
@@ -136,24 +137,24 @@ const TaxVaultPage = () => {
         </CardContent>
       </Card>
 
-      <Card className="bg-card border-primary/20 hover:border-primary/40 transition-colors">
+      <Card className="bg-[#1f2937] border-[#3b82f6]/20 hover:border-[#3b82f6]/40 transition-colors">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 neptune-gold">
-            <Upload className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <Upload className="h-5 w-5 text-[#3b82f6]" />
             Upload Documents
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-gray-300">
             Add tax forms, receipts, or other important documents to your vault.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="border-2 border-dashed border-input rounded-lg p-6 flex flex-col items-center justify-center gap-4">
-            <Upload className="h-10 w-10 text-muted-foreground" />
+          <div className="border-2 border-dashed border-[#374151] rounded-lg p-6 flex flex-col items-center justify-center gap-4">
+            <Upload className="h-10 w-10 text-[#3b82f6]" />
             <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className="text-sm text-gray-300 mb-2">
                 Drag and drop your files here, or click to browse
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-400">
                 Supports PDFs, images, and common document formats
               </p>
             </div>
@@ -163,7 +164,7 @@ const TaxVaultPage = () => {
                 ref={fileInputRef}
                 id="file-upload" 
                 type="file" 
-                className="cursor-pointer" 
+                className="cursor-pointer bg-[#1A1F2C] text-white border-[#374151]" 
                 multiple 
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" 
                 onChange={handleFileUpload}
@@ -173,11 +174,11 @@ const TaxVaultPage = () => {
         </CardContent>
       </Card>
 
-      <div className="bg-card/50 border border-primary/10 rounded-lg p-4 flex items-start gap-3">
-        <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+      <div className="bg-[#1f2937]/50 border border-[#3b82f6]/10 rounded-lg p-4 flex items-start gap-3">
+        <Shield className="h-5 w-5 text-[#3b82f6] mt-0.5 flex-shrink-0" />
         <div className="text-sm">
-          <p className="font-medium mb-1 text-primary">Security & Privacy</p>
-          <p className="text-muted-foreground">
+          <p className="font-medium mb-1 text-[#3b82f6]">Security & Privacy</p>
+          <p className="text-gray-300">
             Your documents are stored securely. Phase 2 will add robust encryption and permission logs.
             We recommend not uploading sensitive personal information until enhanced security features are released.
           </p>
@@ -185,36 +186,36 @@ const TaxVaultPage = () => {
       </div>
 
       <div>
-        <h2 className="text-xl font-bold mb-4 neptune-gold">
+        <h2 className="text-xl font-bold mb-4 text-white">
           {selectedTaxYear ? `${selectedTaxYear} Documents (${filteredDocuments.length})` : `Your Documents (${filteredDocuments.length})`}
         </h2>
         
         {filteredDocuments.length > 0 ? (
           <div className="grid gap-4">
             {filteredDocuments.map(doc => (
-              <Card key={doc.id} className="bg-card border-primary/10 transition-colors">
+              <Card key={doc.id} className="bg-[#1f2937] border-[#3b82f6]/10 transition-colors">
                 <div className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <FileText className="h-8 w-8 text-primary" />
+                    <FileText className="h-8 w-8 text-[#3b82f6]" />
                     <div>
-                      <p className="font-medium">{doc.name}</p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <p className="font-medium text-white">{doc.name}</p>
+                      <div className="flex items-center gap-4 text-xs text-gray-400">
                         <span>Uploaded: {formatDate(doc.uploadDate)}</span>
                         <span>Type: {doc.type}</span>
                         <span>Size: {doc.size}</span>
-                        {doc.taxYear && <span className="font-medium text-primary">Tax Year: {doc.taxYear}</span>}
+                        {doc.taxYear && <span className="font-medium text-[#3b82f6]">Tax Year: {doc.taxYear}</span>}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
                       <ArrowLeft className="h-4 w-4 rotate-180" />
                       <span className="sr-only">Download</span>
                     </Button>
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                       onClick={() => handleDeleteDocument(doc.id)}
                     >
                       <AlertCircle className="h-4 w-4" />
@@ -226,8 +227,8 @@ const TaxVaultPage = () => {
             ))}
           </div>
         ) : (
-          <Card className="bg-card border-primary/10 p-8 text-center">
-            <p className="text-muted-foreground">
+          <Card className="bg-[#1f2937] border-[#3b82f6]/10 p-8 text-center">
+            <p className="text-gray-400">
               {selectedTaxYear ? `No documents uploaded yet for ${selectedTaxYear}.` : 'No documents uploaded yet.'}
             </p>
           </Card>

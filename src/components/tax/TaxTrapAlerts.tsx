@@ -62,24 +62,24 @@ const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" })
       case 'critical':
         return {
           icon: AlertCircle,
-          containerClass: 'bg-red-950/20 dark:bg-red-900/20 border-red-800/30 dark:border-red-700/30',
-          textClass: 'text-red-200',
-          iconClass: 'text-red-500'
+          containerClass: 'bg-red-950/30 dark:bg-red-900/20 border-red-700 dark:border-red-600',
+          textClass: 'text-white',
+          iconClass: 'text-red-400'
         };
       case 'warning':
         return {
           icon: AlertTriangle,
-          containerClass: 'bg-amber-950/20 dark:bg-amber-900/20 border-amber-800/30 dark:border-amber-700/30',
-          textClass: 'text-amber-200',
-          iconClass: 'text-amber-500'
+          containerClass: 'bg-amber-950/30 dark:bg-amber-900/20 border-amber-700 dark:border-amber-600',
+          textClass: 'text-white',
+          iconClass: 'text-amber-400'
         };
       case 'info':
       default:
         return {
           icon: Info,
-          containerClass: 'bg-slate-800/30 dark:bg-slate-800/20 border-slate-700/30 dark:border-slate-700/30',
-          textClass: 'text-slate-200',
-          iconClass: 'text-slate-400'
+          containerClass: 'bg-slate-800/30 dark:bg-slate-800/20 border-blue-700 dark:border-blue-600',
+          textClass: 'text-white',
+          iconClass: 'text-blue-400'
         };
     }
   };
@@ -88,12 +88,12 @@ const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" })
     <div className={`mb-6 ${className}`}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold neptune-gold flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
+          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-amber-400" />
             Tax Trap Alerts ({alerts.length})
           </h3>
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="p-0 w-9 h-9">
+            <Button variant="ghost" size="sm" className="p-0 w-9 h-9 text-white hover:bg-white/10">
               <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "transform rotate-180" : ""}`} />
               <span className="sr-only">Toggle tax trap alerts</span>
             </Button>
@@ -119,7 +119,7 @@ const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" })
                         {displayMessage}
                       </h4>
                       {displayDetails && (
-                        <p className="text-sm text-muted-foreground mb-2">
+                        <p className="text-sm text-gray-200 mb-2">
                           {typeof displayDetails === 'string' 
                             ? displayDetails 
                             : JSON.stringify(displayDetails)}
@@ -127,7 +127,7 @@ const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" })
                       )}
                       <Link 
                         to={getEducationalLink(alert.trapType)} 
-                        className="text-sm flex items-center text-primary hover:text-primary/80 gap-1 mt-2"
+                        className="text-sm flex items-center text-blue-400 hover:text-blue-300 gap-1 mt-2"
                       >
                         Learn more about this tax trap
                         <ExternalLink className="h-3.5 w-3.5" />

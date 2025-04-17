@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle, Info } from 'lucide-react';
+import { AlertTriangle, Info, AlertCircle } from 'lucide-react';
 import { TrapAlert } from '@/types/tax/rothConversionTypes';
 
 interface ScenarioWarningsProps {
@@ -13,17 +13,58 @@ const ScenarioWarnings: React.FC<ScenarioWarningsProps> = ({ warnings }) => {
     return null;
   }
 
+  // Function to get appropriate icon and styles based on severity
+  const getSeverityDetails = (severity: string = 'medium') => {
+    switch (severity) {
+      case 'high':
+      case 'critical':
+        return {
+          icon: AlertCircle,
+          bgClass: 'bg-red-950/30 dark:bg-red-900/30',
+          borderClass: 'border-red-700',
+          textClass: 'text-red-50',
+          iconClass: 'text-red-400'
+        };
+      case 'medium':
+      case 'warning':
+        return {
+          icon: AlertTriangle,
+          bgClass: 'bg-amber-950/30 dark:bg-amber-900/30',
+          borderClass: 'border-amber-700',
+          textClass: 'text-amber-50',
+          iconClass: 'text-amber-400'
+        };
+      case 'low':
+      case 'info':
+      default:
+        return {
+          icon: Info,
+          bgClass: 'bg-blue-950/30 dark:bg-blue-900/30',
+          borderClass: 'border-blue-700',
+          textClass: 'text-blue-50',
+          iconClass: 'text-blue-400'
+        };
+    }
+  };
+
   return (
     <div className="space-y-4">
-      {warnings.map((warning, index) => (
-        <Alert key={`${warning.trapType}-${index}`} variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>{warning.message}</AlertTitle>
-          <AlertDescription>
-            {warning.details}
-          </AlertDescription>
-        </Alert>
-      ))}
+      {warnings.map((warning, index) => {
+        const { icon: Icon, bgClass, borderClass, textClass, iconClass } = getSeverityDetails(warning.severity);
+        
+        return (
+          <Alert 
+            key={`${warning.trapType}-${index}`} 
+            className={`${bgClass} border ${borderClass} ${textClass}`}
+          >
+            <Icon className={`h-5 w-5 ${iconClass}`} />
+            <AlertTitle className="font-medium">{warning.title || warning.message}</AlertTitle>
+            <AlertDescription className="mt-2 text-sm opacity-90">
+              {warning.details || warning.description}
+            </AlertDescription>
+          </Alert>
+        );
+      })}
     </div>
   );
 };
