@@ -1,30 +1,3 @@
-// Add the following to your existing file or create if doesn't exist
-export interface TrapAlert {
-  year?: number;
-  type: string;
-  message: string;
-  details: string;
-  severity: 'low' | 'medium' | 'high';
-  trapType: string;
-  title?: string;
-  financial_impact?: number;
-  remediation?: string;
-}
-
-// Make sure the YearlyResult interface includes warnings
-export interface YearlyResult {
-  year: number;
-  income?: number;
-  taxableIncome?: number;
-  conversionAmount?: number;
-  federalTax?: number;
-  stateTax?: number;
-  totalTax?: number;
-  warnings?: TrapAlert[];
-  // ... any other properties you need
-}
-
-// Define the MultiYearScenarioData interface
 export interface MultiYearScenarioData {
   id?: string;
   name?: string;
@@ -46,5 +19,57 @@ export interface MultiYearScenarioData {
   charitableContributionAmount?: number;
   beneficiaryAge?: number;
   includeBeneficiary?: boolean;
-  // ... any other properties you need
+
+  baseAnnualIncome?: number;
+  incomeGrowthRate?: number;
+  startAge?: number;
+  expectedAnnualReturn?: number;
+  fixedConversionAmount?: number;
+
+  spouseFirstName?: string;
+  spouseLastName?: string;
+  spouseBaseAnnualIncome?: number;
+  spouseTraditionalIRAStartBalance?: number;
+  spouseRothIRAStartBalance?: number;
+  spouseRmdStartAge?: number;
+
+  isInCommunityPropertyState?: boolean;
+  splitCommunityIncome?: boolean;
+  compareMfjVsMfs?: boolean;
+  combinedIRAApproach?: boolean;
+
+  beneficiaryIncomeTaxRate?: number;
+  assumedDeathYear?: number;
+  spouseAssumedDeathYear?: number;
+  numYears?: number;
 }
+
+export interface TrapAlert {
+  year?: number;
+  type: string;
+  message: string;
+  details: string;
+  severity: 'low' | 'medium' | 'high';
+  trapType: string;
+  title?: string;
+  financial_impact?: number;
+  remediation?: string;
+}
+
+export interface YearlyResult {
+  year: number;
+  income?: number;
+  taxableIncome?: number;
+  conversionAmount?: number;
+  federalTax?: number;
+  stateTax?: number;
+  totalTax?: number;
+  warnings?: TrapAlert[];
+  mfsComparison?: any;
+}
+
+export type ConversionStrategyType = 'bracketed' | 'fixed' | 'dynamic';
+export type CharitableContribution = {
+  year: number;
+  amount: number;
+};
