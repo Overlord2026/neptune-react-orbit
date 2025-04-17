@@ -102,13 +102,18 @@ const TaxVaultPage = () => {
     : documents;
 
   return (
-    <div className="space-y-6 pb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4">
+    <div className="space-y-6 pb-8 bg-[#111827] min-h-screen text-white">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4 px-4 sm:px-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">Tax Vault</h1>
-          <p className="text-gray-300">Securely store and organize your tax documents</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Tax Vault</h1>
+          <p className="text-gray-300 text-base">Securely store and organize your tax documents</p>
         </div>
-        <Link to="/tax-planning" className="border-2 border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors w-full sm:w-auto text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
+        <Link 
+          to="/tax-planning" 
+          className="flex items-center justify-center sm:justify-start gap-2 px-4 py-2 rounded-md 
+                     text-white bg-blue-600 hover:bg-blue-700 transition-colors 
+                     border border-blue-500 text-sm font-medium"
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to Tax Planning
         </Link>
