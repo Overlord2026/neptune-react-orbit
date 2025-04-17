@@ -26,4 +26,11 @@ export interface AuditLogEntry {
   action: string;
   details: any;
   type: AuditLogType;
+  // Add missing properties referenced in AdminAuditLogPage
+  user_id?: string;
+  reason?: string;
+  data_feed_id?: string;
+  changes_made?: any;
+  version_id?: string;
+  affected_years?: string[];
 }

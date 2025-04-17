@@ -54,7 +54,11 @@ const CompareRothScenariosPage: React.FC = () => {
         { bracket: 22, amount: 17425, tax: 3834 }
       ],
       capitalGains: []
-    }
+    },
+    federal_tax: 0,
+    state_tax: 0,
+    tax_data_updated_at: new Date().toISOString(),
+    tax_data_is_current: true
   };
 
   const scenario2: TaxResult = {
@@ -78,7 +82,11 @@ const CompareRothScenariosPage: React.FC = () => {
         { bracket: 22, amount: 27425, tax: 6034 }
       ],
       capitalGains: []
-    }
+    },
+    federal_tax: 0,
+    state_tax: 0,
+    tax_data_updated_at: new Date().toISOString(),
+    tax_data_is_current: true
   };
 
   const scenario3: TaxResult = {
@@ -102,7 +110,11 @@ const CompareRothScenariosPage: React.FC = () => {
         { bracket: 22, amount: 37425, tax: 8234 }
       ],
       capitalGains: []
-    }
+    },
+    federal_tax: 0,
+    state_tax: 0,
+    tax_data_updated_at: new Date().toISOString(),
+    tax_data_is_current: true
   };
 
   const scenarios = [scenario1, scenario2, scenario3];

@@ -95,7 +95,7 @@ const SingleYearRothConversion = () => {
       // Convert TaxTrapWarnings to TrapAlerts format
       const newAlerts: TrapAlert[] = trapResults.warnings.map(warning => ({
         trapType: warning.type,
-        severity: warning.severity === 'alert' ? 'critical' : 
+        severity: warning.severity === 'danger' ? 'critical' : 
                 warning.severity === 'warning' ? 'warning' : 'info',
         message: warning.title,
         details: warning.description

@@ -33,6 +33,13 @@ export interface TaxInput {
   futureResidentState?: string;
 }
 
+// Define BracketItem type for brackets_breakdown
+export interface BracketItem {
+  bracket: number; // The tax rate as a percentage (e.g., 10 for 10%)
+  amount: number; // The amount of income in this bracket
+  tax: number; // The tax amount for this bracket
+}
+
 export interface TaxResult {
   scenario_name: string;
   year: number;
@@ -51,8 +58,8 @@ export interface TaxResult {
   state_tax?: number;
   state_code?: string;
   brackets_breakdown?: {
-    ordinary: Array<{ bracket: number; amount: number; tax: number }>;
-    capitalGains: Array<{ bracket: number; amount: number; tax: number }>;
+    ordinary: BracketItem[];
+    capitalGains: BracketItem[];
   };
   tax_data_updated_at?: string | Date;
   tax_data_is_current?: boolean;

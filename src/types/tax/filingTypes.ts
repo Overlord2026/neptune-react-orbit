@@ -69,14 +69,14 @@ export interface TaxReturnData {
   dividendIncome: number;
   useStandardDeduction: boolean;
   itemizedDeductions: Record<string, number>;
-  hasOnlyW2Income: boolean;
-  hasDependents: boolean;
-  hasSelfEmploymentIncome: boolean;
+  hasOnlyW2Income: boolean | null;
+  hasDependents: boolean | null;
+  hasSelfEmploymentIncome: boolean | null;
   childTaxCredit: boolean;
   educationCredit: boolean;
   calculatedRefund: number;
   calculatedOwed: number;
-  referenceNumber: string;
+  referenceNumber?: string;
   residentState: string;
   includeStateTax: boolean;
   bankInfo?: {
@@ -92,9 +92,10 @@ export interface TaxReturnData {
   isEligible?: boolean;
   disclaimerAcknowledged?: boolean;
   stateTax?: number;
-  // Add email field used in initialState.ts
+  // Add missing fields referenced in code
   email?: string;
-  phone?: string;  // Also used in initialState.ts
+  phone?: string;
+  directDeposit?: boolean;
 }
 
 export interface Dependent {

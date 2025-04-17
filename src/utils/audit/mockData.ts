@@ -1,44 +1,56 @@
 
-import { AuditLogEntry } from './types';
+import { AuditLogEntry, AuditLogType } from './types';
 
-// Mock database for audit logs (in a real app, this would be in a database)
-export const auditLogs: AuditLogEntry[] = [
+// Sample audit log entries for demonstration purposes
+export const mockAuditLogEntries: AuditLogEntry[] = [
   {
-    id: 'audit-2023-01',
-    action: 'auto_update',
-    timestamp: '2023-11-01T12:00:00Z',
-    data_feed_id: 'irs-updates',
-    version_id: 'v2023-01',
-    changes_made: {
-      added: 14,
-      modified: 0,
-      removed: 0,
-      details: {
-        tax_brackets: 8,
-        standard_deductions: 6
-      }
+    id: "audit-001",
+    timestamp: new Date("2025-03-15T10:30:00Z"),
+    user: "admin@example.com",
+    action: "TAX_BRACKET_UPDATE",
+    details: {
+      year: 2025,
+      brackets: [
+        { min: 0, max: 10000, rate: 0.10 },
+        { min: 10001, max: 40000, rate: 0.12 }
+      ]
     },
-    status: 'success',
-    affected_years: [2024]
+    type: "DATA_UPDATE",
+    user_id: "admin-001",
+    reason: "Annual tax bracket update",
+    data_feed_id: "feed-001",
+    changes_made: { bracket_updates: 2 }
   },
   {
-    id: 'audit-2023-02',
-    action: 'manual_override',
-    user_id: 'admin-user',
-    timestamp: '2023-11-15T14:30:00Z',
-    data_feed_id: 'irs-updates',
-    version_id: 'v2023-02',
-    changes_made: {
-      added: 0,
-      modified: 2,
-      removed: 0,
-      details: {
-        tax_brackets: 2,
-        descriptions: "Adjusted income brackets for 2024 head of household"
+    id: "audit-002",
+    timestamp: new Date("2025-03-14T14:15:00Z"),
+    user: "user@example.com",
+    action: "SCENARIO_CALCULATION",
+    details: {
+      scenario_id: "scenario-123",
+      calculation_parameters: {
+        income: 75000,
+        filing_status: "single"
       }
     },
-    reason: 'Correction after IRS announcement',
-    status: 'success',
-    affected_years: [2024]
+    type: "TAX_CALCULATION",
+    user_id: "user-002"
+  },
+  {
+    id: "audit-003",
+    timestamp: new Date("2025-03-13T09:45:00Z"),
+    user: "system",
+    action: "DATA_FEED_IMPORT",
+    details: {
+      source: "irs.gov",
+      files: ["2025_brackets.json", "2025_deductions.json"]
+    },
+    type: "SYSTEM_EVENT",
+    data_feed_id: "feed-002"
   }
 ];
+
+// Function to get mock audit logs with optional filters
+export function getMockAuditLogs() {
+  return mockAuditLogEntries;
+}

@@ -1,17 +1,43 @@
 
-import { type TrapAlert } from '@/components/tax/TaxTrapAlerts';
+/**
+ * Tax Trap Types
+ * 
+ * Definitions for tax traps and related warnings
+ */
 
-// Re-export the TrapAlert type for use in other files
-export type { TrapAlert };
-
-// Define additional types for tax trap functionality
-export interface TaxTrapSummary {
-  alerts: TrapAlert[];
-  totalFinancialImpact: number;
+export interface TaxTrapWarning {
+  id: string;
+  trapType: string;
+  message: string;
+  details?: string;
+  severity: 'low' | 'medium' | 'high';
+  remediation?: string;
+  threshold?: {
+    value: number;
+    units: string;
+  };
+  financial_impact?: {
+    amount: number;
+    description: string;
+  };
 }
 
-export interface TaxBracketThreshold {
-  rate: number;
-  threshold: number;
-  maxIncome: number;
+export interface TaxTrapResult {
+  warnings: TaxTrapWarning[];
+  scenario_id?: string;
+}
+
+export interface TaxTrapThreshold {
+  name: string;
+  value: number;
+  description: string;
+  year: number;
+  filingStatus: string;
+}
+
+export interface TaxTrapType {
+  id: string;
+  name: string;
+  description: string;
+  thresholds: TaxTrapThreshold[];
 }

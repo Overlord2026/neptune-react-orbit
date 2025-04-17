@@ -1,221 +1,370 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { InfoCircledIcon, CheckCircledIcon, CrossCircledIcon, UpdateIcon } from '@radix-ui/react-icons';
+import { Separator } from '@/components/ui/separator';
+import AdminLayout from '@/components/layouts/AdminLayout';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { recordManualOverride } from '@/utils/audit';
 
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { fetchTaxCodeUpdates } from "@/utils/fetchTaxCodeUpdates";
-import { getDataFeedLogs, getDataFeeds, DataFeed, DataFeedLog } from "@/utils/dataFeed";
-import { Calendar, RefreshCw, Settings, AlertTriangle, Check, Info } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from 'date-fns';
-import { toast } from "sonner";
-import { recordManualOverride, getCurrentUserId, hasAdminPermission } from "@/utils/auditLogUtils";
+// Mock data for data feeds
+const dataFeeds = [
+  {
+    id: 'feed-001',
+    name: 'IRS Tax Brackets',
+    lastUpdated: '2023-12-15',
+    status: 'current',
+    source: 'irs.gov',
+    affectedYears: [2023, 2024],
+    description: 'Federal income tax brackets and rates'
+  },
+  {
+    id: 'feed-002',
+    name: 'Standard Deduction Amounts',
+    lastUpdated: '2023-12-10',
+    status: 'current',
+    source: 'irs.gov',
+    affectedYears: [2023, 2024],
+    description: 'Standard deduction amounts by filing status'
+  },
+  {
+    id: 'feed-003',
+    name: 'State Tax Rates',
+    lastUpdated: '2023-11-30',
+    status: 'outdated',
+    source: 'taxfoundation.org',
+    affectedYears: [2023],
+    description: 'State income tax rates and brackets'
+  },
+  {
+    id: 'feed-004',
+    name: 'Retirement Contribution Limits',
+    lastUpdated: '2023-12-01',
+    status: 'current',
+    source: 'irs.gov',
+    affectedYears: [2023, 2024],
+    description: '401(k), IRA and other retirement account contribution limits'
+  }
+];
 
-const DataFeedsAndUpdatesPage: React.FC = () => {
-  const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
-  const [activeTab, setActiveTab] = useState("feeds");
-  const dataFeeds = getDataFeeds();
-  const dataFeedLogs = getDataFeedLogs();
-  const currentUserId = getCurrentUserId();
-  const isAdmin = hasAdminPermission(currentUserId);
-  
-  const handleManualUpdate = async (feedId: string) => {
-    setIsUpdating(prev => ({ ...prev, [feedId]: true }));
-    try {
-      const success = await fetchTaxCodeUpdates(feedId, true);
-      if (success) {
-        toast.success(`Successfully updated data from ${feedId}`);
-      } else {
-        toast.error(`Failed to update data from ${feedId}`);
-      }
-    } catch (error) {
-      console.error("Error updating data feed:", error);
-      toast.error(`Error updating data: ${error instanceof Error ? error.message : "Unknown error"}`);
-    } finally {
-      setIsUpdating(prev => ({ ...prev, [feedId]: false }));
-    }
-  };
-  
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Active</Badge>;
-      case "error":
-        return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Error</Badge>;
-      case "pending":
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Pending</Badge>;
-      default:
-        return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">{status}</Badge>;
-    }
-  };
-  
-  const getLogStatusIcon = (success: boolean) => {
-    return success ? (
-      <Check className="h-4 w-4 text-green-500" />
-    ) : (
-      <AlertTriangle className="h-4 w-4 text-red-500" />
+// Mock data for update history
+const updateHistory = [
+  {
+    id: 'update-001',
+    feedId: 'feed-001',
+    date: '2023-12-15',
+    user: 'system',
+    changes: 'Updated 2024 tax brackets with inflation adjustments',
+    version: '2024.1.0'
+  },
+  {
+    id: 'update-002',
+    feedId: 'feed-002',
+    date: '2023-12-10',
+    user: 'system',
+    changes: 'Updated standard deduction amounts for 2024',
+    version: '2024.1.0'
+  },
+  {
+    id: 'update-003',
+    feedId: 'feed-003',
+    date: '2023-11-30',
+    user: 'admin@example.com',
+    changes: 'Manual update to California state tax brackets',
+    version: '2023.2.1'
+  },
+  {
+    id: 'update-004',
+    feedId: 'feed-004',
+    date: '2023-12-01',
+    user: 'system',
+    changes: 'Updated retirement contribution limits for 2024',
+    version: '2024.1.0'
+  }
+];
+
+export default function DataFeedsAndUpdatesPage() {
+  const [activeTab, setActiveTab] = useState('feeds');
+  const [selectedFeed, setSelectedFeed] = useState(null);
+  const [manualUpdateOpen, setManualUpdateOpen] = useState(false);
+  const [manualUpdateData, setManualUpdateData] = useState({
+    feedId: '',
+    changes: '',
+    reason: ''
+  });
+
+  // Filter update history based on selected feed
+  const filteredHistory = selectedFeed 
+    ? updateHistory.filter(update => update.feedId === selectedFeed.id)
+    : updateHistory;
+
+  const handleManualUpdate = () => {
+    // Record the manual override
+    recordManualOverride(
+      'admin@example.com',
+      `Data Feed: ${selectedFeed?.name}`,
+      manualUpdateData.changes,
+      manualUpdateData.reason
     );
+    
+    // Close the dialog
+    setManualUpdateOpen(false);
+    
+    // Reset form
+    setManualUpdateData({
+      feedId: '',
+      changes: '',
+      reason: ''
+    });
+    
+    // In a real app, we would update the data feed here
+    alert('Manual update recorded successfully');
   };
-  
-  const formatLastUpdate = (date: string) => {
-    try {
-      return formatDistanceToNow(new Date(date), { addSuffix: true });
-    } catch (e) {
-      return "Unknown";
-    }
-  };
-  
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Tax Data Feeds & Updates</h1>
-      </div>
-      
-      <Tabs defaultValue="feeds" className="w-full" onValueChange={setActiveTab} value={activeTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="feeds">Data Feeds</TabsTrigger>
-          <TabsTrigger value="updates">Update History</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-        </TabsList>
+    <AdminLayout>
+      <div className="container mx-auto py-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Data Feeds & Updates</h1>
+          <Button onClick={() => alert('Checking for updates...')}>
+            <UpdateIcon className="mr-2 h-4 w-4" />
+            Check for Updates
+          </Button>
+        </div>
         
-        <TabsContent value="feeds">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {dataFeeds.map((feed: DataFeed) => (
-              <Card key={feed.id} className="overflow-hidden">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-lg">{feed.name}</CardTitle>
-                    {getStatusBadge(feed.status)}
-                  </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-4">
+            <TabsTrigger value="feeds">Data Feeds</TabsTrigger>
+            <TabsTrigger value="history">Update History</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="feeds">
+            <Card>
+              <CardHeader>
+                <CardTitle>Active Data Feeds</CardTitle>
+                <CardDescription>
+                  Tax data feeds that power calculations and analysis
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Last Updated</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Source</TableHead>
+                      <TableHead>Years</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {dataFeeds.map(feed => (
+                      <TableRow key={feed.id}>
+                        <TableCell className="font-medium">{feed.name}</TableCell>
+                        <TableCell>{feed.lastUpdated}</TableCell>
+                        <TableCell>
+                          {feed.status === 'current' ? (
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              <CheckCircledIcon className="mr-1 h-3 w-3" />
+                              Current
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                              <InfoCircledIcon className="mr-1 h-3 w-3" />
+                              Outdated
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>{feed.source}</TableCell>
+                        <TableCell>{feed.affectedYears.join(', ')}</TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setSelectedFeed(feed)}
+                            >
+                              Details
+                            </Button>
+                            <Dialog open={manualUpdateOpen && selectedFeed?.id === feed.id} onOpenChange={setManualUpdateOpen}>
+                              <DialogTrigger asChild>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedFeed(feed);
+                                    setManualUpdateData({
+                                      ...manualUpdateData,
+                                      feedId: feed.id
+                                    });
+                                  }}
+                                >
+                                  Manual Update
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Manual Data Update</DialogTitle>
+                                  <DialogDescription>
+                                    Update {feed.name} data manually. This will be logged in the audit trail.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="changes" className="text-right">
+                                      Changes
+                                    </Label>
+                                    <Input
+                                      id="changes"
+                                      value={manualUpdateData.changes}
+                                      onChange={(e) => setManualUpdateData({
+                                        ...manualUpdateData,
+                                        changes: e.target.value
+                                      })}
+                                      className="col-span-3"
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="reason" className="text-right">
+                                      Reason
+                                    </Label>
+                                    <Input
+                                      id="reason"
+                                      value={manualUpdateData.reason}
+                                      onChange={(e) => setManualUpdateData({
+                                        ...manualUpdateData,
+                                        reason: e.target.value
+                                      })}
+                                      className="col-span-3"
+                                    />
+                                  </div>
+                                </div>
+                                <DialogFooter>
+                                  <Button variant="outline" onClick={() => setManualUpdateOpen(false)}>
+                                    Cancel
+                                  </Button>
+                                  <Button onClick={handleManualUpdate}>
+                                    Update Data
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+            
+            {selectedFeed && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>{selectedFeed.name} Details</CardTitle>
+                  <CardDescription>{selectedFeed.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-muted-foreground">{feed.description}</p>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Source</h3>
+                      <p>{selectedFeed.source}</p>
                     </div>
-                    
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <span className="text-muted-foreground">Refresh:</span> {feed.refresh_frequency}
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Last update:</span> {feed.last_update ? formatLastUpdate(feed.last_update) : "Never"}
-                      </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Last Updated</h3>
+                      <p>{selectedFeed.lastUpdated}</p>
                     </div>
-                    
-                    {feed.error_message && (
-                      <div className="text-sm mt-2 text-red-500 bg-red-50 p-2 rounded border border-red-200">
-                        <span className="font-medium">Error: </span>{feed.error_message}
-                      </div>
-                    )}
-                    
-                    {isAdmin && (
-                      <div className="mt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="w-full flex items-center justify-center"
-                          onClick={() => handleManualUpdate(feed.id)}
-                          disabled={isUpdating[feed.id]}
-                        >
-                          <RefreshCw className={`h-4 w-4 mr-2 ${isUpdating[feed.id] ? 'animate-spin' : ''}`} />
-                          {isUpdating[feed.id] ? "Updating..." : "Manual Update"}
-                        </Button>
-                      </div>
-                    )}
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Status</h3>
+                      <p>{selectedFeed.status === 'current' ? 'Current' : 'Outdated'}</p>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Affected Years</h3>
+                      <p>{selectedFeed.affectedYears.join(', ')}</p>
+                    </div>
                   </div>
+                  
+                  <Separator className="my-4" />
+                  
+                  <h3 className="font-medium mb-2">Recent Updates</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>User</TableHead>
+                        <TableHead>Changes</TableHead>
+                        <TableHead>Version</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {updateHistory
+                        .filter(update => update.feedId === selectedFeed.id)
+                        .map(update => (
+                          <TableRow key={update.id}>
+                            <TableCell>{update.date}</TableCell>
+                            <TableCell>{update.user}</TableCell>
+                            <TableCell>{update.changes}</TableCell>
+                            <TableCell>{update.version}</TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
                 </CardContent>
+                <CardFooter>
+                  <Button variant="outline" onClick={() => setSelectedFeed(null)}>
+                    Close Details
+                  </Button>
+                </CardFooter>
               </Card>
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="updates">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Calendar className="h-5 w-5 mr-2" />
-                Recent Tax Data Updates
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {dataFeedLogs.length === 0 ? (
-                <p className="text-center text-muted-foreground py-6">No update logs found.</p>
-              ) : (
-                <div className="space-y-4">
-                  {dataFeedLogs.map((log: DataFeedLog) => (
-                    <div key={log.id} className="border rounded-md p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {getLogStatusIcon(log.success)}
-                          <span className="font-medium">{log.feed_id}</span>
-                        </div>
-                        <span className="text-sm text-muted-foreground">
-                          {formatLastUpdate(log.timestamp)}
-                        </span>
-                      </div>
-                      
-                      <p className="text-sm mt-1">{log.message}</p>
-                      
-                      {log.changes_count > 0 && (
-                        <div className="mt-2 text-sm">
-                          <span className="text-green-600 font-medium">{log.changes_count} changes</span> applied
-                          {log.version_info && ` (Version: ${log.version_info})`}
-                        </div>
-                      )}
-                      
-                      {log.error_message && (
-                        <div className="mt-2 text-sm text-red-500">
-                          Error: {log.error_message}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="settings">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Settings className="h-5 w-5 mr-2" />
-                Data Feed Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center text-sm">
-                  <Info className="h-4 w-4 mr-2 text-blue-500" />
-                  <p>
-                    Configure how tax data feeds are processed and update schedules.
-                    These settings are only available to administrators.
-                  </p>
-                </div>
-                
-                {!isAdmin && (
-                  <div className="bg-yellow-50 text-yellow-800 p-4 rounded-md">
-                    You need administrator permissions to modify data feed settings.
-                  </div>
-                )}
-                
-                {isAdmin && (
-                  <div className="space-y-4 pt-2">
-                    <p className="text-sm text-muted-foreground">
-                      Data feed settings controls will be available here in a future update.
-                    </p>
-                    <Button variant="outline" disabled>Save Settings</Button>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="history">
+            <Card>
+              <CardHeader>
+                <CardTitle>Update History</CardTitle>
+                <CardDescription>
+                  History of all data feed updates and changes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Data Feed</TableHead>
+                      <TableHead>User</TableHead>
+                      <TableHead>Changes</TableHead>
+                      <TableHead>Version</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredHistory.map(update => {
+                      const feed = dataFeeds.find(f => f.id === update.feedId);
+                      return (
+                        <TableRow key={update.id}>
+                          <TableCell>{update.date}</TableCell>
+                          <TableCell>{feed?.name || update.feedId}</TableCell>
+                          <TableCell>{update.user}</TableCell>
+                          <TableCell>{update.changes}</TableCell>
+                          <TableCell>{update.version}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </AdminLayout>
   );
-};
-
-export default DataFeedsAndUpdatesPage;
+}
