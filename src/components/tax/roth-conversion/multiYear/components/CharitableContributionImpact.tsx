@@ -1,10 +1,11 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
-import { CharitableContribution } from '@/types/tax/rothConversionTypes';
+import { CharitableContributionImpact as CharitableContributionImpactType } from '@/types/tax/rothConversionTypes';
 
 interface CharitableContributionImpactProps {
-  charitableContribution: CharitableContribution;
+  charitableContribution: CharitableContributionImpactType;
 }
 
 const CharitableContributionImpact: React.FC<CharitableContributionImpactProps> = ({
@@ -37,7 +38,7 @@ const CharitableContributionImpact: React.FC<CharitableContributionImpactProps> 
           </div>
         </div>
 
-        {trapAvoidance.length > 0 && (
+        {trapAvoidance && trapAvoidance.length > 0 && (
           <div className="mt-4">
             <h5 className="text-xs font-medium text-muted-foreground">Tax Trap Avoidance:</h5>
             {trapAvoidance.map((avoidance, idx) => (

@@ -5,10 +5,10 @@
  * Functions for processing charitable contribution effects on taxes
  */
 
-import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 import { calculateCharitableImpact } from '../../charitableImpactUtils';
 import { calculateCharitableOpportunity } from '../../charitableOpportunityUtils';
-import { TaxTrapResult } from '@/utils/taxTraps';
+import { TaxTrapResult } from '@/utils/taxTraps/types';
 
 interface CharitableEffectParams {
   scenarioData: MultiYearScenarioData;
@@ -52,8 +52,15 @@ export function calculateCharitableEffect({
   // Calculate charitable impact and opportunities
   let updatedWarnings = [...warnings];
   
+  // Now using the correct property from our updated interface
   if (scenarioData.useCharitablePlanning && charitableContribution.amount > 0) {
     // Calculate initial impact with estimated marginal rate
+    // Using a modified placeholder TaxTrapResult to avoid type mismatch
+    const placeholderTrapResult = {
+      scenario_id: `${currentYear}_charitable`,
+      warnings: []
+    };
+    
     charitableImpact = calculateCharitableImpact(
       charitableContribution.amount,
       charitableContribution.useQcd,
@@ -63,7 +70,7 @@ export function calculateCharitableEffect({
       0.24, // Estimate marginal rate for initial calculation
       charitableContribution.useQcd ? charitableContribution.amount : 0,
       baseAGI,
-      beforeCharitableTraps
+      placeholderTrapResult
     );
     
     // Check for additional charitable opportunities

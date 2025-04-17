@@ -33,6 +33,7 @@ export type {
   MultiYearScenarioData,
   YearlyResult,
   CharitableContribution,
+  CharitableContributionImpact,
   ConversionStrategyType,
   TrapAlert,
   TrapAvoidance

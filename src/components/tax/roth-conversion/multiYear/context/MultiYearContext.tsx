@@ -28,10 +28,11 @@ const defaultScenarioData: MultiYearScenarioData = {
   startAge: 60,
   startYear: new Date().getFullYear(),
   numYears: 10,
+  traditionalIraBalance: 500000,
+  rothIraBalance: 100000,
+  // Using the proper property names aligned with the interface
   traditionalIRAStartBalance: 500000,
   rothIRAStartBalance: 100000,
-  traditionalIRABalance: 500000,
-  rothIRABalance: 100000,
   inflationRate: 0.025,
   investmentReturn: 0.06,
   expectedAnnualReturn: 0.06,

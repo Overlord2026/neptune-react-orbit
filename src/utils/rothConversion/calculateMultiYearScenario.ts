@@ -18,9 +18,9 @@ export const calculateMultiYearScenario = async (
 ): Promise<YearlyResult[]> => {
   const results: YearlyResult[] = [];
   
-  // Initial account balances
-  let traditionalIraBalance = scenarioData.traditionalIRAStartBalance;
-  let rothIraBalance = scenarioData.rothIRAStartBalance;
+  // Initial account balances - use both forms of the property names for compatibility
+  let traditionalIraBalance = scenarioData.traditionalIRAStartBalance || scenarioData.traditionalIraBalance;
+  let rothIraBalance = scenarioData.rothIRAStartBalance || scenarioData.rothIraBalance;
   let cumulativeTaxPaid = 0;
   let cumulativeTaxSaved = 0;
   

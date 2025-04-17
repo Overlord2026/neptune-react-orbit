@@ -42,6 +42,24 @@ export interface MultiYearScenarioData {
   assumedDeathYear?: number;
   spouseAssumedDeathYear?: number;
   numYears?: number;
+
+  useCharitablePlanning?: boolean;
+  charitableAmount?: number;
+  useQcd?: boolean;
+  useCharitableBunching?: boolean;
+  bunchingFrequency?: number;
+  
+  includeStateTax?: boolean;
+  residentState?: string;
+  stateRelocationYear?: number;
+  futureResidentState?: string;
+  
+  traditionalIRAStartBalance?: number;
+  rothIRAStartBalance?: number;
+  investmentReturn?: number;
+  inflationRate?: number;
+  assumedGrowthRate?: number;
+  includeIrmaa?: boolean;
 }
 
 export interface TrapAlert {
@@ -54,10 +72,20 @@ export interface TrapAlert {
   title?: string;
   financial_impact?: number;
   remediation?: string;
+  threshold?: number;
+  impact?: number;
+}
+
+export interface TrapAvoidance {
+  type: string;
+  name: string;
+  description: string;
+  savings: number;
 }
 
 export interface YearlyResult {
   year: number;
+  age?: number;
   income?: number;
   taxableIncome?: number;
   conversionAmount?: number;
@@ -66,10 +94,53 @@ export interface YearlyResult {
   totalTax?: number;
   warnings?: TrapAlert[];
   mfsComparison?: any;
+  
+  rmdAmount?: number;
+  spouseRmdAmount?: number;
+  marginalRate?: number;
+  traditionalIraBalance?: number;
+  spouseTraditionalIraBalance?: number;
+  rothIraBalance?: number;
+  spouseRothIraBalance?: number;
+  breakEvenYear?: boolean;
+  
+  spouseAge?: number;
+  spouseConversionAmount?: number;
+  filingStatus?: string;
+  spouseIncome?: number;
+  totalIncome?: number;
+  irmaaImpact?: boolean;
+  effectiveRate?: number;
+  totalTraditionalBalance?: number;
+  totalRothBalance?: number;
+  totalRetirementBalance?: number;
+  cumulativeTaxPaid?: number;
+  cumulativeTaxSaved?: number;
+  traditionalScenarioBalance?: number;
+  rothScenarioBalance?: number;
+  charitableContribution?: CharitableContributionImpact;
 }
 
 export type ConversionStrategyType = 'bracketed' | 'fixed' | 'dynamic';
+
 export type CharitableContribution = {
   year: number;
   amount: number;
+  useQcd?: boolean;
+  isBunching?: boolean;
+  type?: string;
+  isQcd?: boolean;
+  taxDeduction?: number;
+  description?: string;
 };
+
+export interface CharitableContributionImpact {
+  amount: number;
+  useQcd?: boolean;
+  isBunching?: boolean;
+  standardDeduction?: number;
+  itemizedDeduction?: number;
+  isItemizing?: boolean;
+  taxSavings?: number;
+  trapAvoidance?: TrapAvoidance[];
+}

@@ -10,7 +10,7 @@ export function getCharitableContributionForYear(
   useQcd: boolean;
   isBunching: boolean;
 } {
-  // Default values
+  // Default values - now using our updated property names
   const amount = scenarioData.charitableAmount || 0;
   const useQcd = Boolean(scenarioData.useQcd);
   const isBunching = Boolean(scenarioData.useCharitableBunching);

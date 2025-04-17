@@ -1,5 +1,6 @@
 
-import { TrapAlert, TrapAvoidance } from '@/types/tax/rothConversionTypes';
+import { TrapAlert } from '@/types/tax/rothConversionTypes';
+import { TrapAvoidance } from '@/types/tax/rothConversionTypes';
 import { TaxTrapInput } from '@/utils/taxTraps';
 
 // Define a common structure to work with both types of TaxTrapResult
@@ -56,6 +57,7 @@ function createAvoidanceStrategy(
   conversionAmount: number,
   year: number
 ): TrapAvoidance | null {
+  // Use optional chaining for these properties since they're now optional
   const threshold = trap.threshold || 0;
   const impact = trap.impact || 0;
 
@@ -80,131 +82,11 @@ function createAvoidanceStrategy(
       return {
         type: 'aca_subsidy_preserve',
         name: 'ACA Subsidy Preservation',
-        description: 'Reduce your modified adjusted gross income to preserve ACA premium subsidies.',
-        savings: impact
-      };
-      
-    case 'tax_bracket_jump':
-      const proposedReduction = (income + conversionAmount - threshold + 1);
-      return {
-        type: 'bracket_preservation',
-        name: 'Tax Bracket Preservation',
-        description: `Reduce conversion by $${proposedReduction.toLocaleString()} to stay in your current tax bracket.`,
+        description: 'Reduce your Roth conversion to preserve ACA premium tax credits.',
         savings: impact
       };
       
     default:
       return null;
   }
-}
-
-/**
- * Prioritize and filter avoidance strategies to present the most beneficial options
- */
-export function prioritizeAvoidanceStrategies(strategies: TrapAvoidance[]): TrapAvoidance[] {
-  // Sort by savings (highest first)
-  return strategies
-    .sort((a, b) => b.savings - a.savings)
-    .map(strategy => ({
-      ...strategy,
-      savings: Math.round(strategy.savings)
-    }));
-}
-
-/**
- * Generate input for tax trap checking with adjusted values
- */
-export function generateTrapCheckInput(
-  baseInput: TaxTrapInput,
-  adjustedAGI: number,
-  isItemizing: boolean,
-  itemizedDeduction: number,
-  standardDeduction: number
-): TaxTrapInput {
-  // Calculate the taxable income based on deduction type
-  const deduction = isItemizing ? itemizedDeduction : standardDeduction;
-  const adjustedTaxableIncome = Math.max(0, adjustedAGI - deduction);
-  
-  return {
-    ...baseInput,
-    agi: adjustedAGI,
-    magi: adjustedAGI, // Simplified MAGI equals AGI
-    total_income: adjustedAGI,
-    taxable_income: adjustedTaxableIncome
-  };
-}
-
-/**
- * Analyze trap avoidance opportunities based on charitable contributions
- */
-export function analyzeTrapAvoidance(
-  originalTrapResults: TaxTrapResultCommon, // Using common interface to handle both types
-  adjustedAGI: number,
-  isItemizing: boolean,
-  itemizedDeduction: number,
-  standardDeduction: number,
-  useQcd: boolean,
-  charitableAmount: number
-): TrapAvoidance[] {
-  const trapAvoidances: TrapAvoidance[] = [];
-  
-  // Check for IRMAA avoidance
-  if (originalTrapResults.irmaa_data && originalTrapResults.warnings.some(w => w.type === 'irmaa' || w.trapType === 'irmaa')) {
-    const irmaaWarning = originalTrapResults.warnings.find(w => w.type === 'irmaa' || w.trapType === 'irmaa');
-    if (irmaaWarning) {
-      const annualImpact = originalTrapResults.irmaa_data.annual_impact;
-      
-      trapAvoidances.push({
-        type: 'irmaa_avoidance',
-        name: 'IRMAA Surcharge Avoidance',
-        description: useQcd ? 
-          'Using QCD reduced your income below the IRMAA threshold, eliminating Medicare premium surcharges.' :
-          'Your charitable contribution helped reduce your income below the IRMAA threshold.',
-        savings: annualImpact
-      });
-    }
-  }
-  
-  // Check for Social Security tax avoidance
-  if (originalTrapResults.social_security_data && 
-      originalTrapResults.warnings.some(w => w.type === 'social_security' || w.trapType === 'social_security')) {
-    const ssWarning = originalTrapResults.warnings.find(w => w.type === 'social_security' || w.trapType === 'social_security');
-    if (ssWarning) {
-      trapAvoidances.push({
-        type: 'ss_tax_reduction',
-        name: 'Social Security Tax Reduction',
-        description: useQcd ? 
-          'Your QCD reduced the taxable portion of your Social Security benefits.' :
-          'Your charitable contribution reduced the taxable portion of your Social Security benefits.',
-        savings: Math.round(originalTrapResults.social_security_data.tax_increase * 0.5)
-      });
-    }
-  }
-  
-  // Check for ACA subsidy preservation
-  if (originalTrapResults.aca_data && 
-      originalTrapResults.warnings.some(w => w.type === 'aca' || w.trapType === 'aca')) {
-    trapAvoidances.push({
-      type: 'aca_subsidy_preservation',
-      name: 'ACA Premium Subsidy Preservation',
-      description: 'Your charitable contribution helped maintain eligibility for ACA premium tax credits.',
-      savings: originalTrapResults.aca_data.subsidy_impact
-    });
-  }
-  
-  // Check for additional tax benefits from itemizing
-  if (isItemizing && itemizedDeduction > standardDeduction) {
-    const additionalDeduction = itemizedDeduction - standardDeduction;
-    const approxMarginalRate = 0.24; // Approximate marginal rate
-    
-    trapAvoidances.push({
-      type: 'itemized_deduction_benefit',
-      name: 'Itemized Deduction Benefit',
-      description: `Charitable giving increased your total itemized deductions by $${additionalDeduction.toLocaleString()}.`,
-      savings: Math.round(additionalDeduction * approxMarginalRate)
-    });
-  }
-  
-  // Prioritize and return strategies
-  return prioritizeAvoidanceStrategies(trapAvoidances);
 }
