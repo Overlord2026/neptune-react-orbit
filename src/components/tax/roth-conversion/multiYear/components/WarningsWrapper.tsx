@@ -12,10 +12,10 @@ const WarningsWrapper: React.FC = () => {
     result.warnings?.map(warning => ({
       ...warning,
       year: result.year,
-      message: warning.title || warning.message || `Warning for ${result.year}`,
-      details: warning.details || warning.description || warning.message || '',
+      message: warning.message || `Warning for ${result.year}`,
+      details: warning.message || '',
       severity: warning.severity || 'medium', // Ensure severity always has a value
-      trapType: warning.trapType || warning.type || 'unknown' // Ensure trapType is always defined
+      trapType: warning.type || warning.trapType || 'unknown' // Ensure trapType is always defined
     })) || []
   ) || [];
   
