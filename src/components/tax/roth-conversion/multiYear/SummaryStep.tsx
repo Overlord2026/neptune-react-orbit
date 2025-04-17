@@ -1,46 +1,31 @@
 
 import React, { useEffect } from 'react';
 import { useMultiYearContext } from './context/MultiYearContext';
-import FilingStatusComparison from './components/FilingStatusComparison';
-import ScenarioSummaryTable from './components/ScenarioSummaryTable';
-import WarningsWrapper from './components/WarningsWrapper';
+import ResultsContent from './components/ResultsContent';
 
 const SummaryStep: React.FC = () => {
   const { 
     scenarioData, 
     yearlyResults, 
     hasCalculated, 
-    handleCalculate 
+    handleCalculate,
+    isCalculating
   } = useMultiYearContext();
 
   // Trigger calculation if needed when this step is loaded
   useEffect(() => {
-    if (!hasCalculated && yearlyResults.length === 0) {
+    if (!hasCalculated && yearlyResults.length === 0 && !isCalculating) {
       handleCalculate();
     }
-  }, [hasCalculated, yearlyResults, handleCalculate]);
+  }, [hasCalculated, yearlyResults, handleCalculate, isCalculating]);
 
   return (
     <div className="space-y-6">
-      <div className="mb-4">
-        <WarningsWrapper />
-      </div>
-      
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <ScenarioSummaryTable 
-            yearlyResults={yearlyResults}
-            hasCalculated={hasCalculated}
-          />
-        </div>
-        
-        <div className="space-y-6">
-          <FilingStatusComparison 
-            yearlyResults={yearlyResults} 
-            showMfsComparison={!!scenarioData.compareMfjVsMfs && scenarioData.filingStatus === 'married_joint'}
-          />
-        </div>
-      </div>
+      <ResultsContent 
+        yearlyResults={yearlyResults}
+        scenarioData={scenarioData}
+        hasCalculated={hasCalculated}
+      />
     </div>
   );
 };

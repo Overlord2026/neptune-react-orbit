@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle, Info, AlertCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Info } from "lucide-react";
 import { TrapAlert } from '@/types/tax/rothConversionTypes';
 
 interface ScenarioWarningsProps {
@@ -12,61 +12,75 @@ const ScenarioWarnings: React.FC<ScenarioWarningsProps> = ({ warnings }) => {
   if (!warnings || warnings.length === 0) {
     return null;
   }
-
-  // Function to get appropriate icon and styles based on severity
-  const getSeverityDetails = (severity: string = 'medium') => {
-    switch (severity) {
-      case 'high':
-      case 'critical':
-        return {
-          icon: AlertCircle,
-          bgClass: 'bg-red-950/30 dark:bg-red-900/30',
-          borderClass: 'border-red-700',
-          textClass: 'text-red-50',
-          iconClass: 'text-red-400'
-        };
-      case 'medium':
-      case 'warning':
-        return {
-          icon: AlertTriangle,
-          bgClass: 'bg-amber-950/30 dark:bg-amber-900/30',
-          borderClass: 'border-amber-700',
-          textClass: 'text-amber-50',
-          iconClass: 'text-amber-400'
-        };
-      case 'low':
-      case 'info':
-      default:
-        return {
-          icon: Info,
-          bgClass: 'bg-blue-950/30 dark:bg-blue-900/30',
-          borderClass: 'border-blue-700',
-          textClass: 'text-blue-50',
-          iconClass: 'text-blue-400'
-        };
+  
+  // Group warnings by type and severity
+  const groupedWarnings = warnings.reduce<Record<string, TrapAlert[]>>((acc, warning) => {
+    const key = warning.type || warning.trapType || 'unknown';
+    if (!acc[key]) {
+      acc[key] = [];
     }
-  };
+    acc[key].push(warning);
+    return acc;
+  }, {});
 
   return (
     <div className="space-y-4">
-      {warnings.map((warning, index) => {
-        const { icon: Icon, bgClass, borderClass, textClass, iconClass } = getSeverityDetails(warning.severity);
-        
-        return (
+      <h3 className="text-lg font-medium">Scenario Alerts & Warnings</h3>
+      <div className="space-y-2">
+        {Object.entries(groupedWarnings).map(([type, alerts]) => (
           <Alert 
-            key={`${warning.trapType}-${index}`} 
-            className={`${bgClass} border ${borderClass} ${textClass}`}
+            key={type} 
+            variant={getVariantForSeverity(alerts[0].severity)}
+            className="bg-opacity-20"
           >
-            <Icon className={`h-5 w-5 ${iconClass}`} />
-            <AlertTitle className="font-medium">{warning.message}</AlertTitle>
-            <AlertDescription className="mt-2 text-sm opacity-90">
-              {warning.details || warning.message}
+            {getIconForSeverity(alerts[0].severity)}
+            <AlertTitle>
+              {formatWarningType(type)}
+            </AlertTitle>
+            <AlertDescription>
+              <ul className="list-disc pl-5 space-y-1 mt-2">
+                {alerts.map((alert, idx) => (
+                  <li key={`${type}-${idx}`}>{alert.message || alert.details}</li>
+                ))}
+              </ul>
             </AlertDescription>
           </Alert>
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
+};
+
+// Helper functions for warning appearance
+const getVariantForSeverity = (severity: 'low' | 'medium' | 'high'): "default" | "destructive" => {
+  switch (severity) {
+    case 'high':
+      return 'destructive';
+    default:
+      return 'default';
+  }
+};
+
+const getIconForSeverity = (severity: 'low' | 'medium' | 'high') => {
+  switch (severity) {
+    case 'high':
+      return <AlertCircle className="h-4 w-4" />;
+    case 'medium':
+      return <AlertTriangle className="h-4 w-4" />;
+    case 'low':
+      return <Info className="h-4 w-4" />;
+    default:
+      return <Info className="h-4 w-4" />;
+  }
+};
+
+const formatWarningType = (type: string): string => {
+  // Convert snake_case or camelCase to Title Case
+  return type
+    .replace(/_/g, ' ')
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, str => str.toUpperCase())
+    .trim();
 };
 
 export default ScenarioWarnings;
