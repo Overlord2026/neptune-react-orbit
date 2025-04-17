@@ -1,6 +1,29 @@
 
 import { TrapAlert, TrapAvoidance } from '@/types/tax/rothConversionTypes';
-import { TaxTrapInput, TaxTrapResult } from '@/utils/taxTraps';
+import { TaxTrapInput } from '@/utils/taxTraps';
+
+// Define a common structure to work with both types of TaxTrapResult
+interface TaxTrapResultCommon {
+  warnings: any[];
+  irmaa_data?: {
+    partB_surcharge: number;
+    partD_surcharge: number;
+    annual_impact: number;
+  };
+  social_security_data?: {
+    taxable_percentage: number;
+    tax_increase: number;
+  };
+  capital_gains_data?: {
+    current_rate: number;
+    potential_rate: number;
+    tax_increase: number;
+  };
+  aca_data?: {
+    current_fpl_percentage: number;
+    subsidy_impact: number;
+  };
+}
 
 /**
  * Generate trap avoidance strategies based on detected tax traps
@@ -115,7 +138,7 @@ export function generateTrapCheckInput(
  * Analyze trap avoidance opportunities based on charitable contributions
  */
 export function analyzeTrapAvoidance(
-  originalTrapResults: TaxTrapResult,
+  originalTrapResults: TaxTrapResultCommon, // Using common interface to handle both types
   adjustedAGI: number,
   isItemizing: boolean,
   itemizedDeduction: number,
@@ -126,8 +149,8 @@ export function analyzeTrapAvoidance(
   const trapAvoidances: TrapAvoidance[] = [];
   
   // Check for IRMAA avoidance
-  if (originalTrapResults.irmaa_data && originalTrapResults.warnings.some(w => w.type === 'irmaa')) {
-    const irmaaWarning = originalTrapResults.warnings.find(w => w.type === 'irmaa');
+  if (originalTrapResults.irmaa_data && originalTrapResults.warnings.some(w => w.type === 'irmaa' || w.trapType === 'irmaa')) {
+    const irmaaWarning = originalTrapResults.warnings.find(w => w.type === 'irmaa' || w.trapType === 'irmaa');
     if (irmaaWarning) {
       const annualImpact = originalTrapResults.irmaa_data.annual_impact;
       
@@ -144,8 +167,8 @@ export function analyzeTrapAvoidance(
   
   // Check for Social Security tax avoidance
   if (originalTrapResults.social_security_data && 
-      originalTrapResults.warnings.some(w => w.type === 'social_security')) {
-    const ssWarning = originalTrapResults.warnings.find(w => w.type === 'social_security');
+      originalTrapResults.warnings.some(w => w.type === 'social_security' || w.trapType === 'social_security')) {
+    const ssWarning = originalTrapResults.warnings.find(w => w.type === 'social_security' || w.trapType === 'social_security');
     if (ssWarning) {
       trapAvoidances.push({
         type: 'ss_tax_reduction',
@@ -160,7 +183,7 @@ export function analyzeTrapAvoidance(
   
   // Check for ACA subsidy preservation
   if (originalTrapResults.aca_data && 
-      originalTrapResults.warnings.some(w => w.type === 'aca')) {
+      originalTrapResults.warnings.some(w => w.type === 'aca' || w.trapType === 'aca')) {
     trapAvoidances.push({
       type: 'aca_subsidy_preservation',
       name: 'ACA Premium Subsidy Preservation',

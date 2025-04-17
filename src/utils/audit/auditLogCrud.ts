@@ -1,16 +1,7 @@
 
 // Dummy implementation to fix build errors
 import { v4 as uuid } from 'uuid';
-
-type AuditLogEntry = {
-  id: string;
-  timestamp: Date;
-  userId: string;
-  action: string;
-  details: any;
-  targetId?: string;
-  reason?: string;
-};
+import { AuditLogEntry } from './types';
 
 // In-memory storage for audit logs
 const auditLogEntries: AuditLogEntry[] = [];
@@ -20,14 +11,15 @@ export function recordManualOverride(
   targetId: string,
   details: any,
   reason: string
-) {
+): AuditLogEntry {
   const entry: AuditLogEntry = {
     id: uuid(),
     timestamp: new Date(),
-    userId,
-    action: 'MANUAL_OVERRIDE',
+    user: userId,
+    user_id: userId,
+    action: 'manual_override',
     details,
-    targetId,
+    type: 'SECURITY_EVENT',
     reason
   };
   
@@ -43,6 +35,6 @@ export function getCurrentUserId(): string {
   return 'current-user-id';
 }
 
-export function getAuditLogs() {
+export function getAuditLogs(): AuditLogEntry[] {
   return [...auditLogEntries];
 }

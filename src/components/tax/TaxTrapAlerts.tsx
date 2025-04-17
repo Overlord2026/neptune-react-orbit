@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 // Define the TrapAlert interface
 export interface TrapAlert {
   trapType: string;
-  severity: "info" | "warning" | "critical";
+  severity: "info" | "warning" | "critical" | "low" | "medium" | "high";
   message: string;
   details?: string;
   description?: string;
@@ -52,7 +52,13 @@ const TaxTrapAlerts: React.FC<TaxTrapAlertsProps> = ({ alerts, className = "" })
   
   // Get the severity level icon and styling
   const getSeverityDetails = (severity: TrapAlert['severity']) => {
-    switch (severity) {
+    // Map severity values from either naming convention
+    const normalizedSeverity = 
+      severity === 'low' || severity === 'info' ? 'info' :
+      severity === 'medium' || severity === 'warning' ? 'warning' :
+      'critical'; // high or critical
+    
+    switch (normalizedSeverity) {
       case 'critical':
         return {
           icon: AlertCircle,

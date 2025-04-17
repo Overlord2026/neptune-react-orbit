@@ -3,7 +3,6 @@ import React from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle, Info } from 'lucide-react';
 import { TrapAlert } from '@/types/tax/rothConversionTypes';
-import { YearlyResult } from '@/types/tax/rothConversionTypes';
 
 interface ScenarioWarningsProps {
   warnings: TrapAlert[];

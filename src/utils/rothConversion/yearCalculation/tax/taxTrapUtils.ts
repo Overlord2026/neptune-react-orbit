@@ -61,7 +61,8 @@ export function checkForTaxTraps({
           value: threshold,
           units: 'USD'
         },
-        remediation: 'Consider tax-efficient withdrawal strategies or charitable giving to reduce MAGI.'
+        remediation: 'Consider tax-efficient withdrawal strategies or charitable giving to reduce MAGI.',
+        type: 'irmaa' // Add type field for compatibility
       });
       
       // Calculate surcharge amounts
@@ -87,6 +88,7 @@ export function checkForTaxTraps({
       warnings.push({
         id: `ss-tax-${scenarioId}`,
         trapType: 'social_security',
+        type: 'social_security', // Add type field for compatibility
         message: '85% of Social Security Benefits Taxable',
         details: 'Your combined income has triggered the maximum 85% taxation of your Social Security benefits.',
         severity: 'medium',
@@ -106,6 +108,7 @@ export function checkForTaxTraps({
       warnings.push({
         id: `ss-tax-${scenarioId}`,
         trapType: 'social_security',
+        type: 'social_security', // Add type field for compatibility
         message: '50% of Social Security Benefits Taxable',
         details: 'Your combined income has triggered partial taxation of your Social Security benefits.',
         severity: 'low',
@@ -134,6 +137,7 @@ export function checkForTaxTraps({
       warnings.push({
         id: `aca-cliff-${scenarioId}`,
         trapType: 'aca',
+        type: 'aca', // Add type field for compatibility
         message: 'ACA Subsidy Cliff Risk',
         details: `Your income is ${fplPercentage.toFixed(1)}% of the Federal Poverty Level, which is near the 400% cliff for ACA premium subsidies.`,
         severity: 'high',
@@ -144,6 +148,7 @@ export function checkForTaxTraps({
         remediation: 'Consider reducing income through retirement contributions or charitable giving to maintain subsidy eligibility.'
       });
       
+      // Add ACA data
       trapResults.aca_data = {
         current_fpl_percentage: Math.round(fplPercentage),
         subsidy_impact: Math.round(householdSize * 8000) // Rough estimate of potential subsidy loss
@@ -163,6 +168,7 @@ export function checkForTaxTraps({
       warnings.push({
         id: `cap-gain-jump-${scenarioId}`,
         trapType: 'capital_gains',
+        type: 'capital_gains', // Add type field for compatibility
         message: 'Capital Gains Tax Bracket Jump',
         details: 'Your capital gains have pushed you from the 0% to the 15% capital gains tax bracket.',
         severity: 'high',
