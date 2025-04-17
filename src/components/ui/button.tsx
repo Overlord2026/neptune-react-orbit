@@ -14,17 +14,19 @@ const buttonVariants = cva(
         destructive:
           "bg-red-600 text-white hover:bg-red-700",
         outline:
-          "border border-[#0056b3] bg-transparent text-[#0056b3] hover:bg-[#0056b3]/10",
+          "border border-[#3b82f6] bg-transparent text-[#3b82f6] hover:bg-[#3b82f6]/10",
         secondary:
-          "bg-[#e9ecef] text-[#212529] border border-[#e9ecef] hover:bg-[#dde2e6] hover:border-[#dde2e6]",
-        ghost: "text-[#0056b3] hover:bg-[#0056b3]/10 hover:text-[#003d7a]",
-        link: "text-[#0056b3] underline-offset-4 hover:underline",
-        success: "bg-[#28a745] text-white hover:bg-[#218838]",
+          "bg-[#1f2937] text-[#e5e7eb] border border-[#374151] hover:bg-[#374151] hover:border-[#4b5563]",
+        ghost: "text-[#3b82f6] hover:bg-[#3b82f6]/10 hover:text-[#60a5fa]",
+        link: "text-[#3b82f6] underline-offset-4 hover:underline",
+        success: "bg-[#10b981] text-white hover:bg-[#059669]",
+        premium: "bg-[#8a76e4] hover:bg-[#7c5fec] text-white",
       },
       size: {
         default: "h-11 px-5 py-2.5",
         sm: "h-9 rounded-md px-3 text-sm",
-        lg: "h-12 rounded-md px-8 text-lg",
+        lg: "h-12 rounded-md px-8 text-lg py-3",
+        xl: "h-14 rounded-md px-8 text-lg py-4",
         icon: "h-11 w-11",
       },
     },

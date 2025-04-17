@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TaxResult } from "@/utils/taxCalculatorTypes";
@@ -149,62 +150,61 @@ const CompareRothScenariosPage: React.FC = () => {
     return (
       <div className="container mx-auto py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <Card className="border-[#9b87f5]/30 bg-[#1A1F2C]">
+          <Card className="border-[#6366f1]/30 bg-[#111827]">
             <CardHeader className="text-center">
-              <Lock className="mx-auto h-12 w-12 text-[#9b87f5] mb-4" />
-              <CardTitle className="text-2xl">Premium Feature</CardTitle>
-              <CardDescription className="text-base">
+              <Lock className="mx-auto h-12 w-12 text-[#8a76e4] mb-4" />
+              <CardTitle className="text-2xl text-white font-bold">Premium Feature</CardTitle>
+              <CardDescription className="text-base text-gray-300">
                 Roth Conversion Scenarios is a premium feature available with our 90-day free trial.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-[#9b87f5]/10 border border-[#9b87f5]/30 rounded-md p-4">
+              <div className="bg-[#1f2937] border border-[#6366f1]/30 rounded-md p-6">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-[#9b87f5]" />
-                  <h3 className="font-medium text-[#9b87f5]">FREE 90-DAY TRIAL</h3>
+                  <Calendar className="h-5 w-5 text-[#a78bfa]" />
+                  <h3 className="font-medium text-[#a78bfa] text-lg">FREE 90-DAY TRIAL</h3>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-white text-base mt-4 mb-6">
                   Start your free trial today to gain access to all premium features including:
                 </p>
-                <ul className="mt-3 space-y-2 text-sm">
+                <ul className="mt-3 space-y-4 text-base text-gray-300">
                   <li className="flex items-start">
-                    <span className="text-[#9b87f5] mr-2">•</span>
+                    <span className="text-[#a78bfa] mr-3 text-lg">•</span>
                     <span>Roth conversion analysis and scenario comparison</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-[#9b87f5] mr-2">•</span>
+                    <span className="text-[#a78bfa] mr-3 text-lg">•</span>
                     <span>Advanced tax strategies and tax-loss harvesting tools</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-[#9b87f5] mr-2">•</span>
+                    <span className="text-[#a78bfa] mr-3 text-lg">•</span>
                     <span>Social Security optimization calculator</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-[#9b87f5] mr-2">•</span>
+                    <span className="text-[#a78bfa] mr-3 text-lg">•</span>
                     <span>QuickBooks & Xero integration for seamless tax planning</span>
                   </li>
                 </ul>
               </div>
               
               <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-gray-300 text-sm mb-4">
                   No credit card required. Cancel anytime during the trial period.
                 </p>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-3">
               <Button 
-                className="w-full bg-[#9b87f5] hover:bg-[#8a76e4]" 
-                onClick={() => {
-                  toast.success("Starting your free trial!", { 
-                    description: "Redirecting to trial activation..." 
-                  });
-                  navigate('/pricing');
-                }}
+                className="w-full bg-[#8a76e4] hover:bg-[#7c5fec] text-white text-lg py-6" 
+                onClick={handleStartFreeTrial}
               >
                 Start 90-Day Free Trial
               </Button>
-              <Button variant="outline" className="w-full" asChild>
+              <Button 
+                variant="outline" 
+                className="w-full border-[#3b82f6] text-[#3b82f6] hover:bg-[#1e3a8a] hover:bg-opacity-10 hover:text-[#60a5fa] text-base"
+                asChild
+              >
                 <Link to="/tax-planning">Return to Tax Planning Hub</Link>
               </Button>
             </CardFooter>

@@ -5,22 +5,85 @@
 
 /* Add highlight pulse animation for tool cards */
 @keyframes highlight-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(0, 86, 179, 0.7); }
-  70% { box-shadow: 0 0 0 15px rgba(0, 86, 179, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 86, 179, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
 }
 
 .highlight-pulse {
   animation: highlight-pulse 1.5s ease-out;
-  border-color: #0056b3 !important;
+  border-color: #6366f1 !important;
 }
 
 :root {
-  --primary-color: #0056b3;
-  --primary-hover: #003d7a;
-  --background-color: #ffffff;
-  --text-color: #212529;
-  --text-secondary: #495057;
-  --text-muted: #6c757d;
-  --border-color: #dee2e6;
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+  --background-color: #111827;
+  --background-secondary: #1f2937;
+  --text-color: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  --border-color: #374151;
+}
+
+/* Dark mode classes for better contrast */
+.dark-card {
+  @apply bg-[#111827] border border-[#374151] text-white;
+}
+
+.dark-card-header {
+  @apply bg-[#1f2937] border-b border-[#374151];
+}
+
+.dark-text-primary {
+  @apply text-white;
+}
+
+.dark-text-secondary {
+  @apply text-gray-300;
+}
+
+.dark-button-primary {
+  @apply bg-[#3b82f6] text-white hover:bg-[#2563eb];
+}
+
+.dark-button-secondary {
+  @apply border border-[#3b82f6] text-[#3b82f6] bg-transparent hover:bg-[#3b82f6]/10;
+}
+
+.dark-button-premium {
+  @apply bg-[#8a76e4] text-white hover:bg-[#7c5fec];
+}
+
+.neptune-gold {
+  color: #e5e7eb;
+}
+
+/* Premium feature styles with better contrast */
+.premium-feature-card {
+  @apply bg-[#111827] border-[#6366f1]/30;
+}
+
+.premium-header {
+  @apply bg-[#1f2937] text-white border-b border-[#374151];
+}
+
+.premium-content {
+  @apply bg-[#1f2937] text-gray-300 border border-[#6366f1]/30;
+}
+
+.premium-list-item {
+  @apply text-gray-300;
+}
+
+.premium-icon {
+  @apply text-[#a78bfa];
+}
+
+.premium-button {
+  @apply bg-[#8a76e4] hover:bg-[#7c5fec] text-white;
+}
+
+.premium-link {
+  @apply text-[#3b82f6] hover:text-[#60a5fa];
 }
