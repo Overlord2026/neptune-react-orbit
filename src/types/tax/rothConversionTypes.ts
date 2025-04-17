@@ -139,3 +139,18 @@ export interface YearlyResult {
 
 // Add ConversionStrategyType for IncomeInformationCard
 export type ConversionStrategyType = 'fixed' | 'bracket' | 'minimize' | 'maximize' | 'optimal';
+
+// Add TrapAlert and TrapAvoidance types for compatibility with existing code
+export interface TrapAlert {
+  trapType: string;
+  severity: 'low' | 'medium' | 'high';
+  message: string;
+  details: string;
+}
+
+export interface TrapAvoidance {
+  type: string;
+  savings: number;
+  name?: string;
+  description?: string;
+}

@@ -1,7 +1,8 @@
 
 import React from 'react';
 import TaxTrapWarnings from './TaxTrapWarnings';
-import { checkTaxTraps, TaxTrapInput, TaxTrapResult } from '@/utils/taxTraps';
+import { checkTaxTraps } from '@/utils/taxTraps';
+import { TaxTrapInput, TaxTrapResult } from '@/utils/taxTraps/types';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface TaxTrapCheckerProps {

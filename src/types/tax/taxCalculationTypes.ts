@@ -3,7 +3,7 @@
  * Unified type definitions for tax calculations
  */
 import { FilingStatusType } from "./filingTypes";
-import { StateCode } from "../../utils/stateTaxData";
+import { StateCode } from "../../utils/stateTax/types";
 
 export interface TaxInput {
   year: number;

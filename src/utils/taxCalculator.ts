@@ -56,7 +56,18 @@ export const calculateTaxScenario = (input: any, scenarioName: string, sessionId
     dividends: input.dividends || 0,
     ira_distributions: input.ira_distributions || 0,
     roth_conversion: input.roth_conversion || 0,
-    social_security: input.social_security || 0
+    social_security: input.social_security || 0,
+    // Add community property state fields
+    isInCommunityPropertyState: input.isInCommunityPropertyState || false,
+    splitCommunityIncome: input.splitCommunityIncome || false,
+    // Add spouse-related fields
+    spouseWages: input.spouseWages || 0,
+    spouseInterest: input.spouseInterest || 0,
+    spouseDividends: input.spouseDividends || 0,
+    spouseCapitalGains: input.spouseCapitalGains || 0,
+    spouseIraDistributions: input.spouseIraDistributions || 0,
+    spouseRothConversion: input.spouseRothConversion || 0,
+    spouseSocialSecurity: input.spouseSocialSecurity || 0
   };
 
   return calcTaxScenario(adaptedInput, scenarioName, sessionId || "default");

@@ -30,14 +30,11 @@ export type {
 } from './taxCalculationTypes';
 
 export type { 
-  RothConversionInput,
-  RothConversionScenario, 
-  YearlyConversionSummary,
   MultiYearScenarioData,
   YearlyResult,
   CharitableContribution,
-  TrapAlert,
   ConversionStrategyType,
+  TrapAlert,
   TrapAvoidance
 } from './rothConversionTypes';
 

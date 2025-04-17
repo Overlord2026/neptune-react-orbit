@@ -68,6 +68,12 @@ export function processTaxResults({
   let updatedCharitableImpact = charitableImpact;
   
   if (yearTaxInput.isItemizedDeduction && charitableContribution.amount > 0) {
+    // Create a placeholder TaxTrapResult to maintain compatibility
+    const placeholderTrapResult: TaxTrapResult = {
+      scenario_id: `${scenarioName}_charitable`, 
+      warnings: []
+    };
+    
     updatedCharitableImpact = calculateCharitableImpact(
       charitableContribution.amount,
       charitableContribution.useQcd,
@@ -77,7 +83,7 @@ export function processTaxResults({
       taxResult.marginal_rate, // Use actual marginal rate
       rmdAmount,
       (yearTaxInput.wages || 0) + (yearTaxInput.ira_distributions || 0) + (yearTaxInput.roth_conversion || 0),
-      { scenario_id: `${scenarioName}_charitable`, warnings: [] } as TaxTrapResult // Provide a valid TaxTrapResult
+      placeholderTrapResult
     );
   }
   

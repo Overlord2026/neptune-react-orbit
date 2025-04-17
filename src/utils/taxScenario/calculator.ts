@@ -23,6 +23,7 @@ export function calculateBasicScenarioResult(
   const taxDataInfo = checkTaxDataBeforeCalculation(input.year, sessionId);
   
   // Calculate tax amounts
+  const result = calculateTaxAmounts(input);
   const {
     total_income,
     agi,
@@ -35,7 +36,7 @@ export function calculateBasicScenarioResult(
     effective_rate,
     marginal_capital_gains_rate,
     brackets_breakdown
-  } = calculateTaxAmounts(input);
+  } = result;
   
   // Return results with standardized property names
   return {

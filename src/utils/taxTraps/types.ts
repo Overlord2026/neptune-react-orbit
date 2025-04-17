@@ -1,4 +1,5 @@
 
+
 // Shared types for tax trap detection
 
 export interface TaxTrapInput {
