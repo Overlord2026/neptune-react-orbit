@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,9 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { InfoCircledIcon, CheckCircledIcon, CrossCircledIcon, UpdateIcon } from '@radix-ui/react-icons';
+import { InfoCircledIcon, CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
+import { UpdateIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import AdminLayout from '@/components/layouts/AdminLayout';
+import DashboardLayout from '@/components/DashboardLayout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -128,7 +130,7 @@ export default function DataFeedsAndUpdatesPage() {
   };
 
   return (
-    <AdminLayout>
+    <DashboardLayout>
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Data Feeds & Updates</h1>
@@ -365,6 +367,6 @@ export default function DataFeedsAndUpdatesPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+    </DashboardLayout>
   );
 }

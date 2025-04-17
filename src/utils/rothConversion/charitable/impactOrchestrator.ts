@@ -15,8 +15,8 @@ export function orchestrateCharitableImpact(
   // Extract traps from trap results
   const traps = trapResults.warnings?.map(warning => ({
     type: warning.type || 'unknown',
-    message: warning.message || 'Unknown warning',
-    details: warning.details || '',
+    message: warning.title || 'Unknown warning',
+    details: warning.description || '',
     severity: warning.severity || 'medium',
     trapType: warning.type || 'unknown',
     impact: warning.financial_impact || 0
