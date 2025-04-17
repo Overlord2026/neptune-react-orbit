@@ -1,28 +1,20 @@
 
-import { TaxDataVersion } from '@/utils/dataFeed/types';
+/**
+ * Audit Log Types
+ */
 
-export interface AuditLogEntry {
-  id: string;
-  action: 'auto_update' | 'manual_update' | 'manual_override' | 'rollback';
-  user_id?: string;
-  timestamp: string;
-  data_feed_id: string;
-  version_id?: string;
-  changes_made: {
-    added?: number;
-    modified?: number;
-    removed?: number;
-    details?: any;
-  };
-  reason?: string;
-  status: 'success' | 'error';
-  affected_years?: number[];
-  error_message?: string;
-}
+export type AuditLogType = 
+  | 'USER_ACTION'
+  | 'SYSTEM_EVENT'
+  | 'TAX_CALCULATION'
+  | 'DATA_UPDATE'
+  | 'SECURITY_EVENT'
+  | 'ERROR';
 
-// Types for auth/permission functions
-export interface AdminUser {
-  id: string;
-  roles: string[];
-  permissions: string[];
+export interface AuditLogFilter {
+  startDate?: Date;
+  endDate?: Date;
+  userId?: string;
+  actionTypes?: AuditLogType[];
+  limit?: number;
 }

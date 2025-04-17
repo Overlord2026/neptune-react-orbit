@@ -46,12 +46,15 @@ export interface TaxResult {
   marginal_rate: number;
   marginal_capital_gains_rate: number;
   effective_rate: number;
-  updated_at: Date;
+  updated_at: string | Date;
   federal_tax: number;
   state_tax?: number;
   state_code?: string;
-  brackets_breakdown?: any[];
-  tax_data_updated_at?: Date;
+  brackets_breakdown?: {
+    ordinary: Array<{ bracket: number; amount: number; tax: number }>;
+    capitalGains: Array<{ bracket: number; amount: number; tax: number }>;
+  };
+  tax_data_updated_at?: string | Date;
   tax_data_is_current?: boolean;
   tax_data_version?: string;
   tax_data_warning?: string;

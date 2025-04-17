@@ -1,3 +1,4 @@
+
 /**
  * Tax Data Versioning
  * 
@@ -5,7 +6,6 @@
  */
 
 import { getTaxBracket } from './taxBracketData';
-import { TaxDataVersion } from './dataFeed/types';
 
 // Define tax bracket type manually since it's not exported from taxBracketData
 export interface TaxBracket {

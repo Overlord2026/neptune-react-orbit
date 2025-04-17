@@ -1,98 +1,63 @@
+// Create this file if it doesn't exist
+import { AuditLogType } from './types';
 
-import { toast } from "sonner";
-import { createAuditLog, getAuditLogById } from './auditLogCrud';
-import { getCurrentUserId } from './authUtils';
-import { getTaxDataVersionsForYear } from '@/utils/taxDataVersioning';
-
-/**
- * Perform a rollback based on an audit log entry
- */
-export const performRollback = async (
-  auditLogId: string,
-  userId: string,
-  reason: string
-): Promise<boolean> => {
-  const logToRevert = getAuditLogById(auditLogId);
-  
-  if (!logToRevert) {
-    console.error(`Audit log with ID ${auditLogId} not found`);
-    toast.error("Failed to rollback: Audit log not found");
-    return false;
-  }
-  
-  try {
-    // In a real application, this would restore data from a backup or previous version
-    console.log(`Rolling back changes from audit log ${auditLogId}`);
-    
-    // Create a new audit log entry for the rollback
-    createAuditLog({
-      action: 'rollback',
-      user_id: userId,
-      timestamp: new Date().toISOString(),
-      data_feed_id: logToRevert.data_feed_id,
-      version_id: logToRevert.version_id,
-      changes_made: {
-        details: `Rolled back changes from audit log ${auditLogId}`
-      },
-      reason: reason,
-      status: 'success',
-      affected_years: logToRevert.affected_years
-    });
-    
-    toast.success("Successfully rolled back changes");
-    return true;
-  } catch (error) {
-    console.error("Rollback error:", error);
-    
-    // Log the failed rollback attempt
-    createAuditLog({
-      action: 'rollback',
-      user_id: userId,
-      timestamp: new Date().toISOString(),
-      data_feed_id: logToRevert.data_feed_id,
-      version_id: logToRevert.version_id,
-      changes_made: {
-        details: `Failed rollback attempt for audit log ${auditLogId}`
-      },
-      reason: reason,
-      status: 'error',
-      affected_years: logToRevert.affected_years,
-      error_message: error instanceof Error ? error.message : "Unknown error"
-    });
-    
-    toast.error(`Failed to rollback: ${error instanceof Error ? error.message : "Unknown error"}`);
-    return false;
-  }
-};
+// Define the AuditLogEntry type if missing
+export interface AuditLogEntry {
+  id: string;
+  timestamp: Date;
+  user: string;
+  action: string;
+  details: any;
+  type: AuditLogType;
+}
 
 /**
- * Record a manual override
+ * Log tax scenario changes
  */
-export const recordManualOverride = (
-  userId: string,
-  dataFeedId: string,
-  changes: any,
-  reason: string,
-  affectedYears: number[]
-): AuditLogEntry => {
-  // Get the current version for the first affected year to associate with this change
-  const versions = affectedYears.length > 0 ? getTaxDataVersionsForYear(affectedYears[0]) : [];
-  const version = versions.length > 0 ? versions[0] : undefined;
-  
-  return createAuditLog({
-    action: 'manual_override',
-    user_id: userId,
-    timestamp: new Date().toISOString(),
-    data_feed_id: dataFeedId,
-    version_id: version?.id,
-    changes_made: {
-      added: changes.added || 0,
-      modified: changes.modified || 0,
-      removed: changes.removed || 0,
-      details: changes.details || {}
+export function logTaxScenarioUpdate(scenarioId: string, changes: any, userId: string) {
+  const logEntry: AuditLogEntry = {
+    id: generateId(),
+    timestamp: new Date(),
+    user: userId,
+    action: 'TAX_SCENARIO_UPDATE',
+    details: {
+      scenarioId,
+      changes
     },
-    reason: reason,
-    status: 'success',
-    affected_years: affectedYears
-  });
-};
+    type: 'TAX_CALCULATION'
+  };
+  
+  saveLogEntry(logEntry);
+  return logEntry;
+}
+
+/**
+ * Log tax data updates
+ */
+export function logTaxDataUpdate(year: number, version: string, userId: string) {
+  const logEntry: AuditLogEntry = {
+    id: generateId(),
+    timestamp: new Date(),
+    user: userId,
+    action: 'TAX_DATA_UPDATE',
+    details: {
+      year,
+      version
+    },
+    type: 'DATA_UPDATE'
+  };
+  
+  saveLogEntry(logEntry);
+  return logEntry;
+}
+
+// Helper functions
+function generateId(): string {
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
+}
+
+function saveLogEntry(entry: AuditLogEntry) {
+  // In a real implementation, this would save to a database or storage
+  console.log('Audit log entry saved:', entry);
+}
