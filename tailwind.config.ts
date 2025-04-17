@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -25,8 +26,11 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
+          DEFAULT: '#007BFF',
+          foreground: '#FFFFFF',
+          hover: '#0069d9',
+          light: '#cce5ff',
+          dark: '#004a99'
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -77,18 +81,30 @@ export default {
         },
         custom: {
           background: {
-            primary: '#101521',
-            secondary: '#1A1F2C',
-            tertiary: '#242A38',
+            primary: '#FFFFFF',
+            secondary: '#f8f9fa',
+            tertiary: '#e9ecef',
           },
           text: {
-            primary: '#FFFFFF',
-            secondary: '#E5E5E5',
-            muted: '#B0B0B0',
+            primary: '#212529',
+            secondary: '#495057',
+            muted: '#6c757d',
           },
           accent: {
-            green: '#00C47C',
+            green: '#28a745',
           }
+        },
+        blue: {
+          50: '#e6f2ff',
+          100: '#cce5ff',
+          200: '#99cbff',
+          300: '#66b0ff',
+          400: '#3395ff',
+          500: '#007BFF',
+          600: '#0069d9',
+          700: '#0062cc',
+          800: '#0056b3',
+          900: '#004a99',
         }
       },
       borderRadius: {
