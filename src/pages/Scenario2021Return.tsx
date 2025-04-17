@@ -1,6 +1,6 @@
+
 import React from 'react';
-import { TaxScenario } from '@/utils/tax';
-import TaxScenarioComponent from '@/components/tax/TaxScenarioComponent';
+import { TaxScenario } from '@/types/tax/taxCalculationTypes';
 
 const Scenario2021Return: React.FC = () => {
   // Define a tax scenario for the 2021 tax year
@@ -9,6 +9,22 @@ const Scenario2021Return: React.FC = () => {
     name: "2021 Tax Return",
     is_baseline: true,
     scenario_id: "scenario-2021",
+    // Adding necessary properties required by the TaxScenario type
+    scenario_name: "2021 Tax Return",
+    year: 2021,
+    filing_status: "single",
+    total_income: 50000,
+    agi: 50000,
+    taxable_income: 37050,
+    total_tax: 4176,
+    ordinary_tax: 4176,
+    capital_gains_tax: 0,
+    marginal_rate: 0.22,
+    marginal_capital_gains_rate: 0,
+    effective_rate: 0.0835,
+    federal_tax: 4176,
+    state_tax: 0,
+    updated_at: new Date().toISOString(),
     result: {
       scenario_name: "2021 Tax Return",
       year: 2021,
@@ -42,7 +58,12 @@ const Scenario2021Return: React.FC = () => {
   return (
     <div>
       <h1>2021 Tax Return Scenario</h1>
-      <TaxScenarioComponent scenario={taxScenario2021} />
+      <div className="mt-4">
+        <h2>Tax Scenario Data</h2>
+        <pre className="bg-slate-800 p-4 rounded-md overflow-auto text-xs">
+          {JSON.stringify(taxScenario2021, null, 2)}
+        </pre>
+      </div>
     </div>
   );
 };

@@ -10,7 +10,7 @@ export * from './income/taxableIncomeProcessor';
 // Re-export tax calculation functions
 export * from './tax/taxInputPreparation';
 export * from './tax/taxResultProcessor';
-export * from './tax/stateTaxUtils';  // Export the stateTaxUtils directly
+export * from './tax/stateTaxUtils';
 export * from './tax/taxTrapUtils';
 
 // Re-export charitable functions

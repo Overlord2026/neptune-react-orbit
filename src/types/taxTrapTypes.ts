@@ -1,4 +1,3 @@
-
 /**
  * Tax Trap Types
  * 
@@ -16,15 +15,33 @@ export interface TaxTrapWarning {
     value: number;
     units: string;
   };
-  financial_impact?: {
-    amount: number;
-    description: string;
-  };
+  financial_impact?: number;
+  type?: string;
+  title?: string;
+  description?: string;
 }
 
 export interface TaxTrapResult {
   warnings: TaxTrapWarning[];
   scenario_id?: string;
+  irmaa_data?: {
+    partB_surcharge: number;
+    partD_surcharge: number;
+    annual_impact: number;
+  };
+  aca_data?: {
+    current_fpl_percentage: number;
+    subsidy_impact: number;
+  };
+  social_security_data?: {
+    taxable_percentage: number;
+    tax_increase: number;
+  };
+  capital_gains_data?: {
+    current_rate: number;
+    potential_rate: number;
+    tax_increase: number;
+  };
 }
 
 export interface TaxTrapThreshold {
