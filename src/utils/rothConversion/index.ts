@@ -17,13 +17,12 @@ export {
   getStandardDeduction
 } from './charitableUtils';
 
-// Export specific functions from yearCalculation instead of using star exports
+// Export specific functions from yearCalculation
 export { 
   calculateYearlyIncome,
   processTaxableIncome,
   calculateCharitableEffect,
   prepareTaxInput,
-  // Remove calculateStateTax since it doesn't exist
   checkForTaxTraps,
   processTaxResults,
   applyStateTaxInfo

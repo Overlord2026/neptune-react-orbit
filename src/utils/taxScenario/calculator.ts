@@ -5,10 +5,62 @@
  * Core functions for calculating tax scenarios based on user inputs
  */
 
-import { FilingStatusType } from '../taxBracketData';
+import { FilingStatusType } from '@/types/tax/filingTypes';
 import { TaxInput, TaxResult } from '../../types/tax/taxCalculationTypes';
-import { calculateBasicScenarioResult } from './calculatorCore';
-import { calculateSafeHarbor, SafeHarborInput, SafeHarborResult } from '../safeHarborUtils';
+import { calculateTaxAmounts } from '../taxCalculator/taxAmountsCalculator';
+import { calculateSafeHarbor, SafeHarborInput } from '../safeHarborUtils';
+import { checkTaxDataBeforeCalculation } from '../taxCalculator/taxDataUtils';
+
+/**
+ * Calculate basic scenario result with core tax calculations
+ */
+export function calculateBasicScenarioResult(
+  input: TaxInput, 
+  scenario_name: string, 
+  sessionId: string = "default"
+): TaxResult {
+  // Check tax data currency before calculation
+  const taxDataInfo = checkTaxDataBeforeCalculation(input.year, sessionId);
+  
+  // Calculate tax amounts
+  const {
+    total_income,
+    agi,
+    taxable_income,
+    ordinary_tax,
+    capital_gains_tax,
+    total_tax,
+    state_tax,
+    marginal_rate,
+    effective_rate,
+    marginal_capital_gains_rate,
+    brackets_breakdown
+  } = calculateTaxAmounts(input);
+  
+  // Return results with standardized property names
+  return {
+    scenario_name,
+    year: input.year,
+    filing_status: input.filing_status,
+    total_income,
+    agi,
+    taxable_income,
+    total_tax,
+    ordinary_tax,
+    capital_gains_tax,
+    marginal_rate,
+    marginal_capital_gains_rate,
+    effective_rate,
+    updated_at: new Date().toISOString(),
+    federal_tax: total_tax - (state_tax || 0),
+    state_tax,
+    state_code: input.residentState,
+    brackets_breakdown,
+    tax_data_updated_at: new Date(taxDataInfo.dataUpdatedAt).toISOString(),
+    tax_data_is_current: taxDataInfo.isCurrent,
+    tax_data_version: "2.0"
+  };
+}
 
 /**
  * Calculate tax scenario based on inputs
@@ -19,15 +71,7 @@ export function calculateTaxScenario(
   scenario_name: string, 
   sessionId: string = "default"
 ): TaxResult {
-  // Calculate the basic scenario result with all core tax calculations
-  const result = calculateBasicScenarioResult(input, scenario_name, sessionId);
-  
-  // Convert any Date objects to strings to maintain compatibility
-  if (result.updated_at instanceof Date) {
-    result.updated_at = result.updated_at.toISOString();
-  }
-  
-  return result;
+  return calculateBasicScenarioResult(input, scenario_name, sessionId);
 }
 
 /**

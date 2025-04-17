@@ -25,11 +25,13 @@ export function calculateBasicScenarioResult(input: TaxInput, scenario_name: str
     marginal_capital_gains_rate: 0,
     effective_rate: 0,
     updated_at: new Date().toISOString(),
-    has_mid_year_updates: false,
     brackets_breakdown: {
       ordinary: [],
       capitalGains: []
-    }
+    },
+    tax_data_updated_at: new Date().toISOString(),
+    tax_data_is_current: true,
+    tax_data_version: '1.0'
   };
 }
 

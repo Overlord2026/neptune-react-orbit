@@ -11,7 +11,7 @@ export * from './income/taxableIncomeProcessor';
 export * from './tax/taxInputPreparation';
 export * from './tax/taxResultProcessor';
 export * from './tax/stateTaxUtils';
-export * from './tax/taxTrapUtils';
+export { checkForTaxTraps, getTotalTaxTrapImpact } from './tax/taxTrapUtils';
 
 // Re-export charitable functions
 export * from './charitable/charitableProcessor';
