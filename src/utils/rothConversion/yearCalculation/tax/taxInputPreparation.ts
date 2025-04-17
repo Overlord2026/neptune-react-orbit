@@ -5,9 +5,9 @@
  * Functions for preparing tax inputs for scenario calculations.
  */
 
-import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
-import { TaxInput } from '@/utils/taxCalculator';
-import { TaxTrapResult } from '@/utils/taxTraps';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
+import { TaxInput } from '@/types/tax/taxCalculationTypes';
+import { TaxTrapResult } from '@/utils/taxTraps/types';
 
 interface TaxInputParams {
   currentYear: number;
@@ -50,11 +50,12 @@ export function prepareTaxInput({
   // Create the tax input
   const yearTaxInput: TaxInput = {
     year: currentYear,
-    filingStatus: scenarioData.filingStatus,
+    filing_status: scenarioData.filingStatus,
+    filingStatus: scenarioData.filingStatus, // Add both properties for compatibility
     wages: baseIncome,
     interest: 0,
     dividends: 0,
-    capitalGains: 0,
+    capital_gains: 0,
     ira_distributions: adjustedRmdAmount, // Use adjusted RMD amount
     roth_conversion: conversionAmount,
     social_security: 0,
@@ -69,6 +70,12 @@ export function prepareTaxInput({
     // Community property settings
     isInCommunityPropertyState: scenarioData.isInCommunityPropertyState,
     splitCommunityIncome: scenarioData.splitCommunityIncome,
+    
+    // State tax info
+    includeStateTax: scenarioData.includeStateTax,
+    residentState: scenarioData.residentState,
+    stateRelocationYear: scenarioData.stateRelocationYear,
+    futureResidentState: scenarioData.futureResidentState
   };
   
   // Update tax input with itemized deduction info if applicable

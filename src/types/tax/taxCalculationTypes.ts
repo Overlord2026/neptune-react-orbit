@@ -26,11 +26,12 @@ export interface TaxInput {
   spouseRothConversion?: number;
   spouseSocialSecurity?: number;
   isInCommunityPropertyState?: boolean;
-  splitCommunityIncome?: boolean; // We'll use boolean consistently
+  splitCommunityIncome?: boolean;
   includeStateTax?: boolean;
   residentState?: string;
   stateRelocationYear?: number;
   futureResidentState?: string;
+  filingStatus?: FilingStatusType; // For compatibility with code using this property name
 }
 
 // Define BracketItem type for brackets_breakdown

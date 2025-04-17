@@ -5,9 +5,10 @@
  * Functions for processing tax results with different scenarios.
  */
 
-import { TaxInput, calculateTaxScenario } from '../../../taxCalculator';
+import { TaxInput } from '@/types/tax/taxCalculationTypes';
+import { calculateTaxScenario } from '@/utils/taxCalculator';
 import { calculateCharitableImpact } from '../../charitableImpactUtils';
-import { TaxTrapResult } from '@/utils/taxTraps';
+import { TaxTrapResult } from '@/utils/taxTraps/types';
 
 interface TaxResultsParams {
   yearTaxInput: TaxInput;
@@ -71,7 +72,7 @@ export function processTaxResults({
       charitableContribution.amount,
       charitableContribution.useQcd,
       charitableContribution.isBunching,
-      yearTaxInput.filingStatus,
+      yearTaxInput.filing_status,
       yearTaxInput.year,
       taxResult.marginal_rate, // Use actual marginal rate
       rmdAmount,

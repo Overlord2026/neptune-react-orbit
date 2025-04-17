@@ -20,11 +20,12 @@ export interface TaxTrapInput {
 
 export interface TaxTrapWarning {
   type: 'irmaa' | 'capital_gains' | 'social_security' | 'aca' | 'charitable_opportunity' | string;
-  severity: 'info' | 'warning' | 'alert';
+  severity: 'low' | 'medium' | 'high';
   title: string;
   description: string;
   financial_impact: number; // Estimated dollar impact
   icon?: 'info' | 'alertCircle' | 'alertTriangle' | 'help';
+  trapType?: string; // Added for compatibility with code using this property
 }
 
 export interface TaxTrapResult {

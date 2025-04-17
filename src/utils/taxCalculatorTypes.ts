@@ -25,6 +25,8 @@ export interface TaxInput {
   itemizedDeductionAmount?: number;
   residentState?: string;
   includeStateTax?: boolean;
+  stateRelocationYear?: number;
+  futureResidentState?: string;
   // Add spouse-related fields for community property calculations
   isInCommunityPropertyState?: boolean;
   splitCommunityIncome?: boolean;

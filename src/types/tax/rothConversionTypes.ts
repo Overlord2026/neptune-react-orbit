@@ -1,171 +1,111 @@
-
 import { FilingStatusType } from './filingTypes';
-import { StateCode } from '@/utils/stateTaxData';
 
-export interface RothConversionInput {
-  year: number;
-  filing_status: FilingStatusType;
-  total_income: number;
-  ira_balance: number;
-  roth_conversion_amount: number;
-  tax_rate: number;
-  current_age: number;
-  retirement_age: number;
-  investment_return: number;
-}
-
-export interface YearlyConversionSummary {
-  year: number;
-  age: number;
-  traditional_ira_balance: number;
-  roth_ira_balance: number;
-  conversion_amount: number;
-  tax_on_conversion: number;
-  total_balance: number;
-}
-
-export interface RothConversionScenario {
-  id: string;
-  name: string;
-  input: RothConversionInput;
-  yearly_summary: YearlyConversionSummary[];
-  total_taxes_paid: number;
-  ending_traditional_balance: number;
-  ending_roth_balance: number;
-  ending_total_balance: number;
-  created_at: Date;
-  is_active: boolean;
+/**
+ * Types for Roth conversion calculations
+ */
+export interface MultiYearScenarioData {
+  startYear: number;
+  startAge: number;
+  numYears: number;
+  filingStatus: FilingStatusType;
+  traditionalIRAStartBalance: number;
+  rothIRAStartBalance: number;
+  baseAnnualIncome: number;
+  rmdStartAge: number;
+  assumedGrowthRate: number;
+  conversionStrategy?: string;
+  maxBracket?: number;
+  maxAnnualConversion?: number;
+  charitableContributions?: boolean;
+  charitableAmount?: number;
+  useQcd?: boolean;
+  useCharitableBunching?: boolean;
+  bunchingFrequency?: number;
+  includeSpouse?: boolean;
+  spouseAge?: number;
+  spouseFirstName?: string;
+  spouseLastName?: string;
+  spouseBaseAnnualIncome?: number;
+  spouseTraditionalIRAStartBalance?: number;
+  spouseRothIRAStartBalance?: number;
+  spouseRmdStartAge?: number;
+  isInCommunityPropertyState?: boolean;
+  splitCommunityIncome?: boolean;
+  compareMfjVsMfs?: boolean;
+  combinedIRAApproach?: boolean;
+  includeStateTax?: boolean;
+  residentState?: string;
+  stateRelocationYear?: number;
+  futureResidentState?: string;
 }
 
 export interface CharitableContribution {
-  year: number;
   amount: number;
-  type: string;
-  taxDeduction: number;
-  description?: string;
-  isQcd?: boolean;
-  isBunching?: boolean;
-  recipient?: string;
-  useQcd?: boolean;  // Add this property which is referenced in code
-}
-
-export type ConversionStrategyType = 'fixed' | 'partial' | 'bracket_fill' | 'tax_efficient' | 'custom' | 'bracket_12' | 'bracket_22' | 'bracket_12_22';
-
-export interface TrapAlert {
-  id: string;
-  name: string;
-  description: string;
-  impact: number;
-  year: number;
-  threshold: number;
-  amount: number;
-  severity: 'low' | 'medium' | 'high';
-  type?: string;
-  message?: string;
-}
-
-export interface TrapAvoidance {
-  id: string;
-  name: string;
-  description: string;
-  taxSavings: number;
-  type?: string;
+  useQcd: boolean;
+  isBunching: boolean;
+  standardDeduction?: number;
+  itemizedDeduction?: number;
+  isItemizing?: boolean;
+  taxSavings?: number;
+  trapAvoidance?: { type: string; savings: number }[];
 }
 
 export interface YearlyResult {
   year: number;
   age: number;
+  traditionaIraBalance?: number; // Include old property name for backward compatibility
+  traditionalIraBalance: number;
+  rothIraBalance: number;
+  conversionAmount: number;
+  rmdAmount: number;
+  taxableIncome: number;
+  totalTax: number;
+  marginalRate: number;
+  effectiveRate: number;
+  warnings: { 
+    type: string; 
+    message: string; 
+    severity: 'low' | 'medium' | 'high';
+    trapType: string;
+  }[];
+  cumulativeTaxPaid: number;
+  cumulativeTaxSaved: number;
+  traditionalScenarioBalance: number;
+  rothScenarioBalance: number;
+  breakEvenYear: boolean;
+  
+  // Spouse related results (if applicable)
   spouseAge?: number;
+  spouseTraditionalIraBalance?: number;
+  spouseRothIraBalance?: number;
+  spouseConversionAmount?: number;
+  spouseRmdAmount?: number;
+  
+  // Filing info
   filingStatus: FilingStatusType;
   income: number;
   spouseIncome?: number;
   totalIncome: number;
+  
+  // MFS comparison results (if applicable)
+  mfsComparison?: {
+    mfjTotalTax: number;
+    spouse1Tax: number;
+    spouse2Tax: number;
+    combinedMfsTax: number;
+    taxDifference: number;
+  };
+  
+  // State tax info
+  stateCode?: string;
+  stateTax?: number;
+  
+  // Other required properties
   irmaaImpact: boolean;
-  socialSecurityTax?: number;
-  rmds?: number;
-  spouseRmds?: number;
-  conversionAmount: number;
-  traditionalIraBalance: number;
-  rothIraBalance: number;
-  spouseTraditionalIraBalance?: number;
-  spouseRothIraBalance?: number;
   totalTraditionalBalance: number;
   totalRothBalance: number;
   totalRetirementBalance: number;
-  taxableIncome?: number;
-  effectiveTaxRate?: number;
-  taxWithoutConversion?: number;
-  taxWithConversion?: number;
-  taxOnConversion?: number;
-  marginalRate?: number;
-  stateTax?: number;
-  federalTax?: number;
-  totalTax?: number;
-  brackets?: Array<{ min: number; max: number; rate: number; }>;
-  rmdAmount?: number;
-  spouseRmdAmount?: number;
-  charitableContribution?: any;
-  warnings?: any[];
-  cumulativeTaxPaid?: number;
-  cumulativeTaxSaved?: number;
-  traditionalScenarioBalance?: number;
-  rothScenarioBalance?: number;
-  breakEvenYear?: boolean;
-  mfsComparison?: any;
-  spouseConversionAmount?: number;
-  effectiveRate?: number;
-}
-
-export interface MultiYearScenarioData {
-  startAge: number;
-  startYear: number;
-  numYears: number;
-  traditionalIRABalance: number;
-  traditionalIRAStartBalance: number;
-  rothIRABalance: number;
-  rothIRAStartBalance: number;
-  inflationRate: number;
-  investmentReturn: number;
-  expectedAnnualReturn: number;
-  filingStatus: FilingStatusType;
-  stateIncomeTax: number;
-  baseAnnualIncome: number;
-  conversionStrategy: ConversionStrategyType;
-  fixedConversionAmount: number;
-  includeSpouse: boolean;
-  spouseAge: number;
-  spouseTraditionalIRABalance: number;
-  spouseRothIRABalance: number;
-  spouseTraditionalIRAStartBalance: number;
-  spouseRothIRAStartBalance: number;
-  spouseBaseAnnualIncome: number;
-  rmdStartAge: number;
-  spouseRmdStartAge: number;
-  includeRMDs: boolean;
-  includeIrmaa: boolean;
   
-  // Add all referenced optional properties
-  isInCommunityPropertyState?: boolean;
-  splitCommunityIncome?: boolean;
-  assumedDeathYear?: number;
-  spouseAssumedDeathYear?: number;
-  isQcd?: boolean;
-  useCharitablePlanning?: boolean;
-  charitableContributions?: CharitableContribution[];
-  includeStateTax?: boolean;
-  residentState?: StateCode;
-  futureResidentState?: StateCode;
-  stateRelocationYear?: number;
-  compareMfjVsMfs?: boolean; 
-  beneficiaryAge?: number;
-  beneficiaryIncomeTaxRate?: number;
-  includeBeneficiary?: boolean;
-  charitableAmount?: number;
-  
-  // Additional properties referenced in other files
-  spouseFirstName?: string;
-  spouseLastName?: string;
-  combinedIRAApproach?: boolean;
-  incomeGrowthRate?: number;
-  dafBunching?: boolean;
+  // Charitable contribution impact
+  charitableContribution: CharitableContribution;
 }

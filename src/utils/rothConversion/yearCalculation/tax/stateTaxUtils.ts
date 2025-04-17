@@ -5,8 +5,8 @@
  * Functions for applying state tax information to tax input and processing.
  */
 
-import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
-import { TaxInput } from '@/utils/taxCalculator';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
+import { TaxInput } from '@/types/tax/taxCalculationTypes';
 
 /**
  * Apply state tax information to tax input
