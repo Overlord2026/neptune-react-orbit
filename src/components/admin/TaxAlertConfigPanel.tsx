@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -104,7 +103,6 @@ const TaxAlertConfigPanel: React.FC<TaxAlertConfigProps> = ({
             <TabsTrigger value="preview">Preview Settings</TabsTrigger>
           </TabsList>
           
-          {/* Thresholds Tab */}
           <TabsContent value="thresholds">
             <ThresholdSettings 
               thresholds={thresholds} 
@@ -112,7 +110,6 @@ const TaxAlertConfigPanel: React.FC<TaxAlertConfigProps> = ({
             />
           </TabsContent>
           
-          {/* Notifications Tab */}
           <TabsContent value="notifications">
             <NotificationSettings 
               notifyUsers={notifyUsers}
@@ -124,7 +121,6 @@ const TaxAlertConfigPanel: React.FC<TaxAlertConfigProps> = ({
             />
           </TabsContent>
           
-          {/* Templates Tab */}
           <TabsContent value="templates">
             <TemplateSettings 
               majorTemplate={majorTemplate}
@@ -139,7 +135,6 @@ const TaxAlertConfigPanel: React.FC<TaxAlertConfigProps> = ({
             />
           </TabsContent>
           
-          {/* Preview Settings Tab */}
           <TabsContent value="preview">
             <PreviewSettings 
               previewType={previewType}

@@ -18,7 +18,7 @@ export const YearSelector: React.FC<YearSelectorProps> = ({
   if (!showTabs) return null;
 
   return (
-    <Tabs defaultValue="current" className="w-full" onValueChange={(val) => setActiveYear(val as "current" | "next")}>
+    <Tabs defaultValue={activeYear} className="w-full" onValueChange={(val) => setActiveYear(val as "current" | "next")}>
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="current">
           {currentYear} Tax Impact

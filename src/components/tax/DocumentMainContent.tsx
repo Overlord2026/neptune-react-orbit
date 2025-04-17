@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { TabsContent } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import DocumentSearchBar from './DocumentSearchBar';
 import DocumentsTable from './DocumentsTable';
@@ -42,19 +42,21 @@ const DocumentMainContent: React.FC<DocumentMainContentProps> = ({
         <DocumentSearchBar />
       </CardHeader>
       <CardContent>
-        <TabsContent value="documents" className="mt-0">
-          <DocumentsTable 
-            onShareDocument={onShareDocument}
-            onArchiveDocument={handleArchiveDocument}
-          />
-        </TabsContent>
-        
-        <TabsContent value="archive" className="mt-0">
-          <DocumentArchiveSection 
-            selectedYear={selectedYear}
-            onArchiveStatusChange={handleArchiveStatusChange}
-          />
-        </TabsContent>
+        <Tabs value={activeTab} defaultValue="documents">
+          <TabsContent value="documents" className="mt-0">
+            <DocumentsTable 
+              onShareDocument={onShareDocument}
+              onArchiveDocument={handleArchiveDocument}
+            />
+          </TabsContent>
+          
+          <TabsContent value="archive" className="mt-0">
+            <DocumentArchiveSection 
+              selectedYear={selectedYear}
+              onArchiveStatusChange={handleArchiveStatusChange}
+            />
+          </TabsContent>
+        </Tabs>
       </CardContent>
       <DocumentTableFooter />
     </Card>
