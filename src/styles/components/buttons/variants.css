@@ -1,19 +1,5 @@
 
-/* Button Styles */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-md);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  text-decoration: none;
-  gap: 0.5rem;
-}
-
+/* Button variants */
 .btn-primary {
   background-color: var(--accent);
   color: #FFFFFF;
@@ -53,9 +39,4 @@
 .btn-danger:hover {
   background-color: #ef4444;
   text-decoration: none;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
