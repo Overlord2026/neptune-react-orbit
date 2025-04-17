@@ -15,8 +15,7 @@ const WarningsWrapper: React.FC = () => {
       message: warning.message || `Warning for ${result.year}`,
       details: warning.message || '',
       severity: warning.severity || 'medium', // Ensure severity always has a value
-      type: warning.type || warning.trapType || 'unknown', // Ensure type is always defined
-      trapType: warning.type || warning.trapType || 'unknown' // Ensure trapType is always defined
+      trapType: warning.trapType || 'unknown' // Ensure trapType is always defined
     })) || []
   ) || [];
   

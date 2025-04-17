@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { YearlyResult } from '@/types/tax/rothConversionTypes';
+import { formatCurrency } from '@/utils/formatUtils';
 
 interface RmdScheduleDisplayProps {
   results: YearlyResult[];
@@ -41,10 +42,10 @@ const RmdScheduleDisplay: React.FC<RmdScheduleDisplayProps> = ({ results, includ
             return (
               <tr key={year.year} className="border-b">
                 <td className="p-2">{year.year}</td>
-                <td className="p-2">${yourRmd.toLocaleString()}</td>
-                {includeSpouse && <td className="p-2">${spouseRmd.toLocaleString()}</td>}
-                <td className="p-2">${totalRmd.toLocaleString()}</td>
-                <td className="p-2">${taxImpact.toLocaleString()}</td>
+                <td className="p-2">{formatCurrency(yourRmd)}</td>
+                {includeSpouse && <td className="p-2">{formatCurrency(spouseRmd)}</td>}
+                <td className="p-2">{formatCurrency(totalRmd)}</td>
+                <td className="p-2">{formatCurrency(taxImpact)}</td>
               </tr>
             );
           })}

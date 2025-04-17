@@ -2,7 +2,7 @@
 import React from 'react';
 import { YearlyResult } from '@/types/tax/rothConversionTypes';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency } from '@/utils/formatUtils';
+import { formatCurrency, formatPercent } from '@/utils/formatUtils';
 
 interface ScenarioSummaryTableProps {
   yearlyResults: YearlyResult[];
@@ -58,7 +58,7 @@ const ScenarioSummaryTable: React.FC<ScenarioSummaryTableProps> = ({
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-sm text-muted-foreground">Avg. Effective Rate</p>
-          <p className="text-lg font-medium">{(averageEffectiveRate * 100).toFixed(2)}%</p>
+          <p className="text-lg font-medium">{formatPercent(averageEffectiveRate)}</p>
         </div>
         <div>
           <p className="text-sm text-muted-foreground">Total RMDs</p>

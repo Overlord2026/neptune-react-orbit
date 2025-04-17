@@ -1,4 +1,3 @@
-
 import { FilingStatusType } from './filingTypes';
 
 /**
@@ -89,12 +88,7 @@ export interface YearlyResult {
   totalTax: number;
   marginalRate: number;
   effectiveRate: number;
-  warnings: { 
-    type: string; 
-    message: string; 
-    severity: 'low' | 'medium' | 'high';
-    trapType: string;
-  }[];
+  warnings: TrapAlert[];
   cumulativeTaxPaid: number;
   cumulativeTaxSaved: number;
   traditionalScenarioBalance: number;
@@ -150,9 +144,11 @@ export interface TrapAlert {
   severity: 'low' | 'medium' | 'high';
   message: string;
   details: string;
-  id?: string; // Added for compatibility
-  threshold?: number; // Added for compatibility
-  impact?: number; // Added for compatibility
+  id?: string;
+  threshold?: number;
+  impact?: number;
+  // Add type field to fix compatibility with ScenarioWarnings
+  type?: string;
 }
 
 export interface TrapAvoidance {
@@ -160,6 +156,6 @@ export interface TrapAvoidance {
   savings: number;
   name?: string;
   description?: string;
-  id?: string; // Added for compatibility
+  id?: string;
   taxSavings?: number; // Added for backward compatibility
 }

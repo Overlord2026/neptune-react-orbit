@@ -17,15 +17,15 @@ export interface TaxTrapWarning {
     units: string;
   };
   financial_impact?: number;
-  type?: string;  // Added for compatibility
-  title?: string;  // Added for compatibility
-  description?: string;  // Added for compatibility
-  impact?: number;  // Added for compatibility
+  type: string;  // Make this required to fix type errors
+  title?: string;
+  description?: string;
+  impact?: number;
 }
 
 export interface TaxTrapResult {
   warnings: TaxTrapWarning[];
-  scenario_id?: string;  // Made optional for compatibility
+  scenario_id: string;  // Make this required to fix type errors
   irmaa_data?: {
     partB_surcharge: number;
     partD_surcharge: number;

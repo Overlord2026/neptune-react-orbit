@@ -33,8 +33,7 @@ export function calculateTaxScenario(
     state_tax,
     marginal_rate,
     effective_rate,
-    marginal_capital_gains_rate,
-    brackets_breakdown
+    marginal_capital_gains_rate
   } = calculateTaxAmounts(input);
   
   // Prepare and return tax result
@@ -54,10 +53,7 @@ export function calculateTaxScenario(
     updated_at: new Date().toISOString(), // Convert Date to string
     federal_tax: total_tax,
     state_tax,
-    state_code: input.residentState,
-    brackets_breakdown,
-    tax_data_updated_at: new Date(taxDataInfo.dataUpdatedAt).toISOString(), // Fix: convert Date to string
-    tax_data_is_current: taxDataInfo.isCurrent
+    state_code: input.residentState
   };
 }
 

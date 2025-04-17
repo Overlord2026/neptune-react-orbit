@@ -15,7 +15,8 @@ const ScenarioWarnings: React.FC<ScenarioWarningsProps> = ({ warnings }) => {
   
   // Group warnings by type and severity
   const groupedWarnings = warnings.reduce<Record<string, TrapAlert[]>>((acc, warning) => {
-    const key = warning.type || warning.trapType || 'unknown';
+    // Use trapType as the fallback if type is not available
+    const key = warning.trapType || 'unknown';
     if (!acc[key]) {
       acc[key] = [];
     }

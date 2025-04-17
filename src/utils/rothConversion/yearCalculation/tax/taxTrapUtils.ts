@@ -38,12 +38,13 @@ export function checkForTaxTraps({
   hasCapitalGains = false,
   capitalGainsAmount = 0,
   hasACA = false
-}: TaxTrapCheckParams): { trapResults: TaxTrapResult; warnings: TaxTrapWarning[] } {
+}: TaxTrapCheckParams): { trapResults: TaxTrapResult; warnings: { type: string; message: string; severity: 'low' | 'medium' | 'high'; trapType: string }[] } {
   const warnings: TaxTrapWarning[] = [];
   
   // Initialize result object
   const trapResults: TaxTrapResult = {
-    warnings: []
+    warnings: [],
+    scenario_id: scenarioId
   };
   
   // Check for Medicare IRMAA surcharges
@@ -54,6 +55,7 @@ export function checkForTaxTraps({
       warnings.push({
         id: `irmaa-${scenarioId}`,
         trapType: 'irmaa',
+        type: 'irmaa', // Ensure type is always set
         message: 'Medicare IRMAA Surcharge Triggered',
         details: `Your MAGI of $${baseAGI.toLocaleString()} exceeds the IRMAA threshold, triggering additional Medicare premium costs.`,
         severity: 'medium',
@@ -61,8 +63,7 @@ export function checkForTaxTraps({
           value: threshold,
           units: 'USD'
         },
-        remediation: 'Consider tax-efficient withdrawal strategies or charitable giving to reduce MAGI.',
-        type: 'irmaa' // Add type field for compatibility
+        remediation: 'Consider tax-efficient withdrawal strategies or charitable giving to reduce MAGI.'
       });
       
       // Calculate surcharge amounts
@@ -196,10 +197,18 @@ export function checkForTaxTraps({
   // Add the sorted warnings to the result
   trapResults.warnings = sortedWarnings;
   
-  // Compile and return results
+  // Convert to the format expected by the yearCalculation.ts
+  const simpleWarnings = sortedWarnings.map(warning => ({
+    type: warning.type,
+    message: warning.message,
+    severity: warning.severity,
+    trapType: warning.trapType
+  }));
+  
+  // Return both formats
   return {
     trapResults,
-    warnings: sortedWarnings
+    warnings: simpleWarnings
   };
 }
 

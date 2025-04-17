@@ -2,6 +2,7 @@
 import React from 'react';
 import { useMultiYearContext } from './context/MultiYearContext';
 import ResultsContent from './components/ResultsContent';
+import { YearlyResult, MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 
 // Update the interface to match the props passed from TabContentManager
 interface ResultsStepProps {
