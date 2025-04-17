@@ -26,7 +26,7 @@ export interface TaxTrapInput {
 // Standardize the warning severity to match taxTrapTypes.ts
 export interface TaxTrapWarning {
   type: string;
-  severity: "low" | "medium" | "high";  // Changed to match taxTrapTypes
+  severity: "low" | "medium" | "high";
   title: string;
   description: string;
   financial_impact?: number;
@@ -34,7 +34,7 @@ export interface TaxTrapWarning {
 }
 
 export interface TaxTrapResult {
-  scenario_id: string;  // Made required
+  scenario_id?: string;  // Made optional for compatibility
   warnings: TaxTrapWarning[];
   irmaa_data?: {
     partB_surcharge: number;
@@ -74,7 +74,7 @@ export function checkTaxTraps(input: TaxTrapInput): TaxTrapResult {
       
       warnings.push({
         type: 'irmaa',
-        severity: 'medium',  // Changed from 'warning' to 'medium'
+        severity: 'medium',
         title: 'Medicare IRMAA Surcharge',
         description: `Your income may trigger an IRMAA surcharge of approximately $${annualSurcharge.toFixed(2)} annually on your Medicare premiums.`,
         financial_impact: annualSurcharge
@@ -99,7 +99,7 @@ export function checkTaxTraps(input: TaxTrapInput): TaxTrapResult {
       
       warnings.push({
         type: 'social_security',
-        severity: 'low',  // Changed from 'info' to 'low'
+        severity: 'low',
         title: 'Social Security Taxation',
         description: `Up to 85% of your Social Security benefits may be taxable due to your income level.`,
         financial_impact: taxImpact

@@ -1,101 +1,98 @@
+
 import { TaxTrapWarning } from './types';
 
-// IRMAA Thresholds
-interface IRMAAThreshold {
+// IRMAA Income Threshold Brackets for 2023
+// Note: These brackets change yearly with inflation adjustments
+interface IrmaaThreshold {
   year: number;
   filing_status: string;
-  magi_min: number;
-  magi_max: number;
-  monthly_surcharge_partB: number;
-  monthly_surcharge_partD: number;
+  tier: number;
+  income_min: number;
+  income_max: number;
+  partB_surcharge: number;
+  partD_surcharge: number;
 }
 
-const IRMAA_THRESHOLDS: IRMAAThreshold[] = [
-  // 2025 Single (projected/estimated)
-  { year: 2025, filing_status: 'single', magi_min: 0, magi_max: 99000, monthly_surcharge_partB: 0, monthly_surcharge_partD: 0 },
-  { year: 2025, filing_status: 'single', magi_min: 99000, magi_max: 124000, monthly_surcharge_partB: 68.00, monthly_surcharge_partD: 12.80 },
-  { year: 2025, filing_status: 'single', magi_min: 124000, magi_max: 155000, monthly_surcharge_partB: 170.00, monthly_surcharge_partD: 32.50 },
-  { year: 2025, filing_status: 'single', magi_min: 155000, magi_max: 186000, monthly_surcharge_partB: 272.00, monthly_surcharge_partD: 52.00 },
-  { year: 2025, filing_status: 'single', magi_min: 186000, magi_max: 520000, monthly_surcharge_partB: 374.00, monthly_surcharge_partD: 72.20 },
-  { year: 2025, filing_status: 'single', magi_min: 520000, magi_max: Infinity, monthly_surcharge_partB: 408.00, monthly_surcharge_partD: 78.50 },
+const IRMAA_THRESHOLDS: IrmaaThreshold[] = [
+  // 2023 Single/Separate
+  { year: 2023, filing_status: 'single', tier: 1, income_min: 0, income_max: 97000, partB_surcharge: 0, partD_surcharge: 0 },
+  { year: 2023, filing_status: 'single', tier: 2, income_min: 97000, income_max: 123000, partB_surcharge: 65.90, partD_surcharge: 12.20 },
+  { year: 2023, filing_status: 'single', tier: 3, income_min: 123000, income_max: 153000, partB_surcharge: 164.80, partD_surcharge: 31.50 },
+  { year: 2023, filing_status: 'single', tier: 4, income_min: 153000, income_max: 183000, partB_surcharge: 263.70, partD_surcharge: 50.70 },
+  { year: 2023, filing_status: 'single', tier: 5, income_min: 183000, income_max: 500000, partB_surcharge: 362.60, partD_surcharge: 70.00 },
+  { year: 2023, filing_status: 'single', tier: 6, income_min: 500000, income_max: Infinity, partB_surcharge: 395.60, partD_surcharge: 76.40 },
   
-  // 2025 Married (projected/estimated)
-  { year: 2025, filing_status: 'married', magi_min: 0, magi_max: 198000, monthly_surcharge_partB: 0, monthly_surcharge_partD: 0 },
-  { year: 2025, filing_status: 'married', magi_min: 198000, magi_max: 248000, monthly_surcharge_partB: 68.00, monthly_surcharge_partD: 12.80 },
-  { year: 2025, filing_status: 'married', magi_min: 248000, magi_max: 310000, monthly_surcharge_partB: 170.00, monthly_surcharge_partD: 32.50 },
-  { year: 2025, filing_status: 'married', magi_min: 310000, magi_max: 372000, monthly_surcharge_partB: 272.00, monthly_surcharge_partD: 52.00 },
-  { year: 2025, filing_status: 'married', magi_min: 372000, magi_max: 770000, monthly_surcharge_partB: 374.00, monthly_surcharge_partD: 72.20 },
-  { year: 2025, filing_status: 'married', magi_min: 770000, magi_max: Infinity, monthly_surcharge_partB: 408.00, monthly_surcharge_partD: 78.50 },
-  
-  // 2023 Single - Keep for historical reference
-  { year: 2023, filing_status: 'single', magi_min: 0, magi_max: 97000, monthly_surcharge_partB: 0, monthly_surcharge_partD: 0 },
-  { year: 2023, filing_status: 'single', magi_min: 97000, magi_max: 123000, monthly_surcharge_partB: 65.90, monthly_surcharge_partD: 12.20 },
-  { year: 2023, filing_status: 'single', magi_min: 123000, magi_max: 153000, monthly_surcharge_partB: 164.80, monthly_surcharge_partD: 31.50 },
-  { year: 2023, filing_status: 'single', magi_min: 153000, magi_max: 183000, monthly_surcharge_partB: 263.70, monthly_surcharge_partD: 50.70 },
-  { year: 2023, filing_status: 'single', magi_min: 183000, magi_max: 500000, monthly_surcharge_partB: 362.60, monthly_surcharge_partD: 70.00 },
-  { year: 2023, filing_status: 'single', magi_min: 500000, magi_max: Infinity, monthly_surcharge_partB: 395.60, monthly_surcharge_partD: 76.40 },
-  
-  // 2023 Married - Keep for historical reference
-  { year: 2023, filing_status: 'married', magi_min: 0, magi_max: 194000, monthly_surcharge_partB: 0, monthly_surcharge_partD: 0 },
-  { year: 2023, filing_status: 'married', magi_min: 194000, magi_max: 246000, monthly_surcharge_partB: 65.90, monthly_surcharge_partD: 12.20 },
-  { year: 2023, filing_status: 'married', magi_min: 246000, magi_max: 306000, monthly_surcharge_partB: 164.80, monthly_surcharge_partD: 31.50 },
-  { year: 2023, filing_status: 'married', magi_min: 306000, magi_max: 366000, monthly_surcharge_partB: 263.70, monthly_surcharge_partD: 50.70 },
-  { year: 2023, filing_status: 'married', magi_min: 366000, magi_max: 750000, monthly_surcharge_partB: 362.60, monthly_surcharge_partD: 70.00 },
-  { year: 2023, filing_status: 'married', magi_min: 750000, magi_max: Infinity, monthly_surcharge_partB: 395.60, monthly_surcharge_partD: 76.40 },
+  // 2023 Joint
+  { year: 2023, filing_status: 'joint', tier: 1, income_min: 0, income_max: 194000, partB_surcharge: 0, partD_surcharge: 0 },
+  { year: 2023, filing_status: 'joint', tier: 2, income_min: 194000, income_max: 246000, partB_surcharge: 65.90, partD_surcharge: 12.20 },
+  { year: 2023, filing_status: 'joint', tier: 3, income_min: 246000, income_max: 306000, partB_surcharge: 164.80, partD_surcharge: 31.50 },
+  { year: 2023, filing_status: 'joint', tier: 4, income_min: 306000, income_max: 366000, partB_surcharge: 263.70, partD_surcharge: 50.70 },
+  { year: 2023, filing_status: 'joint', tier: 5, income_min: 366000, income_max: 750000, partB_surcharge: 362.60, partD_surcharge: 70.00 },
+  { year: 2023, filing_status: 'joint', tier: 6, income_min: 750000, income_max: Infinity, partB_surcharge: 395.60, partD_surcharge: 76.40 }
 ];
 
 /**
- * Check for IRMAA surcharges based on MAGI
+ * Calculate IRMAA surcharges based on income
  */
-export function checkIRMAASurcharges(
-  year: number,
-  filingStatus: string,
-  magi: number
-): { partB_surcharge: number; partD_surcharge: number } {
-  // Find applicable thresholds for the year and filing status
+export function calculateIrmaaSurcharges(
+  income: number,
+  filingStatus: string = 'single',
+  year: number = 2023
+): { partB_surcharge: number; partD_surcharge: number; annual_impact: number } {
+  // First normalize filing status
+  const normalizedStatus = filingStatus === 'married' || filingStatus === 'married_joint' ? 'joint' : 'single';
+  
+  // Find applicable threshold
   const thresholds = IRMAA_THRESHOLDS.filter(
-    t => t.year === year && t.filing_status === filingStatus
+    t => t.year === year && t.filing_status === normalizedStatus
   );
   
   if (thresholds.length === 0) {
-    // Default to 2025 if year not found
-    const latestThresholds = IRMAA_THRESHOLDS.filter(
-      t => t.filing_status === filingStatus
-    );
-    
-    // If we still have no thresholds, return zero surcharges
-    if (latestThresholds.length === 0) {
-      return { partB_surcharge: 0, partD_surcharge: 0 };
-    }
+    // Default to no surcharge if no data found
+    return { partB_surcharge: 0, partD_surcharge: 0, annual_impact: 0 };
   }
   
-  // Find the applicable bracket
-  const bracket = thresholds.find(t => magi >= t.magi_min && magi < t.magi_max);
+  // Find applicable tier
+  const applicableTier = thresholds.find(
+    t => income >= t.income_min && income < t.income_max
+  ) || thresholds[thresholds.length - 1]; // Default to highest tier if above all thresholds
   
-  if (!bracket) {
-    // If no bracket found, return zero surcharges
-    return { partB_surcharge: 0, partD_surcharge: 0 };
-  }
+  const { partB_surcharge, partD_surcharge } = applicableTier;
+  const annual_impact = (partB_surcharge + partD_surcharge) * 12;
   
-  return {
-    partB_surcharge: bracket.monthly_surcharge_partB,
-    partD_surcharge: bracket.monthly_surcharge_partD
-  };
+  return { partB_surcharge, partD_surcharge, annual_impact };
 }
 
-export function generateIRMAAWarning(
-  irmaaResult: { partB_surcharge: number; partD_surcharge: number }
+/**
+ * Generate IRMAA warning if applicable
+ */
+export function generateIrmaaWarning(
+  income: number,
+  filingStatus: string,
+  year: number = 2023
 ): TaxTrapWarning | null {
-  const { partB_surcharge, partD_surcharge } = irmaaResult;
+  const { partB_surcharge, partD_surcharge, annual_impact } = calculateIrmaaSurcharges(
+    income,
+    filingStatus,
+    year
+  );
   
-  if (partB_surcharge > 0 || partD_surcharge > 0) {
-    const annual_impact = (partB_surcharge + partD_surcharge) * 12;
+  if (annual_impact > 0) {
+    // Determine proximity to next threshold
+    const normalizedStatus = filingStatus === 'married' || filingStatus === 'married_joint' ? 'joint' : 'single';
+    const thresholds = IRMAA_THRESHOLDS.filter(t => t.filing_status === normalizedStatus);
+    
+    // Find current tier
+    const currentTierIndex = thresholds.findIndex(t => income >= t.income_min && income < t.income_max);
+    
+    // Determine severity based on surcharge amount
+    const severityLevel = annual_impact > 3000 ? 'high' : 'medium';
     
     return {
       type: 'irmaa',
-      severity: 'warning',
-      title: 'IRMAA Medicare Surcharge Alert',
-      description: `Your income may trigger an IRMAA surcharge of $${partB_surcharge.toFixed(2)} per month for Medicare Part B and $${partD_surcharge.toFixed(2)} for Part D.`,
+      severity: severityLevel, // Fixed: changed from 'warning' to 'medium'
+      title: 'Medicare IRMAA Surcharge',
+      description: `Your income triggers Medicare IRMAA surcharges of $${annual_impact.toFixed(2)} annually ($${(partB_surcharge + partD_surcharge).toFixed(2)}/month).`,
       financial_impact: annual_impact,
       icon: 'alertCircle'
     };

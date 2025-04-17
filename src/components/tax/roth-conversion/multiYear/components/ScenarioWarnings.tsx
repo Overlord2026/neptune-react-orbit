@@ -58,9 +58,9 @@ const ScenarioWarnings: React.FC<ScenarioWarningsProps> = ({ warnings }) => {
             className={`${bgClass} border ${borderClass} ${textClass}`}
           >
             <Icon className={`h-5 w-5 ${iconClass}`} />
-            <AlertTitle className="font-medium">{warning.title || warning.message}</AlertTitle>
+            <AlertTitle className="font-medium">{warning.message}</AlertTitle>
             <AlertDescription className="mt-2 text-sm opacity-90">
-              {warning.details || warning.description}
+              {warning.details || warning.message}
             </AlertDescription>
           </Alert>
         );

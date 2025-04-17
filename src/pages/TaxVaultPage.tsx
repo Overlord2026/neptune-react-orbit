@@ -62,7 +62,7 @@ const TaxVaultPage = () => {
       uploadDate: new Date(),
       type: file.type.split('/')[1].toUpperCase(),
       size: formatFileSize(file.size),
-      taxYear: file.name.split('_')[1].split('.')[0]
+      taxYear: file.name.split('_')[1]?.split('.')[0] || "Unknown"
     }));
 
     setDocuments([...newDocs, ...documents]);
@@ -103,7 +103,7 @@ const TaxVaultPage = () => {
 
   return (
     <div className="space-y-6 pb-8 bg-[#111827] min-h-screen text-white">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4 px-4 sm:px-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-4 px-4 sm:px-6 pt-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Tax Vault</h1>
           <p className="text-gray-300 text-base">Securely store and organize your tax documents</p>
@@ -119,7 +119,7 @@ const TaxVaultPage = () => {
         </Link>
       </div>
 
-      <Card className="bg-[#1f2937] border-[#374151]">
+      <Card className="bg-[#1f2937] border-[#374151] mx-4 sm:mx-6">
         <CardHeader>
           <CardTitle className="text-lg text-white">Filter by Tax Year</CardTitle>
         </CardHeader>
@@ -142,7 +142,7 @@ const TaxVaultPage = () => {
         </CardContent>
       </Card>
 
-      <Card className="bg-[#1f2937] border-[#3b82f6]/20 hover:border-[#3b82f6]/40 transition-colors">
+      <Card className="bg-[#1f2937] border-[#3b82f6]/20 hover:border-[#3b82f6]/40 transition-colors mx-4 sm:mx-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white">
             <Upload className="h-5 w-5 text-[#3b82f6]" />
@@ -179,7 +179,7 @@ const TaxVaultPage = () => {
         </CardContent>
       </Card>
 
-      <div className="bg-[#1f2937]/50 border border-[#3b82f6]/10 rounded-lg p-4 flex items-start gap-3">
+      <div className="bg-[#1f2937]/50 border border-[#3b82f6]/10 rounded-lg p-4 flex items-start gap-3 mx-4 sm:mx-6">
         <Shield className="h-5 w-5 text-[#3b82f6] mt-0.5 flex-shrink-0" />
         <div className="text-sm">
           <p className="font-medium mb-1 text-[#3b82f6]">Security & Privacy</p>
@@ -190,7 +190,7 @@ const TaxVaultPage = () => {
         </div>
       </div>
 
-      <div>
+      <div className="mx-4 sm:mx-6">
         <h2 className="text-xl font-bold mb-4 text-white">
           {selectedTaxYear ? `${selectedTaxYear} Documents (${filteredDocuments.length})` : `Your Documents (${filteredDocuments.length})`}
         </h2>
@@ -204,7 +204,7 @@ const TaxVaultPage = () => {
                     <FileText className="h-8 w-8 text-[#3b82f6]" />
                     <div>
                       <p className="font-medium text-white">{doc.name}</p>
-                      <div className="flex items-center gap-4 text-xs text-gray-400">
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
                         <span>Uploaded: {formatDate(doc.uploadDate)}</span>
                         <span>Type: {doc.type}</span>
                         <span>Size: {doc.size}</span>

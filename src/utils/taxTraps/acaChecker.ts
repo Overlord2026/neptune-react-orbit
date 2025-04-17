@@ -1,130 +1,150 @@
 
 import { TaxTrapWarning } from './types';
 
-// ACA Subsidy Thresholds
-interface ACASubsidyThreshold {
-  year: number;
-  household_size: number;
-  fpl_min: number; // % of FPL
-  fpl_max: number; // % of FPL
-  premium_cap_percent: number;
-  fpl_amount: number; // Base Federal Poverty Level for this household size
+// FPL values for 2023
+// These should be updated each year as the Federal Poverty Level values change
+const FPL_BASE_2023 = 13590;
+const FPL_ADDITIONAL_2023 = 4720;
+
+// Premium subsidy thresholds - % of income expected to be paid for benchmark plan
+// After the American Rescue Plan Act (ARPA), extended by the Inflation Reduction Act
+interface SubsidyThreshold {
+  fpl_percent_min: number;
+  fpl_percent_max: number;
+  income_percent_2023: number;
+  income_percent_2024: number;
+  notes: string;
 }
 
-const ACA_SUBSIDY_THRESHOLDS: ACASubsidyThreshold[] = [
-  // 2023 - Household Size 1
-  { year: 2023, household_size: 1, fpl_min: 0, fpl_max: 150, premium_cap_percent: 0, fpl_amount: 13590 },
-  { year: 2023, household_size: 1, fpl_min: 150, fpl_max: 200, premium_cap_percent: 2, fpl_amount: 13590 },
-  { year: 2023, household_size: 1, fpl_min: 200, fpl_max: 250, premium_cap_percent: 4, fpl_amount: 13590 },
-  { year: 2023, household_size: 1, fpl_min: 250, fpl_max: 300, premium_cap_percent: 6, fpl_amount: 13590 },
-  { year: 2023, household_size: 1, fpl_min: 300, fpl_max: 400, premium_cap_percent: 8.5, fpl_amount: 13590 },
-  { year: 2023, household_size: 1, fpl_min: 400, fpl_max: Infinity, premium_cap_percent: Infinity, fpl_amount: 13590 },
-  
-  // 2023 - Household Size 2
-  { year: 2023, household_size: 2, fpl_min: 0, fpl_max: 150, premium_cap_percent: 0, fpl_amount: 18310 },
-  { year: 2023, household_size: 2, fpl_min: 150, fpl_max: 200, premium_cap_percent: 2, fpl_amount: 18310 },
-  { year: 2023, household_size: 2, fpl_min: 200, fpl_max: 250, premium_cap_percent: 4, fpl_amount: 18310 },
-  { year: 2023, household_size: 2, fpl_min: 250, fpl_max: 300, premium_cap_percent: 6, fpl_amount: 18310 },
-  { year: 2023, household_size: 2, fpl_min: 300, fpl_max: 400, premium_cap_percent: 8.5, fpl_amount: 18310 },
-  { year: 2023, household_size: 2, fpl_min: 400, fpl_max: Infinity, premium_cap_percent: Infinity, fpl_amount: 18310 },
-  
-  // 2023 - Household Size 4 (simplified)
-  { year: 2023, household_size: 4, fpl_min: 0, fpl_max: 150, premium_cap_percent: 0, fpl_amount: 27750 },
-  { year: 2023, household_size: 4, fpl_min: 150, fpl_max: 200, premium_cap_percent: 2, fpl_amount: 27750 },
-  { year: 2023, household_size: 4, fpl_min: 200, fpl_max: 250, premium_cap_percent: 4, fpl_amount: 27750 },
-  { year: 2023, household_size: 4, fpl_min: 250, fpl_max: 300, premium_cap_percent: 6, fpl_amount: 27750 },
-  { year: 2023, household_size: 4, fpl_min: 300, fpl_max: 400, premium_cap_percent: 8.5, fpl_amount: 27750 },
-  { year: 2023, household_size: 4, fpl_min: 400, fpl_max: Infinity, premium_cap_percent: Infinity, fpl_amount: 27750 },
+const SUBSIDY_THRESHOLDS: SubsidyThreshold[] = [
+  { fpl_percent_min: 0, fpl_percent_max: 150, income_percent_2023: 0, income_percent_2024: 0, notes: 'Maximum subsidy' },
+  { fpl_percent_min: 150, fpl_percent_max: 200, income_percent_2023: 2, income_percent_2024: 2, notes: 'High subsidy' },
+  { fpl_percent_min: 200, fpl_percent_max: 250, income_percent_2023: 4, income_percent_2024: 4, notes: 'Significant subsidy' },
+  { fpl_percent_min: 250, fpl_percent_max: 300, income_percent_2023: 6, income_percent_2024: 6, notes: 'Moderate subsidy' },
+  { fpl_percent_min: 300, fpl_percent_max: 400, income_percent_2023: 8.5, income_percent_2024: 8.5, notes: 'Some subsidy' },
+  { fpl_percent_min: 400, fpl_percent_max: Infinity, income_percent_2023: 8.5, income_percent_2024: 8.5, notes: 'Limited subsidy' }
 ];
 
 /**
- * Check for ACA subsidy impacts
+ * Calculate FPL percentage for a household
  */
-export function checkACASubsidyImpact(
-  year: number,
+export function calculateFplPercentage(
+  income: number,
   householdSize: number,
-  magi: number
-): { fpl_percentage: number; premium_cap_percent: number; subsidy_impact: number } {
-  // Find applicable thresholds for the year and household size
-  let thresholds = ACA_SUBSIDY_THRESHOLDS.filter(
-    t => t.year === year && t.household_size === householdSize
-  );
+  year: number = 2023
+): number {
+  // For now we only have 2023 data
+  const baseAmount = FPL_BASE_2023;
+  const additionalAmount = FPL_ADDITIONAL_2023;
   
-  if (thresholds.length === 0) {
-    // Try to find thresholds for the closest household size
-    const allSizes = [...new Set(ACA_SUBSIDY_THRESHOLDS.map(t => t.household_size))];
-    const closestSize = allSizes.reduce((prev, curr) => 
-      Math.abs(curr - householdSize) < Math.abs(prev - householdSize) ? curr : prev
-    );
-    
-    thresholds = ACA_SUBSIDY_THRESHOLDS.filter(
-      t => t.year === year && t.household_size === closestSize
-    );
-    
-    if (thresholds.length === 0) {
-      // Default to no subsidy if no data found
-      return { fpl_percentage: 0, premium_cap_percent: Infinity, subsidy_impact: 0 };
-    }
-  }
+  const fplForHousehold = baseAmount + ((householdSize - 1) * additionalAmount);
+  return (income / fplForHousehold) * 100;
+}
+
+/**
+ * Estimate ACA subsidy amount
+ * This is a simplified calculation - actual subsidies involve age, location, etc.
+ */
+export function estimateSubsidyAmount(
+  income: number,
+  householdSize: number,
+  year: number = 2023
+): number {
+  const fplPercentage = calculateFplPercentage(income, householdSize, year);
   
-  // Get FPL amount for this household size
-  const fplAmount = thresholds[0].fpl_amount;
+  // Approximate average annual premium for benchmark plan
+  const averagePremium = householdSize * 7500;
   
-  // Calculate FPL percentage
-  const fpl_percentage = (magi / fplAmount) * 100;
+  // Find applicable threshold
+  const threshold = SUBSIDY_THRESHOLDS.find(
+    t => fplPercentage >= t.fpl_percent_min && fplPercentage < t.fpl_percent_max
+  ) || SUBSIDY_THRESHOLDS[SUBSIDY_THRESHOLDS.length - 1];
   
-  // Find the applicable bracket
-  const bracket = thresholds.find(
-    t => fpl_percentage >= t.fpl_min && fpl_percentage < t.fpl_max
-  );
+  // Expected contribution percentage
+  const contributionPercentage = threshold.income_percent_2023;
   
-  if (!bracket) {
-    // Default to no subsidy if no bracket found
-    return { fpl_percentage, premium_cap_percent: Infinity, subsidy_impact: 0 };
-  }
+  // Maximum household contribution
+  const householdContribution = (income * contributionPercentage) / 100;
   
-  // Find the next bracket for potential impact
-  const currentIndex = thresholds.indexOf(bracket);
-  const nextBracket = currentIndex < thresholds.length - 1 ? thresholds[currentIndex + 1] : null;
+  // Subsidy is difference between premium and expected contribution
+  const subsidy = Math.max(0, averagePremium - householdContribution);
   
-  // Calculate estimated subsidy impact (simplified)
-  // Assume average marketplace premium of $500/month per person
-  const avgMonthlyPremium = 500 * householdSize;
-  let subsidy_impact = 0;
+  return subsidy;
+}
+
+/**
+ * Check if at risk of subsidy cliff
+ */
+export function checkSubsidyCliff(
+  income: number,
+  householdSize: number,
+  year: number = 2023
+): { 
+  isAtRisk: boolean; 
+  fplPercentage: number; 
+  subsidyAmount: number;
+  distanceToCliff: number | null;
+} {
+  const fplPercentage = calculateFplPercentage(income, householdSize, year);
+  const subsidyAmount = estimateSubsidyAmount(income, householdSize, year);
   
-  if (nextBracket && fpl_percentage + 10 >= nextBracket.fpl_min) {
-    // If close to next bracket, calculate potential impact
-    const currentMaxContribution = (bracket.premium_cap_percent / 100) * magi / 12;
-    const nextMaxContribution = (nextBracket.premium_cap_percent / 100) * magi / 12;
-    
-    // The impact is the difference in monthly contribution, annualized
-    subsidy_impact = Math.max(0, (nextMaxContribution - currentMaxContribution) * 12);
-    
-    // Special case for the subsidy cliff
-    if (nextBracket.premium_cap_percent === Infinity) {
-      subsidy_impact = Math.max(0, (avgMonthlyPremium - currentMaxContribution) * 12);
-    }
-  }
+  // FPL threshold for household
+  const fplForHousehold = FPL_BASE_2023 + ((householdSize - 1) * FPL_ADDITIONAL_2023);
+  
+  // Calculate distance to 400% FPL
+  const threshold = fplForHousehold * 4; // 400% FPL
+  const distanceToCliff = threshold - income;
+  
+  // Determine if at risk (within 10% of threshold)
+  const isAtRisk = fplPercentage >= 360 && fplPercentage <= 410;
   
   return {
-    fpl_percentage,
-    premium_cap_percent: bracket.premium_cap_percent,
-    subsidy_impact
+    isAtRisk,
+    fplPercentage,
+    subsidyAmount,
+    distanceToCliff: distanceToCliff > 0 ? distanceToCliff : null
   };
 }
 
-export function generateACAWarning(
-  acaResult: { fpl_percentage: number; premium_cap_percent: number; subsidy_impact: number }
+/**
+ * Generate ACA subsidy warning if applicable
+ */
+export function generateAcaWarning(
+  income: number,
+  householdSize: number,
+  year: number = 2023
 ): TaxTrapWarning | null {
-  if (acaResult.subsidy_impact > 1000) {
-    return {
-      type: 'aca',
-      severity: acaResult.subsidy_impact > 5000 ? 'alert' : 'warning',
-      title: 'ACA Subsidy Reduction Risk',
-      description: `You may lose up to $${acaResult.subsidy_impact.toFixed(0)} in annual health insurance premium assistance.`,
-      financial_impact: acaResult.subsidy_impact,
-      icon: 'alertCircle'
-    };
+  const { isAtRisk, fplPercentage, subsidyAmount, distanceToCliff } = checkSubsidyCliff(
+    income,
+    householdSize,
+    year
+  );
+  
+  if (isAtRisk) {
+    // Calculate financial impact (potential loss of subsidy)
+    const financialImpact = subsidyAmount;
+    
+    if (distanceToCliff !== null && distanceToCliff > 0) {
+      // Close to cliff but not over
+      return {
+        type: 'aca',
+        severity: 'medium', // Fixed: changed from 'warning' to 'medium'
+        title: 'ACA Subsidy Cliff Risk',
+        description: `You are ${Math.round(fplPercentage)}% of FPL, only $${Math.round(distanceToCliff).toLocaleString()} from the premium subsidy cliff.`,
+        financial_impact: financialImpact,
+        icon: 'alertTriangle'
+      };
+    } else {
+      // Over cliff
+      return {
+        type: 'aca',
+        severity: 'high', // Fixed: changed from 'alert' to 'high'
+        title: 'ACA Subsidy Cliff Impact',
+        description: `You are at ${Math.round(fplPercentage)}% of FPL, which may put you beyond the premium subsidy eligibility threshold.`,
+        financial_impact: financialImpact,
+        icon: 'alertCircle'
+      };
+    }
   }
   
   return null;

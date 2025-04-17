@@ -100,7 +100,7 @@ export function generateSocialSecurityWarning(
   if (taxablePercentage > 50) {
     return {
       type: 'social_security',
-      severity: taxablePercentage > 80 ? 'alert' : 'warning',
+      severity: taxablePercentage > 80 ? 'high' : 'medium', // Fixed: changed 'alert' to 'high'
       title: 'Social Security Tax Impact',
       description: `${Math.round(taxablePercentage)}% of your Social Security benefits may be taxable.`,
       financial_impact: tax_increase,
