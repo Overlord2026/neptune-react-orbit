@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -167,8 +166,11 @@ const TaxPlanningPricingPage = () => {
               </div>
             </div>
           </CardContent>
-          <CardFooter>
-            <Button className="w-full bg-[#9b87f5] hover:bg-[#8a76e4]" onClick={handleStartFreeTrial}>
+          <CardFooter className="flex flex-col gap-3">
+            <Button 
+              className="w-full bg-[#FFFFFF] text-[#1A1F2C] hover:bg-[#f0f0f0] text-lg py-6 font-semibold" 
+              onClick={handleStartFreeTrial}
+            >
               Start 90-Day Free Trial <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardFooter>
