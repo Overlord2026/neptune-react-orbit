@@ -20,7 +20,7 @@ const WarningsWrapper: React.FC = () => {
   ) || [];
   
   return (
-    <div className="warnings-container mt-6 rounded-lg overflow-hidden">
+    <div className="warnings-container mt-6 rounded-lg overflow-hidden shadow-lg">
       <ScenarioWarnings warnings={allWarnings as TrapAlert[]} />
     </div>
   );
