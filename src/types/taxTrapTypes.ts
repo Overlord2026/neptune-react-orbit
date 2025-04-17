@@ -1,3 +1,4 @@
+
 /**
  * Tax Trap Types
  * 
@@ -16,14 +17,15 @@ export interface TaxTrapWarning {
     units: string;
   };
   financial_impact?: number;
-  type?: string;
-  title?: string;
-  description?: string;
+  type?: string;  // Added for compatibility
+  title?: string;  // Added for compatibility
+  description?: string;  // Added for compatibility
+  impact?: number;  // Added for compatibility
 }
 
 export interface TaxTrapResult {
   warnings: TaxTrapWarning[];
-  scenario_id?: string;
+  scenario_id?: string;  // Made optional for compatibility
   irmaa_data?: {
     partB_surcharge: number;
     partD_surcharge: number;

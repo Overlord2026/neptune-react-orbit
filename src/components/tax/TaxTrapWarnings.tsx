@@ -18,11 +18,11 @@ const TaxTrapWarnings: React.FC<TaxTrapWarningsProps> = ({ warnings }) => {
 
   const getIconForSeverity = (severity: string) => {
     switch (severity) {
-      case 'alert':
+      case 'high':
         return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case 'warning':
+      case 'medium':
         return <AlertTriangle className="h-5 w-5 text-amber-500" />;
-      case 'info':
+      case 'low':
       default:
         return <Info className="h-5 w-5 text-slate-400" />;
     }
@@ -30,17 +30,17 @@ const TaxTrapWarnings: React.FC<TaxTrapWarningsProps> = ({ warnings }) => {
 
   const getClassesForSeverity = (severity: string) => {
     switch (severity) {
-      case 'alert':
+      case 'high':
         return {
           border: 'border-red-800/30',
           bg: 'bg-red-950/20',
         };
-      case 'warning':
+      case 'medium':
         return {
           border: 'border-amber-800/30',
           bg: 'bg-amber-950/20',
         };
-      case 'info':
+      case 'low':
       default:
         return {
           border: 'border-slate-700/30',

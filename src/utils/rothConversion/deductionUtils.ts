@@ -1,16 +1,28 @@
 
-/**
- * Calculate standard deduction based on filing status and tax year
- */
-export const getStandardDeduction = (filingStatus: string, year: number): number => {
-  // Basic standard deduction values - would ideally come from a tax data source
-  // These are simplified examples based on 2023 values
-  const baseValues: Record<string, number> = {
-    'single': 13850,
-    'married': 27700,
-    'head_of_household': 20800,
-    'married_separate': 13850
+export function getStandardDeduction(filingStatus: string, year: number): number {
+  // 2023 standard deduction amounts
+  const baseDeductions = {
+    single: 13850,
+    married_joint: 27700,
+    married_separate: 13850,
+    head_of_household: 20800
   };
   
-  return baseValues[filingStatus as keyof typeof baseValues] || 12950;
-};
+  // Adjustments for inflation
+  const inflationAdjustments = {
+    2023: 1.0,
+    2024: 1.051, // 5.1% adjustment for 2024
+    2025: 1.1 // Estimated 10% cumulative adjustment by 2025
+  };
+  
+  // Get the base deduction for the filing status
+  const baseDeduction = baseDeductions[filingStatus as keyof typeof baseDeductions] || 
+                      baseDeductions.single;
+  
+  // Apply inflation adjustment if we have it for the year, otherwise use most recent
+  const adjustmentFactor = inflationAdjustments[year as keyof typeof inflationAdjustments] || 
+                         inflationAdjustments[2023];
+  
+  // Return adjusted deduction amount
+  return Math.round(baseDeduction * adjustmentFactor);
+}

@@ -13,24 +13,25 @@ export function useCharitableMultiYearIntegration() {
     
     if (!useCharitablePlanning || charitableAmount <= 0) {
       return {
-        year: currentYear,
         amount: 0,
         type: 'standard',
         isQcd: false,
         isBunching: false,
-        taxDeduction: 0
+        taxDeduction: 0,
+        useQcd: false
       };
     }
 
     // Create a standard contribution
     if (!bunchingEnabled) {
       return {
-        year: currentYear,
         amount: charitableAmount,
         type: 'standard',
         isQcd: useQcd,
         isBunching: false,
-        taxDeduction: charitableAmount
+        taxDeduction: charitableAmount,
+        useQcd: useQcd,
+        description: `Standard contribution for ${currentYear}`
       };
     }
 
@@ -38,12 +39,12 @@ export function useCharitableMultiYearIntegration() {
     const startYear = scenarioData.startYear || currentYear;
     
     return {
-      year: startYear,
       amount: charitableAmount * 2,
       type: 'bunched',
       isQcd: useQcd,
       isBunching: true,
       taxDeduction: charitableAmount * 2,
+      useQcd: useQcd,
       description: `Bunched contribution for ${startYear}`
     };
   }, [useCharitablePlanning, charitableAmount, bunchingEnabled, useQcd]);
@@ -51,8 +52,8 @@ export function useCharitableMultiYearIntegration() {
   const updateScenarioWithCharitable = useCallback((scenarioData: MultiYearScenarioData): Partial<MultiYearScenarioData> => {
     return {
       ...scenarioData,
-      useCharitablePlanning: useCharitablePlanning,
-      charitableAmount: charitableAmount
+      useCharitablePlanning,
+      charitableAmount
     };
   }, [useCharitablePlanning, charitableAmount]);
 

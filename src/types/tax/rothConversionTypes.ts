@@ -55,6 +55,10 @@ export interface MultiYearScenarioData {
   investmentReturn?: number;
   includeIrmaa?: boolean;
   fixedConversionAmount?: number;
+  // Added properties for charitable planning integration
+  useCharitablePlanning?: boolean;
+  dafBunching?: boolean;
+  dafBunchingYears?: number;
 }
 
 export interface CharitableContribution {
@@ -65,12 +69,12 @@ export interface CharitableContribution {
   itemizedDeduction?: number;
   isItemizing?: boolean;
   taxSavings?: number;
-  trapAvoidance?: { 
-    type: string; 
-    savings: number;
-    name?: string;
-    description?: string;
-  }[];
+  trapAvoidance?: TrapAvoidance[];
+  year?: number; // Added for charitable planning integration
+  type?: string; // Added for charitable planning integration
+  description?: string; // Added for compatibility
+  isQcd?: boolean; // Added for compatibility
+  taxDeduction?: number; // Added for compatibility
 }
 
 export interface YearlyResult {
@@ -146,6 +150,9 @@ export interface TrapAlert {
   severity: 'low' | 'medium' | 'high';
   message: string;
   details: string;
+  id?: string; // Added for compatibility
+  threshold?: number; // Added for compatibility
+  impact?: number; // Added for compatibility
 }
 
 export interface TrapAvoidance {
@@ -153,4 +160,6 @@ export interface TrapAvoidance {
   savings: number;
   name?: string;
   description?: string;
+  id?: string; // Added for compatibility
+  taxSavings?: number; // Added for backward compatibility
 }

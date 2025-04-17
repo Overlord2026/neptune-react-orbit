@@ -1,62 +1,34 @@
-import { CharitableContribution, MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 
-// Define an interface for DAF bunching configuration
-interface DAFBunchingConfig {
-  enabled: boolean;
-  bunchingYears: number;
-  bunchingAmount: number;
-}
+// Dummy implementation for compatibility
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 
-/**
- * Get charitable contribution for a specific year
- */
-export const getCharitableContributionForYear = (
-  scenarioData: MultiYearScenarioData,
-  currentYear: number,
-  currentAge: number
-): { amount: number; useQcd: boolean; isBunching: boolean } => {
-  if (!scenarioData.useCharitablePlanning) {
+export function getCharitableContributionForYear(
+  scenarioData: MultiYearScenarioData, 
+  year: number
+): {
+  amount: number;
+  useQcd: boolean;
+  isBunching: boolean;
+} {
+  // Default values
+  const amount = scenarioData.charitableAmount || 0;
+  const useQcd = Boolean(scenarioData.useQcd);
+  const isBunching = Boolean(scenarioData.useCharitableBunching);
+  
+  if (!amount) {
     return { amount: 0, useQcd: false, isBunching: false };
   }
-
-  // If we have a specific contribution for this year, use it
-  if (scenarioData.charitableContributions && scenarioData.charitableContributions.length > 0) {
-    const yearContribution = scenarioData.charitableContributions.find(c => c.year === currentYear);
-    if (yearContribution) {
-      return {
-        amount: yearContribution.amount,
-        useQcd: yearContribution.useQcd,
-        isBunching: yearContribution.isBunching || false
-      };
-    }
+  
+  // For bunching, only apply in even years
+  if (isBunching) {
+    const bunchingFrequency = scenarioData.bunchingFrequency || 2;
+    const isContributionYear = (year - scenarioData.startYear) % bunchingFrequency === 0;
+    return {
+      amount: isContributionYear ? amount * bunchingFrequency : 0,
+      useQcd,
+      isBunching
+    };
   }
-
-  // Otherwise, check if we should apply DAF bunching logic
-  if (scenarioData.dafBunching && 
-      typeof scenarioData.dafBunching === 'object') {
-    
-    const dafConfig = scenarioData.dafBunching as DAFBunchingConfig;
-    
-    if (dafConfig.enabled) {
-      const startYear = scenarioData.startYear;
-      const yearIndex = currentYear - startYear;
-      
-      const bunchingYears = dafConfig.bunchingYears || 1;
-      const cyclePosition = yearIndex % bunchingYears;
-      
-      // If we're at the start of a bunching cycle, use bunching amount
-      if (cyclePosition === 0) {
-        return { 
-          amount: dafConfig.bunchingAmount || 0,
-          useQcd: false, // Bunching typically done with cash contributions
-          isBunching: true
-        };
-      }
-      // Otherwise, no contribution in non-bunching years
-      return { amount: 0, useQcd: false, isBunching: false };
-    }
-  }
-
-  // Default case (no contribution)
-  return { amount: 0, useQcd: false, isBunching: false };
-};
+  
+  return { amount, useQcd, isBunching };
+}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import {
@@ -77,7 +76,7 @@ const ManualOverrideForm: React.FC<ManualOverrideFormProps> = ({
       const userId = getCurrentUserId();
       const affectedYears = [...new Set(fields.map(f => parseInt(f.year)))];
       
-      // Record the override in the audit log
+      // Record the override in the audit log - updated to match expected parameters
       recordManualOverride(
         userId,
         dataFeedId,
@@ -92,8 +91,7 @@ const ManualOverrideForm: React.FC<ManualOverrideFormProps> = ({
             }))
           }
         },
-        overrideReason,
-        affectedYears
+        overrideReason
       );
       
       toast.success("Manual override applied successfully");
