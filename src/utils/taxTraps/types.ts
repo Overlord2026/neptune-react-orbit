@@ -26,6 +26,7 @@ export interface TaxTrapWarning {
   financial_impact: number; // Estimated dollar impact
   icon?: 'info' | 'alertCircle' | 'alertTriangle' | 'help';
   trapType?: string; // Added for compatibility with code using this property
+  name?: string; // For compatibility with CharitableContributionImpact
 }
 
 export interface TaxTrapResult {

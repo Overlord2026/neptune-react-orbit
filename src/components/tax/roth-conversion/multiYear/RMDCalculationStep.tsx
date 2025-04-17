@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Info, Calculator, Clock } from "lucide-react";
-import { MultiYearScenarioData } from '../types/ScenarioTypes';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 
 interface RMDCalculationStepProps {
   scenarioData: MultiYearScenarioData;

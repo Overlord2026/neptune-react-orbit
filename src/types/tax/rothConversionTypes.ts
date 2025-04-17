@@ -1,3 +1,4 @@
+
 import { FilingStatusType } from './filingTypes';
 
 /**
@@ -37,6 +38,23 @@ export interface MultiYearScenarioData {
   residentState?: string;
   stateRelocationYear?: number;
   futureResidentState?: string;
+  // Added properties for RMDCalculationStep
+  includeRMDs?: boolean;
+  // Added properties for BeneficiaryStep
+  includeBeneficiary?: boolean;
+  beneficiaryAge?: number;
+  beneficiaryIncomeTaxRate?: number;
+  assumedDeathYear?: number;
+  spouseAssumedDeathYear?: number;
+  // Added properties for other components
+  traditionalIRABalance?: number; // For backward compatibility
+  rothIRABalance?: number; // For backward compatibility
+  expectedAnnualReturn?: number;
+  incomeGrowthRate?: number;
+  inflationRate?: number;
+  investmentReturn?: number;
+  includeIrmaa?: boolean;
+  fixedConversionAmount?: number;
 }
 
 export interface CharitableContribution {
@@ -47,7 +65,12 @@ export interface CharitableContribution {
   itemizedDeduction?: number;
   isItemizing?: boolean;
   taxSavings?: number;
-  trapAvoidance?: { type: string; savings: number }[];
+  trapAvoidance?: { 
+    type: string; 
+    savings: number;
+    name?: string;
+    description?: string;
+  }[];
 }
 
 export interface YearlyResult {
@@ -94,6 +117,10 @@ export interface YearlyResult {
     spouse2Tax: number;
     combinedMfsTax: number;
     taxDifference: number;
+    mfjIrmaa?: number;
+    spouse1Irmaa?: number;
+    spouse2Irmaa?: number;
+    combinedMfsIrmaa?: number;
   };
   
   // State tax info
@@ -109,3 +136,6 @@ export interface YearlyResult {
   // Charitable contribution impact
   charitableContribution: CharitableContribution;
 }
+
+// Add ConversionStrategyType for IncomeInformationCard
+export type ConversionStrategyType = 'fixed' | 'bracket' | 'minimize' | 'maximize' | 'optimal';

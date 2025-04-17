@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -7,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Info, AlertTriangle, Users, X, Check } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { MultiYearScenarioData } from '../types/ScenarioTypes';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 import { Checkbox } from "@/components/ui/checkbox";
 import { FilingStatusType } from '@/types/tax/filingTypes';
 
@@ -290,7 +291,7 @@ const SpouseDetailsStep: React.FC<SpouseDetailsStepProps> = ({
 
       {isMarried && 
        scenarioData.includeSpouse && 
-       (scenarioData.spouseTraditionalIRABalance || 0) > 0 && (
+       (scenarioData.spouseTraditionalIRAStartBalance || 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">IRA Planning Approach</CardTitle>
