@@ -6,7 +6,7 @@
  */
 
 import { FilingStatusType } from '../taxBracketData';
-import { TaxInput, TaxResult } from '../taxCalculatorTypes';
+import { TaxInput, TaxResult } from '../../types/tax/taxCalculationTypes';
 import { calculateBasicScenarioResult } from './calculatorCore';
 import { calculateSafeHarbor, SafeHarborInput, SafeHarborResult } from '../safeHarborUtils';
 
@@ -20,7 +20,14 @@ export function calculateTaxScenario(
   sessionId: string = "default"
 ): TaxResult {
   // Calculate the basic scenario result with all core tax calculations
-  return calculateBasicScenarioResult(input, scenario_name, sessionId);
+  const result = calculateBasicScenarioResult(input, scenario_name, sessionId);
+  
+  // Convert any Date objects to strings to maintain compatibility
+  if (result.updated_at instanceof Date) {
+    result.updated_at = result.updated_at.toISOString();
+  }
+  
+  return result;
 }
 
 /**

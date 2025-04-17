@@ -1,24 +1,18 @@
-
 /**
- * Year Calculation Utilities
- * 
- * Re-exports year calculation utilities from their modular files.
+ * Centralized export for year calculation utilities
  */
 
-// Re-export primary function
-export { processSingleYearCalculation } from '../yearCalculation';
+// Re-export income calculation functions
+export * from './income/incomeCalculation';
+export * from './income/taxableIncomeProcessor';
 
-// Income calculation modules
-export { calculateYearlyIncome } from './income/incomeCalculation';
-export { processTaxableIncome } from './income/taxableIncomeProcessor';
+// Re-export tax calculation functions
+export * from './tax/taxInputPreparation';
+export * from './tax/taxResultProcessor';
+export * from './tax/stateTaxUtils';  // Export the stateTaxUtils directly
+export * from './tax/taxTrapUtils';
 
-// Charitable modules
-export { calculateCharitableEffect } from './charitable/charitableProcessor';
+// Re-export charitable functions
+export * from './charitable/charitableProcessor';
 
-// Tax modules
-export { prepareTaxInput } from './tax/taxInputPreparation';
-export { checkForTaxTraps } from './tax/taxTrapUtils';
-export { processTaxResults } from './tax/taxResultProcessor';
-
-// Add the applyStateTaxInfo function from stateTaxUtils
-export { applyStateTaxInfo, calculateStateTax } from './tax/stateTaxUtils';
+// Additional exports and functions as needed...

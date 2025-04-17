@@ -25,6 +25,22 @@ export interface TaxInput {
   itemizedDeductionAmount?: number;
   residentState?: string;
   includeStateTax?: boolean;
+  // Add spouse-related fields for community property calculations
+  isInCommunityPropertyState?: boolean;
+  splitCommunityIncome?: boolean;
+  spouseWages?: number;
+  spouseInterest?: number;
+  spouseDividends?: number;
+  spouseCapitalGains?: number;
+  spouseIraDistributions?: number;
+  spouseRothConversion?: number;
+  spouseSocialSecurity?: number;
+}
+
+export interface BracketItem {
+  bracket: number; // The tax rate as a percentage (e.g., 10 for 10%)
+  amount: number; // The amount of income in this bracket
+  tax: number; // The tax amount for this bracket
 }
 
 export interface TaxResult {
@@ -44,23 +60,27 @@ export interface TaxResult {
   federal_tax: number;
   state_tax: number;
   state_code?: string;
-  tax_data_updated_at: string; // Add this field to match the object in taxScenarioCalculator.ts
-  tax_data_is_current: boolean; // Add this field to match the object in taxScenarioCalculator.ts
+  // Add the missing properties referenced in BracketSummary.tsx
+  brackets_breakdown?: {
+    ordinary: BracketItem[];
+    capitalGains: BracketItem[];
+  };
+  tax_data_updated_at: string;
+  tax_data_is_current: boolean;
+  tax_data_version?: string;
   safe_harbor?: {
     required_payment: number;
     is_compliant: boolean;
     method_used: string;
-  }
+  };
+  // Additional fields referenced in other components
+  mfs_comparison?: any;
+  brackets?: any[];
+  standard_deduction?: number;
 }
 
 export interface TaxDataCacheInfo {
   dataUpdatedAt: Date;
   isCurrent: boolean;
   sessionId: string;
-}
-
-export interface BracketItem {
-  bracket: number; // The tax rate as a percentage (e.g., 10 for 10%)
-  amount: number; // The amount of income in this bracket
-  tax: number; // The tax amount for this bracket
 }

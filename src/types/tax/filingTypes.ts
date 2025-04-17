@@ -1,3 +1,4 @@
+
 /**
  * Defines the comprehensive types of filing statuses used in tax calculations
  */
@@ -91,6 +92,9 @@ export interface TaxReturnData {
   isEligible?: boolean;
   disclaimerAcknowledged?: boolean;
   stateTax?: number;
+  // Add email field used in initialState.ts
+  email?: string;
+  phone?: string;  // Also used in initialState.ts
 }
 
 export interface Dependent {

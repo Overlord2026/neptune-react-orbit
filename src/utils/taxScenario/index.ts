@@ -31,12 +31,19 @@ export {
   updateTaxScenario
 } from './storage';
 
-// Re-export types from our proper types path
-export type { 
+// Import types from our proper types path
+import type { 
   TaxInput, 
   TaxResult, 
   TaxScenario 
 } from '../../types/tax/taxCalculationTypes';
+
+// Re-export types
+export type { 
+  TaxInput, 
+  TaxResult, 
+  TaxScenario 
+};
 
 // Import equity types directly
 import type { 

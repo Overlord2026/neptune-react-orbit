@@ -18,3 +18,12 @@ export interface AuditLogFilter {
   actionTypes?: AuditLogType[];
   limit?: number;
 }
+
+export interface AuditLogEntry {
+  id: string;
+  timestamp: Date;
+  user: string;
+  action: string;
+  details: any;
+  type: AuditLogType;
+}
