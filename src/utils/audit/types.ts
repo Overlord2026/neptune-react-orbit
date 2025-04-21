@@ -1,4 +1,3 @@
-
 /**
  * Audit Log Types
  */
@@ -33,4 +32,9 @@ export interface AuditLogEntry {
   changes_made?: any;
   version_id?: string;
   affected_years?: string[];
+}
+
+export interface AuditLogOperationDetails {
+  [key: string]: any;
+  reason?: string;
 }

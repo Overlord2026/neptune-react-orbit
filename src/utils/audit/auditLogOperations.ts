@@ -14,7 +14,7 @@ export function recordManualOverride(
 ): AuditLogEntry {
   const entry: AuditLogEntry = {
     id: uuid(),
-    timestamp: new Date().toISOString(),
+    timestamp: new Date(),
     userId,
     action: 'MANUAL_OVERRIDE',
     targetId: dataFeedId,
@@ -40,7 +40,7 @@ export function recordLoginAttempt(
 ): AuditLogEntry {
   const entry: AuditLogEntry = {
     id: uuid(),
-    timestamp: new Date().toISOString(),
+    timestamp: new Date(),
     userId,
     action: success ? 'LOGIN_SUCCESS' : 'LOGIN_FAILURE',
     targetId: userId,

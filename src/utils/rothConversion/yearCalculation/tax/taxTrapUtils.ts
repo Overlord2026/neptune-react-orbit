@@ -38,7 +38,7 @@ export function checkForTaxTraps({
   hasCapitalGains = false,
   capitalGainsAmount = 0,
   hasACA = false
-}: TaxTrapCheckParams): { trapResults: TaxTrapResult; warnings: { type: string; message: string; severity: 'low' | 'medium' | 'high'; trapType: string }[] } {
+}: TaxTrapCheckParams): { trapResults: TaxTrapResult; warnings: { type: string; message: string; severity: 'low' | 'medium' | 'high'; trapType: string; details: string; }[] } {
   const warnings: TaxTrapWarning[] = [];
   
   // Initialize result object
@@ -56,6 +56,7 @@ export function checkForTaxTraps({
         id: `irmaa-${scenarioId}`,
         trapType: 'irmaa',
         type: 'irmaa', // Ensure type is always set
+        title: 'Medicare IRMAA Surcharge', // Add required title
         message: 'Medicare IRMAA Surcharge Triggered',
         details: `Your MAGI of $${baseAGI.toLocaleString()} exceeds the IRMAA threshold, triggering additional Medicare premium costs.`,
         severity: 'medium',
@@ -90,6 +91,7 @@ export function checkForTaxTraps({
         id: `ss-tax-${scenarioId}`,
         trapType: 'social_security',
         type: 'social_security', // Add type field for compatibility
+        title: '85% of Social Security Taxable', // Add required title
         message: '85% of Social Security Benefits Taxable',
         details: 'Your combined income has triggered the maximum 85% taxation of your Social Security benefits.',
         severity: 'medium',
@@ -110,6 +112,7 @@ export function checkForTaxTraps({
         id: `ss-tax-${scenarioId}`,
         trapType: 'social_security',
         type: 'social_security', // Add type field for compatibility
+        title: '50% of Social Security Taxable', // Add required title
         message: '50% of Social Security Benefits Taxable',
         details: 'Your combined income has triggered partial taxation of your Social Security benefits.',
         severity: 'low',
@@ -139,6 +142,7 @@ export function checkForTaxTraps({
         id: `aca-cliff-${scenarioId}`,
         trapType: 'aca',
         type: 'aca', // Add type field for compatibility
+        title: 'ACA Subsidy Cliff Risk', // Add required title
         message: 'ACA Subsidy Cliff Risk',
         details: `Your income is ${fplPercentage.toFixed(1)}% of the Federal Poverty Level, which is near the 400% cliff for ACA premium subsidies.`,
         severity: 'high',
@@ -170,6 +174,7 @@ export function checkForTaxTraps({
         id: `cap-gain-jump-${scenarioId}`,
         trapType: 'capital_gains',
         type: 'capital_gains', // Add type field for compatibility
+        title: 'Capital Gains Tax Bracket Jump', // Add required title
         message: 'Capital Gains Tax Bracket Jump',
         details: 'Your capital gains have pushed you from the 0% to the 15% capital gains tax bracket.',
         severity: 'high',
@@ -202,7 +207,8 @@ export function checkForTaxTraps({
     type: warning.type,
     message: warning.message,
     severity: warning.severity,
-    trapType: warning.trapType
+    trapType: warning.trapType,
+    details: warning.details || warning.message // Ensure details is present
   }));
   
   // Return both formats

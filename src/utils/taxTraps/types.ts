@@ -1,5 +1,4 @@
 
-
 // Shared types for tax trap detection
 
 export interface TaxTrapInput {
@@ -31,7 +30,7 @@ export interface TaxTrapWarning {
 }
 
 export interface TaxTrapResult {
-  scenario_id: string;
+  scenario_id?: string; // Made optional to match the other definition
   warnings: TaxTrapWarning[];
   irmaa_data?: {
     partB_surcharge: number;

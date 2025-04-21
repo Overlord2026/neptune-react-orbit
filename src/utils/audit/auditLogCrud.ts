@@ -1,4 +1,3 @@
-
 // Dummy implementation to fix build errors
 import { v4 as uuid } from 'uuid';
 import { AuditLogEntry } from './types';
@@ -7,11 +6,11 @@ import { AuditLogEntry } from './types';
 const auditLogEntries: AuditLogEntry[] = [];
 
 /**
- * Get the current user ID (for demo purposes)
+ * Get the ID of the currently logged-in user
  */
 export function getCurrentUserId(): string {
-  // In a real implementation, this would get the current user ID from auth context
-  return 'current-user-id';
+  // In a real implementation, this would use authentication
+  return 'current-user-123';
 }
 
 /**
@@ -24,8 +23,9 @@ export function getAuditLogs(): AuditLogEntry[] {
 /**
  * Get audit log by ID
  */
-export function getAuditLogById(id: string): AuditLogEntry | undefined {
-  return auditLogEntries.find(entry => entry.id === id);
+export function getAuditLogById(id: string) {
+  // In a real implementation, this would fetch from a database
+  return getAuditLogs().find(log => log.id === id);
 }
 
 /**

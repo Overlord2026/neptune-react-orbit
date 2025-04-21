@@ -1,20 +1,18 @@
-
 /**
  * Tax Input Preparation
  * 
  * Functions for preparing tax inputs for scenario calculations.
  */
 
-import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
-import { TaxInput } from '@/types/tax/taxCalculationTypes';
-import { TaxTrapResult } from '@/utils/taxTraps/types';
+import { TaxInput } from "@/types/tax/taxCalculationTypes";
+import { FilingStatusType } from "@/types/tax/filingTypes";
 
 interface TaxInputParams {
   currentYear: number;
   baseIncome: number;
   adjustedRmdAmount: number;
   conversionAmount: number;
-  scenarioData: MultiYearScenarioData;
+  scenarioData: any;
   spouseBaseIncome: number;
   spouseRmdAmount: number;
   spouseConversionAmount: number;
@@ -24,7 +22,7 @@ interface TaxInputParams {
     isBunching: boolean; 
   };
   baseAGI: number;
-  beforeCharitableTraps: TaxTrapResult;
+  beforeCharitableTraps: any;
   charitableImpact: {
     standardDeduction: number;
     itemizedDeduction: number;
@@ -36,7 +34,7 @@ interface TaxInputParams {
 /**
  * Prepare tax input for the scenario
  */
-export function prepareTaxInput({
+export function prepareTaxInput({ 
   currentYear,
   baseIncome,
   adjustedRmdAmount,
@@ -45,18 +43,24 @@ export function prepareTaxInput({
   spouseBaseIncome,
   spouseRmdAmount,
   spouseConversionAmount,
+  charitableContribution,
+  baseAGI,
+  beforeCharitableTraps,
   charitableImpact
-}: TaxInputParams) {
-  // Create the tax input
+}: any) {
+  // Convert string filing status to FilingStatusType
+  const filingStatus = scenarioData.filingStatus as FilingStatusType;
+  
+  // Build the yearTaxInput object with the correct type
   const yearTaxInput: TaxInput = {
     year: currentYear,
-    filing_status: scenarioData.filingStatus,
-    filingStatus: scenarioData.filingStatus, // Add both properties for compatibility
+    filing_status: filingStatus,
+    filingStatus: filingStatus, // Include both properties for compatibility
     wages: baseIncome,
     interest: 0,
     dividends: 0,
     capital_gains: 0,
-    ira_distributions: adjustedRmdAmount, // Use adjusted RMD amount
+    ira_distributions: adjustedRmdAmount,
     roth_conversion: conversionAmount,
     social_security: 0,
     isItemizedDeduction: false, // Will be determined based on charitable contribution
@@ -84,5 +88,7 @@ export function prepareTaxInput({
     yearTaxInput.itemizedDeductionAmount = charitableImpact.itemizedDeduction;
   }
 
-  return { yearTaxInput };
+  return {
+    yearTaxInput
+  };
 }

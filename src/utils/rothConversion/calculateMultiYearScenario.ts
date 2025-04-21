@@ -4,7 +4,7 @@
  * Main function for calculating multi-year Roth conversion scenarios.
  */
 
-import { MultiYearScenarioData, YearlyResult, CharitableContribution } from '@/types/tax/rothConversionTypes';
+import { MultiYearScenarioData, YearlyResult, CharitableContribution, TrapAlert } from '@/types/tax/rothConversionTypes';
 import { TaxInput } from '@/types/tax/taxCalculationTypes';
 import { calculateTaxScenario } from '../taxCalculator';
 import { processSingleYearCalculation } from './yearCalculation';
@@ -149,7 +149,10 @@ export const calculateMultiYearScenario = async (
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
       effectiveRate: taxResult.effective_rate,
-      warnings: warnings || [],
+      warnings: (warnings || []).map(w => ({
+        ...w,
+        details: w.details || w.message || 'No details provided'
+      })) as TrapAlert[],
       cumulativeTaxPaid,
       cumulativeTaxSaved,
       traditionalScenarioBalance,
