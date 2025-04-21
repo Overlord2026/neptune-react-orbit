@@ -61,13 +61,6 @@ export const calculateTaxScenario = (input: any, scenarioName: string, sessionId
     spouseSocialSecurity: input.spouseSocialSecurity || 0
   };
 
-  // Remove state tax properties to fix the type error
-  // We're removing state tax functionality as requested by the user
-  delete adaptedInput.residentState;
-  delete adaptedInput.includeStateTax;
-  delete adaptedInput.stateRelocationYear;
-  delete adaptedInput.futureResidentState;
-
   return calcTaxScenario(adaptedInput, scenarioName, sessionId || "default");
 };
 

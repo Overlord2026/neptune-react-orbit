@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   RefreshCw, // Use RefreshCw instead of UpdateIcon which doesn't exist
@@ -44,7 +45,20 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { dataFeeds, dataFeedLogs, taxDataCache } from '@/utils/dataFeed';
-import { formatTimestamp } from '@/utils/dataFeed/formattingUtils';
+
+// Add formatTimestamp function since it's missing from the imported module
+const formatTimestamp = (timestamp: string | Date): string => {
+  if (!timestamp) return 'N/A';
+  
+  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+};
 
 const DataFeedsAndUpdatesPage: React.FC = () => {
   return (
@@ -113,7 +127,7 @@ const DataTable = ({ data }: { data: any[] }) => {
           <TableRow key={feed.id}>
             <TableCell>
               {feed.status === 'active' ? (
-                <Badge variant="success">Active</Badge>
+                <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">Active</Badge>
               ) : (
                 <Badge variant="destructive">Inactive</Badge>
               )}

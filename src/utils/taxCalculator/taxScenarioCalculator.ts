@@ -36,7 +36,7 @@ export function calculateTaxScenario(
     marginal_capital_gains_rate
   } = calculateTaxAmounts(input);
   
-  // Prepare and return tax result
+  // Prepare and return tax result with the missing tax_data fields
   return {
     scenario_name: scenarioName,
     year: input.year,
@@ -52,8 +52,11 @@ export function calculateTaxScenario(
     effective_rate,
     updated_at: new Date().toISOString(), // Convert Date to string
     federal_tax: total_tax,
-    state_tax,
-    state_code: input.residentState
+    state_tax: state_tax || 0,
+    state_code: undefined, // Remove state tax functionality
+    tax_data_updated_at: taxDataInfo.dataUpdatedAt.toISOString(),
+    tax_data_is_current: taxDataInfo.isCurrent,
+    tax_data_version: "1.0"
   };
 }
 

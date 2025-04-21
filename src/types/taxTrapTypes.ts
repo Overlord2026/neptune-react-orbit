@@ -18,7 +18,7 @@ export interface TaxTrapWarning {
   };
   financial_impact?: number;
   type: string;
-  title?: string;
+  title: string; // Changed from optional to required to match utils/taxTraps/types
   description?: string;
   impact?: number;
 }
