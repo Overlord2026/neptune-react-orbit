@@ -1,4 +1,3 @@
-
 /**
  * Tax Amounts Calculator
  * 
@@ -58,7 +57,6 @@ export function calculateTaxAmounts(input: TaxInput) {
   );
   
   // Calculate ordinary tax on ordinary income
-  // Capital gains are taxed separately
   const ordinary_taxable = Math.max(0, taxable_income - Math.min(taxable_income, capital_gains));
   const ordinary_tax = calculateOrdinaryTax(ordinary_taxable, input.year, input.filingStatus || input.filing_status as FilingStatusType);
   
@@ -73,13 +71,6 @@ export function calculateTaxAmounts(input: TaxInput) {
   
   // Total federal tax
   const total_tax = ordinary_tax + capital_gains_tax;
-  
-  // Calculate state tax if requested
-  let state_tax = 0;
-  if (input.includeStateTax && input.residentState) {
-    const stateRate = getApproximateStateRate(input.residentState, agi);
-    state_tax = agi * stateRate;
-  }
   
   // Calculate marginal and effective rates
   const marginal_rate_data = getTaxBracket(taxable_income, input.filingStatus || input.filing_status as FilingStatusType);
@@ -101,7 +92,7 @@ export function calculateTaxAmounts(input: TaxInput) {
     ordinary_tax,
     capital_gains_tax,
     total_tax,
-    state_tax,
+    state_tax: 0, // Always return 0 for state tax
     marginal_rate,
     effective_rate,
     marginal_capital_gains_rate

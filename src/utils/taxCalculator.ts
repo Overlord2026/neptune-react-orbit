@@ -25,12 +25,7 @@ import {
   calculateTaxScenarioWithSafeHarbor as calcWithSafeHarbor,
 } from './taxCalculator/taxScenarioCalculator';
 
-import {
-  saveTaxScenario as saveTaxScenarioFunc,
-  getSavedScenarios as fetchTaxScenariosFunc,
-} from './taxScenario/storage';
-
-// Re-export functions from modules with their original names
+// Re-export functions with their original names
 export const checkTaxDataBeforeCalculation = checkTaxData;
 export const refreshTaxData = refreshData;
 
@@ -47,20 +42,16 @@ export const calculateTaxScenario = (input: any, scenarioName: string, sessionId
     credits: 0,
     isItemizedDeduction: input.isItemizedDeduction || false,
     itemizedDeductionAmount: input.itemizedDeductionAmount || 0,
-    residentState: input.residentState,
-    includeStateTax: input.includeStateTax || false,
-    filing_status: input.filingStatus || input.filing_status, // Keep both for backwards compatibility
-    capital_gains: input.capitalGains || input.capital_gains || 0, // Keep both for backwards compatibility
+    filing_status: input.filingStatus || input.filing_status,
+    capital_gains: input.capitalGains || input.capital_gains || 0,
     wages: input.wages || 0,
     interest: input.interest || 0,
     dividends: input.dividends || 0,
     ira_distributions: input.ira_distributions || 0,
     roth_conversion: input.roth_conversion || 0,
     social_security: input.social_security || 0,
-    // Add community property state fields
     isInCommunityPropertyState: input.isInCommunityPropertyState || false,
     splitCommunityIncome: input.splitCommunityIncome || false,
-    // Add spouse-related fields
     spouseWages: input.spouseWages || 0,
     spouseInterest: input.spouseInterest || 0,
     spouseDividends: input.spouseDividends || 0,
@@ -73,11 +64,8 @@ export const calculateTaxScenario = (input: any, scenarioName: string, sessionId
   return calcTaxScenario(adaptedInput, scenarioName, sessionId || "default");
 };
 
+// Re-export other functions
 export const calculateTaxScenarioWithSafeHarbor = calcWithSafeHarbor;
-export const saveScenario = saveTaxScenarioFunc;
-export const fetchScenarios = fetchTaxScenariosFunc;
-
-// Re-export utility functions that are part of the public API
 export { calculateSafeHarbor } from './safeHarborUtils';
 export { calculateMultiYearScenario } from './rothConversion';
 export { calculateRMD } from './rmdCalculationUtils';

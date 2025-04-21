@@ -1,4 +1,3 @@
-
 /**
  * Tax Calculator Type Definitions
  */
@@ -8,13 +7,13 @@ import { FilingStatusType } from '@/types/tax/filingTypes';
 export interface TaxInput {
   year: number;
   filingStatus?: FilingStatusType;
-  filing_status?: FilingStatusType; // For backward compatibility
+  filing_status?: FilingStatusType;
   income?: number;
   wages?: number;
   interest?: number;
   dividends?: number;
   capitalGains?: number;
-  capital_gains?: number; // For backward compatibility
+  capital_gains?: number;
   ira_distributions?: number;
   roth_conversion?: number;
   social_security?: number;
@@ -23,11 +22,10 @@ export interface TaxInput {
   credits?: number;
   isItemizedDeduction?: boolean;
   itemizedDeductionAmount?: number;
-  residentState?: string;
-  includeStateTax?: boolean;
-  stateRelocationYear?: number;
-  futureResidentState?: string;
-  // Add spouse-related fields for community property calculations
+  residentState?: never;
+  includeStateTax?: never;
+  stateRelocationYear?: never;
+  futureResidentState?: never;
   isInCommunityPropertyState?: boolean;
   splitCommunityIncome?: boolean;
   spouseWages?: number;
@@ -40,9 +38,9 @@ export interface TaxInput {
 }
 
 export interface BracketItem {
-  bracket: number; // The tax rate as a percentage (e.g., 10 for 10%)
-  amount: number; // The amount of income in this bracket
-  tax: number; // The tax amount for this bracket
+  bracket: number;
+  amount: number;
+  tax: number;
 }
 
 export interface TaxResult {
@@ -62,7 +60,6 @@ export interface TaxResult {
   federal_tax: number;
   state_tax: number;
   state_code?: string;
-  // Add the missing properties referenced in BracketSummary.tsx
   brackets_breakdown?: {
     ordinary: BracketItem[];
     capitalGains: BracketItem[];
@@ -75,7 +72,6 @@ export interface TaxResult {
     is_compliant: boolean;
     method_used: string;
   };
-  // Additional fields referenced in other components
   mfs_comparison?: any;
   brackets?: any[];
   standard_deduction?: number;
