@@ -1,3 +1,4 @@
+
 /**
  * Tax Calculator Type Definitions
  */
@@ -22,10 +23,6 @@ export interface TaxInput {
   credits?: number;
   isItemizedDeduction?: boolean;
   itemizedDeductionAmount?: number;
-  residentState?: never;
-  includeStateTax?: never;
-  stateRelocationYear?: never;
-  futureResidentState?: never;
   isInCommunityPropertyState?: boolean;
   splitCommunityIncome?: boolean;
   spouseWages?: number;

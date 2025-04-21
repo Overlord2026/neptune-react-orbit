@@ -25,7 +25,7 @@ export interface TaxTrapWarning {
 
 export interface TaxTrapResult {
   warnings: TaxTrapWarning[];
-  scenario_id?: string;
+  scenario_id: string; // Make this required to match the utils/taxTraps/types version
   irmaa_data?: {
     partB_surcharge: number;
     partD_surcharge: number;
@@ -59,4 +59,19 @@ export interface TaxTrapType {
   name: string;
   description: string;
   thresholds: TaxTrapThreshold[];
+}
+
+export interface TrapAlert {
+  type: string;
+  message: string;
+  severity: 'low' | 'medium' | 'high';
+  trapType: string;
+  details: string; // Make this required to match usage
+}
+
+export interface TrapAvoidance {
+  type: string;
+  message: string;
+  action: string;
+  impact: number;
 }

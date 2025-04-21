@@ -6,35 +6,39 @@ import { AuditLogEntry } from './types';
 // In-memory storage for audit logs
 const auditLogEntries: AuditLogEntry[] = [];
 
-export function recordManualOverride(
-  userId: string,
-  targetId: string,
-  details: any,
-  reason: string
-): AuditLogEntry {
-  const entry: AuditLogEntry = {
-    id: uuid(),
-    timestamp: new Date(),
-    user: userId,
-    user_id: userId,
-    action: 'manual_override',
-    details,
-    type: 'SECURITY_EVENT',
-    reason
-  };
-  
-  // In a real implementation, this would save to a database
-  auditLogEntries.push(entry);
-  console.log('Manual override recorded:', entry);
-  
-  return entry;
-}
-
+/**
+ * Get the current user ID (for demo purposes)
+ */
 export function getCurrentUserId(): string {
   // In a real implementation, this would get the current user ID from auth context
   return 'current-user-id';
 }
 
+/**
+ * Get all audit logs
+ */
 export function getAuditLogs(): AuditLogEntry[] {
   return [...auditLogEntries];
+}
+
+/**
+ * Get audit log by ID
+ */
+export function getAuditLogById(id: string): AuditLogEntry | undefined {
+  return auditLogEntries.find(entry => entry.id === id);
+}
+
+/**
+ * Delete an audit log
+ */
+export function deleteAuditLog(id: string): boolean {
+  const initialLength = auditLogEntries.length;
+  const index = auditLogEntries.findIndex(entry => entry.id === id);
+  
+  if (index !== -1) {
+    auditLogEntries.splice(index, 1);
+    return true;
+  }
+  
+  return false;
 }
