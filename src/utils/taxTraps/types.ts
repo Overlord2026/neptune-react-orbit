@@ -30,7 +30,7 @@ export interface TaxTrapWarning {
 }
 
 export interface TaxTrapResult {
-  scenario_id?: string; // Made optional to match the other definition
+  scenario_id?: string; // Made optional for consistency
   warnings: TaxTrapWarning[];
   irmaa_data?: {
     partB_surcharge: number;

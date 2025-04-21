@@ -1,3 +1,4 @@
+
 /**
  * Tax Input Preparation
  * 
@@ -48,8 +49,18 @@ export function prepareTaxInput({
   beforeCharitableTraps,
   charitableImpact
 }: any) {
-  // Convert string filing status to FilingStatusType
-  const filingStatus = scenarioData.filingStatus as FilingStatusType;
+  // Convert string filing status to FilingStatusType, ensuring it's a valid value
+  const filingStatusValue = scenarioData.filingStatus;
+  
+  // Ensure filingStatus is a valid FilingStatusType
+  const validFilingStatuses: FilingStatusType[] = [
+    'single', 'married_joint', 'married_separate', 'head_of_household', 'qualifying_widow'
+  ];
+  
+  // Default to 'single' if the provided value isn't valid
+  const filingStatus: FilingStatusType = validFilingStatuses.includes(filingStatusValue) 
+    ? filingStatusValue as FilingStatusType 
+    : 'single';
   
   // Build the yearTaxInput object with the correct type
   const yearTaxInput: TaxInput = {
@@ -75,11 +86,11 @@ export function prepareTaxInput({
     isInCommunityPropertyState: scenarioData.isInCommunityPropertyState,
     splitCommunityIncome: scenarioData.splitCommunityIncome,
     
-    // State tax info
-    includeStateTax: scenarioData.includeStateTax,
-    residentState: scenarioData.residentState,
+    // State tax info - make sure we're handling string or undefined only
+    includeStateTax: Boolean(scenarioData.includeStateTax),
+    residentState: scenarioData.residentState ? String(scenarioData.residentState) : undefined,
     stateRelocationYear: scenarioData.stateRelocationYear,
-    futureResidentState: scenarioData.futureResidentState
+    futureResidentState: scenarioData.futureResidentState ? String(scenarioData.futureResidentState) : undefined
   };
   
   // Update tax input with itemized deduction info if applicable

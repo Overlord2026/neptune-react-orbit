@@ -35,8 +35,14 @@ export function calculateBasicScenarioResult(
     marginal_rate,
     effective_rate,
     marginal_capital_gains_rate,
-    brackets_breakdown
+    // Ensure result has brackets_breakdown or provide default empty breakdown
   } = result;
+  
+  // Create default brackets_breakdown if not provided by calculateTaxAmounts
+  const brackets_breakdown = result.brackets_breakdown || {
+    ordinary: [],
+    capitalGains: []
+  };
   
   // Return results with standardized property names
   return {
@@ -56,7 +62,7 @@ export function calculateBasicScenarioResult(
     federal_tax: total_tax - (state_tax || 0),
     state_tax,
     state_code: input.residentState,
-    brackets_breakdown,
+    brackets_breakdown, // Added fixed brackets_breakdown
     tax_data_updated_at: new Date(taxDataInfo.dataUpdatedAt).toISOString(),
     tax_data_is_current: taxDataInfo.isCurrent,
     tax_data_version: "2.0"

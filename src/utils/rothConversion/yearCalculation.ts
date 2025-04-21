@@ -6,7 +6,7 @@
  * This file orchestrates the various specialized utility modules to process a full year calculation.
  */
 
-import { MultiYearScenarioData } from '@/components/tax/roth-conversion/types/ScenarioTypes';
+import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 import { calculateTaxScenario } from '../taxCalculator';
 import { FilingStatusType } from '@/types/tax/filingTypes';
 
@@ -19,6 +19,7 @@ import { prepareTaxInput } from './yearCalculation/tax/taxInputPreparation';
 import { applyStateTaxInfo } from './yearCalculation/tax/stateTaxUtils';
 import { processTaxResults } from './yearCalculation/tax/taxResultProcessor';
 import { checkForTaxTraps } from './yearCalculation/tax/taxTrapUtils';
+import { TaxTrapWarning } from '@/utils/taxTraps/types';
 
 /**
  * Input parameters for a single year calculation
@@ -93,15 +94,26 @@ export function processSingleYearCalculation({
   const baseAGI = totalPreConversionIncome + conversionAmount + (spouseConversionAmount || 0);
   
   // Check for tax traps before charitable contributions
+  // Create compatible warnings with required properties
   const { trapResults: beforeCharitableTraps, warnings } = checkForTaxTraps({
     scenarioId: `year_${currentYear}_before`,
     year: currentYear,
-    filingStatus: scenarioData.filingStatus,
+    filingStatus: scenarioData.filingStatus as FilingStatusType,
     baseAGI,
     currentAge,
     isMarried: scenarioData.filingStatus === 'married_joint' || scenarioData.filingStatus === 'married_separate',
     isMedicare: currentAge >= 65
   });
+  
+  // Make sure the warnings have all required properties
+  const standardizedWarnings = warnings?.map((warning: any) => ({
+    type: warning.type,
+    severity: warning.severity,
+    title: warning.title || warning.message || 'Warning',
+    description: warning.description || warning.message || 'Tax trap detected',
+    financial_impact: warning.financial_impact || 0,
+    trapType: warning.trapType || warning.type,
+  })) || [];
   
   // Calculate charitable effects
   const { charitableImpact, updatedWarnings } = calculateCharitableEffect({
@@ -111,7 +123,7 @@ export function processSingleYearCalculation({
     baseAGI,
     charitableContribution,
     beforeCharitableTraps,
-    warnings
+    warnings: standardizedWarnings
   });
   
   // Prepare tax input with charitable impact
