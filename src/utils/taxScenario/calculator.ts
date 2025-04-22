@@ -1,3 +1,4 @@
+
 /**
  * Tax Scenario Calculator
  * 
@@ -60,7 +61,7 @@ export function calculateBasicScenarioResult(
     federal_tax: total_tax - (state_tax || 0),
     state_tax,
     state_code: input.residentState,
-    brackets_breakdown, // Added fixed brackets_breakdown
+    brackets_breakdown,
     tax_data_updated_at: new Date(taxDataInfo.dataUpdatedAt).toISOString(),
     tax_data_is_current: taxDataInfo.isCurrent,
     tax_data_version: "2.0"

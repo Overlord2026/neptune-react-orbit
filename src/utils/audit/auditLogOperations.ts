@@ -15,15 +15,15 @@ export function recordManualOverride(
   const entry: AuditLogEntry = {
     id: uuid(),
     timestamp: new Date(),
-    user_id: userId, // Fixed property name to match AuditLogEntry type
+    user: userId,
+    user_id: userId,
     action: 'MANUAL_OVERRIDE',
-    target_id: dataFeedId, // Changed from targetId to target_id to match type
     details: {
       reason,
       ...details
     },
-    type: 'USER_ACTION', // Added required type property
-    user: userId // Added required user property
+    type: 'USER_ACTION',
+    data_feed_id: dataFeedId // Changed from target_id to data_feed_id to match type
   };
   
   // In a real implementation, this would save to a database
@@ -43,15 +43,15 @@ export function recordLoginAttempt(
   const entry: AuditLogEntry = {
     id: uuid(),
     timestamp: new Date(),
-    user_id: userId, // Fixed property name to match AuditLogEntry type
+    user: userId,
+    user_id: userId,
     action: success ? 'LOGIN_SUCCESS' : 'LOGIN_FAILURE',
-    target_id: userId, // Changed from targetId to target_id to match type
     details: {
       ipAddress,
       success
     },
-    type: 'SECURITY_EVENT', // Added required type property
-    user: userId // Added required user property
+    type: 'SECURITY_EVENT',
+    data_feed_id: userId // Changed from target_id to data_feed_id
   };
   
   // In a real implementation, this would save to a database

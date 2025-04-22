@@ -1,14 +1,13 @@
-
 /**
  * Single Year Calculation Utilities
  * 
  * Functions for calculating a single year within a multi-year Roth conversion scenario.
- * This file orchestrates the various specialized utility modules to process a full year calculation.
  */
 
 import { MultiYearScenarioData } from '@/types/tax/rothConversionTypes';
 import { calculateTaxScenario } from '../taxCalculator';
 import { FilingStatusType } from '@/types/tax/filingTypes';
+import { TaxTrapResult, TaxTrapWarning } from '@/utils/taxTraps/types';
 
 // Import specialized calculation modules
 import { calculateYearlyIncome } from './yearCalculation/income/incomeCalculation';
@@ -19,7 +18,6 @@ import { prepareTaxInput } from './yearCalculation/tax/taxInputPreparation';
 import { applyStateTaxInfo } from './yearCalculation/tax/stateTaxUtils';
 import { processTaxResults } from './yearCalculation/tax/taxResultProcessor';
 import { checkForTaxTraps } from './yearCalculation/tax/taxTrapUtils';
-import { TaxTrapWarning } from '@/utils/taxTraps/types';
 
 /**
  * Input parameters for a single year calculation
@@ -94,8 +92,8 @@ export function processSingleYearCalculation({
   const baseAGI = totalPreConversionIncome + conversionAmount + (spouseConversionAmount || 0);
   
   // Check for tax traps before charitable contributions
-  // Create compatible warnings with required properties
-  const { trapResults: beforeCharitableTraps, warnings } = checkForTaxTraps({
+  // Using type casting to address the type incompatibility
+  const checkResult = checkForTaxTraps({
     scenarioId: `year_${currentYear}_before`,
     year: currentYear,
     filingStatus: scenarioData.filingStatus as FilingStatusType,
@@ -105,6 +103,8 @@ export function processSingleYearCalculation({
     isMedicare: currentAge >= 65
   });
   
+  const { trapResults: beforeCharitableTraps, warnings } = checkResult;
+
   // Make sure the warnings have all required properties
   const standardizedWarnings = warnings?.map((warning: any) => ({
     type: warning.type || 'general',
