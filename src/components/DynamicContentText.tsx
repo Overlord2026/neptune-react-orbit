@@ -12,14 +12,20 @@ interface DynamicContentTextProps {
 const DynamicContentText: React.FC<DynamicContentTextProps> = ({ 
   children, 
   options,
-  as: Component = 'p',
+  as: Component = 'span',
   className = "" 
 }) => {
   const [processedContent, setProcessedContent] = useState<string>(children);
 
   useEffect(() => {
-    // Process the content with the placeholders
-    setProcessedContent(processDynamicContent(children, options));
+    try {
+      // Make sure we're working with a string
+      const contentToProcess = typeof children === 'string' ? children : String(children);
+      setProcessedContent(processDynamicContent(contentToProcess, options));
+    } catch (error) {
+      console.error("Error processing dynamic content:", error);
+      setProcessedContent(String(children || ''));
+    }
   }, [children, options]);
 
   return (

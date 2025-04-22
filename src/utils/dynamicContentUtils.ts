@@ -18,6 +18,10 @@ export interface DynamicContentOptions {
 
 // Default formatting functions
 const formatValue = (value: number | string, format?: string): string => {
+  if (value === undefined || value === null) {
+    return '';
+  }
+  
   if (typeof value === 'number') {
     switch (format) {
       case 'currency':
@@ -28,7 +32,7 @@ const formatValue = (value: number | string, format?: string): string => {
         return value.toString();
     }
   }
-  return value.toString();
+  return String(value);
 };
 
 // Registry of available placeholders
@@ -43,10 +47,15 @@ export const dynamicContentPlaceholders: DynamicContentPlaceholder[] = [
       const filingStatus = options?.filingStatus || 'single';
       const format = options?.format || 'currency';
       
-      const deductionAmount = STANDARD_DEDUCTION_BY_YEAR[year]?.[filingStatus] || 
-                              STANDARD_DEDUCTION_BY_YEAR[Object.keys(STANDARD_DEDUCTION_BY_YEAR).sort().pop() as unknown as number][filingStatus];
-      
-      return formatValue(deductionAmount, format);
+      try {
+        const yearData = STANDARD_DEDUCTION_BY_YEAR[year] || 
+                          STANDARD_DEDUCTION_BY_YEAR[Object.keys(STANDARD_DEDUCTION_BY_YEAR).sort().pop() as unknown as number];
+        const deductionAmount = yearData?.[filingStatus] || 0;
+        return formatValue(deductionAmount, format);
+      } catch (error) {
+        console.error("Error getting standard deduction:", error);
+        return formatValue(0, format);
+      }
     }
   },
   {
@@ -75,8 +84,13 @@ export const dynamicContentPlaceholders: DynamicContentPlaceholder[] = [
     description: 'When the tax data was last updated from official sources',
     category: 'date',
     getValue: () => {
-      const lastUpdateTime = getTaxBracketLastUpdateTime();
-      return getFormattedUpdateDate(lastUpdateTime);
+      try {
+        const lastUpdateTime = getTaxBracketLastUpdateTime();
+        return getFormattedUpdateDate(lastUpdateTime || new Date().toISOString());
+      } catch (error) {
+        console.error("Error getting tax data update date:", error);
+        return "Recently updated";
+      }
     }
   },
   {
@@ -128,14 +142,21 @@ export const dynamicContentPlaceholders: DynamicContentPlaceholder[] = [
         }
       };
       
-      const threshold = thresholds[year]?.[filingStatus] || thresholds[Object.keys(thresholds).sort().pop() as unknown as number][filingStatus];
-      return formatValue(threshold, format);
+      try {
+        const yearData = thresholds[year] || thresholds[Object.keys(thresholds).sort().pop() as unknown as number];
+        const threshold = yearData?.[filingStatus] || 0;
+        return formatValue(threshold, format);
+      } catch (error) {
+        console.error("Error getting capital gains threshold:", error);
+        return formatValue(0, format);
+      }
     }
   }
 ];
 
 // Find a placeholder by ID
 export const getPlaceholderById = (id: string): DynamicContentPlaceholder | undefined => {
+  if (!id) return undefined;
   return dynamicContentPlaceholders.find(placeholder => placeholder.id === id);
 };
 
@@ -146,26 +167,40 @@ export const replacePlaceholders = (
 ): string => {
   if (!text) return '';
   
-  // Handle both {{placeholder}} format and direct placeholder strings
-  const placeholderRegex = /{{([^}]+)}}/g;
-  
-  // First check if the text itself is a placeholder (without brackets)
-  const directPlaceholder = getPlaceholderById(text.trim());
-  if (directPlaceholder) {
-    return directPlaceholder.getValue(options);
-  }
-  
-  // Otherwise process the text for embedded placeholders
-  return text.replace(placeholderRegex, (match, placeholderId) => {
-    const placeholder = getPlaceholderById(placeholderId.trim());
-    if (placeholder) {
-      return placeholder.getValue(options);
+  try {
+    // Handle both {{placeholder}} format and direct placeholder strings
+    const placeholderRegex = /{{([^}]+)}}/g;
+    
+    // First check if the text itself is a placeholder (without brackets)
+    const directPlaceholder = getPlaceholderById(text.trim());
+    if (directPlaceholder) {
+      return directPlaceholder.getValue(options) || '';
     }
-    return match; // Keep the original placeholder if not found
-  });
+    
+    // Otherwise process the text for embedded placeholders
+    return text.replace(placeholderRegex, (match, placeholderId) => {
+      if (!placeholderId || !placeholderId.trim()) return match;
+      
+      const placeholder = getPlaceholderById(placeholderId.trim());
+      if (placeholder) {
+        return placeholder.getValue(options) || '';
+      }
+      return match; // Keep the original placeholder if not found
+    });
+  } catch (error) {
+    console.error("Error replacing placeholders:", error);
+    return text; // Return the original text if there's an error
+  }
 };
 
 // Process dynamic content
 export const processDynamicContent = (content: string, options?: DynamicContentOptions): string => {
-  return replacePlaceholders(content, options);
+  if (!content) return '';
+  
+  try {
+    return replacePlaceholders(content, options);
+  } catch (error) {
+    console.error("Error processing dynamic content:", error);
+    return content;
+  }
 };
