@@ -1,9 +1,6 @@
 
-// Re-export everything from the types file
+// Export everything from the types file using the now-updated interfaces
 export * from './types';
 
-// Export the checkTaxTraps function
+// Export the checkTaxTraps function (which now directly uses the interface from './types')
 export { checkTaxTraps } from '../taxTrapChecker';
-
-// Re-export types from the global types to ensure consistency
-export type { TaxTrapWarning, TaxTrapResult } from '@/types/taxTrapTypes';

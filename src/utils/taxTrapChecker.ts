@@ -1,4 +1,3 @@
-
 import { TaxTrapInput, TaxTrapResult, TaxTrapWarning } from './taxTraps/types';
 
 // Simulate checking for IRMAA thresholds
@@ -80,7 +79,7 @@ const checkCapitalGainsTrap = (income: number, capitalGains: number, filingStatu
 };
 
 // Main function to check for tax traps
-export const checkTaxTraps = (input: TaxTrapInput): TaxTrapResult => {
+export const checkTaxTraps = (input: import('./taxTraps/types').TaxTrapInput): import('./taxTraps/types').TaxTrapResult => {
   const warnings: TaxTrapWarning[] = [];
   let irmaa_data, capital_gains_data, social_security_data, aca_data;
   
@@ -122,5 +121,5 @@ export const checkTaxTraps = (input: TaxTrapInput): TaxTrapResult => {
   };
 };
 
-// Re-export the types from './taxTraps/types' to ensure they're available
-export type { TaxTrapInput, TaxTrapResult, TaxTrapWarning };
+// Directly export interfaces for type-safe imports elsewhere
+export type { TaxTrapWarning, TaxTrapInput, TaxTrapResult } from './taxTraps/types';

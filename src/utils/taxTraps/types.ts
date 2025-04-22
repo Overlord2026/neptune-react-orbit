@@ -1,16 +1,22 @@
 
+/**
+ * TaxTrapWarning - unified warning type for all tax trap modules
+ */
 export interface TaxTrapWarning {
-  type: string;
-  message: string;
+  id?: string;                // If code references id
+  trapType: string;           // See note: used instead of "type"
   severity: 'low' | 'medium' | 'high';
-  trapType: string;
-  details?: string;
-  title?: string;
-  description?: string;
-  financial_impact?: number;
-  icon?: 'info' | 'alertCircle' | 'alertTriangle' | 'help';
+  message?: string;           // Used in some warnings
+  title?: string;             // Used in some warnings
+  description?: string;       // Used in some warnings
+  details?: string;           // Used in some warnings
+  financial_impact?: number;  // Dollars
+  icon?: string;              // e.g., "alertTriangle", "info", etc
 }
 
+/**
+ * TaxTrapResult - outcome of tax trap analysis
+ */
 export interface TaxTrapResult {
   scenario_id?: string;
   warnings: TaxTrapWarning[];
@@ -34,6 +40,9 @@ export interface TaxTrapResult {
   };
 }
 
+/**
+ * TaxTrapInput - required input for checking tax traps
+ */
 export interface TaxTrapInput {
   scenario_id: string;
   year: number;
