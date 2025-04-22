@@ -4,7 +4,7 @@
  */
 export interface TaxTrapWarning {
   id?: string;
-  trapType: string; // unified key for type of trap
+  trapType: string;
   severity: 'low' | 'medium' | 'high';
   message?: string;
   title?: string;
