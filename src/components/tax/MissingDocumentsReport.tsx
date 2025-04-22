@@ -23,15 +23,15 @@ const MissingDocumentsReport: React.FC<MissingDocumentsReportProps> = ({
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-[#273549] border-[#334155]">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <AlertTriangle className="h-5 w-5 text-yellow-500" />
             Missing Document Analysis
           </CardTitle>
         </CardHeader>
         <CardContent className="text-sm">
-          <p>
+          <p className="text-gray-300">
             Based on your tax profile and history, we've identified potential missing tax documents
             that might be relevant for your tax preparation or planning.
           </p>
@@ -41,24 +41,25 @@ const MissingDocumentsReport: React.FC<MissingDocumentsReportProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Tax Year</TableHead>
-            <TableHead>Document Type</TableHead>
-            <TableHead>Importance</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="text-white">Tax Year</TableHead>
+            <TableHead className="text-white">Document Type</TableHead>
+            <TableHead className="text-white">Importance</TableHead>
+            <TableHead className="text-white">Description</TableHead>
+            <TableHead className="text-white">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredMissingDocs.map((doc, idx) => (
-            <TableRow key={idx}>
-              <TableCell>{doc.year}</TableCell>
-              <TableCell>{doc.documentType}</TableCell>
+            <TableRow key={idx} className="hover:bg-[#334155]/50">
+              <TableCell className="text-gray-300">{doc.year}</TableCell>
+              <TableCell className="text-gray-300">{doc.documentType}</TableCell>
               <TableCell>
-                <Badge variant="outline" 
+                <Badge 
+                  variant="outline" 
                   className={
                     doc.documentType.includes("W-2") || doc.documentType.includes("1099") 
-                      ? "border-red-500 text-red-500" 
-                      : "border-amber-500 text-amber-500"
+                      ? "border-red-500 text-red-500 bg-red-500/20" 
+                      : "border-yellow-500 text-yellow-500 bg-yellow-500/20"
                   }
                 >
                   {doc.documentType.includes("W-2") || doc.documentType.includes("1099") 
@@ -66,12 +67,12 @@ const MissingDocumentsReport: React.FC<MissingDocumentsReportProps> = ({
                     : "Recommended"}
                 </Badge>
               </TableCell>
-              <TableCell>{doc.description}</TableCell>
+              <TableCell className="text-gray-300">{doc.description}</TableCell>
               <TableCell>
                 <Button 
                   size="sm" 
                   onClick={() => onRequestUpload(doc.documentType)}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 bg-[#0284c7] hover:bg-[#0369a1] text-white"
                 >
                   <UploadCloud className="h-3 w-3" />
                   Upload
@@ -82,13 +83,13 @@ const MissingDocumentsReport: React.FC<MissingDocumentsReportProps> = ({
         </TableBody>
       </Table>
 
-      <Card className="bg-amber-500/10 border-amber-500/30">
+      <Card className="bg-yellow-500/10 border-yellow-500/30">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5" />
+            <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />
             <div>
-              <h3 className="font-medium mb-1">Why are these documents important?</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-medium mb-1 text-white">Why are these documents important?</h3>
+              <p className="text-sm text-gray-300">
                 Missing tax documents can lead to incomplete tax filings, missed deductions,
                 or potential issues with tax authorities. Upload these documents to ensure
                 your tax preparation is comprehensive.

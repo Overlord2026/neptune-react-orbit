@@ -33,10 +33,10 @@ const DocumentDialogs: React.FC<DocumentDialogsProps> = ({
     <>
       {/* Upload Dialog */}
       <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl bg-[#1e293b] border-[#334155]">
           <DialogHeader>
-            <DialogTitle>Upload Tax Documents</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Upload Tax Documents</DialogTitle>
+            <DialogDescription className="text-gray-300">
               Upload and classify your tax documents for secure storage and easy access
               {enableAIClassification && (
                 <span className="flex items-center mt-2 text-primary">
@@ -54,10 +54,10 @@ const DocumentDialogs: React.FC<DocumentDialogsProps> = ({
 
       {/* Scan Documents Sheet */}
       <Sheet open={showScanSheet} onOpenChange={setShowScanSheet}>
-        <SheetContent className="w-full md:w-[600px]">
+        <SheetContent className="w-full md:w-[600px] bg-[#1e293b] border-[#334155]">
           <SheetHeader>
-            <SheetTitle>Scan Documents</SheetTitle>
-            <SheetDescription>
+            <SheetTitle className="text-white">Scan Documents</SheetTitle>
+            <SheetDescription className="text-gray-300">
               Use your device camera or connected scanner to digitize tax documents
               {enableAIClassification && (
                 <span className="flex items-center mt-2 text-primary">
@@ -68,22 +68,22 @@ const DocumentDialogs: React.FC<DocumentDialogsProps> = ({
             </SheetDescription>
           </SheetHeader>
           <div className="mt-6 space-y-6">
-            <Card>
+            <Card className="bg-[#273549] border-[#334155]">
               <CardContent className="pt-6">
-                <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-md">
-                  <Scan className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2 text-center">Connect a Scanner or Use Camera</h3>
-                  <p className="text-sm text-muted-foreground text-center mb-4">
+                <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#334155] rounded-md">
+                  <Scan className="h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium mb-2 text-white text-center">Connect a Scanner or Use Camera</h3>
+                  <p className="text-sm text-gray-300 text-center mb-4">
                     Position your document in the scanner or in view of your camera
                   </p>
-                  <Button>Start Scanning</Button>
+                  <Button className="bg-[#0284c7] hover:bg-[#0369a1]">Start Scanning</Button>
                 </div>
               </CardContent>
-              <CardFooter className="flex flex-col items-start border-t pt-4">
+              <CardFooter className="flex flex-col items-start border-t border-[#334155] pt-4">
                 <div className="flex items-start gap-3 text-sm">
-                  <AlertTriangle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                  <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-muted-foreground">
+                    <p className="text-gray-300">
                       Once scanned, your document will be processed through the same classification system as uploaded files.
                     </p>
                   </div>
@@ -96,10 +96,10 @@ const DocumentDialogs: React.FC<DocumentDialogsProps> = ({
 
       {/* Missing Documents Dialog */}
       <Dialog open={showMissingDocsDialog} onOpenChange={setShowMissingDocsDialog}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl bg-[#1e293b] border-[#334155]">
           <DialogHeader>
-            <DialogTitle>Missing Documents Report</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Missing Documents Report</DialogTitle>
+            <DialogDescription className="text-gray-300">
               Check for potential missing tax documents based on your financial profile
             </DialogDescription>
           </DialogHeader>
