@@ -4,14 +4,13 @@ export interface TaxTrapWarning {
   message: string;
   severity: 'low' | 'medium' | 'high';
   trapType: string;
-  details?: string; // Added optional details
-  title?: string;   // Added optional title
-  description?: string; // Added optional description
+  details?: string;
+  title?: string;
+  description?: string;
   financial_impact?: number;
-  icon?: 'info' | 'alertCircle' | 'alertTriangle' | 'help'; // Added icon for compatibility
+  icon?: 'info' | 'alertCircle' | 'alertTriangle' | 'help';
 }
 
-// Re-adding the TaxTrapResult interface that was removed
 export interface TaxTrapResult {
   scenario_id?: string;
   warnings: TaxTrapWarning[];
@@ -35,7 +34,6 @@ export interface TaxTrapResult {
   };
 }
 
-// Adding the TaxTrapInput interface for completeness
 export interface TaxTrapInput {
   scenario_id: string;
   year: number;

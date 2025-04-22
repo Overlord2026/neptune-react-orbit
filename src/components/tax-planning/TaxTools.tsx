@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Banknote, 
@@ -34,7 +35,7 @@ const TaxTools: React.FC = () => {
       icon: <Lock className="w-10 h-10 text-[#FFD700]" />,
       description: "Securely store your tax documents and share them with your accountant, advisors, or family members.",
       comingSoon: false,
-      link: "/tax-planning/aggregator",
+      link: "/tax-vault",
       documentCount: 8,
       lastUpdated: "Apr 2, 2025",
       category: "document-management"
@@ -82,7 +83,7 @@ const TaxTools: React.FC = () => {
       icon: <FileText className="w-10 h-10 text-[#FFD700]" />,
       description: "Upload and analyze your tax returns to identify potential savings and optimization opportunities.",
       comingSoon: false,
-      link: "/tax-planning/analyzer", // Make sure this URL matches a route in App.tsx
+      link: "/tax-planning/analyzer",
       category: "document-management"
     },
     {
@@ -127,7 +128,7 @@ const TaxTools: React.FC = () => {
       icon: <FileCheck className="w-10 h-10 text-[#FFD700]" />,
       description: "Choose a simple do-it-yourself filing tool for basic returns, or connect with a tax professional.",
       comingSoon: false,
-      link: "/tax-planning/filing-options",
+      link: "/file-my-taxes",
       category: "document-management"
     },
   ];

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useRoutes } from 'react-router-dom';
 import Layout from "./components/Layout";
@@ -141,6 +142,15 @@ function AppRoutes() {
     {
       path: "/tax-planning/advanced-strategies",
       element: <Layout><AdvancedTaxStrategiesPage /></Layout>
+    },
+    // Add direct file-my-taxes route for tax filing
+    {
+      path: "/tax-planning/file-my-taxes",
+      element: <Layout><TaxFilingPage /></Layout>
+    },
+    {
+      path: "/tax-planning/filing-options",
+      element: <Layout><TaxFilingOptionsPage /></Layout>
     }
   ]);
 

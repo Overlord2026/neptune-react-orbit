@@ -89,8 +89,8 @@ const SidebarContent = () => {
         <SidebarItem 
           icon={<FileCheck className="h-5 w-5" />} 
           label="Return Analyzer" 
-          href="/tax-filing/tax-return" 
-          isActive={location.pathname === '/tax-filing/tax-return'} 
+          href="/tax-planning/analyzer" 
+          isActive={location.pathname === '/tax-planning/analyzer'} 
         />
         <SidebarItem 
           icon={<Briefcase className="h-5 w-5" />} 
@@ -153,6 +153,12 @@ const SidebarContent = () => {
           label="Social Security" 
           href="/tax-planning/social-security" 
           isActive={location.pathname === '/tax-planning/social-security'} 
+        />
+        <SidebarItem 
+          icon={<FileCheck className="h-5 w-5" />} 
+          label="File My Taxes" 
+          href="/file-my-taxes" 
+          isActive={location.pathname === '/file-my-taxes'} 
         />
       </SidebarGroup>
 
