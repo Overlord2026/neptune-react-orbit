@@ -1,4 +1,3 @@
-
 /**
  * Tax Trap Utility Functions
  * 
@@ -38,7 +37,14 @@ export function checkForTaxTraps({
   hasCapitalGains = false,
   capitalGainsAmount = 0,
   hasACA = false
-}: TaxTrapCheckParams): { trapResults: TaxTrapResult; warnings: { type: string; message: string; severity: 'low' | 'medium' | 'high'; trapType: string; details: string; }[] } {
+}: TaxTrapCheckParams): { trapResults: TaxTrapResult; warnings: { 
+  type: string; 
+  message: string; 
+  severity: 'low' | 'medium' | 'high'; 
+  trapType: string; 
+  details?: string;
+  title?: string;
+}[] } {
   const warnings: TaxTrapWarning[] = [];
   
   // Initialize result object
@@ -173,16 +179,14 @@ export function checkForTaxTraps({
     return severityOrder[b.severity] - severityOrder[a.severity];
   });
   
-  // Add the sorted warnings to the result
-  trapResults.warnings = sortedWarnings;
-  
-  // Convert to the format expected by the yearCalculation.ts
+  // Convert warnings to include optional details and title
   const simpleWarnings = sortedWarnings.map(warning => ({
     type: warning.type,
-    message: warning.message || warning.title,
+    message: warning.message || '',
     severity: warning.severity,
     trapType: warning.trapType || warning.type,
-    details: warning.description || warning.message || 'No details available'
+    details: warning.description || warning.details || warning.message || 'No details available',
+    title: warning.title || warning.message
   }));
   
   // Return both formats
