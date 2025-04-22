@@ -1,155 +1,123 @@
 
-/**
- * Tax Trap Checker
- * 
- * Utility for checking various tax traps in scenarios
- */
-import { FilingStatusType } from '@/types/tax/filingTypes';
+import { TaxTrapInput, TaxTrapResult, TaxTrapWarning } from './taxTraps/types';
 
-export interface TaxTrapInput {
-  scenario_id: string;
-  year: number;
-  filing_status: FilingStatusType | string;
-  agi: number;
-  magi?: number;
-  total_income: number;
-  taxable_income: number;
-  capital_gains_long: number;
-  capital_gains_short: number;
-  social_security_amount: number;
-  household_size: number;
-  medicare_enrollment: boolean;
-  aca_enrollment: boolean;
-  state_of_residence?: string;
-}
+// Simulate checking for IRMAA thresholds
+const checkIRMAAThresholds = (income: number, filingStatus: string): TaxTrapWarning | null => {
+  // IRMAA thresholds for 2023 (simplified)
+  const singleThresholds = [97000, 123000, 153000, 183000, 500000];
+  const marriedThresholds = [194000, 246000, 306000, 366000, 750000];
+  
+  const thresholds = filingStatus === 'single' ? singleThresholds : marriedThresholds;
+  
+  // Check which threshold the income exceeds
+  if (income > thresholds[4]) {
+    return {
+      type: 'irmaa',
+      message: 'Your income places you in the highest IRMAA tier',
+      severity: 'high',
+      trapType: 'medicare',
+      title: 'Medicare IRMAA Surcharge',
+      details: `Income over ${thresholds[4].toLocaleString()} results in maximum IRMAA surcharges`,
+      description: 'Consider strategies to reduce your MAGI to lower your Medicare premium surcharges',
+      financial_impact: 642.30 * 12, // Monthly surcharge * 12
+      icon: 'alertCircle'
+    };
+  } else if (income > thresholds[0]) {
+    // Find which tier they're in (simplified)
+    const surcharge = income > thresholds[3] ? 386.10 : 
+                      income > thresholds[2] ? 257.30 : 
+                      income > thresholds[1] ? 154.30 : 64.30;
+                      
+    return {
+      type: 'irmaa',
+      message: 'Your income exceeds the base IRMAA threshold',
+      severity: 'medium',
+      trapType: 'medicare',
+      title: 'Medicare IRMAA Surcharge',
+      details: `Income over ${thresholds[0].toLocaleString()} triggers IRMAA surcharges`,
+      description: 'Consider income management strategies to reduce or eliminate these surcharges',
+      financial_impact: surcharge * 12, // Monthly surcharge * 12
+      icon: 'alertCircle'
+    };
+  }
+  
+  return null;
+};
 
-// Standardize the warning severity to match taxTrapTypes.ts
-export interface TaxTrapWarning {
-  type: string;
-  severity: "low" | "medium" | "high";
-  title: string;
-  description: string;
-  financial_impact?: number;
-  trapType?: string;  // Added for compatibility
-  message?: string;   // Added for compatibility
-  details?: string;   // Added for compatibility
-}
+// Simulate checking for capital gains rate thresholds
+const checkCapitalGainsTrap = (income: number, capitalGains: number, filingStatus: string): TaxTrapWarning | null => {
+  // 2023 thresholds for 0%/15%/20% capital gains brackets (simplified)
+  const zeroTo15Threshold = filingStatus === 'single' ? 44625 : 89250;
+  const fifteenTo20Threshold = filingStatus === 'single' ? 492300 : 553850;
+  
+  if (income > fifteenTo20Threshold) {
+    return {
+      type: 'capital_gains',
+      message: 'Your income places you in the 20% capital gains bracket',
+      severity: 'medium',
+      trapType: 'tax_bracket',
+      title: 'Capital Gains Tax Impact',
+      details: 'Income above threshold results in 20% long-term capital gains rate',
+      description: 'Consider timing capital gains realizations in lower-income years',
+      financial_impact: capitalGains * 0.05, // Estimated impact of 5% higher rate
+      icon: 'alertTriangle'
+    };
+  } else if (income > zeroTo15Threshold && income < zeroTo15Threshold + 10000) {
+    return {
+      type: 'capital_gains',
+      message: 'Your income is near the 0% to 15% capital gains threshold',
+      severity: 'low',
+      trapType: 'tax_bracket',
+      title: 'Capital Gains Planning Opportunity',
+      details: 'You may be able to realize gains at 0% rate with planning',
+      description: 'Consider strategies to keep taxable income below the 0% capital gains threshold',
+      financial_impact: capitalGains * 0.15, // Potential savings
+      icon: 'info'
+    };
+  }
+  
+  return null;
+};
 
-export interface TaxTrapResult {
-  scenario_id?: string;  // Made optional for compatibility
-  warnings: TaxTrapWarning[];
-  irmaa_data?: {
-    partB_surcharge: number;
-    partD_surcharge: number;
-    annual_impact: number;
-  };
-  social_security_data?: {
-    taxable_percentage: number;
-    tax_increase: number;
-  };
-  aca_data?: {
-    current_fpl_percentage: number;
-    subsidy_impact: number;
-  };
-}
-
-/**
- * Check for tax traps based on input data
- */
-export function checkTaxTraps(input: TaxTrapInput): TaxTrapResult {
+// Main function to check for tax traps
+export const checkTaxTraps = (input: TaxTrapInput): TaxTrapResult => {
   const warnings: TaxTrapWarning[] = [];
-  const result: TaxTrapResult = {
-    scenario_id: input.scenario_id,
-    warnings: []
-  };
+  let irmaa_data, capital_gains_data, social_security_data, aca_data;
   
-  // Use MAGI if provided, otherwise use AGI
-  const magi = input.magi || input.agi;
-  
-  // Check for IRMAA (Medicare premium surcharge)
+  // Check for IRMAA if on Medicare
   if (input.medicare_enrollment) {
-    const irmaaThreshold = input.filing_status === 'married_joint' || input.filing_status === 'married' ? 194000 : 97000;
-    if (magi > irmaaThreshold) {
-      const partBSurcharge = 68.00; // Simplified - in reality there are tiers
-      const partDSurcharge = 12.20; // Simplified
-      const annualSurcharge = (partBSurcharge + partDSurcharge) * 12;
-      
-      warnings.push({
-        type: 'irmaa',
-        severity: 'medium',
-        title: 'Medicare IRMAA Surcharge',
-        description: `Your income may trigger an IRMAA surcharge of approximately $${annualSurcharge.toFixed(2)} annually on your Medicare premiums.`,
-        financial_impact: annualSurcharge,
-        message: 'Medicare IRMAA Surcharge Alert',
-        trapType: 'irmaa',
-        details: `Your income may trigger an IRMAA surcharge of approximately $${annualSurcharge.toFixed(2)} annually on your Medicare premiums.`
-      });
-      
-      result.irmaa_data = {
-        partB_surcharge: partBSurcharge,
-        partD_surcharge: partDSurcharge,
-        annual_impact: annualSurcharge
+    const irmaaWarning = checkIRMAAThresholds(input.magi || input.agi, input.filing_status);
+    if (irmaaWarning) {
+      warnings.push(irmaaWarning);
+      irmaa_data = {
+        partB_surcharge: input.magi! > 500000 ? 396.10 : 164.30,
+        partD_surcharge: input.magi! > 500000 ? 76.40 : 12.90,
+        annual_impact: irmaaWarning.financial_impact || 0
       };
     }
   }
   
-  // Check for Social Security taxation thresholds
-  if (input.social_security_amount > 0) {
-    const combinedIncome = input.agi + (input.social_security_amount * 0.5);
-    const ssThreshold = input.filing_status === 'married_joint' || input.filing_status === 'married' ? 44000 : 34000;
-    
-    if (combinedIncome > ssThreshold) {
-      const taxableAmount = Math.min(input.social_security_amount * 0.85, (combinedIncome - ssThreshold) * 0.85);
-      const taxImpact = taxableAmount * 0.22; // Simplified using 22% tax rate
-      
-      warnings.push({
-        type: 'social_security',
-        severity: 'low',
-        title: 'Social Security Taxation',
-        description: `Up to 85% of your Social Security benefits may be taxable due to your income level.`,
-        financial_impact: taxImpact,
-        message: 'Social Security Benefits Taxation',
-        trapType: 'social_security',
-        details: `Up to 85% of your Social Security benefits may be taxable due to your income level.`
-      });
-      
-      result.social_security_data = {
-        taxable_percentage: 85,
-        tax_increase: taxImpact
+  // Check for capital gains trap
+  if (input.capital_gains_long > 0) {
+    const capitalGainsWarning = checkCapitalGainsTrap(input.taxable_income, input.capital_gains_long, input.filing_status);
+    if (capitalGainsWarning) {
+      warnings.push(capitalGainsWarning);
+      capital_gains_data = {
+        current_rate: input.taxable_income > 492300 ? 0.20 : 0.15,
+        potential_rate: input.taxable_income > 492300 ? 0.20 : 0.0,
+        tax_increase: capitalGainsWarning.financial_impact || 0
       };
     }
   }
   
-  // Add ACA subsidy check
-  if (input.aca_enrollment) {
-    const fplAmount = 13590; // Base FPL amount for 2023
-    const householdSize = input.household_size || 1;
-    const adjustedFPL = fplAmount + ((householdSize - 1) * 4720);
-    const fplPercentage = (input.agi / adjustedFPL) * 100;
-    
-    if (fplPercentage > 395) {
-      const estimatedSubsidyLoss = householdSize * 5000; // Rough estimate
-      
-      warnings.push({
-        type: 'aca',
-        severity: 'high',
-        title: 'ACA Subsidy Cliff',
-        description: `Your income is close to or over 400% FPL, which may cause loss of ACA premium subsidies.`,
-        financial_impact: estimatedSubsidyLoss,
-        message: 'ACA Subsidy Cliff Risk',
-        trapType: 'aca',
-        details: `Your income is close to or over 400% FPL, which may cause loss of ACA premium subsidies.`
-      });
-      
-      result.aca_data = {
-        current_fpl_percentage: Math.round(fplPercentage),
-        subsidy_impact: estimatedSubsidyLoss
-      };
-    }
-  }
+  // Add additional tax traps here (Social Security, ACA, etc)
   
-  // Set the warnings in the result
-  result.warnings = warnings;
-  
-  return result;
-}
+  return {
+    scenario_id: input.scenario_id,
+    warnings,
+    irmaa_data,
+    capital_gains_data,
+    social_security_data,
+    aca_data
+  };
+};
