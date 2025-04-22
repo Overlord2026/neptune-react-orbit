@@ -21,6 +21,8 @@ export interface TaxTrapWarning {
   title: string;
   description?: string;
   impact?: number;
+  icon?: 'info' | 'alertCircle' | 'alertTriangle' | 'help';
+  name?: string;
 }
 
 export interface TaxTrapResult {

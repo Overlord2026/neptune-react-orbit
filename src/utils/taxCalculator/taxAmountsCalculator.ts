@@ -1,3 +1,4 @@
+
 /**
  * Tax Amounts Calculator
  * 
@@ -58,16 +59,24 @@ export function calculateTaxAmounts(input: TaxInput) {
   
   // Calculate ordinary tax on ordinary income
   const ordinary_taxable = Math.max(0, taxable_income - Math.min(taxable_income, capital_gains));
-  const ordinary_tax = calculateOrdinaryTax(ordinary_taxable, input.year, input.filingStatus || input.filing_status as FilingStatusType);
+  const ordinary_tax_result = calculateOrdinaryTaxWithBreakdown(
+    ordinary_taxable, 
+    input.year, 
+    input.filingStatus || input.filing_status as FilingStatusType
+  );
+  const ordinary_tax = ordinary_tax_result.tax;
+  const ordinary_brackets = ordinary_tax_result.brackets;
   
   // Calculate capital gains tax
   const taxable_capital_gains = Math.min(taxable_income, capital_gains);
-  const capital_gains_tax = calculateCapitalGainsTax(
+  const capital_gains_tax_result = calculateCapitalGainsTaxWithBreakdown(
     taxable_capital_gains, 
     ordinary_taxable, 
     input.year, 
     input.filingStatus || input.filing_status as FilingStatusType
   );
+  const capital_gains_tax = capital_gains_tax_result.tax;
+  const capital_gains_brackets = capital_gains_tax_result.brackets;
   
   // Total federal tax
   const total_tax = ordinary_tax + capital_gains_tax;
@@ -95,14 +104,22 @@ export function calculateTaxAmounts(input: TaxInput) {
     state_tax: 0, // Always return 0 for state tax
     marginal_rate,
     effective_rate,
-    marginal_capital_gains_rate
+    marginal_capital_gains_rate,
+    brackets_breakdown: {
+      ordinary: ordinary_brackets,
+      capitalGains: capital_gains_brackets
+    }
   };
 }
 
 /**
- * Calculate ordinary income tax
+ * Calculate ordinary income tax with bracket breakdown
  */
-function calculateOrdinaryTax(amount: number, year: number, filingStatus: FilingStatusType): number {
+function calculateOrdinaryTaxWithBreakdown(
+  amount: number, 
+  year: number, 
+  filingStatus: FilingStatusType
+): { tax: number; brackets: { bracket: number; amount: number; tax: number }[] } {
   // For a simplified implementation, we'll use a progressive bracket approach
   const taxBrackets = [
     { min: 0, max: 10000, rate: 0.10 },
@@ -116,6 +133,7 @@ function calculateOrdinaryTax(amount: number, year: number, filingStatus: Filing
   
   let tax = 0;
   let remainingAmount = amount;
+  const brackets: { bracket: number; amount: number; tax: number }[] = [];
   
   for (const bracket of taxBrackets) {
     if (remainingAmount <= 0) break;
@@ -125,22 +143,29 @@ function calculateOrdinaryTax(amount: number, year: number, filingStatus: Filing
       bracket.max - bracket.min
     );
     
-    tax += taxableInBracket * bracket.rate;
+    const taxInBracket = taxableInBracket * bracket.rate;
+    tax += taxInBracket;
     remainingAmount -= taxableInBracket;
+    
+    brackets.push({
+      bracket: bracket.rate * 100, // Convert to percentage
+      amount: taxableInBracket,
+      tax: taxInBracket
+    });
   }
   
-  return tax;
+  return { tax, brackets };
 }
 
 /**
- * Calculate capital gains tax
+ * Calculate capital gains tax with bracket breakdown
  */
-function calculateCapitalGainsTax(
+function calculateCapitalGainsTaxWithBreakdown(
   amount: number, 
   ordinaryIncome: number, 
   year: number, 
   filingStatus: FilingStatusType
-): number {
+): { tax: number; brackets: { bracket: number; amount: number; tax: number }[] } {
   // Simplified capital gains brackets
   const cgBrackets = [
     { min: 0, max: 40000, rate: 0 },
@@ -152,6 +177,7 @@ function calculateCapitalGainsTax(
   const startingPoint = ordinaryIncome;
   let remainingAmount = amount;
   let tax = 0;
+  const brackets: { bracket: number; amount: number; tax: number }[] = [];
   
   for (const bracket of cgBrackets) {
     if (remainingAmount <= 0) break;
@@ -164,11 +190,18 @@ function calculateCapitalGainsTax(
     const bracketSize = bracket.max - adjustedMin;
     const taxableInBracket = Math.min(remainingAmount, bracketSize);
     
-    tax += taxableInBracket * bracket.rate;
+    const taxInBracket = taxableInBracket * bracket.rate;
+    tax += taxInBracket;
     remainingAmount -= taxableInBracket;
+    
+    brackets.push({
+      bracket: bracket.rate * 100, // Convert to percentage
+      amount: taxableInBracket,
+      tax: taxInBracket
+    });
   }
   
-  return tax;
+  return { tax, brackets };
 }
 
 /**

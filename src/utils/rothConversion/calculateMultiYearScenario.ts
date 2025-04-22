@@ -138,6 +138,16 @@ export const calculateMultiYearScenario = async (
       trapAvoidance: []
     };
     
+    // Ensure warnings have all required properties for TrapAlert
+    const normalizedWarnings = Array.isArray(warnings) ? warnings.map(w => ({
+      ...w,
+      type: w.type || 'unknown',
+      severity: w.severity || 'medium',
+      trapType: w.trapType || w.type || 'unknown',
+      message: w.message || w.title || 'Warning',
+      details: w.details || w.description || w.message || 'No details provided'
+    })) as TrapAlert[] : [];
+    
     // Add this year's results to the array
     results.push({
       year: currentYear,
@@ -150,14 +160,7 @@ export const calculateMultiYearScenario = async (
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
       effectiveRate: taxResult.effective_rate,
-      warnings: Array.isArray(warnings) ? warnings.map(w => ({
-        ...w,
-        type: w.type || 'unknown',
-        severity: w.severity || 'medium',
-        trapType: w.trapType || w.type || 'unknown',
-        message: w.message || 'Warning',
-        details: w.details || w.message || w.description || 'No details provided'
-      })) as TrapAlert[] : [],
+      warnings: normalizedWarnings,
       cumulativeTaxPaid,
       cumulativeTaxSaved,
       traditionalScenarioBalance,
