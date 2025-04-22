@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useRoutes } from 'react-router-dom';
 import Layout from "./components/Layout";
@@ -12,7 +11,7 @@ import RothConversionPage from "./pages/RothConversionPage";
 import RothConversionAnalysisPage from "./pages/RothConversionAnalysisPage";
 import EstateGiftingPage from "./pages/EstateGiftingPage";
 import CharitableGivingPage from "./pages/CharitablePlanningPage";
-import TaxReturnPage from "./pages/TaxReturnAnalyzerPage";
+import TaxReturnAnalyzerPage from "./pages/TaxReturnAnalyzerPage";
 import Scenario2025Return from "./pages/Scenario2025Return";
 import BusinessIncomePage from "./pages/SmallBusinessPage";
 import DeferredCompensationPage from "./pages/DeferredCompPage";
@@ -84,8 +83,12 @@ function AppRoutes() {
       element: <Layout><CharitableGivingPage /></Layout>
     },
     {
-      path: "/tax-filing/tax-return",
-      element: <Layout><TaxReturnPage /></Layout>
+      path: "/tax-planning/analyzer",
+      element: <Layout><TaxReturnAnalyzerPage /></Layout>
+    },
+    {
+      path: "/tax-planning/tax-return",
+      element: <Layout><TaxReturnAnalyzerPage /></Layout>
     },
     {
       path: "/tax-planning/scenario-2025",

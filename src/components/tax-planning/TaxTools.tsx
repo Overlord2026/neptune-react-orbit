@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Banknote, 
@@ -83,7 +82,7 @@ const TaxTools: React.FC = () => {
       icon: <FileText className="w-10 h-10 text-[#FFD700]" />,
       description: "Upload and analyze your tax returns to identify potential savings and optimization opportunities.",
       comingSoon: false,
-      link: "/tax-planning/analyzer",
+      link: "/tax-planning/analyzer", // Make sure this URL matches a route in App.tsx
       category: "document-management"
     },
     {
