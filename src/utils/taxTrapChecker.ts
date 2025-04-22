@@ -1,7 +1,7 @@
 import { TaxTrapInput, TaxTrapResult, TaxTrapWarning } from './taxTraps/types';
 
 // Simulate checking for IRMAA thresholds
-const checkIRMAAThresholds = (income: number, filingStatus: string): TaxTrapWarning | null => {
+const checkIRMAAThresholds = (income: number, filingStatus: string): import('./taxTraps/types').TaxTrapWarning | null => {
   // IRMAA thresholds for 2023 (simplified)
   const singleThresholds = [97000, 123000, 153000, 183000, 500000];
   const marriedThresholds = [194000, 246000, 306000, 366000, 750000];
@@ -11,10 +11,9 @@ const checkIRMAAThresholds = (income: number, filingStatus: string): TaxTrapWarn
   // Check which threshold the income exceeds
   if (income > thresholds[4]) {
     return {
-      type: 'irmaa',
+      trapType: 'medicare',
       message: 'Your income places you in the highest IRMAA tier',
       severity: 'high',
-      trapType: 'medicare',
       title: 'Medicare IRMAA Surcharge',
       details: `Income over ${thresholds[4].toLocaleString()} results in maximum IRMAA surcharges`,
       description: 'Consider strategies to reduce your MAGI to lower your Medicare premium surcharges',
@@ -28,10 +27,9 @@ const checkIRMAAThresholds = (income: number, filingStatus: string): TaxTrapWarn
                       income > thresholds[1] ? 154.30 : 64.30;
                       
     return {
-      type: 'irmaa',
+      trapType: 'medicare',
       message: 'Your income exceeds the base IRMAA threshold',
       severity: 'medium',
-      trapType: 'medicare',
       title: 'Medicare IRMAA Surcharge',
       details: `Income over ${thresholds[0].toLocaleString()} triggers IRMAA surcharges`,
       description: 'Consider income management strategies to reduce or eliminate these surcharges',
@@ -44,17 +42,16 @@ const checkIRMAAThresholds = (income: number, filingStatus: string): TaxTrapWarn
 };
 
 // Simulate checking for capital gains rate thresholds
-const checkCapitalGainsTrap = (income: number, capitalGains: number, filingStatus: string): TaxTrapWarning | null => {
+const checkCapitalGainsTrap = (income: number, capitalGains: number, filingStatus: string): import('./taxTraps/types').TaxTrapWarning | null => {
   // 2023 thresholds for 0%/15%/20% capital gains brackets (simplified)
   const zeroTo15Threshold = filingStatus === 'single' ? 44625 : 89250;
   const fifteenTo20Threshold = filingStatus === 'single' ? 492300 : 553850;
   
   if (income > fifteenTo20Threshold) {
     return {
-      type: 'capital_gains',
+      trapType: 'tax_bracket',
       message: 'Your income places you in the 20% capital gains bracket',
       severity: 'medium',
-      trapType: 'tax_bracket',
       title: 'Capital Gains Tax Impact',
       details: 'Income above threshold results in 20% long-term capital gains rate',
       description: 'Consider timing capital gains realizations in lower-income years',
@@ -63,10 +60,9 @@ const checkCapitalGainsTrap = (income: number, capitalGains: number, filingStatu
     };
   } else if (income > zeroTo15Threshold && income < zeroTo15Threshold + 10000) {
     return {
-      type: 'capital_gains',
+      trapType: 'tax_bracket',
       message: 'Your income is near the 0% to 15% capital gains threshold',
       severity: 'low',
-      trapType: 'tax_bracket',
       title: 'Capital Gains Planning Opportunity',
       details: 'You may be able to realize gains at 0% rate with planning',
       description: 'Consider strategies to keep taxable income below the 0% capital gains threshold',
@@ -80,7 +76,7 @@ const checkCapitalGainsTrap = (income: number, capitalGains: number, filingStatu
 
 // Main function to check for tax traps
 export const checkTaxTraps = (input: import('./taxTraps/types').TaxTrapInput): import('./taxTraps/types').TaxTrapResult => {
-  const warnings: TaxTrapWarning[] = [];
+  const warnings: import('./taxTraps/types').TaxTrapWarning[] = [];
   let irmaa_data, capital_gains_data, social_security_data, aca_data;
   
   // Check for IRMAA if on Medicare

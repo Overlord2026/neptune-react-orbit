@@ -1,4 +1,3 @@
-
 import { TaxTrapWarning } from './types';
 
 // FPL values for 2023
@@ -119,18 +118,16 @@ export function generateAcaWarning(
     householdSize,
     year
   );
-  
+
   if (isAtRisk) {
     // Calculate financial impact (potential loss of subsidy)
     const financialImpact = subsidyAmount;
-    
     if (distanceToCliff !== null && distanceToCliff > 0) {
       // Close to cliff but not over
       return {
-        type: 'aca',
+        trapType: 'aca',
         message: `You are ${Math.round(fplPercentage)}% of FPL, only $${Math.round(distanceToCliff).toLocaleString()} from the premium subsidy cliff.`,
         severity: 'medium',
-        trapType: 'aca',
         title: 'ACA Subsidy Cliff Risk',
         description: `You are ${Math.round(fplPercentage)}% of FPL, only $${Math.round(distanceToCliff).toLocaleString()} from the premium subsidy cliff.`,
         financial_impact: financialImpact,
@@ -139,10 +136,9 @@ export function generateAcaWarning(
     } else {
       // Over cliff
       return {
-        type: 'aca',
+        trapType: 'aca',
         message: `You are at ${Math.round(fplPercentage)}% of FPL, which may put you beyond the premium subsidy eligibility threshold.`,
         severity: 'high',
-        trapType: 'aca',
         title: 'ACA Subsidy Cliff Impact',
         description: `You are at ${Math.round(fplPercentage)}% of FPL, which may put you beyond the premium subsidy eligibility threshold.`,
         financial_impact: financialImpact,
@@ -150,6 +146,6 @@ export function generateAcaWarning(
       };
     }
   }
-  
+
   return null;
 }

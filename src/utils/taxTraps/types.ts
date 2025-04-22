@@ -3,15 +3,15 @@
  * TaxTrapWarning - unified warning type for all tax trap modules
  */
 export interface TaxTrapWarning {
-  id?: string;                // If code references id
-  trapType: string;           // See note: used instead of "type"
+  id?: string;
+  trapType: string; // unified key for type of trap
   severity: 'low' | 'medium' | 'high';
-  message?: string;           // Used in some warnings
-  title?: string;             // Used in some warnings
-  description?: string;       // Used in some warnings
-  details?: string;           // Used in some warnings
-  financial_impact?: number;  // Dollars
-  icon?: string;              // e.g., "alertTriangle", "info", etc
+  message?: string;
+  title?: string;
+  description?: string;
+  details?: string;
+  financial_impact?: number;
+  icon?: string;
 }
 
 /**

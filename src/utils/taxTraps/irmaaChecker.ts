@@ -1,4 +1,3 @@
-
 import { TaxTrapWarning } from './types';
 
 // IRMAA Income Threshold Brackets for 2023
@@ -76,7 +75,7 @@ export function generateIrmaaWarning(
     filingStatus,
     year
   );
-  
+
   if (annual_impact > 0) {
     // Determine proximity to next threshold
     const normalizedStatus = filingStatus === 'married' || filingStatus === 'married_joint' ? 'joint' : 'single';
@@ -89,16 +88,15 @@ export function generateIrmaaWarning(
     const severityLevel = annual_impact > 3000 ? 'high' : 'medium';
     
     return {
-      type: 'irmaa',
+      trapType: 'irmaa',
       message: `Your income triggers Medicare IRMAA surcharges of $${annual_impact.toFixed(2)} annually ($${(partB_surcharge + partD_surcharge).toFixed(2)}/month).`,
       severity: severityLevel,
-      trapType: 'irmaa',
       title: 'Medicare IRMAA Surcharge',
       description: `Your income triggers Medicare IRMAA surcharges of $${annual_impact.toFixed(2)} annually ($${(partB_surcharge + partD_surcharge).toFixed(2)}/month).`,
       financial_impact: annual_impact,
       icon: 'alertCircle'
     };
   }
-  
+
   return null;
 }

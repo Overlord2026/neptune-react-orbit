@@ -1,7 +1,6 @@
-
 import { CharitableContribution, TrapAlert, TrapAvoidance } from '@/types/tax/rothConversionTypes';
 import { generateTrapAvoidanceStrategies } from './trapAvoidanceAnalysis';
-import { TaxTrapResult } from '@/utils/taxTraps/types';
+import { TaxTrapResult, TaxTrapWarning } from '@/utils/taxTraps/types';
 
 /**
  * Orchestrates the calculation of charitable giving impact
@@ -13,12 +12,11 @@ export function orchestrateCharitableImpact(
   year: number
 ) {
   // Extract traps from trap results
-  const traps = trapResults.warnings?.map(warning => ({
-    type: warning.type || 'unknown',
+  const traps = trapResults.warnings?.map((warning: TaxTrapWarning) => ({
+    trapType: warning.trapType || 'unknown',
     message: warning.title || 'Unknown warning',
     details: warning.description || '',
     severity: warning.severity || 'medium',
-    trapType: warning.type || 'unknown',
     impact: warning.financial_impact || 0
   })) as TrapAlert[];
   

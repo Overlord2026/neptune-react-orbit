@@ -1,4 +1,3 @@
-
 import { TaxTrapWarning } from './types';
 
 // Social Security Taxation Thresholds
@@ -84,31 +83,27 @@ export function generateSocialSecurityWarning(
   if (socialSecurityAmount <= 0) {
     return null;
   }
-  
   const taxableSS = calculateTaxableSocialSecurity(
     socialSecurityAmount,
     otherIncome,
     filingStatus
   );
-  
   const taxablePercentage = (taxableSS / socialSecurityAmount) * 100;
-  
   // Estimate the tax impact using marginal rate (simplified approach)
   const marginalRate = 0.22; // Assume 22% marginal rate - could be refined
   const tax_increase = taxableSS * marginalRate;
-  
+
   if (taxablePercentage > 50) {
     return {
-      type: 'social_security',
+      trapType: 'social_security',
       message: `${Math.round(taxablePercentage)}% of your Social Security benefits may be taxable.`,
       severity: taxablePercentage > 80 ? 'high' : 'medium',
-      trapType: 'social_security',
       title: 'Social Security Tax Impact',
       description: `${Math.round(taxablePercentage)}% of your Social Security benefits may be taxable.`,
       financial_impact: tax_increase,
       icon: 'alertTriangle'
     };
   }
-  
+
   return null;
 }

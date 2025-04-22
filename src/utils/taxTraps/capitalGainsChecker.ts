@@ -1,4 +1,3 @@
-
 import { TaxTrapWarning } from './types';
 
 // Capital Gains Thresholds
@@ -74,21 +73,16 @@ export function generateCapitalGainsWarning(
   taxableIncome: number,
   capitalGainsLong: number
 ): TaxTrapWarning | null {
-  // Calculate what happens if additional income pushes them into higher bracket
   if (cgResult.threshold_to_next_bracket) {
     const distance_to_next_bracket = cgResult.threshold_to_next_bracket - taxableIncome;
-    
     if (distance_to_next_bracket < 25000) {
-      // If within $25k of next bracket, warn about potential impact
       const next_rate = cgResult.current_rate === 0 ? 15 : 20;
       const rate_increase = next_rate - cgResult.current_rate;
       const tax_increase = (capitalGainsLong * rate_increase) / 100;
-      
       return {
-        type: 'capital_gains',
+        trapType: 'capital_gains',
         message: `You are $${distance_to_next_bracket.toFixed(0)} away from moving from ${cgResult.current_rate}% to ${next_rate}% long-term capital gains rate.`,
         severity: 'medium',
-        trapType: 'capital_gains',
         title: 'Capital Gains Tax Bracket Change',
         description: `You are $${distance_to_next_bracket.toFixed(0)} away from moving from ${cgResult.current_rate}% to ${next_rate}% long-term capital gains rate.`,
         financial_impact: tax_increase,
@@ -96,6 +90,6 @@ export function generateCapitalGainsWarning(
       };
     }
   }
-  
+
   return null;
 }
