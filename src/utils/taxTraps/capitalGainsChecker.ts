@@ -86,7 +86,9 @@ export function generateCapitalGainsWarning(
       
       return {
         type: 'capital_gains',
-        severity: 'medium', // Fixed: changed from 'warning' to 'medium'
+        message: `You are $${distance_to_next_bracket.toFixed(0)} away from moving from ${cgResult.current_rate}% to ${next_rate}% long-term capital gains rate.`,
+        severity: 'medium',
+        trapType: 'capital_gains',
         title: 'Capital Gains Tax Bracket Change',
         description: `You are $${distance_to_next_bracket.toFixed(0)} away from moving from ${cgResult.current_rate}% to ${next_rate}% long-term capital gains rate.`,
         financial_impact: tax_increase,

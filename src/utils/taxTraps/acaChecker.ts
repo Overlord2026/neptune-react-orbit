@@ -128,7 +128,9 @@ export function generateAcaWarning(
       // Close to cliff but not over
       return {
         type: 'aca',
-        severity: 'medium', // Fixed: changed from 'warning' to 'medium'
+        message: `You are ${Math.round(fplPercentage)}% of FPL, only $${Math.round(distanceToCliff).toLocaleString()} from the premium subsidy cliff.`,
+        severity: 'medium',
+        trapType: 'aca',
         title: 'ACA Subsidy Cliff Risk',
         description: `You are ${Math.round(fplPercentage)}% of FPL, only $${Math.round(distanceToCliff).toLocaleString()} from the premium subsidy cliff.`,
         financial_impact: financialImpact,
@@ -138,7 +140,9 @@ export function generateAcaWarning(
       // Over cliff
       return {
         type: 'aca',
-        severity: 'high', // Fixed: changed from 'alert' to 'high'
+        message: `You are at ${Math.round(fplPercentage)}% of FPL, which may put you beyond the premium subsidy eligibility threshold.`,
+        severity: 'high',
+        trapType: 'aca',
         title: 'ACA Subsidy Cliff Impact',
         description: `You are at ${Math.round(fplPercentage)}% of FPL, which may put you beyond the premium subsidy eligibility threshold.`,
         financial_impact: financialImpact,

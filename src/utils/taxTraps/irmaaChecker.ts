@@ -90,7 +90,9 @@ export function generateIrmaaWarning(
     
     return {
       type: 'irmaa',
-      severity: severityLevel, // Fixed: changed from 'warning' to 'medium'
+      message: `Your income triggers Medicare IRMAA surcharges of $${annual_impact.toFixed(2)} annually ($${(partB_surcharge + partD_surcharge).toFixed(2)}/month).`,
+      severity: severityLevel,
+      trapType: 'irmaa',
       title: 'Medicare IRMAA Surcharge',
       description: `Your income triggers Medicare IRMAA surcharges of $${annual_impact.toFixed(2)} annually ($${(partB_surcharge + partD_surcharge).toFixed(2)}/month).`,
       financial_impact: annual_impact,

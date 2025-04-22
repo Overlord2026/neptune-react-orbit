@@ -121,3 +121,6 @@ export const checkTaxTraps = (input: TaxTrapInput): TaxTrapResult => {
     aca_data
   };
 };
+
+// Re-export the types from './taxTraps/types' to ensure they're available
+export type { TaxTrapInput, TaxTrapResult, TaxTrapWarning };
