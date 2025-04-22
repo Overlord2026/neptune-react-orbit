@@ -1,8 +1,7 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { MultiYearScenarioData, YearlyResult } from '@/types/tax/rothConversionTypes';
 import { FilingStatusType } from '@/types/tax/filingTypes';
-import { calculateMultiYearScenario } from '@/utils/rothConversion/calculateMultiYearScenario';
+import { calculateMultiYearScenario } from '@/utils/rothConversion';
 import { toast } from 'sonner';
 
 interface MultiYearContextType {
@@ -30,7 +29,6 @@ const defaultScenarioData: MultiYearScenarioData = {
   numYears: 10,
   traditionalIraBalance: 500000,
   rothIraBalance: 100000,
-  // Using the proper property names aligned with the interface
   traditionalIRAStartBalance: 500000,
   rothIRAStartBalance: 100000,
   inflationRate: 0.025,
@@ -127,5 +125,4 @@ export const useMultiYear = () => {
   return context;
 };
 
-// Export for components that need the context
 export const useMultiYearContext = useMultiYear;

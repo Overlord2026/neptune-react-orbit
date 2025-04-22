@@ -25,6 +25,7 @@ import {
   saveTaxScenario as saveTaxScenarioFunc,
   getSavedScenarios as fetchTaxScenariosFunc 
 } from '../taxScenario/storage';
+import { calculateMultiYearScenario } from '../rothConversion';
 
 // Re-export functions with renamed variables to avoid conflicts
 export const calculateTaxableIncome = calcTaxable;
@@ -65,6 +66,6 @@ export const fetchScenarios = fetchTaxScenariosFunc;
 
 // Re-export utility functions that are part of the public API
 export { calculateSafeHarbor } from '../safeHarborUtils';
-export { calculateMultiYearScenario } from '../rothConversion/calculateMultiYearScenario';
+export { calculateMultiYearScenario } from '../rothConversion';
 export { calculateRMD } from '../rmdCalculationUtils';
 export { getMaxConversionAmount } from '../conversionStrategyUtils';

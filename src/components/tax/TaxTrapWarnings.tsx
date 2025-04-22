@@ -55,7 +55,7 @@ const TaxTrapWarnings: React.FC<TaxTrapWarningsProps> = ({ warnings }) => {
         const classes = getClassesForSeverity(warning.severity);
         return (
           <div
-            key={`${warning.type}-${index}`}
+            key={`${warning.trapType}-${index}`}
             className={`p-3 rounded-md border ${classes.border} ${classes.bg}`}
           >
             <div className="flex items-start gap-2">

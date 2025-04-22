@@ -65,7 +65,7 @@ const TaxTrapAccordion: React.FC<TaxTrapAccordionProps> = ({ warnings }) => {
     <Accordion type="multiple" className="space-y-3">
       {warnings.map((warning, index) => (
         <AccordionItem 
-          key={`${warning.type}-${index}`}
+          key={`${warning.trapType}-${index}`}
           value={`item-${index}`}
           className={`rounded-md border ${getClassesForSeverity(warning.severity)}`}
         >
@@ -84,7 +84,7 @@ const TaxTrapAccordion: React.FC<TaxTrapAccordionProps> = ({ warnings }) => {
                 </p>
               )}
               <Link 
-                to={getEducationalLink(warning.type)} 
+                to={getEducationalLink(warning.trapType)} 
                 className="text-xs flex items-center text-primary hover:text-primary/80 gap-1 mt-2"
               >
                 Learn more about this tax trap
