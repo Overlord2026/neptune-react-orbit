@@ -31,6 +31,8 @@ export interface TaxTrapWarning {
   description: string;
   financial_impact?: number;
   trapType?: string;  // Added for compatibility
+  message?: string;   // Added for compatibility
+  details?: string;   // Added for compatibility
 }
 
 export interface TaxTrapResult {
@@ -77,7 +79,10 @@ export function checkTaxTraps(input: TaxTrapInput): TaxTrapResult {
         severity: 'medium',
         title: 'Medicare IRMAA Surcharge',
         description: `Your income may trigger an IRMAA surcharge of approximately $${annualSurcharge.toFixed(2)} annually on your Medicare premiums.`,
-        financial_impact: annualSurcharge
+        financial_impact: annualSurcharge,
+        message: 'Medicare IRMAA Surcharge Alert',
+        trapType: 'irmaa',
+        details: `Your income may trigger an IRMAA surcharge of approximately $${annualSurcharge.toFixed(2)} annually on your Medicare premiums.`
       });
       
       result.irmaa_data = {
@@ -102,7 +107,10 @@ export function checkTaxTraps(input: TaxTrapInput): TaxTrapResult {
         severity: 'low',
         title: 'Social Security Taxation',
         description: `Up to 85% of your Social Security benefits may be taxable due to your income level.`,
-        financial_impact: taxImpact
+        financial_impact: taxImpact,
+        message: 'Social Security Benefits Taxation',
+        trapType: 'social_security',
+        details: `Up to 85% of your Social Security benefits may be taxable due to your income level.`
       });
       
       result.social_security_data = {
@@ -127,7 +135,10 @@ export function checkTaxTraps(input: TaxTrapInput): TaxTrapResult {
         severity: 'high',
         title: 'ACA Subsidy Cliff',
         description: `Your income is close to or over 400% FPL, which may cause loss of ACA premium subsidies.`,
-        financial_impact: estimatedSubsidyLoss
+        financial_impact: estimatedSubsidyLoss,
+        message: 'ACA Subsidy Cliff Risk',
+        trapType: 'aca',
+        details: `Your income is close to or over 400% FPL, which may cause loss of ACA premium subsidies.`
       });
       
       result.aca_data = {

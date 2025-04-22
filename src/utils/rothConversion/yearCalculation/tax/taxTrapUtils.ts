@@ -1,3 +1,4 @@
+
 /**
  * Tax Trap Utility Functions
  * 
@@ -52,18 +53,13 @@ export function checkForTaxTraps({
     
     if (baseAGI > threshold) {
       warnings.push({
-        id: `irmaa-${scenarioId}`,
-        trapType: 'irmaa',
         type: 'irmaa',
+        severity: 'medium',
         title: 'Medicare IRMAA Surcharge',
         description: `Your MAGI of $${baseAGI.toLocaleString()} exceeds the IRMAA threshold, triggering additional Medicare premium costs.`,
-        severity: 'medium',
-        threshold: {
-          value: threshold,
-          units: 'USD'
-        },
-        remediation: 'Consider tax-efficient withdrawal strategies or charitable giving to reduce MAGI.',
-        financial_impact: 0 // Will be calculated later
+        financial_impact: 0, // Will be calculated later
+        trapType: 'irmaa',
+        message: 'Medicare IRMAA Surcharge Alert'
       });
       
       // Calculate surcharge amounts
@@ -87,18 +83,13 @@ export function checkForTaxTraps({
     if (combinedIncome > threshold2) {
       taxablePercentage = 85;
       warnings.push({
-        id: `ss-tax-${scenarioId}`,
-        trapType: 'social_security',
         type: 'social_security',
-        title: '85% of Social Security Taxable',
-        message: '85% of Social Security Benefits Taxable',
-        details: 'Your combined income has triggered the maximum 85% taxation of your Social Security benefits.',
         severity: 'medium',
-        threshold: {
-          value: threshold2,
-          units: 'USD'
-        },
-        remediation: 'Consider tax-free income sources or strategic Roth conversions in prior years.'
+        title: '85% of Social Security Taxable',
+        description: 'Your combined income has triggered the maximum 85% taxation of your Social Security benefits.',
+        trapType: 'social_security',
+        message: '85% of Social Security Benefits Taxable',
+        financial_impact: Math.round(socialSecurityAmount * 0.85 * 0.22)
       });
       
       trapResults.social_security_data = {
@@ -108,18 +99,13 @@ export function checkForTaxTraps({
     } else if (combinedIncome > threshold1) {
       taxablePercentage = 50;
       warnings.push({
-        id: `ss-tax-${scenarioId}`,
-        trapType: 'social_security',
         type: 'social_security',
-        title: '50% of Social Security Taxable',
-        message: '50% of Social Security Benefits Taxable',
-        details: 'Your combined income has triggered partial taxation of your Social Security benefits.',
         severity: 'low',
-        threshold: {
-          value: threshold1,
-          units: 'USD'
-        },
-        remediation: 'Monitor income levels to avoid reaching the 85% taxation threshold.'
+        title: '50% of Social Security Taxable',
+        description: 'Your combined income has triggered partial taxation of your Social Security benefits.',
+        trapType: 'social_security',
+        message: '50% of Social Security Benefits Taxable',
+        financial_impact: Math.round(socialSecurityAmount * 0.5 * 0.12)
       });
       
       trapResults.social_security_data = {
@@ -138,18 +124,13 @@ export function checkForTaxTraps({
     
     if (fplPercentage > 395 && fplPercentage < 405) {
       warnings.push({
-        id: `aca-cliff-${scenarioId}`,
-        trapType: 'aca',
         type: 'aca',
-        title: 'ACA Subsidy Cliff Risk',
-        message: 'ACA Subsidy Cliff Risk',
-        details: `Your income is ${fplPercentage.toFixed(1)}% of the Federal Poverty Level, which is near the 400% cliff for ACA premium subsidies.`,
         severity: 'high',
-        threshold: {
-          value: 400,
-          units: '%'
-        },
-        remediation: 'Consider reducing income through retirement contributions or charitable giving to maintain subsidy eligibility.'
+        title: 'ACA Subsidy Cliff Risk',
+        description: `Your income is ${fplPercentage.toFixed(1)}% of the Federal Poverty Level, which is near the 400% cliff for ACA premium subsidies.`,
+        trapType: 'aca',
+        message: 'ACA Subsidy Cliff Risk',
+        financial_impact: Math.round(householdSize * 8000)
       });
       
       trapResults.aca_data = {
@@ -169,18 +150,13 @@ export function checkForTaxTraps({
       const taxIncrease = amountInHigherBracket * 0.15;
       
       warnings.push({
-        id: `cap-gain-jump-${scenarioId}`,
-        trapType: 'capital_gains',
         type: 'capital_gains',
-        title: 'Capital Gains Tax Bracket Jump',
-        message: 'Capital Gains Tax Bracket Jump',
-        details: 'Your capital gains have pushed you from the 0% to the 15% capital gains tax bracket.',
         severity: 'high',
-        threshold: {
-          value: threshold,
-          units: 'USD'
-        },
-        remediation: 'Consider spreading capital gains realizations across multiple tax years.'
+        title: 'Capital Gains Tax Bracket Jump',
+        description: 'Your capital gains have pushed you from the 0% to the 15% capital gains tax bracket.',
+        trapType: 'capital_gains',
+        message: 'Capital Gains Tax Bracket Jump',
+        financial_impact: Math.round(taxIncrease)
       });
       
       trapResults.capital_gains_data = {
@@ -203,10 +179,10 @@ export function checkForTaxTraps({
   // Convert to the format expected by the yearCalculation.ts
   const simpleWarnings = sortedWarnings.map(warning => ({
     type: warning.type,
-    message: warning.message,
+    message: warning.message || warning.title,
     severity: warning.severity,
-    trapType: warning.trapType,
-    details: warning.description || warning.message
+    trapType: warning.trapType || warning.type,
+    details: warning.description || warning.message || 'No details available'
   }));
   
   // Return both formats

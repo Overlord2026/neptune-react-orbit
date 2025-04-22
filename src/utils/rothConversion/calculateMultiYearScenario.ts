@@ -1,3 +1,4 @@
+
 /**
  * Multi-Year Roth Conversion Scenario Calculation
  * 
@@ -149,10 +150,14 @@ export const calculateMultiYearScenario = async (
       totalTax: taxResult.total_tax,
       marginalRate: taxResult.marginal_rate,
       effectiveRate: taxResult.effective_rate,
-      warnings: (warnings || []).map(w => ({
+      warnings: Array.isArray(warnings) ? warnings.map(w => ({
         ...w,
-        details: w.details || w.message || 'No details provided'
-      })) as TrapAlert[],
+        type: w.type || 'unknown',
+        severity: w.severity || 'medium',
+        trapType: w.trapType || w.type || 'unknown',
+        message: w.message || 'Warning',
+        details: w.details || w.message || w.description || 'No details provided'
+      })) as TrapAlert[] : [],
       cumulativeTaxPaid,
       cumulativeTaxSaved,
       traditionalScenarioBalance,

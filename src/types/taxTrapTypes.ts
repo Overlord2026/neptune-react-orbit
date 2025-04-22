@@ -6,7 +6,7 @@
  */
 
 export interface TaxTrapWarning {
-  id: string;
+  id?: string;
   trapType: string;
   message: string;
   details: string;
@@ -18,14 +18,14 @@ export interface TaxTrapWarning {
   };
   financial_impact?: number;
   type: string;
-  title: string; // Changed from optional to required to match utils/taxTraps/types
+  title: string;
   description?: string;
   impact?: number;
 }
 
 export interface TaxTrapResult {
   warnings: TaxTrapWarning[];
-  scenario_id: string; // Make this required to match the utils/taxTraps/types version
+  scenario_id?: string;
   irmaa_data?: {
     partB_surcharge: number;
     partD_surcharge: number;
@@ -66,7 +66,7 @@ export interface TrapAlert {
   message: string;
   severity: 'low' | 'medium' | 'high';
   trapType: string;
-  details: string; // Make this required to match usage
+  details: string;
 }
 
 export interface TrapAvoidance {

@@ -23,11 +23,12 @@ export interface TaxTrapWarning {
   severity: 'low' | 'medium' | 'high';
   title: string;
   description: string;
-  financial_impact: number; // Estimated dollar impact
+  financial_impact?: number; // Estimated dollar impact
   icon?: 'info' | 'alertCircle' | 'alertTriangle' | 'help';
   trapType?: string; // Added for compatibility with code using this property
   name?: string; // For compatibility with CharitableContributionImpact
   message?: string; // Added for compatibility with existing code
+  details?: string; // Added for compatibility with other components
 }
 
 export interface TaxTrapResult {
