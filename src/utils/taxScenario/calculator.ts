@@ -1,4 +1,3 @@
-
 /**
  * Tax Scenario Calculator
  * 
@@ -35,7 +34,6 @@ export function calculateBasicScenarioResult(
     marginal_rate,
     effective_rate,
     marginal_capital_gains_rate,
-    // Ensure result has brackets_breakdown or provide default empty breakdown
   } = result;
   
   // Create default brackets_breakdown if not provided by calculateTaxAmounts

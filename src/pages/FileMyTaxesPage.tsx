@@ -16,7 +16,7 @@ const FileMyTaxesPage = () => {
           </h2>
           <div className="flex gap-2">
             <Button variant="outline" className="border-[#9b87f5] text-[#9b87f5]" asChild>
-              <Link to="/tax-filing">Back to Options</Link>
+              <Link to="/tax-planning/filing-options">Back to Options</Link>
             </Button>
             <Button variant="outline" className="border-[#FFD700] text-[#FFD700]" asChild>
               <Link to="/tax-planning">Tax Planning Hub</Link>

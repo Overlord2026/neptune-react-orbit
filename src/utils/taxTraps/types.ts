@@ -27,6 +27,7 @@ export interface TaxTrapWarning {
   icon?: 'info' | 'alertCircle' | 'alertTriangle' | 'help';
   trapType?: string; // Added for compatibility with code using this property
   name?: string; // For compatibility with CharitableContributionImpact
+  message?: string; // Added for compatibility with existing code
 }
 
 export interface TaxTrapResult {

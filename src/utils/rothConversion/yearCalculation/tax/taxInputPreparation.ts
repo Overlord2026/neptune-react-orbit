@@ -48,25 +48,29 @@ export function prepareTaxInput({
   baseAGI,
   beforeCharitableTraps,
   charitableImpact
-}: any) {
-  // Convert string filing status to FilingStatusType, ensuring it's a valid value
-  const filingStatusValue = scenarioData.filingStatus;
+}: TaxInputParams) {
+  // Map string filing status to FilingStatusType
+  let filingStatus: FilingStatusType = 'single';
   
   // Ensure filingStatus is a valid FilingStatusType
   const validFilingStatuses: FilingStatusType[] = [
     'single', 'married_joint', 'married_separate', 'head_of_household', 'qualifying_widow'
   ];
   
-  // Default to 'single' if the provided value isn't valid
-  const filingStatus: FilingStatusType = validFilingStatuses.includes(filingStatusValue) 
-    ? filingStatusValue as FilingStatusType 
-    : 'single';
+  // If scenarioData.filingStatus is a valid FilingStatusType, use it
+  if (typeof scenarioData.filingStatus === 'string' && 
+      validFilingStatuses.includes(scenarioData.filingStatus as FilingStatusType)) {
+    filingStatus = scenarioData.filingStatus as FilingStatusType;
+  } else if (scenarioData.filingStatus === 'married') {
+    // Convert 'married' to 'married_joint' for compatibility
+    filingStatus = 'married_joint';
+  }
   
   // Build the yearTaxInput object with the correct type
   const yearTaxInput: TaxInput = {
     year: currentYear,
     filing_status: filingStatus,
-    filingStatus: filingStatus, // Include both properties for compatibility
+    filingStatus, // Include both properties for compatibility
     wages: baseIncome,
     interest: 0,
     dividends: 0,
@@ -83,8 +87,8 @@ export function prepareTaxInput({
     spouseRothConversion: scenarioData.includeSpouse ? spouseConversionAmount : undefined,
     
     // Community property settings
-    isInCommunityPropertyState: scenarioData.isInCommunityPropertyState,
-    splitCommunityIncome: scenarioData.splitCommunityIncome,
+    isInCommunityPropertyState: Boolean(scenarioData.isInCommunityPropertyState),
+    splitCommunityIncome: Boolean(scenarioData.splitCommunityIncome),
     
     // State tax info - make sure we're handling string or undefined only
     includeStateTax: Boolean(scenarioData.includeStateTax),

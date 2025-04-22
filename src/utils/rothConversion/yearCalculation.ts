@@ -107,12 +107,13 @@ export function processSingleYearCalculation({
   
   // Make sure the warnings have all required properties
   const standardizedWarnings = warnings?.map((warning: any) => ({
-    type: warning.type,
-    severity: warning.severity,
+    type: warning.type || 'general',
+    severity: warning.severity || 'medium',
     title: warning.title || warning.message || 'Warning',
     description: warning.description || warning.message || 'Tax trap detected',
     financial_impact: warning.financial_impact || 0,
-    trapType: warning.trapType || warning.type,
+    trapType: warning.trapType || warning.type || 'general',
+    message: warning.message || warning.description || 'Tax trap detected',
   })) || [];
   
   // Calculate charitable effects

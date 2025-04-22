@@ -17,7 +17,7 @@ export function recordManualOverride(
     timestamp: new Date(),
     user_id: userId, // Fixed property name to match AuditLogEntry type
     action: 'MANUAL_OVERRIDE',
-    targetId: dataFeedId,
+    target_id: dataFeedId, // Changed from targetId to target_id to match type
     details: {
       reason,
       ...details
@@ -45,7 +45,7 @@ export function recordLoginAttempt(
     timestamp: new Date(),
     user_id: userId, // Fixed property name to match AuditLogEntry type
     action: success ? 'LOGIN_SUCCESS' : 'LOGIN_FAILURE',
-    targetId: userId,
+    target_id: userId, // Changed from targetId to target_id to match type
     details: {
       ipAddress,
       success

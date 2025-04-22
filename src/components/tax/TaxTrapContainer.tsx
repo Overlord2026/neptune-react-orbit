@@ -23,7 +23,8 @@ const TaxTrapContainer: React.FC = () => {
   const taxableIncome = Math.max(0, agi - (filingStatus === 'single' ? 12950 : filingStatus === 'married_joint' ? 25900 : 19400));
   
   // Convert FilingStatusType to the format expected by TaxTrapInputForm
-  const convertedFilingStatus = filingStatus === 'married_joint' ? 'married' as any : filingStatus;
+  // Use a type assertion to ensure proper compatibility
+  const convertedFilingStatus = filingStatus === 'married_joint' ? 'married' as 'single' | 'married' | 'married_separate' | 'head_of_household' : filingStatus as 'single' | 'married' | 'married_separate' | 'head_of_household';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
