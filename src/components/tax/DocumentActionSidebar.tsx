@@ -55,16 +55,19 @@ const DocumentActionSidebar: React.FC<DocumentActionSidebarProps> = ({
           <Archive className="mr-2 h-4 w-4" />
           Document Archive
         </Button>
-        <Button className="w-full justify-start" variant="outline">
+        <Button 
+          className="w-full justify-start" 
+          variant="outline"
+        >
           <Calendar className="mr-2 h-4 w-4" />
           View Documents by Year
         </Button>
         <Button 
-          className="w-full justify-start bg-green-600 hover:bg-green-700"
+          className="w-full justify-start bg-green-600 hover:bg-green-700 text-xs sm:text-sm"
           onClick={onShowMissingDocsDialog}
         >
           <File className="mr-2 h-4 w-4" />
-          Generate Missing Document Report
+          <span className="truncate">Generate Missing Document Report</span>
         </Button>
         <Button 
           className="w-full justify-start" 
