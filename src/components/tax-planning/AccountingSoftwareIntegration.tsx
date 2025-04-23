@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import InfoTooltip from '@/components/tax/InfoTooltip';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface SoftwareOption {
   name: string;
@@ -26,14 +24,14 @@ const AccountingSoftwareIntegration = () => {
       name: "QuickBooks",
       description: "Connect your QuickBooks account to automatically import income and expense data for tax projections.",
       isPopular: true,
-      authUrl: "https://appcenter.intuit.com/connect/oauth2?client_id=ABCxyz123&redirect_uri=https://your-app.com/api/quickbooks/callback&response_type=code&scope=com.intuit.quickbooks.accounting",
+      authUrl: "https://appcenter.intuit.com/connect/oauth2",
       connectionStatus: 'disconnected',
     },
     {
       name: "Xero",
       description: "Sync your Xero accounting data to simplify tax filing and ensure accuracy in your deductions.",
       isPopular: false,
-      authUrl: "https://login.xero.com/identity/connect/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=https://your-app.com/api/xero/callback&response_type=code&scope=accounting.transactions",
+      authUrl: "https://login.xero.com/identity/connect/authorize",
       connectionStatus: 'disconnected',
     },
     {
@@ -50,51 +48,31 @@ const AccountingSoftwareIntegration = () => {
 
   // Check for existing connections on component mount
   useEffect(() => {
-    // This would typically be an API call to your backend to check connection status
     checkExistingConnections();
   }, []);
 
   const checkExistingConnections = () => {
-    // In a real implementation, this would be an API call to check which services are connected
-    // For demo purposes, we'll check localStorage
+    // This would typically be an API call to check which services are connected
     const quickbooksConnected = localStorage.getItem('quickbooks_connected') === 'true';
     const xeroConnected = localStorage.getItem('xero_connected') === 'true';
     
-    // Check for connection timestamps
-    const quickbooksLastSynced = localStorage.getItem('quickbooks_last_synced');
-    const xeroLastSynced = localStorage.getItem('xero_last_synced');
-    
     if (quickbooksConnected) {
-      updateConnectionStatus("QuickBooks", 'connected', quickbooksLastSynced || getCurrentTimestamp());
+      updateConnectionStatus("QuickBooks", 'connected', new Date().toISOString());
     }
-    
     if (xeroConnected) {
-      updateConnectionStatus("Xero", 'connected', xeroLastSynced || getCurrentTimestamp());
+      updateConnectionStatus("Xero", 'connected', new Date().toISOString());
     }
-  };
-
-  const getCurrentTimestamp = () => {
-    return new Date().toISOString();
-  };
-
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
   };
 
   const updateConnectionStatus = (
     softwareName: string, 
-    status: 'connected' | 'disconnected', 
+    status: 'connected' | 'disconnected',
     lastSynced?: string
   ) => {
-    setSoftwareOptions(prevOptions => 
-      prevOptions.map(option => 
+    setSoftwareOptions(prev => 
+      prev.map(option => 
         option.name === softwareName 
-          ? { 
-              ...option, 
-              connectionStatus: status,
-              lastSynced: status === 'connected' ? (lastSynced || getCurrentTimestamp()) : undefined
-            } 
+          ? { ...option, connectionStatus: status, lastSynced } 
           : option
       )
     );
@@ -104,18 +82,7 @@ const AccountingSoftwareIntegration = () => {
     if (software.connectionStatus === 'connected') {
       // Handle disconnection
       if (software.name === "QuickBooks") {
-        // In production, this would call your API to revoke tokens
         localStorage.removeItem('quickbooks_connected');
-        localStorage.removeItem('quickbooks_last_synced');
-        updateConnectionStatus(software.name, 'disconnected');
-        toast({
-          title: "Disconnected",
-          description: `Successfully disconnected from ${software.name}`,
-        });
-      } else if (software.name === "Xero") {
-        // In production, this would call your API to revoke tokens
-        localStorage.removeItem('xero_connected');
-        localStorage.removeItem('xero_last_synced');
         updateConnectionStatus(software.name, 'disconnected');
         toast({
           title: "Disconnected",
@@ -124,39 +91,25 @@ const AccountingSoftwareIntegration = () => {
       }
     } else {
       // Handle connection
-      if ((software.name === "QuickBooks" || software.name === "Xero") && software.authUrl) {
-        // Open OAuth window
+      if (software.authUrl) {
         const authWindow = window.open(software.authUrl, "_blank", "width=600,height=700");
         
-        // In a real implementation, the OAuth callback would set the connection status
-        // For this demo, we'll simulate a successful connection after 3 seconds
+        // Simulate successful OAuth completion after 3 seconds
         setTimeout(() => {
-          if (authWindow) {
-            // The window would normally close itself after OAuth completion
-            authWindow.close();
-          }
-          
-          // Simulate successful OAuth completion
-          const currentTime = getCurrentTimestamp();
+          if (authWindow) authWindow.close();
           
           if (software.name === "QuickBooks") {
             localStorage.setItem('quickbooks_connected', 'true');
-            localStorage.setItem('quickbooks_last_synced', currentTime);
-          } else if (software.name === "Xero") {
-            localStorage.setItem('xero_connected', 'true');
-            localStorage.setItem('xero_last_synced', currentTime);
+            updateConnectionStatus(software.name, 'connected', new Date().toISOString());
+            toast({
+              title: "Connected",
+              description: `Successfully connected to ${software.name}`,
+            });
           }
-          
-          updateConnectionStatus(software.name, 'connected', currentTime);
-          toast({
-            title: "Connected",
-            description: `Successfully connected to ${software.name}`,
-          });
         }, 3000);
       } else {
-        // For other services without implementation yet
         toast({
-          title: "Integration Coming Soon",
+          title: "Coming Soon",
           description: `${software.name} integration is not yet available.`,
         });
       }
@@ -164,15 +117,7 @@ const AccountingSoftwareIntegration = () => {
   };
 
   const handleSync = (software: SoftwareOption) => {
-    // In a real implementation, this would call your API to sync data from the accounting software
-    const currentTime = getCurrentTimestamp();
-    
-    if (software.name === "QuickBooks") {
-      localStorage.setItem('quickbooks_last_synced', currentTime);
-    } else if (software.name === "Xero") {
-      localStorage.setItem('xero_last_synced', currentTime);
-    }
-    
+    const currentTime = new Date().toISOString();
     updateConnectionStatus(software.name, 'connected', currentTime);
     
     toast({
@@ -203,9 +148,6 @@ const AccountingSoftwareIntegration = () => {
               </p>
               <p className="text-xs text-[#B0B0B0]">
                 We never store your accounting software passwords. All connections are made using secure OAuth tokens that you can revoke at any time.
-              </p>
-              <p className="text-xs text-[#B0B0B0] mt-2">
-                View our complete <a href="#" className="text-[#007BFF] hover:underline">Privacy Policy</a> for more details.
               </p>
             </div>
           </PopoverContent>
@@ -240,11 +182,11 @@ const AccountingSoftwareIntegration = () => {
               {software.connectionStatus === 'connected' && software.lastSynced && (
                 <div className="flex items-center text-xs text-[#B0B0B0] mb-3">
                   <Calendar className="mr-1 h-3 w-3" /> 
-                  <span>Last synced: {formatTimestamp(software.lastSynced)}</span>
+                  <span>Last synced: {new Date(software.lastSynced).toLocaleString()}</span>
                 </div>
               )}
               
-              <div className="flex gap-2 mb-3">
+              <div className="flex gap-2">
                 {software.connectionStatus === 'connected' ? (
                   <>
                     <TooltipProvider>
@@ -256,7 +198,7 @@ const AccountingSoftwareIntegration = () => {
                             onClick={() => handleSync(software)}
                           >
                             Sync Now
-                            <RefreshCw className="h-4 w-4" />
+                            <RefreshCw className="h-4 w-4 ml-2" />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -294,27 +236,9 @@ const AccountingSoftwareIntegration = () => {
                   </p>
                 </div>
               )}
-
-              {software.connectionStatus === 'connected' && (
-                <Alert className="bg-[#1a2336] border border-[#353e52] p-2 mt-2">
-                  <AlertDescription className="text-xs text-[#B0B0B0] flex items-center">
-                    <Shield className="h-3.5 w-3.5 text-[#00C47C] mr-1.5 flex-shrink-0" />
-                    Your connection is secure and can be revoked at any time.
-                  </AlertDescription>
-                </Alert>
-              )}
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      <div className="mt-6 text-center">
-        <InfoTooltip 
-          text="We use industry-standard security practices to protect your data. All connections are secured via OAuth and HTTPS."
-          icon="info"
-          link="#"
-          linkText="View our complete security policy"
-        />
       </div>
     </div>
   );

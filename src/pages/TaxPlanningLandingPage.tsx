@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FileCheck, CreditCard } from "lucide-react";
@@ -80,6 +79,16 @@ const TaxPlanningLandingPage = () => {
           </CardHeader>
           <CardContent>
             <TaxTools />
+          </CardContent>
+        </Card>
+        
+        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+          <ShareFeature title="Software Integration" position="top-right" />
+          <CardHeader>
+            <CardTitle className="text-[#E5E5E5]">Software Integration</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AccountingSoftwareIntegration />
           </CardContent>
         </Card>
         
