@@ -9,14 +9,14 @@ export const getSoftwareOptions = () => [
     description: "Connect your QuickBooks account to automatically import income and expense data for tax projections.",
     isPopular: true,
     authUrl: "https://appcenter.intuit.com/connect/oauth2",
-    connectionStatus: 'disconnected',
+    connectionStatus: 'disconnected' as 'connected' | 'disconnected',
   },
   {
     name: "Xero",
     description: "Sync your Xero accounting data to simplify tax filing and ensure accuracy in your deductions.",
     isPopular: false,
     authUrl: "https://login.xero.com/identity/connect/authorize",
-    connectionStatus: 'disconnected',
+    connectionStatus: 'disconnected' as 'connected' | 'disconnected',
   },
   {
     name: "Wave",
