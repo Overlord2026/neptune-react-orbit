@@ -1,22 +1,24 @@
 
+import { SoftwareOption } from './types';
+
 export const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleString();
 };
 
-export const getSoftwareOptions = () => [
+export const getSoftwareOptions = (): SoftwareOption[] => [
   {
     name: "QuickBooks",
     description: "Connect your QuickBooks account to automatically import income and expense data for tax projections.",
     isPopular: true,
     authUrl: "https://appcenter.intuit.com/connect/oauth2",
-    connectionStatus: 'disconnected' as 'connected' | 'disconnected',
+    connectionStatus: 'disconnected',
   },
   {
     name: "Xero",
     description: "Sync your Xero accounting data to simplify tax filing and ensure accuracy in your deductions.",
     isPopular: false,
     authUrl: "https://login.xero.com/identity/connect/authorize",
-    connectionStatus: 'disconnected' as 'connected' | 'disconnected',
+    connectionStatus: 'disconnected',
   },
   {
     name: "Wave",

@@ -51,6 +51,13 @@ const AccountingSoftwareIntegration = () => {
           title: "Disconnected",
           description: `Successfully disconnected from ${software.name}`,
         });
+      } else if (software.name === "Xero") {
+        localStorage.removeItem('xero_connected');
+        updateConnectionStatus(software.name, 'disconnected');
+        toast({
+          title: "Disconnected",
+          description: `Successfully disconnected from ${software.name}`,
+        });
       }
     } else {
       // Handle connection
@@ -63,6 +70,13 @@ const AccountingSoftwareIntegration = () => {
           
           if (software.name === "QuickBooks") {
             localStorage.setItem('quickbooks_connected', 'true');
+            updateConnectionStatus(software.name, 'connected', new Date().toISOString());
+            toast({
+              title: "Connected",
+              description: `Successfully connected to ${software.name}`,
+            });
+          } else if (software.name === "Xero") {
+            localStorage.setItem('xero_connected', 'true');
             updateConnectionStatus(software.name, 'connected', new Date().toISOString());
             toast({
               title: "Connected",
