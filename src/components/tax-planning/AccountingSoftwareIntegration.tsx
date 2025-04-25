@@ -8,7 +8,7 @@ import { getSoftwareOptions } from './software-integration/utils';
 
 const AccountingSoftwareIntegration = () => {
   const { toast } = useToast();
-  const [softwareOptions, setSoftwareOptions] = useState<SoftwareOption[]>(getSoftwareOptions() as SoftwareOption[]);
+  const [softwareOptions, setSoftwareOptions] = useState<SoftwareOption[]>(getSoftwareOptions());
 
   // Check for existing connections on component mount
   useEffect(() => {
