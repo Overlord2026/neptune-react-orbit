@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useRoutes } from 'react-router-dom';
 import Layout from "./components/Layout";
@@ -28,7 +27,6 @@ import TaxGlossaryPage from "./pages/TaxGlossaryPage";
 import TaxTrapCheckerPage from "./pages/TaxTrapCheckerPage";
 import AdvancedTaxStrategiesPage from "./pages/AdvancedTaxStrategiesPage";
 
-// Using the pattern with useRoutes
 function AppRoutes() {
   const routes = useRoutes([
     {
@@ -143,7 +141,6 @@ function AppRoutes() {
       path: "/tax-planning/advanced-strategies",
       element: <Layout><AdvancedTaxStrategiesPage /></Layout>
     },
-    // Add direct file-my-taxes route for tax filing
     {
       path: "/tax-planning/file-my-taxes",
       element: <Layout><TaxFilingPage /></Layout>
