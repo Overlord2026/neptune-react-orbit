@@ -1,42 +1,57 @@
 
-/* Button variants */
+/* Button variants with improved contrast and visual hierarchy */
 .btn-primary {
-  background-color: var(--accent);
+  background-color: var(--accent-primary);
   color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
 }
 
 .btn-primary:hover {
-  background-color: #0369a1;
-  text-decoration: none;
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.15);
 }
 
 .btn-secondary {
   background-color: transparent;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--accent-primary);
+  border: 2px solid var(--accent-primary);
 }
 
 .btn-secondary:hover {
-  background-color: rgba(2, 132, 199, 0.1);
-  text-decoration: none;
+  background-color: rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
 }
 
 .btn-accent {
   background-color: var(--accent-gold);
-  color: var(--bg-primary);
+  color: #0f1729;
+  font-weight: 500;
 }
 
 .btn-accent:hover {
   background-color: #f59e0b;
-  text-decoration: none;
+  transform: translateY(-1px);
 }
 
 .btn-danger {
   background-color: var(--error);
-  color: var(--text-primary);
+  color: #FFFFFF;
 }
 
 .btn-danger:hover {
-  background-color: #ef4444;
-  text-decoration: none;
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+/* Ghost button variant */
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+}
+
+.btn-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-secondary);
 }

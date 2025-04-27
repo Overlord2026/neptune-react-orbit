@@ -1,3 +1,4 @@
+
 @import './base/typography.css';
 @import './components/buttons/base-button.css';
 @import './components/buttons/variants.css';
@@ -11,35 +12,36 @@
 /* CSS Variables and Root Styles */
 :root {
   /* Background Colors */
-  --bg-primary: #0f172a;
+  --bg-primary: #0f1729;
   --bg-secondary: #1e293b;
-  --bg-tertiary: #273549;
-  --bg-sidebar: #0f172a;
+  --bg-tertiary: #334155;
+  --bg-sidebar: #0f1729;
   
   /* Text Colors */
   --text-primary: #f8fafc;
   --text-secondary: #e2e8f0;
-  --text-accent: #fbbf24;
+  --text-accent: #3b82f6;
   
   /* Accent Colors */
-  --accent: #0284c7;
-  --accent-gold: #fbbf24;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #10b981;
+  --accent-gold: #f59e0b;
   
   /* Status Colors */
-  --success: #4ade80;
-  --warning: #fbbf24;
-  --error: #f87171;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
   
   /* Card/Container */
   --card-bg: #1e293b;
   --card-border: #334155;
-  --card-hover: #273549;
+  --card-hover: #334155;
   
   /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
   
   /* Spacing */
   --space-xs: 0.25rem;
@@ -50,7 +52,11 @@
   --space-xxl: 3rem;
   
   /* Typography */
-  --font-family: 'Inter', Arial, sans-serif;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 }
 
 /* Base Reset */
@@ -64,4 +70,69 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* Enhanced Card Styling */
+.card {
+  @apply bg-[#1e293b] border border-[#334155] rounded-lg p-6 shadow-lg transition-all duration-200;
+}
+
+.card:hover {
+  @apply shadow-xl border-[#475569];
+}
+
+/* Improved Button Styles */
+.btn {
+  @apply px-4 py-2 rounded-md font-medium transition-all duration-200 flex items-center gap-2;
+}
+
+.btn-primary {
+  @apply bg-[#3b82f6] text-white hover:bg-[#2563eb] shadow-md hover:shadow-lg;
+}
+
+.btn-secondary {
+  @apply border-2 border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6]/10;
+}
+
+/* Form Controls Enhancement */
+input, select, textarea {
+  @apply bg-[#0f1729] border-2 border-[#334155] text-white rounded-md px-4 py-2 
+         focus:outline-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] 
+         transition-colors;
+}
+
+/* Header and Navigation */
+.header {
+  @apply bg-[#0f1729] border-b border-[#334155] sticky top-0 z-50;
+}
+
+/* Typography Improvements */
+h1, h2, h3, h4, h5, h6 {
+  @apply text-[#f8fafc] font-semibold tracking-tight;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  @apply text-3xl md:text-4xl mb-4;
+}
+
+h2 {
+  @apply text-2xl md:text-3xl mb-3;
+}
+
+h3 {
+  @apply text-xl md:text-2xl mb-2;
+}
+
+/* Enhanced Link Styling */
+a {
+  @apply text-[#3b82f6] hover:text-[#60a5fa] transition-colors;
+}
+
+/* Glass Effect Cards */
+.glass-card {
+  @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg;
 }

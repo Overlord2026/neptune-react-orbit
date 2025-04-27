@@ -2,71 +2,69 @@
 export const colors = {
   // Base backgrounds
   background: {
-    primary: '#0f172a',      // Deep navy background
-    secondary: '#1e293b',    // Slightly lighter navy for cards
-    tertiary: '#273549',     // Even lighter navy for accents 
-    sidebar: '#0f172a',      // Sidebar background
+    primary: '#0f1729',     // Rich navy background
+    secondary: '#1e293b',   // Lighter navy for cards
+    tertiary: '#334155',    // Mid-tone for accents
+    sidebar: '#0f1729',     // Matching sidebar
   },
   
-  // Main colors
+  // Main accent colors
   accent: {
-    primary: '#0284c7',      // Bright blue
-    secondary: '#00C47C',    // Green for success and positive indicators
-    gold: '#fbbf24',         // Gold for premium features/highlights
+    primary: '#3b82f6',    // Bright blue for primary actions
+    secondary: '#10b981',  // Green for success states
+    gold: '#f59e0b',      // Warm gold for premium features
   },
   
   text: {
-    primary: '#f8fafc',      // Very light gray, almost white for main text
-    secondary: '#e2e8f0',    // Light gray for secondary text
-    muted: '#94a3b8',        // Medium gray for less important text
-    nav: '#94a3b8',          // Navigation text
+    primary: '#f8fafc',    // Crisp white for primary text
+    secondary: '#e2e8f0',  // Light grey for secondary text
+    muted: '#94a3b8',      // Muted text for less emphasis
+    nav: '#cbd5e1',        // Navigation text
   },
   
-  // Status colors
   status: {
-    success: '#4ade80',      // Green for success messages
-    warning: '#fbbf24',      // Amber for warnings
-    error: '#f87171',        // Red for errors
+    success: '#22c55e',    // Vibrant green
+    warning: '#f59e0b',    // Clear amber
+    error: '#ef4444',      // Bright red
   },
   
-  // Button variants
   button: {
     primary: {
-      background: '#0284c7',
-      text: '#FFFFFF',
-      hover: '#0369a1',
+      background: '#3b82f6',
+      text: '#ffffff',
+      hover: '#2563eb',
     },
     secondary: {
       background: 'transparent',
-      text: '#0284c7',
-      border: '#0284c7',
+      text: '#3b82f6',
+      border: '#3b82f6',
       hover: '#1e293b',
     },
     green: {
       background: '#10b981',
-      text: '#FFFFFF',
+      text: '#ffffff',
       hover: '#059669',
     },
     danger: {
-      background: '#f87171',
-      text: '#FFFFFF',
-      hover: '#ef4444',
+      background: '#ef4444',
+      text: '#ffffff',
+      hover: '#dc2626',
     },
   },
   
   card: {
     background: '#1e293b',
     border: '#334155',
-    hover: '#273549',
+    hover: '#334155',
   },
   
   form: {
     input: {
-      background: '#0f172a',
+      background: '#0f1729',
       border: '#334155',
       text: '#f8fafc',
       placeholder: '#94a3b8',
-      focus: '#0284c7',
+      focus: '#3b82f6',
     },
   },
 };
