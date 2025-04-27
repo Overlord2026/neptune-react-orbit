@@ -4,23 +4,17 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CharitableContributionWizard } from '../index';
 import { TaxDataProvider } from '@/services/TaxDataService';
 import { CalculatorIntegrationProvider } from '@/components/calculators/integration/CalculatorIntegrationContext';
-import { useTaxPlanningFirestore } from '@/services/TaxPlanningFirestoreService';
-
-// Mock Firebase services
-jest.mock('@/services/TaxPlanningFirestoreService', () => ({
-  useTaxPlanningFirestore: jest.fn()
-}));
 
 // Mock Toast
 jest.mock('@/components/ui/use-toast', () => ({
-  useToast: jest.fn().mockReturnValue({
+  useToast: () => ({
     toast: jest.fn()
   })
 }));
 
 // Mock TaxDataService
 jest.mock('@/services/TaxDataService', () => ({
-  useTaxData: jest.fn().mockReturnValue({
+  useTaxData: () => ({
     taxData: {
       incomeTaxBrackets: {
         single: [
@@ -54,17 +48,6 @@ jest.mock('@/services/TaxDataService', () => ({
 }));
 
 describe('CharitableContributionWizard', () => {
-  beforeEach(() => {
-    // Mock Firestore functions
-    useTaxPlanningFirestore.mockReturnValue({
-      saveCharitableScenario: jest.fn().mockResolvedValue('mock-id'),
-      getCharitableScenarios: jest.fn().mockResolvedValue([]),
-      getCharitableScenario: jest.fn(),
-      updateCharitableScenario: jest.fn(),
-      deleteCharitableScenario: jest.fn()
-    });
-  });
-
   const renderWizard = () => {
     return render(
       <TaxDataProvider>
