@@ -3,9 +3,9 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Link2, RefreshCw } from 'lucide-react';
 import { formatDate } from './utils';
 import { SoftwareOption } from './types';
-import { Link2, RefreshCw } from 'lucide-react';
 
 interface IntegrationCardProps {
   software: SoftwareOption;

@@ -2,8 +2,8 @@
 export interface SoftwareOption {
   name: string;
   description: string;
-  isPopular: boolean;
   authUrl?: string;
+  isPopular?: boolean;
   connectionStatus?: 'connected' | 'disconnected';
   lastSynced?: string;
 }

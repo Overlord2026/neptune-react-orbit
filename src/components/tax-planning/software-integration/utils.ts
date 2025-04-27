@@ -1,33 +1,33 @@
 
-import { SoftwareOption } from './types';
-
-export const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleString();
-};
-
-export const getSoftwareOptions = (): SoftwareOption[] => [
+export const getSoftwareOptions = () => [
   {
     name: "QuickBooks",
-    description: "Connect your QuickBooks account to automatically import income and expense data for tax projections.",
-    isPopular: true,
-    authUrl: "https://appcenter.intuit.com/connect/oauth2",
-    connectionStatus: 'disconnected',
+    description: "Connect to QuickBooks Online for automated tax data import",
+    authUrl: "https://quickbooks.intuit.com/oauth2/v1/authorize",
+    isPopular: true
   },
   {
     name: "Xero",
-    description: "Sync your Xero accounting data to simplify tax filing and ensure accuracy in your deductions.",
-    isPopular: false,
+    description: "Import your financial data directly from Xero",
     authUrl: "https://login.xero.com/identity/connect/authorize",
-    connectionStatus: 'disconnected',
-  },
-  {
-    name: "Wave",
-    description: "Link your Wave account for seamless integration of your financial data with our tax planning tools.",
-    isPopular: false,
+    isPopular: true
   },
   {
     name: "FreshBooks",
-    description: "Import your FreshBooks data to streamline tax preparation and maximize potential deductions.",
-    isPopular: true,
+    description: "Coming soon - Connect your FreshBooks account"
   },
+  {
+    name: "Wave",
+    description: "Coming soon - Sync your Wave accounting data"
+  }
 ];
+
+export const formatDate = (dateString: string): string => {
+  return new Date(dateString).toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true
+  });
+};
