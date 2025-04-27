@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import TaxDocumentAggregatorPage from '@/pages/TaxDocumentAggregatorPage';
 import { DocumentProvider } from '@/components/tax/DocumentContext';
@@ -34,7 +35,6 @@ const renderWithProviders = (ui: React.ReactElement) => {
 
 describe('TaxDocumentAggregatorPage', () => {
   beforeEach(() => {
-    // Clear mocks before each test
     jest.clearAllMocks();
   });
 
