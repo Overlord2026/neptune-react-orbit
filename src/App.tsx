@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRoutes } from 'react-router-dom';
 import Layout from "./components/Layout";
-import HomePage from "./pages/Index";
+import LandingPage from "./pages/LandingPage";
 import TaxPlanningPage from "./pages/TaxPlanningLandingPage";
 import TaxFilingPage from "./pages/FileMyTaxesPage";
 import TaxFilingOptionsPage from "./pages/TaxFilingOptionsPage";
@@ -31,7 +31,7 @@ function AppRoutes() {
   const routes = useRoutes([
     {
       path: "/",
-      element: <Layout><HomePage /></Layout>
+      element: <LandingPage />
     },
     {
       path: "/tax-planning",
