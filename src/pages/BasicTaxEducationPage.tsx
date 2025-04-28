@@ -72,8 +72,8 @@ const BasicTaxEducationPage = () => {
       <Accordion type="single" collapsible className="mb-8">
         {taxConcepts.map((concept, index) => (
           <AccordionItem value={`concept-${index}`} key={index} className="border-[#334155]">
-            <AccordionTrigger className="text-white hover:text-[#3b82f6]">{concept.title}</AccordionTrigger>
-            <AccordionContent className="text-gray-300">
+            <AccordionTrigger className="text-white hover:text-[#3b82f6] py-4 px-2">{concept.title}</AccordionTrigger>
+            <AccordionContent className="text-gray-300 px-2 pb-4">
               <p className="mb-2">{concept.description}</p>
               <p className="font-semibold text-white">Example:</p>
               <p>{concept.example}</p>
@@ -150,7 +150,9 @@ const BasicTaxEducationPage = () => {
           </div>
         </CardContent>
         <CardFooter className="border-t border-[#334155] pt-4">
-          <Button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white">Calculate Taxes</Button>
+          <Button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white flex items-center justify-center">
+            <span>Calculate Taxes</span>
+          </Button>
         </CardFooter>
       </Card>
     </div>

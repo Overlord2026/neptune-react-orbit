@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -90,8 +91,10 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
       >
         <CardHeader className="space-y-1">
           <CardTitle className="text-xl font-semibold text-white flex items-center gap-3">
-            {icon}
-            <div className="flex-1">
+            <span className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+              {icon}
+            </span>
+            <div className="flex-1 flex items-center">
               {title}
               {recommended && (
                 <Badge className="ml-2 bg-[#FFD700] text-black font-normal">Recommended</Badge>
@@ -122,12 +125,16 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
             </div>
           )}
           
-          <Button 
-            variant="outline"
-            className="border-primary text-primary hover:bg-primary/10"
-          >
-            {getButtonText()} <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex justify-start">
+            <Button 
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary/10 w-full flex justify-center items-center"
+            >
+              <span className="mr-auto"></span>
+              <span>{getButtonText()}</span>
+              <ArrowRight className="ml-2 h-4 w-4 mr-auto" />
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </Link>
