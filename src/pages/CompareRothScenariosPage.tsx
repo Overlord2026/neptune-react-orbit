@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TaxResult } from "@/utils/taxCalculatorTypes";
@@ -150,59 +149,59 @@ const CompareRothScenariosPage: React.FC = () => {
     return (
       <div className="container mx-auto py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <Card className="border-[#6366f1]/30 bg-[#111827]">
+          <Card className="border-[#2d3748] bg-[#0f172a]">
             <CardHeader className="text-center">
-              <Lock className="mx-auto h-12 w-12 text-[#8a76e4] mb-4" />
+              <Lock className="mx-auto h-12 w-12 text-[#f6ad55] mb-4" />
               <CardTitle className="text-2xl text-white font-bold">Premium Feature</CardTitle>
-              <CardDescription className="text-base text-gray-300">
+              <CardDescription className="text-lg text-[#e2e8f0]">
                 Roth Conversion Scenarios is a premium feature available with our 90-day free trial.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-[#1f2937] border border-[#6366f1]/30 rounded-md p-6">
+              <div className="bg-[#1a202c] border border-[#2d3748] rounded-md p-6">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-[#a78bfa]" />
-                  <h3 className="font-medium text-[#a78bfa] text-lg">FREE 90-DAY TRIAL</h3>
+                  <Calendar className="h-5 w-5 text-[#f6ad55]" />
+                  <h3 className="font-medium text-[#f6ad55] text-lg">FREE 90-DAY TRIAL</h3>
                 </div>
                 <p className="text-white text-base mt-4 mb-6">
                   Start your free trial today to gain access to all premium features including:
                 </p>
-                <ul className="mt-3 space-y-4 text-base text-gray-300">
+                <ul className="mt-3 space-y-4 text-base text-[#e2e8f0]">
                   <li className="flex items-start">
-                    <span className="text-[#a78bfa] mr-3 text-lg">•</span>
+                    <span className="text-[#f6ad55] mr-3 text-lg">•</span>
                     <span>Roth conversion analysis and scenario comparison</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-[#a78bfa] mr-3 text-lg">•</span>
+                    <span className="text-[#f6ad55] mr-3 text-lg">•</span>
                     <span>Advanced tax strategies and tax-loss harvesting tools</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-[#a78bfa] mr-3 text-lg">•</span>
+                    <span className="text-[#f6ad55] mr-3 text-lg">•</span>
                     <span>Social Security optimization calculator</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-[#a78bfa] mr-3 text-lg">•</span>
+                    <span className="text-[#f6ad55] mr-3 text-lg">•</span>
                     <span>QuickBooks & Xero integration for seamless tax planning</span>
                   </li>
                 </ul>
               </div>
               
               <div className="text-center">
-                <p className="text-gray-300 text-sm mb-4">
+                <p className="text-[#e2e8f0] text-sm mb-4">
                   No credit card required. Cancel anytime during the trial period.
                 </p>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-3">
               <Button 
-                className="w-full bg-[#8a76e4] hover:bg-[#7c5fec] text-white text-lg py-6" 
+                className="w-full bg-[#f6ad55] hover:bg-[#ed8936] text-[#0f172a] font-bold text-lg py-6" 
                 onClick={handleStartFreeTrial}
               >
                 Start 90-Day Free Trial
               </Button>
               <Button 
                 variant="outline" 
-                className="w-full border-[#3b82f6] text-[#3b82f6] hover:bg-[#1e3a8a] hover:bg-opacity-10 hover:text-[#60a5fa] text-base"
+                className="w-full border-[#3b82f6] text-[#3b82f6] hover:bg-[#1e3a8a]/10 hover:text-[#60a5fa] text-base"
                 asChild
               >
                 <Link to="/tax-planning">Return to Tax Planning Hub</Link>

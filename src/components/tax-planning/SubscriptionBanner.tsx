@@ -83,21 +83,21 @@ const SubscriptionBanner = () => {
   }
   
   return (
-    <div className={`mb-6 rounded-lg border p-4 ${daysLeft <= 7 ? 'border-amber-400 bg-amber-500/10' : 'border-[#9b87f5]/30 bg-[#9b87f5]/10'}`}>
+    <div className={`mb-6 rounded-lg border p-4 ${daysLeft <= 7 ? 'border-amber-400 bg-[#0f172a]' : 'border-[#f6ad55] bg-[#0f172a]'}`}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           {daysLeft <= 7 ? (
             <AlertCircle className="h-5 w-5 text-amber-400" />
           ) : (
-            <Calendar className="h-5 w-5 text-[#9b87f5]" />
+            <Calendar className="h-5 w-5 text-[#f6ad55]" />
           )}
           <div>
-            <h3 className={`font-medium ${daysLeft <= 7 ? 'text-amber-400' : 'text-[#9b87f5]'}`}>
+            <h3 className={`font-medium ${daysLeft <= 7 ? 'text-amber-400' : 'text-[#f6ad55]'}`}>
               Premium Trial: {daysLeft} {daysLeft === 1 ? 'Day' : 'Days'} Left
             </h3>
             <div className="mt-1 flex items-center gap-2">
               <Progress value={progress} className="h-2 w-24" />
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-[#e2e8f0]">
                 {daysLeft <= 7 ? 'Trial ending soon' : `${Math.floor((90 - daysLeft) / 90 * 100)}% complete`}
               </span>
             </div>
@@ -107,7 +107,9 @@ const SubscriptionBanner = () => {
           variant={daysLeft <= 7 ? "default" : "outline"} 
           size="sm" 
           asChild
-          className={daysLeft <= 7 ? "bg-amber-400 hover:bg-amber-500 text-black" : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5]/10"}
+          className={daysLeft <= 7 ? 
+            "bg-[#f6ad55] hover:bg-[#ed8936] text-[#0f172a] font-medium" : 
+            "border-[#f6ad55] text-[#f6ad55] hover:bg-[#f6ad55]/10"}
         >
           <Link to="/pricing">
             {daysLeft <= 7 ? 'Upgrade Now' : 'View Plans'}

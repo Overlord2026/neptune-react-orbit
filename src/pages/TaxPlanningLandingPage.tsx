@@ -105,19 +105,22 @@ const TaxPlanningLandingPage = () => {
       </div>
       
       {!isInTrial && (
-        <Card className="border-[#9b87f5]/30 bg-[#9b87f5]/5">
+        <Card className="border-[#2d3748] bg-[#0f172a]">
           <CardHeader>
-            <CardTitle className="text-[#9b87f5]">Ready to unlock all premium features?</CardTitle>
+            <CardTitle className="text-[#f8fafc] text-2xl">Ready to unlock all premium features?</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-white">
+            <p className="text-[#e2e8f0] text-lg mb-6">
               Start your free 90-day trial today and get full access to our premium tax planning tools.
               No credit card required.
             </p>
           </CardContent>
-          <CardFooter>
-            <Button asChild className="bg-[#9b87f5] hover:bg-[#8a76e4] text-white">
+          <CardFooter className="flex flex-col sm:flex-row gap-4">
+            <Button asChild className="bg-[#f6ad55] hover:bg-[#ed8936] text-[#0f172a] font-bold text-lg w-full sm:w-auto px-8 py-6">
               <Link to="/pricing">Start Free 90-Day Trial</Link>
+            </Button>
+            <Button asChild variant="outline" className="border-[#f6ad55] text-[#f6ad55] hover:bg-[#f6ad55]/10 w-full sm:w-auto">
+              <Link to="/tax-education/basics">Learn More About Features</Link>
             </Button>
           </CardFooter>
         </Card>

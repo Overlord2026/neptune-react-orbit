@@ -11,7 +11,10 @@ interface SidebarHeaderProps {
 const SidebarHeader = ({ toggleSidebar, isMobile }: SidebarHeaderProps) => {
   return (
     <div className="flex h-16 items-center border-b border-[#2d3748] px-4 bg-[#0b1120]">
-      <h2 className="text-lg font-semibold text-white">Navigation</h2>
+      <h2 className="text-lg font-semibold text-white flex items-center">
+        <span className="text-[#f6ad55] mr-2">•</span>
+        Navigation
+      </h2>
       {isMobile && (
         <Button 
           variant="ghost" 
