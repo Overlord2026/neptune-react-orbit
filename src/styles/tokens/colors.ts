@@ -1,4 +1,3 @@
-
 export const colors = {
   // Base backgrounds
   background: {
@@ -6,6 +5,7 @@ export const colors = {
     secondary: '#1a202c',   // Adjusted secondary background
     tertiary: '#2d3748',    // Adjusted accent background
     sidebar: '#0b1120',     // Matching sidebar
+    header: '#1F2937',      // Standardized header background
   },
   
   // Main accent colors
@@ -20,7 +20,7 @@ export const colors = {
     primary: '#ffffff',    // Pure white for primary text - higher contrast
     secondary: '#e2e8f0',  // Light grey for secondary text
     muted: '#a0aec0',      // Adjusted muted text for better readability
-    nav: '#e2e8f0',        // Navigation text
+    nav: '#ffffff',        // Navigation text - now pure white for better contrast
   },
   
   status: {

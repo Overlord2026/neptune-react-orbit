@@ -255,10 +255,10 @@ const DashboardLayout = () => {
       )}
       
       <div className={`flex-1 ${!isMobile ? 'ml-64' : 'ml-0'}`}>
-        <header className="sticky top-0 z-10 h-16 border-b border-[#242A38] bg-[#101521] px-6 flex items-center justify-between">
+        <header className="sticky top-0 z-10 h-16 border-b border-[#2d3748] bg-[#1F2937] px-6 flex items-center justify-between">
           {isMobile && (
             <button 
-              className="mr-4 p-1 text-[#E5E5E5] hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#007BFF]"
+              className="mr-4 p-1 text-white hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4299e1]"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu size={20} />
@@ -277,10 +277,10 @@ const DashboardLayout = () => {
           </h1>
           
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-[#9AA0AC] hidden sm:block">John Doe</span>
+            <span className="text-sm text-white hidden sm:block">John Doe</span>
             <Avatar className="h-8 w-8">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-[#007BFF] text-white">JD</AvatarFallback>
+              <AvatarFallback className="bg-[#4299e1] text-white">JD</AvatarFallback>
             </Avatar>
           </div>
         </header>

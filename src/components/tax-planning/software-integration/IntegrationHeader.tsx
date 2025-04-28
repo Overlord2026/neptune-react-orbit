@@ -6,12 +6,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 const IntegrationHeader = () => {
   return (
-    <div className="mb-4">
+    <div className="mb-4 bg-[#1F2937] p-4 rounded-lg">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-xl font-semibold text-white">Connect Your Accounting Software</h3>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-white hover:bg-[#374151]">
               <Info className="h-4 w-4" />
               <span className="sr-only">Data Policy</span>
             </Button>
@@ -29,7 +29,7 @@ const IntegrationHeader = () => {
           </PopoverContent>
         </Popover>
       </div>
-      <p className="text-text-secondary text-sm">
+      <p className="text-white text-sm">
         Connect your accounting software to automatically import financial data for more accurate tax projections.
       </p>
     </div>

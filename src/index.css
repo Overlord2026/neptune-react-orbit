@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,6 +23,7 @@
   --primary-hover: #0369a1;        /* Darker blue for hover states */
   --background-color: #0f172a;     /* Deep navy background */
   --background-secondary: #1e293b; /* Slightly lighter navy for cards */
+  --header-background: #1F2937;    /* Standardized header background */
   --card-background: #1e293b;      /* Card background */
   --card-border: #334155;          /* Border for cards */
   --text-color: #f8fafc;           /* Very light gray, almost white */
@@ -171,9 +171,30 @@ tr:hover {
   @apply bg-[#273549]/50;
 }
 
-/* Focus states for accessibility */
+/* Focus states for accessibility - improved for WCAG compliance */
 *:focus-visible {
-  @apply outline-none ring-2 ring-[#0284c7] ring-offset-2 ring-offset-[#0f172a];
+  @apply outline-none ring-2 ring-[#4299e1] ring-offset-2 ring-offset-[#1F2937];
+}
+
+/* Header specific styling for accessibility */
+.header-navigation {
+  @apply bg-[#1F2937] text-white border-b border-[#2d3748];
+}
+
+.header-text {
+  @apply text-white font-medium;
+}
+
+.header-icon {
+  @apply text-white hover:text-white;
+}
+
+.header-search {
+  @apply bg-[#374151] border-[#4B5563] text-white placeholder-white/70;
+}
+
+.header-button {
+  @apply text-white hover:bg-[#374151];
 }
 
 /* Better notification/alert styling */
