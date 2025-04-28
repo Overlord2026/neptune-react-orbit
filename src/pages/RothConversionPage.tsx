@@ -23,14 +23,14 @@ const RothConversionPage = () => {
         </div>
         <Link 
           to="/tax-planning/tax-tools" 
-          className="border-2 border-primary hover:bg-primary/10 px-5 py-2.5 rounded-md text-primary transition-colors flex items-center gap-2 font-medium shadow-sm"
+          className="bg-[#1a202c] hover:bg-[#2d3748] border-2 border-[#4299e1] px-5 py-2.5 rounded-md text-[#4299e1] transition-colors flex items-center gap-2 font-medium shadow-sm"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Tax Tools
         </Link>
       </div>
 
-      <Card className="border-primary/20 shadow-xl">
+      <Card className="border-[#4299e1]/20 shadow-xl">
         <CardHeader className="pb-2 bg-[#1a202c]">
           <div className="flex justify-between items-center">
             <CardTitle className="text-2xl text-white font-bold">Conversion Analysis Mode</CardTitle>
@@ -46,14 +46,14 @@ const RothConversionPage = () => {
             <TabsList className="grid grid-cols-2 p-1 bg-[#273549] m-4 rounded-lg">
               <TabsTrigger 
                 value="single-year"
-                className="py-3 text-base font-medium flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md"
+                className="py-3 text-base font-medium flex items-center gap-2 data-[state=active]:bg-[#4299e1] data-[state=active]:text-white data-[state=active]:shadow-md"
               >
                 <FileText className="h-4 w-4" />
                 Single-Year Snapshot
               </TabsTrigger>
               <TabsTrigger 
                 value="multi-year"
-                className="py-3 text-base font-medium flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md"
+                className="py-3 text-base font-medium flex items-center gap-2 data-[state=active]:bg-[#4299e1] data-[state=active]:text-white data-[state=active]:shadow-md"
               >
                 <Clock className="h-4 w-4" />
                 Multi-Year Advanced

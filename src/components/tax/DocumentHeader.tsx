@@ -5,12 +5,12 @@ import { ArrowLeft } from "lucide-react";
 
 const DocumentHeader: React.FC = () => {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between bg-[#1a202c] p-6 rounded-lg mb-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-primary">Tax Document Aggregator</h1>
-        <p className="text-muted-foreground">Scan, Upload, Archive, and Organize Your Tax Documents by Year</p>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Tax Document Aggregator</h1>
+        <p className="text-[#e2e8f0]">Scan, Upload, Archive, and Organize Your Tax Documents by Year</p>
       </div>
-      <Link to="/tax-planning" className="border border-primary hover:bg-primary/10 px-4 py-2 rounded-md text-primary transition-colors flex items-center gap-2">
+      <Link to="/tax-planning" className="bg-[#0b1120] border border-[#4299e1] hover:bg-[#4299e1]/10 px-4 py-2 rounded-md text-[#4299e1] transition-colors flex items-center gap-2">
         <ArrowLeft className="h-4 w-4" />
         Back to Tax Planning Hub
       </Link>

@@ -14,16 +14,16 @@ const WizardHeader: React.FC<WizardHeaderProps> = ({ title, currentStep, steps }
   const currentIndex = steps.findIndex(step => step.id === currentStep);
   
   return (
-    <div className="mb-6">
-      <h2 className="text-xl font-semibold text-[#FFD700] mb-2">{title}</h2>
+    <div className="mb-6 bg-[#1a202c] p-6 rounded-lg">
+      <h2 className="text-xl font-semibold text-[#f6ad55] mb-2">{title}</h2>
       <div className="flex items-center mb-4">
-        <span className="text-sm text-muted-foreground">
+        <span className="text-sm text-[#e2e8f0]">
           Step {currentIndex + 1} of {steps.length}: {currentStepInfo?.label}
         </span>
       </div>
-      <div className="w-full bg-[#242A38] h-1 rounded-full">
+      <div className="w-full bg-[#2d3748] h-1 rounded-full">
         <div 
-          className="bg-[#FFD700] h-1 rounded-full transition-all duration-300"
+          className="bg-[#f6ad55] h-1 rounded-full transition-all duration-300"
           style={{ width: `${((currentIndex + 1) / steps.length) * 100}%` }}
         />
       </div>

@@ -61,7 +61,7 @@ const RothVsTraditionalSection: React.FC<RothVsTraditionalSectionProps> = ({
                     </ul>
                   </div>
                 </div>
-                <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-md">
+                <div className="mt-4 p-4 bg-[#0b1120] rounded-md">
                   <h4 className="font-semibold mb-2">Current Contribution Limits ({selectedYear}):</h4>
                   <ul className="list-disc list-inside">
                     <li>

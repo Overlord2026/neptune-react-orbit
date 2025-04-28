@@ -25,13 +25,13 @@ const TaxPlanningLandingPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
+      <div className="flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center md:space-y-0 bg-[#1a202c] p-6 rounded-lg">
         <div className="space-y-0.5">
           <h2 className="text-3xl font-semibold tracking-tight text-white flex items-center gap-2">
-            <FileCheck className="w-8 h-8 text-[#00C47C]" />
+            <FileCheck className="w-8 h-8 text-[#10b981]" />
             Tax Planning Hub
           </h2>
-          <p className="text-[#B0B0B0]">
+          <p className="text-[#e2e8f0]">
             Optimize your tax strategy with our suite of advanced tools.
           </p>
         </div>
@@ -60,10 +60,10 @@ const TaxPlanningLandingPage = () => {
       <SubscriptionBanner />
       
       <div className="py-4 space-y-8">
-        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+        <Card className="border border-[#2d3748] bg-[#1a202c] relative">
           <ShareFeature title="Education Resources" position="top-right" />
           <CardHeader>
-            <CardTitle className="text-[#E5E5E5]">Education Resources</CardTitle>
+            <CardTitle className="text-white">Education Resources</CardTitle>
           </CardHeader>
           <CardContent>
             <EducationResources 
@@ -73,30 +73,30 @@ const TaxPlanningLandingPage = () => {
           </CardContent>
         </Card>
         
-        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+        <Card className="border border-[#2d3748] bg-[#1a202c] relative">
           <ShareFeature title="Tax Tools" position="top-right" />
           <CardHeader>
-            <CardTitle className="text-[#E5E5E5]">Tax Tools</CardTitle>
+            <CardTitle className="text-white">Tax Tools</CardTitle>
           </CardHeader>
           <CardContent>
             <TaxTools />
           </CardContent>
         </Card>
         
-        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+        <Card className="border border-[#2d3748] bg-[#1a202c] relative">
           <ShareFeature title="Software Integration" position="top-right" />
           <CardHeader>
-            <CardTitle className="text-[#E5E5E5]">Software Integration</CardTitle>
+            <CardTitle className="text-white">Software Integration</CardTitle>
           </CardHeader>
           <CardContent>
             <AccountingSoftwareIntegration />
           </CardContent>
         </Card>
         
-        <Card className="border border-[#2A2F3C] bg-[#1A1F2C] relative">
+        <Card className="border border-[#2d3748] bg-[#1a202c] relative">
           <ShareFeature title="Tax Updates" position="top-right" />
           <CardHeader>
-            <CardTitle className="text-[#E5E5E5]">Tax Updates</CardTitle>
+            <CardTitle className="text-white">Tax Updates</CardTitle>
           </CardHeader>
           <CardContent>
             <TaxUpdateDemo userId="current-user" />
@@ -110,13 +110,13 @@ const TaxPlanningLandingPage = () => {
             <CardTitle className="text-[#9b87f5]">Ready to unlock all premium features?</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">
+            <p className="text-white">
               Start your free 90-day trial today and get full access to our premium tax planning tools.
               No credit card required.
             </p>
           </CardContent>
           <CardFooter>
-            <Button asChild className="bg-[#9b87f5] hover:bg-[#8a76e4]">
+            <Button asChild className="bg-[#9b87f5] hover:bg-[#8a76e4] text-white">
               <Link to="/pricing">Start Free 90-Day Trial</Link>
             </Button>
           </CardFooter>

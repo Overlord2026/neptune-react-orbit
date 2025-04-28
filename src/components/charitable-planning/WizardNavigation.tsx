@@ -24,7 +24,7 @@ const WizardNavigation: React.FC<WizardNavigationProps> = ({
           <button
             key={step.id}
             className={`w-3 h-3 rounded-full transition-colors ${
-              step.id === currentStep ? 'bg-[#FFD700]' : 'bg-[#242A38]'
+              step.id === currentStep ? 'bg-[#f6ad55]' : 'bg-[#2d3748]'
             }`}
             onClick={() => onStepChange(step.id as WizardStep)}
             aria-label={`Go to ${step.label}`}
