@@ -2,43 +2,44 @@
 export const colors = {
   // Base backgrounds
   background: {
-    primary: '#0f1729',     // Rich navy background
-    secondary: '#1e293b',   // Lighter navy for cards
-    tertiary: '#334155',    // Mid-tone for accents
-    sidebar: '#0f1729',     // Matching sidebar
+    primary: '#0b1120',     // Darker navy background for better contrast
+    secondary: '#1a202c',   // Adjusted secondary background
+    tertiary: '#2d3748',    // Adjusted accent background
+    sidebar: '#0b1120',     // Matching sidebar
   },
   
   // Main accent colors
   accent: {
-    primary: '#3b82f6',    // Bright blue for primary actions
+    primary: '#4299e1',    // Brighter blue for better visibility
     secondary: '#10b981',  // Green for success states
-    gold: '#f59e0b',      // Warm gold for premium features
+    gold: '#f6ad55',      // Warmer gold for premium features
+    purple: '#9b87f5',    // Purple accent for premium features
   },
   
   text: {
-    primary: '#f8fafc',    // Crisp white for primary text
+    primary: '#ffffff',    // Pure white for primary text - higher contrast
     secondary: '#e2e8f0',  // Light grey for secondary text
-    muted: '#94a3b8',      // Muted text for less emphasis
-    nav: '#cbd5e1',        // Navigation text
+    muted: '#a0aec0',      // Adjusted muted text for better readability
+    nav: '#e2e8f0',        // Navigation text
   },
   
   status: {
-    success: '#22c55e',    // Vibrant green
-    warning: '#f59e0b',    // Clear amber
-    error: '#ef4444',      // Bright red
+    success: '#38b2ac',    // Adjusted success color
+    warning: '#ed8936',    // Adjusted warning color
+    error: '#f56565',      // Adjusted error color
   },
   
   button: {
     primary: {
-      background: '#3b82f6',
+      background: '#4299e1',
       text: '#ffffff',
-      hover: '#2563eb',
+      hover: '#3182ce',
     },
     secondary: {
       background: 'transparent',
-      text: '#3b82f6',
-      border: '#3b82f6',
-      hover: '#1e293b',
+      text: '#4299e1',
+      border: '#4299e1',
+      hover: '#1a202c',
     },
     green: {
       background: '#10b981',
@@ -46,25 +47,30 @@ export const colors = {
       hover: '#059669',
     },
     danger: {
-      background: '#ef4444',
+      background: '#f56565',
       text: '#ffffff',
-      hover: '#dc2626',
+      hover: '#e53e3e',
+    },
+    purple: {
+      background: '#9b87f5',
+      text: '#ffffff',
+      hover: '#8a76e4',
     },
   },
   
   card: {
-    background: '#1e293b',
-    border: '#334155',
-    hover: '#334155',
+    background: '#1a202c',
+    border: '#2d3748',
+    hover: '#2d3748',
   },
   
   form: {
     input: {
-      background: '#0f1729',
-      border: '#334155',
-      text: '#f8fafc',
-      placeholder: '#94a3b8',
-      focus: '#3b82f6',
+      background: '#0b1120',
+      border: '#2d3748',
+      text: '#ffffff',
+      placeholder: '#a0aec0',
+      focus: '#4299e1',
     },
   },
 };

@@ -86,7 +86,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
   return (
     <Link to={link} className="block transition-all duration-200 hover:scale-[1.02]">
       <Card 
-        className={`h-full border-[#2A2F3C] bg-[#1A1F2C] hover:border-[#00C47C] transition-colors ${recommended ? 'ring-2 ring-[#FFD700] ring-opacity-30' : ''}`}
+        className={`h-full border-[#2d3748] bg-[#1a202c] hover:border-[#4299e1] transition-colors ${recommended ? 'ring-2 ring-[#f6ad55] ring-opacity-40' : ''}`}
         id={titleSlug}
       >
         <CardHeader className="space-y-1">
@@ -97,19 +97,19 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
             <div className="flex-1 flex items-center">
               {title}
               {recommended && (
-                <Badge className="ml-2 bg-[#FFD700] text-black font-normal">Recommended</Badge>
+                <Badge className="ml-2 bg-[#f6ad55] text-[#0b1120] font-normal">Recommended</Badge>
               )}
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-4">
-          <p className="text-sm text-[#B0B0B0]">
+          <p className="text-sm text-[#e2e8f0]">
             {description}
-            {comingSoon && <span className="ml-1 text-xs text-yellow-500">(Coming Soon)</span>}
+            {comingSoon && <span className="ml-1 text-xs text-[#ed8936]">(Coming Soon)</span>}
           </p>
           
           {showBullets && (
-            <ul className="list-disc pl-5 space-y-1 text-sm text-[#B0B0B0]">
+            <ul className="list-disc pl-5 space-y-1 text-sm text-[#e2e8f0]">
               {getBullets().map((bullet, idx) => (
                 <li key={idx}>{bullet}</li>
               ))}
@@ -117,7 +117,7 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
           )}
           
           {id === "tax-vault" && documentCount !== undefined && lastUpdated && (
-            <div className="text-sm text-[#B0B0B0] bg-[#2A2F3C]/50 p-3 rounded-md">
+            <div className="text-sm text-[#e2e8f0] bg-[#2d3748]/50 p-3 rounded-md">
               <div className="flex justify-between items-center">
                 <span>{documentCount} documents stored</span>
                 <span>Last updated: {lastUpdated}</span>
@@ -125,14 +125,13 @@ const TaxToolCard: React.FC<TaxToolProps> = ({
             </div>
           )}
           
-          <div className="flex justify-start">
+          <div className="flex justify-center">
             <Button 
               variant="outline"
-              className="border-primary text-primary hover:bg-primary/10 w-full flex justify-center items-center"
+              className="border-[#4299e1] text-[#4299e1] hover:bg-[#4299e1]/10 w-full flex justify-center items-center"
             >
-              <span className="mr-auto"></span>
               <span>{getButtonText()}</span>
-              <ArrowRight className="ml-2 h-4 w-4 mr-auto" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </CardContent>

@@ -61,19 +61,19 @@ const BasicTaxEducationPage = () => {
   ];
 
   // Example form elements
-  const status: "single" | "head_of_household" | "married" = "married"; // Fixed: Using a valid type
+  const status: "single" | "head_of_household" | "married" = "married";
   const income = 75000;
 
   return (
-    <div className="container mx-auto p-8 bg-[#1e293b] text-white min-h-screen">
+    <div className="container mx-auto p-8 bg-[#0b1120] text-white min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-white">Understanding Basic Tax Concepts</h1>
 
       {/* Tax Concepts Accordion */}
       <Accordion type="single" collapsible className="mb-8">
         {taxConcepts.map((concept, index) => (
-          <AccordionItem value={`concept-${index}`} key={index} className="border-[#334155]">
-            <AccordionTrigger className="text-white hover:text-[#3b82f6] py-4 px-2">{concept.title}</AccordionTrigger>
-            <AccordionContent className="text-gray-300 px-2 pb-4">
+          <AccordionItem value={`concept-${index}`} key={index} className="border-[#2d3748]">
+            <AccordionTrigger className="text-white hover:text-[#4299e1] py-4 px-2">{concept.title}</AccordionTrigger>
+            <AccordionContent className="text-[#e2e8f0] px-2 pb-4">
               <p className="mb-2">{concept.description}</p>
               <p className="font-semibold text-white">Example:</p>
               <p>{concept.example}</p>
@@ -83,22 +83,22 @@ const BasicTaxEducationPage = () => {
       </Accordion>
 
       {/* Tax Brackets Table */}
-      <Card className="mb-8 bg-[#273549] border-[#334155]">
-        <CardHeader className="border-b border-[#334155]">
+      <Card className="mb-8 bg-[#1a202c] border-[#2d3748]">
+        <CardHeader className="border-b border-[#2d3748]">
           <CardTitle className="text-white">2023 Tax Brackets (Single Filers)</CardTitle>
-          <CardDescription className="text-gray-300">Example tax brackets for single filers in 2023.</CardDescription>
+          <CardDescription className="text-[#a0aec0]">Example tax brackets for single filers in 2023.</CardDescription>
         </CardHeader>
         <CardContent className="overflow-x-auto pt-4">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px] text-gray-300">Income Range</TableHead>
-                <TableHead className="text-gray-300">Tax Rate</TableHead>
+                <TableHead className="w-[100px] text-[#a0aec0]">Income Range</TableHead>
+                <TableHead className="text-[#a0aec0]">Tax Rate</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {taxBrackets.map((bracket, index) => (
-                <TableRow key={index} className="border-[#334155]">
+                <TableRow key={index} className="border-[#2d3748]">
                   <TableCell className="font-medium text-white">{bracket.range}</TableCell>
                   <TableCell className="text-white">{bracket.rate}</TableCell>
                 </TableRow>
@@ -109,48 +109,48 @@ const BasicTaxEducationPage = () => {
       </Card>
 
       {/* Interactive Form Elements */}
-      <Card className="bg-[#273549] border-[#334155]">
-        <CardHeader className="border-b border-[#334155]">
+      <Card className="bg-[#1a202c] border-[#2d3748]">
+        <CardHeader className="border-b border-[#2d3748]">
           <CardTitle className="text-white">Interactive Form Elements</CardTitle>
-          <CardDescription className="text-gray-300">Experiment with different form elements.</CardDescription>
+          <CardDescription className="text-[#a0aec0]">Experiment with different form elements.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 pt-4">
           <div className="grid gap-2">
-            <Label htmlFor="income" className="text-gray-300">Income</Label>
-            <Input type="number" id="income" defaultValue={income} className="bg-[#1e293b] border-[#334155] text-white" />
+            <Label htmlFor="income" className="text-[#e2e8f0]">Income</Label>
+            <Input type="number" id="income" defaultValue={income} className="bg-[#0b1120] border-[#2d3748] text-white focus:border-[#4299e1]" />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="status" className="text-gray-300">Filing Status</Label>
+            <Label htmlFor="status" className="text-[#e2e8f0]">Filing Status</Label>
             <Select>
-              <SelectTrigger id="status" className="bg-[#1e293b] border-[#334155] text-white">
+              <SelectTrigger id="status" className="bg-[#0b1120] border-[#2d3748] text-white">
                 <SelectValue placeholder={status} />
               </SelectTrigger>
-              <SelectContent className="bg-[#273549] border-[#334155] text-white">
-                <SelectItem value="single" className="text-white hover:bg-[#334155]">Single</SelectItem>
-                <SelectItem value="married" className="text-white hover:bg-[#334155]">Married</SelectItem>
-                <SelectItem value="head_of_household" className="text-white hover:bg-[#334155]">Head of Household</SelectItem>
+              <SelectContent className="bg-[#1a202c] border-[#2d3748] text-white">
+                <SelectItem value="single" className="text-white hover:bg-[#2d3748]">Single</SelectItem>
+                <SelectItem value="married" className="text-white hover:bg-[#2d3748]">Married</SelectItem>
+                <SelectItem value="head_of_household" className="text-white hover:bg-[#2d3748]">Head of Household</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="about" className="text-gray-300">About</Label>
-            <Textarea placeholder="Tell us a little bit about yourself." id="about" className="bg-[#1e293b] border-[#334155] text-white placeholder:text-gray-500" />
+            <Label htmlFor="about" className="text-[#e2e8f0]">About</Label>
+            <Textarea placeholder="Tell us a little bit about yourself." id="about" className="bg-[#0b1120] border-[#2d3748] text-white placeholder:text-[#718096] focus:border-[#4299e1]" />
           </div>
           <div className="flex items-center space-x-2">
-            <Checkbox id="terms" className="border-[#334155] data-[state=checked]:bg-[#3b82f6]" />
-            <Label htmlFor="terms" className="text-gray-300">Accept terms and conditions</Label>
+            <Checkbox id="terms" className="border-[#2d3748] data-[state=checked]:bg-[#4299e1]" />
+            <Label htmlFor="terms" className="text-[#e2e8f0]">Accept terms and conditions</Label>
           </div>
           <div className="flex items-center space-x-2">
-            <Switch id="newsletter" className="bg-[#1e293b] data-[state=checked]:bg-[#3b82f6]" />
-            <Label htmlFor="newsletter" className="text-gray-300">Subscribe to newsletter</Label>
+            <Switch id="newsletter" className="bg-[#0b1120] data-[state=checked]:bg-[#4299e1]" />
+            <Label htmlFor="newsletter" className="text-[#e2e8f0]">Subscribe to newsletter</Label>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="slider" className="text-gray-300">Volume</Label>
-            <Slider defaultValue={[50]} max={100} step={1} id="slider" className="[&_[role=slider]]:bg-[#3b82f6]" />
+            <Label htmlFor="slider" className="text-[#e2e8f0]">Volume</Label>
+            <Slider defaultValue={[50]} max={100} step={1} id="slider" className="[&_[role=slider]]:bg-[#4299e1]" />
           </div>
         </CardContent>
-        <CardFooter className="border-t border-[#334155] pt-4">
-          <Button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white flex items-center justify-center">
+        <CardFooter className="border-t border-[#2d3748] pt-4">
+          <Button className="bg-[#4299e1] hover:bg-[#3182ce] text-white flex items-center justify-center">
             <span>Calculate Taxes</span>
           </Button>
         </CardFooter>
