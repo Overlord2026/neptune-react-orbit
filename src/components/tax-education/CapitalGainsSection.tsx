@@ -25,49 +25,49 @@ const CapitalGainsSection: React.FC<CapitalGainsSectionProps> = ({
     
     if (selectedYear === 2023) {
       if (selectedFilingStatus === 'single') {
-        zeroRateMax = 44,625;
-        fifteenRateMax = 492,300;
+        zeroRateMax = 44625;
+        fifteenRateMax = 492300;
       } else if (selectedFilingStatus === 'married') {
-        zeroRateMax = 89,250;
-        fifteenRateMax = 553,850;
+        zeroRateMax = 89250;
+        fifteenRateMax = 553850;
       } else { // head_of_household
-        zeroRateMax = 59,750;
-        fifteenRateMax = 523,050;
+        zeroRateMax = 59750;
+        fifteenRateMax = 523050;
       }
     } else if (selectedYear === 2024) {
       if (selectedFilingStatus === 'single') {
-        zeroRateMax = 47,025;
-        fifteenRateMax = 518,900;
+        zeroRateMax = 47025;
+        fifteenRateMax = 518900;
       } else if (selectedFilingStatus === 'married') {
-        zeroRateMax = 94,050;
-        fifteenRateMax = 583,750;
+        zeroRateMax = 94050;
+        fifteenRateMax = 583750;
       } else { // head_of_household
-        zeroRateMax = 63,000;
-        fifteenRateMax = 551,350;
+        zeroRateMax = 63000;
+        fifteenRateMax = 551350;
       }
     } else if (selectedYear === 2025) {
       // Projected 2025 values with ~5% inflation adjustment
       if (selectedFilingStatus === 'single') {
-        zeroRateMax = 49,375;
-        fifteenRateMax = 544,845;
+        zeroRateMax = 49375;
+        fifteenRateMax = 544845;
       } else if (selectedFilingStatus === 'married') {
-        zeroRateMax = 98,750;
-        fifteenRateMax = 612,950;
+        zeroRateMax = 98750;
+        fifteenRateMax = 612950;
       } else { // head_of_household
-        zeroRateMax = 66,150;
-        fifteenRateMax = 578,920;
+        zeroRateMax = 66150;
+        fifteenRateMax = 578920;
       }
     } else {
       // Default 2022 values
       if (selectedFilingStatus === 'single') {
-        zeroRateMax = 41,675;
-        fifteenRateMax = 459,750;
+        zeroRateMax = 41675;
+        fifteenRateMax = 459750;
       } else if (selectedFilingStatus === 'married') {
-        zeroRateMax = 83,350; 
-        fifteenRateMax = 517,200;
+        zeroRateMax = 83350; 
+        fifteenRateMax = 517200;
       } else { // head_of_household
-        zeroRateMax = 55,800;
-        fifteenRateMax = 488,500;
+        zeroRateMax = 55800;
+        fifteenRateMax = 488500;
       }
     }
     
