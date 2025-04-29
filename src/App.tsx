@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useRoutes } from 'react-router-dom';
 import Layout from "./components/Layout";
@@ -26,6 +27,7 @@ import AdvancedTaxEducationPage from "./pages/AdvancedTaxEducationPage";
 import TaxGlossaryPage from "./pages/TaxGlossaryPage";
 import TaxTrapCheckerPage from "./pages/TaxTrapCheckerPage";
 import AdvancedTaxStrategiesPage from "./pages/AdvancedTaxStrategiesPage";
+import TaxPlanningPricingPage from "./pages/TaxPlanningPricingPage";
 
 function AppRoutes() {
   const routes = useRoutes([
@@ -148,6 +150,10 @@ function AppRoutes() {
     {
       path: "/tax-planning/filing-options",
       element: <Layout><TaxFilingOptionsPage /></Layout>
+    },
+    {
+      path: "/pricing",
+      element: <Layout><TaxPlanningPricingPage /></Layout>
     }
   ]);
 

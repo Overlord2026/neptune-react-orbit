@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FileCheck, CreditCard } from "lucide-react";
 import EducationResources from '@/components/tax-planning/EducationResources';
 import TaxTools from '@/components/tax-planning/TaxTools';
@@ -12,8 +12,10 @@ import { Card, CardHeader, CardContent, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import ShareFeature from '@/components/tax-planning/ShareFeature';
 import SubscriptionBanner from '@/components/tax-planning/SubscriptionBanner';
+import { toast } from 'sonner';
 
 const TaxPlanningLandingPage = () => {
+  const navigate = useNavigate();
   const [isEducationOpen, setIsEducationOpen] = useState<boolean>(true);
   const [isInTrial, setIsInTrial] = useState<boolean>(false);
   const { showOnboarding, completeOnboarding } = useOnboarding();
@@ -23,6 +25,22 @@ const TaxPlanningLandingPage = () => {
     setIsInTrial(trialStatus);
   }, []);
 
+  const handleStartFreeTrial = () => {
+    // Simulating trial activation
+    localStorage.setItem('trial_start_date', new Date().toISOString());
+    const trialEndDate = new Date();
+    trialEndDate.setDate(trialEndDate.getDate() + 90);
+    localStorage.setItem('trial_end_date', trialEndDate.toISOString());
+    localStorage.setItem('is_in_trial', 'true');
+    
+    toast.success("Your 90-day free trial has started!", {
+      description: "You now have full access to all premium features.",
+      duration: 5000,
+    });
+    
+    setIsInTrial(true);
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center md:space-y-0 bg-[#1a202c] p-6 rounded-lg">
@@ -41,12 +59,10 @@ const TaxPlanningLandingPage = () => {
               variant="outline" 
               size="sm" 
               className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5]/10"
-              asChild
+              onClick={handleStartFreeTrial}
             >
-              <Link to="/pricing">
-                <CreditCard className="h-4 w-4 mr-2" />
-                Start Free Trial
-              </Link>
+              <CreditCard className="h-4 w-4 mr-2" />
+              Start Free Trial
             </Button>
           )}
           <ShareFeature 
@@ -116,8 +132,11 @@ const TaxPlanningLandingPage = () => {
             </p>
           </CardContent>
           <CardFooter className="flex flex-col sm:flex-row gap-4">
-            <Button asChild className="bg-[#f6ad55] hover:bg-[#ed8936] text-[#0f172a] font-bold text-lg w-full sm:w-auto px-8 py-6">
-              <Link to="/pricing">Start Free 90-Day Trial</Link>
+            <Button 
+              className="bg-[#f6ad55] hover:bg-[#ed8936] text-[#0f172a] font-bold text-lg w-full sm:w-auto px-8 py-6"
+              onClick={handleStartFreeTrial}
+            >
+              Start Free 90-Day Trial
             </Button>
             <Button asChild variant="outline" className="border-[#f6ad55] text-[#f6ad55] hover:bg-[#f6ad55]/10 w-full sm:w-auto">
               <Link to="/tax-education/basics">Learn More About Features</Link>
