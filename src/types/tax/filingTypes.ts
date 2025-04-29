@@ -1,118 +1,25 @@
 
 /**
- * Defines the comprehensive types of filing statuses used in tax calculations
+ * Type definitions for tax filing status
  */
-export type FilingStatusType = 
-  'single' 
-  | 'married_joint'
-  | 'married_separate'
-  | 'head_of_household'
-  | 'qualifying_widow';
 
-// Legacy filing status type for backward compatibility
-export type LegacyFilingStatusType = 
-  'single' 
-  | 'married' 
-  | 'married_separate' 
-  | 'head_of_household' 
-  | 'qualifying_widow';
+// Standard filing status types as used throughout the application
+export type FilingStatusType = 'single' | 'married_joint' | 'married_separate' | 'head_of_household' | 'qualifying_widow';
 
-/**
- * Converts legacy filing status to current standardized format
- */
-export function convertLegacyFilingStatus(status: LegacyFilingStatusType): FilingStatusType {
-  switch (status) {
-    case 'married':
-      return 'married_joint';
-    case 'single':
-    case 'married_separate':
-    case 'head_of_household':
-    case 'qualifying_widow':
-      return status;
-  }
-}
+// Filing status map for UI labels
+export const filingStatusLabels: Record<FilingStatusType, string> = {
+  'single': 'Single',
+  'married_joint': 'Married Filing Jointly',
+  'married_separate': 'Married Filing Separately',
+  'head_of_household': 'Head of Household',
+  'qualifying_widow': 'Qualifying Widow(er)'
+};
 
-// Optional: Describe valid filing steps
-export const FILING_STEPS = [
-  { id: 'eligibility', label: 'Eligibility' },
-  { id: 'personal', label: 'Personal Info' },
-  { id: 'income', label: 'Income' },
-  { id: 'deductions', label: 'Deductions' },
-  { id: 'review', label: 'Review' },
-  { id: 'file', label: 'File Return' },
-  { id: 'confirmation', label: 'Confirmation' }
+// Filing status options for dropdowns
+export const filingStatusOptions = [
+  { value: 'single', label: 'Single' },
+  { value: 'married_joint', label: 'Married Filing Jointly' },
+  { value: 'married_separate', label: 'Married Filing Separately' },
+  { value: 'head_of_household', label: 'Head of Household' },
+  { value: 'qualifying_widow', label: 'Qualifying Widow(er)' }
 ];
-
-// Additional types can be added here as needed
-export interface W2Form {
-  employerName: string;
-  employerEIN: string;
-  wages: number;
-  federalWithholding: number;
-  stateWithholding: number;
-}
-
-export interface TaxReturnData {
-  firstName: string;
-  lastName: string;
-  ssn: string;
-  filingStatus: FilingStatusType;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-  dependents: Dependent[];
-  w2Forms: W2Form[];
-  interestIncome: number;
-  dividendIncome: number;
-  useStandardDeduction: boolean;
-  itemizedDeductions: Record<string, number>;
-  hasOnlyW2Income: boolean | null;
-  hasDependents: boolean | null;
-  hasSelfEmploymentIncome: boolean | null;
-  childTaxCredit: boolean;
-  educationCredit: boolean;
-  calculatedRefund: number;
-  calculatedOwed: number;
-  referenceNumber?: string;
-  residentState: string;
-  includeStateTax: boolean;
-  bankInfo?: {
-    accountType: 'checking' | 'savings';
-    routingNumber: string;
-    accountNumber: string;
-  };
-  // Additional fields for TaxTrapSection
-  investmentIncome?: number;
-  socialSecurityBenefits?: number;
-  isOver65?: boolean;
-  hasHealthInsurance?: boolean;
-  isEligible?: boolean;
-  disclaimerAcknowledged?: boolean;
-  stateTax?: number;
-  // Add missing fields referenced in code
-  email?: string;
-  phone?: string;
-  directDeposit?: boolean;
-}
-
-export interface Dependent {
-  name: string;
-  ssn: string;
-  relationship: string;
-  dateOfBirth?: string;
-  firstName?: string;
-  lastName?: string;
-  age?: number;
-}
-
-export interface ItemizedDeductions {
-  stateAndLocalTax: number;
-  medicalExpenses: number;
-  mortgageInterest: number;
-  charitableDonations: number;
-}
-
-export type FilingStep = typeof FILING_STEPS[number]['id'];

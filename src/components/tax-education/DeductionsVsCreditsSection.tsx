@@ -11,7 +11,7 @@ import GlossaryTerm from '@/components/GlossaryTerm';
 
 const DeductionsVsCreditsSection: React.FC = () => {
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden mb-6">
       <CardHeader className="bg-[#1A1F2C]">
         <CardTitle>Deductions vs. Credits</CardTitle>
       </CardHeader>
@@ -25,11 +25,11 @@ const DeductionsVsCreditsSection: React.FC = () => {
           </p>
 
           <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="examples">
-              <AccordionTrigger className="text-[#9b87f5]">
+            <AccordionItem value="examples" className="border-[#2d3748]">
+              <AccordionTrigger className="text-[#9b87f5] hover:text-[#a495f7] py-4 px-2">
                 Common Examples
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="px-2 pb-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="p-4 bg-[#1A1F2C] rounded-md">
                     <h4 className="font-semibold mb-2">Common Deductions:</h4>

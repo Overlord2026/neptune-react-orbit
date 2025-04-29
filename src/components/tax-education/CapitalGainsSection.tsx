@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Accordion, 
@@ -7,7 +8,6 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import GlossaryTerm from '@/components/GlossaryTerm';
-import DynamicContentText from '@/components/DynamicContentText';
 
 interface CapitalGainsSectionProps {
   selectedYear: number;
@@ -18,19 +18,76 @@ const CapitalGainsSection: React.FC<CapitalGainsSectionProps> = ({
   selectedYear,
   selectedFilingStatus
 }) => {
-  const contentOptions = {
-    year: selectedYear,
-    filingStatus: selectedFilingStatus,
-    format: 'currency' as const
+  // Function to get capital gains thresholds based on year and filing status
+  const getCapitalGainsThresholds = () => {
+    // Basic thresholds that change based on year and filing status
+    let zeroRateMax, fifteenRateMax;
+    
+    if (selectedYear === 2023) {
+      if (selectedFilingStatus === 'single') {
+        zeroRateMax = 44,625;
+        fifteenRateMax = 492,300;
+      } else if (selectedFilingStatus === 'married') {
+        zeroRateMax = 89,250;
+        fifteenRateMax = 553,850;
+      } else { // head_of_household
+        zeroRateMax = 59,750;
+        fifteenRateMax = 523,050;
+      }
+    } else if (selectedYear === 2024) {
+      if (selectedFilingStatus === 'single') {
+        zeroRateMax = 47,025;
+        fifteenRateMax = 518,900;
+      } else if (selectedFilingStatus === 'married') {
+        zeroRateMax = 94,050;
+        fifteenRateMax = 583,750;
+      } else { // head_of_household
+        zeroRateMax = 63,000;
+        fifteenRateMax = 551,350;
+      }
+    } else if (selectedYear === 2025) {
+      // Projected 2025 values with ~5% inflation adjustment
+      if (selectedFilingStatus === 'single') {
+        zeroRateMax = 49,375;
+        fifteenRateMax = 544,845;
+      } else if (selectedFilingStatus === 'married') {
+        zeroRateMax = 98,750;
+        fifteenRateMax = 612,950;
+      } else { // head_of_household
+        zeroRateMax = 66,150;
+        fifteenRateMax = 578,920;
+      }
+    } else {
+      // Default 2022 values
+      if (selectedFilingStatus === 'single') {
+        zeroRateMax = 41,675;
+        fifteenRateMax = 459,750;
+      } else if (selectedFilingStatus === 'married') {
+        zeroRateMax = 83,350; 
+        fifteenRateMax = 517,200;
+      } else { // head_of_household
+        zeroRateMax = 55,800;
+        fifteenRateMax = 488,500;
+      }
+    }
+    
+    return { zeroRateMax, fifteenRateMax };
+  };
+  
+  const { zeroRateMax, fifteenRateMax } = getCapitalGainsThresholds();
+  
+  // Format numbers with commas
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('en-US').format(num);
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden mb-6">
       <CardHeader className="bg-[#1A1F2C]">
-        <CardTitle>Capital Gains Basics</CardTitle>
+        <CardTitle>Capital Gains Basics ({selectedYear})</CardTitle>
         {selectedYear === 2025 && (
           <p className="text-xs text-gray-400 mt-1">
-            Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released. For the most accurate information, consult the latest IRS publications.
+            Tax rates and thresholds for 2025 are projected/estimated and may change once official IRS figures are released.
           </p>
         )}
       </CardHeader>
@@ -44,21 +101,16 @@ const CapitalGainsSection: React.FC<CapitalGainsSectionProps> = ({
           </p>
 
           <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="capital-gains-rates">
-              <AccordionTrigger className="text-[#9b87f5]">
+            <AccordionItem value="capital-gains-rates" className="border-[#2d3748]">
+              <AccordionTrigger className="text-[#9b87f5] hover:text-[#a495f7] py-4 px-2">
                 Long-Term Capital Gains Rates ({selectedYear})
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="px-2 pb-4">
                 <div className="p-4 bg-[#1A1F2C] rounded-md">
                   <ul className="list-disc list-inside">
-                    <li><strong>0% rate:</strong> Income up to <DynamicContentText 
-                        options={{...contentOptions, filingStatus: 'single'}}
-                      >{`capital_gains_0_rate_max`}</DynamicContentText> (single) or <DynamicContentText 
-                        options={{...contentOptions, filingStatus: 'married'}}
-                      >{`capital_gains_0_rate_max`}</DynamicContentText> (married filing jointly)
-                    </li>
-                    <li><strong>15% rate:</strong> Income from $47,001 to $518,000 (single) or $94,001 to $583,000 (married filing jointly)</li>
-                    <li><strong>20% rate:</strong> Income above $518,000 (single) or $583,000 (married filing jointly)</li>
+                    <li><strong>0% rate:</strong> Income up to ${formatNumber(zeroRateMax)} ({selectedFilingStatus}) </li>
+                    <li><strong>15% rate:</strong> Income from ${formatNumber(zeroRateMax + 1)} to ${formatNumber(fifteenRateMax)} ({selectedFilingStatus})</li>
+                    <li><strong>20% rate:</strong> Income above ${formatNumber(fifteenRateMax)} ({selectedFilingStatus})</li>
                   </ul>
                   <p className="mt-2 text-sm text-yellow-300">Note: An additional 3.8% Net Investment Income Tax may apply to high-income earners.</p>
                   {selectedYear === 2025 && (
