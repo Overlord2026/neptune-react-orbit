@@ -43,12 +43,4 @@ export type {
 export { convertLegacyFilingStatus } from './filingTypes';
 
 // Export filing steps for navigation
-export const FILING_STEPS = [
-  { id: 'eligibility', label: 'Eligibility' },
-  { id: 'personal', label: 'Personal Info' },
-  { id: 'income', label: 'Income' },
-  { id: 'deductions', label: 'Deductions' },
-  { id: 'review', label: 'Review' },
-  { id: 'file', label: 'File Return' },
-  { id: 'confirmation', label: 'Confirmation' }
-];
+export { FILING_STEPS } from './filingTypes';

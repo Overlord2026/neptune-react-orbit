@@ -27,7 +27,8 @@ const DeductionsStep: React.FC<DeductionsStepProps> = ({ data, onComplete }) => 
     });
   };
 
-  const totalItemized = Object.values(itemizedDeductions).reduce((sum, value) => sum + value, 0);
+  // Calculate total itemized deductions properly as a number
+  const totalItemized = Object.values(itemizedDeductions).reduce((sum, value) => sum + Number(value), 0);
   const standardDeductionAmount = 12950; // Example for 2023 single filer
 
   const handleSubmit = () => {

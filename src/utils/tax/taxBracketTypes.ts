@@ -2,12 +2,12 @@
 /**
  * Tax Bracket Types and Standard Deduction Data
  */
-import { FilingStatusType, LegacyFilingStatusType } from '@/types/tax/filingTypes';
+import { FilingStatusType, LegacyFilingStatusType, convertLegacyFilingStatus } from '@/types/tax/filingTypes';
 
 // Export formatters for backward compatibility
 export { formatCurrency, formatPercent } from '../formatUtils';
-export type { FilingStatusType, LegacyFilingStatusType } from '@/types/tax/filingTypes';
-export { convertLegacyFilingStatus } from '@/types/tax/filingTypes';
+export type { FilingStatusType, LegacyFilingStatusType };
+export { convertLegacyFilingStatus };
 
 // Tax bracket types
 export type BracketType = "ordinary" | "ltcg";
