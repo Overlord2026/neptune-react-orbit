@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useRoutes } from 'react-router-dom';
-import Layout from "./components/Layout";
+import MainLayout from "./components/MainLayout";
 import LandingPage from "./pages/LandingPage";
 import TaxPlanningPage from "./pages/TaxPlanningLandingPage";
 import TaxFilingPage from "./pages/FileMyTaxesPage";
@@ -37,123 +37,123 @@ function AppRoutes() {
     },
     {
       path: "/tax-planning",
-      element: <Layout><TaxPlanningPage /></Layout>
+      element: <MainLayout><TaxPlanningPage /></MainLayout>
     },
     {
       path: "/tax-filing",
-      element: <Layout><TaxFilingOptionsPage /></Layout>
+      element: <MainLayout><TaxFilingOptionsPage /></MainLayout>
     },
     {
       path: "/file-my-taxes",
-      element: <Layout><TaxFilingPage /></Layout>
+      element: <MainLayout><TaxFilingPage /></MainLayout>
     },
     {
       path: "/tax-vault",
-      element: <Layout><TaxVaultPage /></Layout>
+      element: <MainLayout><TaxVaultPage /></MainLayout>
     },
     {
       path: "/tax-planning/tax-tools",
-      element: <Layout><TaxToolsPage /></Layout>
+      element: <MainLayout><TaxToolsPage /></MainLayout>
     },
     {
       path: "/tax-planning/roth-conversion",
-      element: <Layout><RothConversionPage /></Layout>
+      element: <MainLayout><RothConversionPage /></MainLayout>
     },
     {
       path: "/tax-planning/roth",
-      element: <Layout><RothConversionPage /></Layout>
+      element: <MainLayout><RothConversionPage /></MainLayout>
     },
     {
       path: "/tax-planning/roth-analysis",
-      element: <Layout><RothConversionAnalysisPage /></Layout>
+      element: <MainLayout><RothConversionAnalysisPage /></MainLayout>
     },
     {
       path: "/tax-planning/roth-scenarios",
-      element: <Layout><CompareRothScenariosPage /></Layout>
+      element: <MainLayout><CompareRothScenariosPage /></MainLayout>
     },
     {
       path: "/tax-planning/estate-gifting",
-      element: <Layout><EstateGiftingPage /></Layout>
+      element: <MainLayout><EstateGiftingPage /></MainLayout>
     },
     {
       path: "/tax-planning/charitable-giving",
-      element: <Layout><CharitableGivingPage /></Layout>
+      element: <MainLayout><CharitableGivingPage /></MainLayout>
     },
     {
       path: "/tax-planning/charitable-planning",
-      element: <Layout><CharitableGivingPage /></Layout>
+      element: <MainLayout><CharitableGivingPage /></MainLayout>
     },
     {
       path: "/tax-planning/analyzer",
-      element: <Layout><TaxReturnAnalyzerPage /></Layout>
+      element: <MainLayout><TaxReturnAnalyzerPage /></MainLayout>
     },
     {
       path: "/tax-planning/tax-return",
-      element: <Layout><TaxReturnAnalyzerPage /></Layout>
+      element: <MainLayout><TaxReturnAnalyzerPage /></MainLayout>
     },
     {
       path: "/tax-planning/scenario-2025",
-      element: <Layout><Scenario2025Return /></Layout>
+      element: <MainLayout><Scenario2025Return /></MainLayout>
     },
     {
       path: "/tax-planning/small-business",
-      element: <Layout><BusinessIncomePage /></Layout>
+      element: <MainLayout><BusinessIncomePage /></MainLayout>
     },
     {
       path: "/tax-planning/deferred-comp",
-      element: <Layout><DeferredCompensationPage /></Layout>
+      element: <MainLayout><DeferredCompensationPage /></MainLayout>
     },
     {
       path: "/tax-education/:topic",
-      element: <Layout><TaxEducationPage /></Layout>
+      element: <MainLayout><TaxEducationPage /></MainLayout>
     },
     {
       path: "/tax-planning/collaboration",
-      element: <Layout><CollaborationCenterPage /></Layout>
+      element: <MainLayout><CollaborationCenterPage /></MainLayout>
     },
     {
       path: "/tax-planning/aggregator",
-      element: <Layout><TaxDocumentAggregatorPage /></Layout>
+      element: <MainLayout><TaxDocumentAggregatorPage /></MainLayout>
     },
     {
       path: "/tax-planning/recommended-reading",
-      element: <Layout><RecommendedReadingPage /></Layout>
+      element: <MainLayout><RecommendedReadingPage /></MainLayout>
     },
     {
       path: "/tax-planning/basic-education",
-      element: <Layout><BasicEducationPage /></Layout>
+      element: <MainLayout><BasicEducationPage /></MainLayout>
     },
     {
       path: "/tax-planning/advanced-tax-education",
-      element: <Layout><AdvancedTaxEducationPage /></Layout>
+      element: <MainLayout><AdvancedTaxEducationPage /></MainLayout>
     },
     {
       path: "/tax-planning/glossary",
-      element: <Layout><TaxGlossaryPage /></Layout>
+      element: <MainLayout><TaxGlossaryPage /></MainLayout>
     },
     {
       path: "/tax-planning/guides/:guideId",
-      element: <Layout><TaxGuidePage /></Layout>
+      element: <MainLayout><TaxGuidePage /></MainLayout>
     },
     {
       path: "/tax-planning/tax-traps",
-      element: <Layout><TaxTrapCheckerPage /></Layout>
+      element: <MainLayout><TaxTrapCheckerPage /></MainLayout>
     },
     {
       path: "/tax-planning/advanced-strategies",
-      element: <Layout><AdvancedTaxStrategiesPage /></Layout>
+      element: <MainLayout><AdvancedTaxStrategiesPage /></MainLayout>
     },
     {
       path: "/tax-planning/file-my-taxes",
-      element: <Layout><TaxFilingPage /></Layout>
+      element: <MainLayout><TaxFilingPage /></MainLayout>
     },
     {
       path: "/tax-planning/filing-options",
-      element: <Layout><TaxFilingOptionsPage /></Layout>
+      element: <MainLayout><TaxFilingOptionsPage /></MainLayout>
     },
     {
       path: "/pricing",
-      element: <Layout><TaxPlanningPricingPage /></Layout>
+      element: <MainLayout><TaxPlanningPricingPage /></MainLayout>
     }
   ]);
 

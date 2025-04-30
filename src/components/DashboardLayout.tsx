@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { cn } from '../lib/utils';
@@ -22,6 +21,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import StationaryBanner from './common/StationaryBanner';
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -94,21 +94,30 @@ const NavSubItem = ({ label, href, isActive }: NavSubItemProps) => {
   );
 };
 
-const DashboardLayout = () => {
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     'education': false,
-    'family': false
+    'family': false,
+    'tax': false
   });
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   
   useEffect(() => {
+    // Update menu state based on path
     const path = location.pathname;
     const newOpenMenus = { ...openMenus };
     
-    if (path.includes('/tax-planning') || 
-        path.includes('/investments') || 
+    if (path.includes('/tax-planning') || path.includes('/tax-filing')) {
+      newOpenMenus.tax = true;
+    }
+    
+    if (path.includes('/investments') || 
         path.includes('/insurance') || 
         path.includes('/lending') || 
         path.includes('/estate-planning')) {
@@ -122,13 +131,22 @@ const DashboardLayout = () => {
     }
     
     setOpenMenus(newOpenMenus);
-  }, [location.pathname]);
+    
+    // Close sidebar on mobile when navigating
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
   
   const toggleSubmenu = (key: string) => {
     setOpenMenus(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(prev => !prev);
   };
 
   const SidebarContent = () => (
@@ -140,6 +158,42 @@ const DashboardLayout = () => {
           href="/" 
           isActive={location.pathname === '/'} 
         />
+        
+        {/* Added Tax Planning section */}
+        <NavItem 
+          icon={<FileText size={18} />} 
+          label="Tax Planning" 
+          href="#" 
+          isActive={false} 
+          hasSubMenu={true} 
+          isOpen={openMenus.tax}
+          toggleSubmenu={() => toggleSubmenu('tax')}
+        />
+        
+        {openMenus.tax && (
+          <div className="ml-2 mt-1 space-y-1">
+            <NavSubItem 
+              label="Tax Dashboard" 
+              href="/tax-planning" 
+              isActive={location.pathname === '/tax-planning'} 
+            />
+            <NavSubItem 
+              label="Tax Filing" 
+              href="/tax-filing" 
+              isActive={location.pathname === '/tax-filing'} 
+            />
+            <NavSubItem 
+              label="Tax Tools" 
+              href="/tax-planning/tax-tools" 
+              isActive={location.pathname.includes('/tax-planning/tax-tools')} 
+            />
+            <NavSubItem 
+              label="Roth Conversion" 
+              href="/tax-planning/roth" 
+              isActive={location.pathname.includes('/tax-planning/roth')} 
+            />
+          </div>
+        )}
         
         <NavItem 
           icon={<BookOpen size={18} />} 
@@ -216,17 +270,8 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex min-h-screen">
-      {!isMobile && (
-        <aside className="fixed left-0 top-0 h-full w-64 bg-[#101521] border-r border-[#242A38] shadow-xl z-20">
-          <div className="flex items-center justify-center h-16 border-b border-[#242A38] px-4">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-full bg-[#007BFF] flex items-center justify-center">
-                <span className="font-bold text-white text-lg">B</span>
-              </div>
-              <span className="font-bold text-xl text-white">Family Office</span>
-            </Link>
-          </div>
-          
+      {!isMobile && sidebarOpen && (
+        <aside className="fixed left-0 top-0 h-full w-64 bg-[#101521] border-r border-[#242A38] shadow-xl z-20 pt-16">
           <SidebarContent />
         </aside>
       )}
@@ -234,63 +279,40 @@ const DashboardLayout = () => {
       {isMobile && (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-[#101521] border-r border-[#242A38]">
-            <div className="flex items-center justify-center h-16 border-b border-[#242A38] px-4">
-              <Link to="/" className="flex items-center space-x-2" onClick={() => setSidebarOpen(false)}>
-                <div className="h-8 w-8 rounded-full bg-[#007BFF] flex items-center justify-center">
-                  <span className="font-bold text-white text-lg">B</span>
-                </div>
-                <span className="font-bold text-xl text-white">Family Office</span>
-              </Link>
-              <button 
-                className="ml-auto text-[#E5E5E5] hover:text-white transition-colors duration-200"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            
             <SidebarContent />
           </SheetContent>
         </Sheet>
       )}
       
-      <div className={`flex-1 ${!isMobile ? 'ml-64' : 'ml-0'}`}>
-        <header className="sticky top-0 z-10 h-16 border-b border-[#2d3748] bg-[#1F2937] px-6 flex items-center justify-between">
-          {isMobile && (
-            <button 
-              className="mr-4 p-1 text-white hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4299e1]"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu size={20} />
-            </button>
-          )}
-          
-          <h1 className="text-xl font-semibold text-white">
-            {location.pathname === '/' 
-              ? 'Dashboard' 
-              : location.pathname.includes('tax-planning')
-                ? 'Tax Planning'
-                : location.pathname.split('/').pop()?.split('-').map(word => 
-                    word.charAt(0).toUpperCase() + word.slice(1)
-                  ).join(' ') || 'Dashboard'
-            }
-          </h1>
-          
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-white hidden sm:block">John Doe</span>
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="" />
-              <AvatarFallback className="bg-[#4299e1] text-white">JD</AvatarFallback>
-            </Avatar>
-          </div>
-        </header>
+      <div className={`flex-1 ${sidebarOpen && !isMobile ? 'ml-64' : 'ml-0'}`}>
+        <StationaryBanner
+          title={getPageTitle(location.pathname)}
+          showMenu={!sidebarOpen}
+          onToggleMenu={toggleSidebar}
+          isMobile={isMobile}
+        />
         
         <main className="p-4 sm:p-6 bg-[#101521] min-h-[calc(100vh-64px)]">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>
   );
+};
+
+// Helper function to get page title from pathname
+const getPageTitle = (pathname: string): string => {
+  if (pathname === '/') return 'Dashboard';
+  
+  if (pathname.includes('tax-planning')) return 'Tax Planning';
+  if (pathname.includes('tax-filing')) return 'Tax Filing';
+  
+  // Extract title from pathname
+  const segment = pathname.split('/').pop() || '';
+  return segment
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 };
 
 export default DashboardLayout;
