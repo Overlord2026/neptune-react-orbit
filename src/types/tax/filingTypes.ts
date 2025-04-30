@@ -7,7 +7,7 @@
 export type FilingStatusType = 'single' | 'married_joint' | 'married_separate' | 'head_of_household' | 'qualifying_widow';
 
 // Legacy filing status type used in some older components
-export type LegacyFilingStatusType = 'single' | 'married' | 'head_of_household';
+export type LegacyFilingStatusType = 'single' | 'married' | 'head_of_household' | 'married_separate';
 
 // Filing status map for UI labels
 export const filingStatusLabels: Record<FilingStatusType, string> = {
@@ -90,11 +90,21 @@ export interface TaxReturnData {
   dependents: Dependent[];
   residentState?: string;
   includeStateTax?: boolean;
+  
+  // Contact Information
+  email?: string;
+  phone?: string;
 
   // Income Information
   w2Forms: W2Form[];
   interestIncome: number;
   dividendIncome: number;
+  investmentIncome?: number;
+  socialSecurityBenefits?: number;
+  
+  // Health and Medicare
+  isOver65?: boolean;
+  hasHealthInsurance?: boolean;
 
   // Deductions and Credits
   useStandardDeduction: boolean;
@@ -108,8 +118,10 @@ export interface TaxReturnData {
   stateTax: number;
 
   // Filing Information
-  bankInfo: BankInfo;
+  bankInfo?: BankInfo;
   referenceNumber?: string;
+  directDeposit?: boolean;
+  disclaimerAcknowledged?: boolean;
 }
 
 // Filing step type

@@ -2,7 +2,7 @@
 /**
  * Tax calculation utilities
  */
-import { FilingStatusType } from '@/types/tax/filingTypes';
+import { FilingStatusType, LegacyFilingStatusType, convertLegacyFilingStatus } from '@/types/tax/filingTypes';
 import { getBrackets } from './bracketUtils';
 
 // Calculate tax for a specific income amount
@@ -34,12 +34,19 @@ export function getDistanceToNextBracket(income: number, filingStatus: FilingSta
   nextThreshold: number;
   distance: number;
 } {
-  const normalizedFilingStatus = typeof filingStatus === 'string' && 
-    (filingStatus === 'married' || filingStatus === 'single' || 
-     filingStatus === 'married_separate' || filingStatus === 'head_of_household')
-    ? convertLegacyFilingStatus(filingStatus)
-    : filingStatus;
-
+  // Ensure we're using a valid filing status by checking and converting legacy types
+  let normalizedFilingStatus: FilingStatusType;
+  
+  if (typeof filingStatus === 'string') {
+    if (filingStatus === 'married' || filingStatus === 'single' || filingStatus === 'head_of_household' || filingStatus === 'married_separate') {
+      normalizedFilingStatus = convertLegacyFilingStatus(filingStatus as LegacyFilingStatusType);
+    } else {
+      normalizedFilingStatus = filingStatus as FilingStatusType;
+    }
+  } else {
+    normalizedFilingStatus = 'single'; // Default fallback
+  }
+  
   const brackets = getBrackets(new Date().getFullYear(), normalizedFilingStatus);
   
   // Find the current bracket and calculate distance to next
@@ -59,6 +66,3 @@ export function getDistanceToNextBracket(income: number, filingStatus: FilingSta
     distance: Infinity
   };
 }
-
-// Import needed for convertLegacyFilingStatus
-import { LegacyFilingStatusType, convertLegacyFilingStatus } from '@/types/tax/filingTypes';

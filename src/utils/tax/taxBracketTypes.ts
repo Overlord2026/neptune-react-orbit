@@ -48,5 +48,6 @@ export const STANDARD_DEDUCTION_BY_YEAR = {
 // Helper function to convert modern filing status to legacy
 export const convertFilingStatusToLegacy = (filingStatus: FilingStatusType): LegacyFilingStatusType => {
   if (filingStatus === 'married_joint') return 'married';
+  if (filingStatus === 'qualifying_widow') return 'married';
   return filingStatus as LegacyFilingStatusType;
 };

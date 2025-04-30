@@ -7,10 +7,9 @@ export const getInitialTaxData = (): TaxReturnData => {
     firstName: '',
     lastName: '',
     ssn: '',
-    // occupation property needs to be removed as it doesn't exist in TaxReturnData
     filingStatus: 'single',
     
-    // Contact Information
+    // Contact Information (now included in the interface)
     email: '',
     phone: '',
     address: {
@@ -33,6 +32,12 @@ export const getInitialTaxData = (): TaxReturnData => {
     }],
     interestIncome: 0,
     dividendIncome: 0,
+    investmentIncome: 0,
+    socialSecurityBenefits: 0,
+    
+    // Health and Medicare
+    isOver65: false,
+    hasHealthInsurance: false,
     
     // Deductions
     useStandardDeduction: true,
