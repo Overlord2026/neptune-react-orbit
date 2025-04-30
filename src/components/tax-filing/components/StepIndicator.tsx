@@ -17,7 +17,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
   goToStep
 }) => {
   return (
-    <TabsList className="grid grid-cols-5 w-full">
+    <TabsList className="grid grid-cols-5 w-full bg-[#1a202c] border border-[#2d3748] p-1">
       {FILING_STEPS.map((step, index) => {
         const isActive = step.id === currentStep;
         const isCompleted = completedSteps.includes(step.id);
@@ -30,23 +30,27 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
             onClick={() => !isDisabled && goToStep(step.id)}
             disabled={isDisabled}
             className={cn(
-              "flex flex-col items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-white",
-              isCompleted && !isActive && "text-primary"
+              "flex flex-col items-center gap-1.5 py-2 px-1",
+              isActive ? "bg-[#4299e1] text-white data-[state=active]:bg-[#4299e1] data-[state=active]:text-white" : 
+              isCompleted ? "text-[#4299e1]" :
+              "text-[#a0aec0]"
             )}
           >
             <div className={cn(
-              "h-6 w-6 rounded-full flex items-center justify-center text-xs",
-              isActive ? "bg-white text-primary" : 
-              isCompleted ? "bg-primary text-white" :
-              "bg-muted text-muted-foreground"
+              "h-7 w-7 rounded-full flex items-center justify-center text-xs transition-colors",
+              isActive ? "bg-white text-[#4299e1]" : 
+              isCompleted ? "bg-[#4299e1] text-white" :
+              "bg-[#2d3748] text-[#a0aec0]"
             )}>
               {isCompleted && !isActive ? (
-                <CheckIcon className="h-3 w-3" />
+                <CheckIcon className="h-4 w-4" />
               ) : (
                 index + 1
               )}
             </div>
-            <span className="text-xs hidden sm:block">{step.label}</span>
+            <span className="text-xs font-medium whitespace-nowrap hidden sm:block">
+              {step.label}
+            </span>
           </TabsTrigger>
         );
       })}

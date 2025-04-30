@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TaxTrapChecker } from '@/components/tax/TaxTrapChecker';
 import { FilingStatusType } from '@/types/tax/filingTypes';
 
@@ -43,24 +43,29 @@ export const TaxTrapAdapter: React.FC<TaxTrapAdapterProps> = ({
   }
 
   return (
-    <Card className={className}>
-      <TaxTrapChecker
-        scenarioId={scenarioId}
-        scenarioData={{
-          year: scenarioData.year,
-          filing_status: convertFilingStatus(scenarioData.filing_status),
-          agi: scenarioData.agi,
-          magi: scenarioData.agi, // Simplified for demo purposes
-          total_income: scenarioData.total_income,
-          taxable_income: scenarioData.taxable_income,
-          capital_gains_long: scenarioData.capital_gains_long,
-          capital_gains_short: scenarioData.capital_gains_short || 0,
-          social_security_amount: scenarioData.social_security_amount,
-          household_size: scenarioData.household_size,
-          medicare_enrollment: scenarioData.medicare_enrollment,
-          aca_enrollment: scenarioData.aca_enrollment
-        }}
-      />
+    <Card className={`border-[#334155] bg-[#1a202c] shadow-md ${className}`}>
+      <CardHeader className="border-b border-[#2d3748] bg-[#1e293b]">
+        <CardTitle className="text-white text-lg font-semibold">Tax Threshold Results</CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
+        <TaxTrapChecker
+          scenarioId={scenarioId}
+          scenarioData={{
+            year: scenarioData.year,
+            filing_status: convertFilingStatus(scenarioData.filing_status),
+            agi: scenarioData.agi,
+            magi: scenarioData.agi, // Simplified for demo purposes
+            total_income: scenarioData.total_income,
+            taxable_income: scenarioData.taxable_income,
+            capital_gains_long: scenarioData.capital_gains_long,
+            capital_gains_short: scenarioData.capital_gains_short || 0,
+            social_security_amount: scenarioData.social_security_amount,
+            household_size: scenarioData.household_size,
+            medicare_enrollment: scenarioData.medicare_enrollment,
+            aca_enrollment: scenarioData.aca_enrollment
+          }}
+        />
+      </CardContent>
     </Card>
   );
 };

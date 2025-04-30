@@ -61,7 +61,7 @@ const SimpleReturnFilingFlow: React.FC = () => {
       toast({
         title: "Complete previous steps first",
         description: "You must complete the previous steps before proceeding.",
-        variant: "warning"
+        variant: "destructive"
       });
     }
   };

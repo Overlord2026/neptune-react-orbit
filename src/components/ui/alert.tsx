@@ -9,15 +9,15 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-background text-foreground",
+        default: "bg-[#1e293b] text-white border-[#334155]",
         destructive:
-          "border-red-700 text-white bg-red-900/50 dark:border-red-600 [&>svg]:text-red-400",
+          "border-red-900/50 text-white bg-red-900/20 dark:border-red-900/30 [&>svg]:text-red-400",
         warning: 
-          "border-amber-700 text-white bg-amber-900/50 dark:border-amber-600 [&>svg]:text-amber-400",
+          "border-amber-900/50 text-white bg-amber-900/20 dark:border-amber-900/30 [&>svg]:text-amber-400",
         info:
-          "border-blue-700 text-white bg-blue-900/50 dark:border-blue-600 [&>svg]:text-blue-400",
+          "border-blue-900/50 text-white bg-blue-900/20 dark:border-blue-900/30 [&>svg]:text-blue-400",
         success:
-          "border-green-700 text-white bg-green-900/50 dark:border-green-600 [&>svg]:text-green-400",
+          "border-green-900/50 text-white bg-green-900/20 dark:border-green-900/30 [&>svg]:text-green-400",
       },
     },
     defaultVariants: {
@@ -45,7 +45,7 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("mb-1 font-medium leading-none tracking-tight", className)}
+    className={cn("mb-1 font-medium leading-none tracking-tight text-white", className)}
     {...props}
   />
 ))
@@ -57,7 +57,7 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm [&_p]:leading-relaxed", className)}
+    className={cn("text-sm [&_p]:leading-relaxed text-gray-300", className)}
     {...props}
   />
 ))
