@@ -57,6 +57,12 @@ const SimpleReturnFilingFlow: React.FC = () => {
         FILING_STEPS.findIndex(s => s.id === stepId) <= 
         FILING_STEPS.findIndex(s => s.id === currentStep)) {
       setCurrentStep(stepId as FilingStep);
+    } else {
+      toast({
+        title: "Complete previous steps first",
+        description: "You must complete the previous steps before proceeding.",
+        variant: "warning"
+      });
     }
   };
   

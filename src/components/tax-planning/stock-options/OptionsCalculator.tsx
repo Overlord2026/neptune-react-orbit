@@ -12,16 +12,18 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
-import { formatCurrency, formatPercent } from "@/utils/formatUtils";
+import { Calculator, HelpCircle } from "lucide-react";
+import { formatCurrency, formatPercent } from "@/utils/formatters";
 import { calculateStockOptions } from "@/utils/tax/stockOptionCalculator";
 import { StockOptionInputs, StockOptionResults, STATE_TAX_RATES } from "@/types/tax/stockOptionTypes";
+import { useToast } from "@/hooks/use-toast";
 
 const defaultInputs: StockOptionInputs = {
   optionType: 'nso',
@@ -36,13 +38,36 @@ const defaultInputs: StockOptionInputs = {
 };
 
 export function OptionsCalculator() {
+  const { toast } = useToast();
   const [inputs, setInputs] = useState<StockOptionInputs>(defaultInputs);
   const [results, setResults] = useState<StockOptionResults | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [hasCalculated, setHasCalculated] = useState(false);
 
-  useEffect(() => {
-    const results = calculateStockOptions(inputs);
-    setResults(results);
-  }, [inputs]);
+  const handleCalculate = () => {
+    setIsCalculating(true);
+    
+    // Simulate calculation delay for better UX
+    setTimeout(() => {
+      const calculationResults = calculateStockOptions(inputs);
+      setResults(calculationResults);
+      setIsCalculating(false);
+      setHasCalculated(true);
+      
+      toast({
+        title: "Analysis complete",
+        description: "Your stock option analysis has been calculated."
+      });
+    }, 800);
+  };
+
+  // Reset results when inputs change after calculation
+  const handleInputChange = (updatedInputs: Partial<StockOptionInputs>) => {
+    setInputs(prev => ({ ...prev, ...updatedInputs }));
+    if (hasCalculated) {
+      setHasCalculated(false);
+    }
+  };
 
   return (
     <div className="container py-6">
@@ -61,7 +86,7 @@ export function OptionsCalculator() {
               <Label>Option Type</Label>
               <Select 
                 value={inputs.optionType}
-                onValueChange={(value: 'nso' | 'iso') => setInputs(prev => ({ ...prev, optionType: value }))}
+                onValueChange={(value: 'nso' | 'iso') => handleInputChange({ optionType: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select option type" />
@@ -78,7 +103,7 @@ export function OptionsCalculator() {
               <Input
                 type="number"
                 value={inputs.numberOfShares}
-                onChange={e => setInputs(prev => ({ ...prev, numberOfShares: Number(e.target.value) }))}
+                onChange={e => handleInputChange({ numberOfShares: Number(e.target.value) })}
               />
             </div>
 
@@ -87,7 +112,7 @@ export function OptionsCalculator() {
               <Input
                 type="number"
                 value={inputs.grantPrice}
-                onChange={e => setInputs(prev => ({ ...prev, grantPrice: Number(e.target.value) }))}
+                onChange={e => handleInputChange({ grantPrice: Number(e.target.value) })}
               />
             </div>
 
@@ -96,7 +121,7 @@ export function OptionsCalculator() {
               <Input
                 type="number"
                 value={inputs.currentMarketPrice}
-                onChange={e => setInputs(prev => ({ ...prev, currentMarketPrice: Number(e.target.value) }))}
+                onChange={e => handleInputChange({ currentMarketPrice: Number(e.target.value) })}
               />
             </div>
 
@@ -105,7 +130,7 @@ export function OptionsCalculator() {
               <Input
                 type="number"
                 value={inputs.annualIncome}
-                onChange={e => setInputs(prev => ({ ...prev, annualIncome: Number(e.target.value) }))}
+                onChange={e => handleInputChange({ annualIncome: Number(e.target.value) })}
               />
             </div>
 
@@ -113,7 +138,7 @@ export function OptionsCalculator() {
               <Label>Filing Status</Label>
               <Select
                 value={inputs.filingStatus}
-                onValueChange={(value: 'single' | 'married') => setInputs(prev => ({ ...prev, filingStatus: value }))}
+                onValueChange={(value: 'single' | 'married') => handleInputChange({ filingStatus: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select filing status" />
@@ -130,7 +155,7 @@ export function OptionsCalculator() {
               <Select
                 value={inputs.stateOfResidence}
                 onValueChange={(value: keyof typeof STATE_TAX_RATES) => 
-                  setInputs(prev => ({ ...prev, stateOfResidence: value }))}
+                  handleInputChange({ stateOfResidence: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select state" />
@@ -152,7 +177,7 @@ export function OptionsCalculator() {
                   <Switch
                     checked={inputs.exerciseAndHold}
                     onCheckedChange={checked => 
-                      setInputs(prev => ({ ...prev, exerciseAndHold: checked }))}
+                      handleInputChange({ exerciseAndHold: checked })}
                   />
                   <Label className="cursor-pointer">Exercise and Hold</Label>
                   <TooltipProvider>
@@ -173,13 +198,23 @@ export function OptionsCalculator() {
                     <Input
                       type="number"
                       value={inputs.holdingPeriod}
-                      onChange={e => setInputs(prev => ({ ...prev, holdingPeriod: Number(e.target.value) }))}
+                      onChange={e => handleInputChange({ holdingPeriod: Number(e.target.value) })}
                     />
                     <p className="text-sm text-gray-400 mt-1">Must hold for at least 1 year for favorable tax treatment</p>
                   </div>
                 )}
               </>
             )}
+
+            <Button 
+              onClick={handleCalculate} 
+              disabled={isCalculating}
+              className="w-full mt-4"
+              size="lg"
+            >
+              <Calculator className="mr-2 h-4 w-4" />
+              {isCalculating ? "Calculating..." : "Calculate Tax Impact"}
+            </Button>
           </div>
         </Card>
 
@@ -187,7 +222,7 @@ export function OptionsCalculator() {
         <Card className="md:col-span-7 p-6">
           <h2 className="text-xl font-semibold mb-4">Analysis Results</h2>
           
-          {results && (
+          {hasCalculated && results ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -232,9 +267,18 @@ export function OptionsCalculator() {
                 <div className="flex justify-between items-center">
                   <span>Effective Tax Rate:</span>
                   <span className="text-xl font-semibold">
-                    {formatPercent(results.effectiveTaxRate)}
+                    {formatPercent(results.effectiveTaxRate / 100)}
                   </span>
                 </div>
+              </div>
+            </div>
+          ) : (
+            <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center p-10 border border-dashed rounded-lg bg-muted/5">
+              <div className="space-y-2">
+                <h3 className="text-xl font-medium text-muted-foreground">No Analysis Yet</h3>
+                <p className="text-sm text-muted-foreground">
+                  Enter your stock option details and click the Calculate button to analyze the tax impacts.
+                </p>
               </div>
             </div>
           )}
