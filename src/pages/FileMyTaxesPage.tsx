@@ -12,17 +12,17 @@ const FileMyTaxesPage = () => {
       <div className="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2 flex items-center gap-2">
-            <FileText className="h-8 w-8 text-[#f6ad55]" />
+            <FileText className="h-8 w-8 text-[#f59e0b]" />
             File My Taxes
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-[#e2e8f0]">
             Complete your tax return with our step-by-step guided process
           </p>
         </div>
         <div className="flex gap-2">
           <Button 
             variant="outline" 
-            className="border-[#4299e1] text-[#4299e1] hover:bg-[#4299e1]/10 shadow-sm" 
+            className="border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6]/10 shadow-sm" 
             asChild
           >
             <Link to="/tax-planning" className="flex items-center gap-2">
@@ -33,7 +33,7 @@ const FileMyTaxesPage = () => {
         </div>
       </div>
       
-      <Card className="border-[#334155] bg-[#1a202c] shadow-xl">
+      <Card className="border-[#202a42] bg-[#141c2e] shadow-xl">
         <CardContent className="pt-6">
           <SimpleReturnFilingFlow />
         </CardContent>

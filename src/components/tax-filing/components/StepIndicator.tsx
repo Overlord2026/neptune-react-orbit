@@ -17,7 +17,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
   goToStep
 }) => {
   return (
-    <TabsList className="grid grid-cols-5 w-full bg-[#1a202c] border border-[#2d3748] p-1">
+    <TabsList className="grid grid-cols-5 w-full bg-[#141c2e] border border-[#202a42] p-1 rounded-lg shadow-md">
       {FILING_STEPS.map((step, index) => {
         const isActive = step.id === currentStep;
         const isCompleted = completedSteps.includes(step.id);
@@ -30,17 +30,17 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
             onClick={() => !isDisabled && goToStep(step.id)}
             disabled={isDisabled}
             className={cn(
-              "flex flex-col items-center gap-1.5 py-2 px-1",
-              isActive ? "bg-[#4299e1] text-white data-[state=active]:bg-[#4299e1] data-[state=active]:text-white" : 
-              isCompleted ? "text-[#4299e1]" :
-              "text-[#a0aec0]"
+              "flex flex-col items-center gap-1.5 py-2 px-1 transition-all duration-200",
+              isActive ? "bg-[#3b82f6] text-white data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white shadow-md" : 
+              isCompleted ? "text-[#3b82f6]" :
+              "text-[#94a3b8]"
             )}
           >
             <div className={cn(
-              "h-7 w-7 rounded-full flex items-center justify-center text-xs transition-colors",
-              isActive ? "bg-white text-[#4299e1]" : 
-              isCompleted ? "bg-[#4299e1] text-white" :
-              "bg-[#2d3748] text-[#a0aec0]"
+              "h-7 w-7 rounded-full flex items-center justify-center text-xs transition-colors shadow-sm",
+              isActive ? "bg-white text-[#3b82f6]" : 
+              isCompleted ? "bg-[#3b82f6] text-white" :
+              "bg-[#202a42] text-[#94a3b8]"
             )}>
               {isCompleted && !isActive ? (
                 <CheckIcon className="h-4 w-4" />

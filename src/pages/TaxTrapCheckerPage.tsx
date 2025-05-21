@@ -14,12 +14,12 @@ const TaxTrapCheckerPage: React.FC = () => {
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
             Tax Trap Checker
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-[#e2e8f0]">
             Identify potential tax thresholds that could impact your tax liability
           </p>
         </div>
         <Link to="/tax-planning/threshold-calculator">
-          <Button variant="outline" className="flex items-center gap-2 border-[#4299e1] text-[#4299e1] hover:bg-[#4299e1]/10 shadow-sm">
+          <Button variant="outline" className="flex items-center gap-2 border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6]/10 shadow-sm">
             <Calculator className="h-4 w-4" />
             <span>Open Threshold Calculator</span>
           </Button>

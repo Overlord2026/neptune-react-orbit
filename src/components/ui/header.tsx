@@ -22,7 +22,7 @@ export interface HeaderProps {
   };
   /** Additional CSS classes to apply to the header */
   className?: string;
-  /** Background color class (defaults to bg-[#1F2937]) */
+  /** Background color class (defaults to bg-[#111827]) */
   bgColor?: string;
 }
 
@@ -33,17 +33,17 @@ const Header = ({
   actions,
   backLink,
   className = '',
-  bgColor = 'bg-[#1F2937]'
+  bgColor = 'bg-[#111827]'
 }: HeaderProps) => {
   return (
-    <div className={`flex flex-col md:flex-row md:items-center md:justify-between p-6 rounded-lg mb-6 border border-[#2d3748] ${bgColor} ${className}`}>
+    <div className={`flex flex-col md:flex-row md:items-center md:justify-between p-6 rounded-lg mb-6 border border-[#202a42] shadow-lg ${bgColor} ${className}`}>
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
           {icon && icon}
           {title}
         </h1>
         {description && (
-          <p className="text-white max-w-3xl">
+          <p className="text-[#e2e8f0] max-w-3xl">
             {description}
           </p>
         )}
@@ -55,7 +55,7 @@ const Header = ({
             variant="outline" 
             size="sm" 
             asChild
-            className="border-[#4299e1] text-white"
+            className="border-[#3b82f6] text-white"
           >
             <Link to={backLink.to} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0b1120] to-[#1a202c]">
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0f1d] to-[#141c2e]">
       <div className="container mx-auto px-4 py-16 md:py-24">
         {/* Hero Section */}
         <div className="text-center mb-16">
@@ -19,7 +19,7 @@ const LandingPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              className="bg-[#4299e1] hover:bg-[#3182ce] text-white flex items-center justify-center"
+              className="bg-[#3b82f6] hover:bg-[#2563eb] text-white flex items-center justify-center"
               asChild
             >
               <Link to="/tax-planning" className="flex items-center justify-center">
@@ -30,7 +30,7 @@ const LandingPage = () => {
             <Button 
               size="lg" 
               variant="outline"
-              className="border-[#4299e1] text-[#4299e1] flex items-center justify-center"
+              className="border-[#3b82f6] text-[#3b82f6] flex items-center justify-center"
               asChild
             >
               <Link to="/tax-education/basics" className="flex items-center justify-center">
@@ -43,9 +43,9 @@ const LandingPage = () => {
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Feature 1 */}
-          <div className="bg-[#1a202c]/80 backdrop-blur-sm p-6 rounded-xl border border-[#2d3748] hover:border-[#4299e1] transition-all duration-300 flex flex-col">
-            <div className="bg-[#4299e1]/10 p-3 rounded-lg w-fit mb-4 flex items-center justify-center">
-              <Zap className="h-6 w-6 text-[#4299e1]" />
+          <div className="bg-[#141c2e]/80 backdrop-blur-sm p-6 rounded-xl border border-[#202a42] hover:border-[#3b82f6] transition-all duration-300 flex flex-col shadow-lg hover:shadow-xl hover:translate-y-[-2px]">
+            <div className="bg-[#3b82f6]/10 p-3 rounded-lg w-fit mb-4 flex items-center justify-center">
+              <Zap className="h-6 w-6 text-[#3b82f6]" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-white">Real-Time Analysis</h3>
             <p className="text-gray-200 flex-grow">
@@ -54,9 +54,9 @@ const LandingPage = () => {
           </div>
 
           {/* Feature 2 */}
-          <div className="bg-[#1a202c]/80 backdrop-blur-sm p-6 rounded-xl border border-[#2d3748] hover:border-[#4299e1] transition-all duration-300 flex flex-col">
-            <div className="bg-[#4299e1]/10 p-3 rounded-lg w-fit mb-4 flex items-center justify-center">
-              <Shield className="h-6 w-6 text-[#4299e1]" />
+          <div className="bg-[#141c2e]/80 backdrop-blur-sm p-6 rounded-xl border border-[#202a42] hover:border-[#3b82f6] transition-all duration-300 flex flex-col shadow-lg hover:shadow-xl hover:translate-y-[-2px]">
+            <div className="bg-[#3b82f6]/10 p-3 rounded-lg w-fit mb-4 flex items-center justify-center">
+              <Shield className="h-6 w-6 text-[#3b82f6]" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-white">Secure Planning</h3>
             <p className="text-gray-200 flex-grow">
@@ -65,9 +65,9 @@ const LandingPage = () => {
           </div>
 
           {/* Feature 3 */}
-          <div className="bg-[#1a202c]/80 backdrop-blur-sm p-6 rounded-xl border border-[#2d3748] hover:border-[#4299e1] transition-all duration-300 flex flex-col">
-            <div className="bg-[#4299e1]/10 p-3 rounded-lg w-fit mb-4 flex items-center justify-center">
-              <FileText className="h-6 w-6 text-[#4299e1]" />
+          <div className="bg-[#141c2e]/80 backdrop-blur-sm p-6 rounded-xl border border-[#202a42] hover:border-[#3b82f6] transition-all duration-300 flex flex-col shadow-lg hover:shadow-xl hover:translate-y-[-2px]">
+            <div className="bg-[#3b82f6]/10 p-3 rounded-lg w-fit mb-4 flex items-center justify-center">
+              <FileText className="h-6 w-6 text-[#3b82f6]" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-white">Smart Documentation</h3>
             <p className="text-gray-200 flex-grow">
