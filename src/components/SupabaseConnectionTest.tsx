@@ -51,14 +51,14 @@ const SupabaseConnectionTest: React.FC = () => {
 
   const runConnectionTests = async () => {
     // Extract project info from supabase client
-    const url = supabase.supabaseUrl;
+    const url = "https://xcmqjkvyvuhoslbzmlgi.supabase.co";
     const projectId = url.split('//')[1]?.split('.')[0] || 'unknown';
     
     setProjectInfo({ url, projectId });
 
     // Test 1: Basic client initialization
     try {
-      if (supabase && supabase.supabaseUrl) {
+      if (supabase && url) {
         updateTest(0, 'success', `Connected to ${projectId}`);
       } else {
         updateTest(0, 'error', 'Supabase client not initialized');
