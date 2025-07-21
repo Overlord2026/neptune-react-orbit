@@ -1,9 +1,12 @@
-
 import React from 'react';
 import { Circle, Clock, FileText, Target, Users } from 'lucide-react';
 import ProjectCard from '@/components/dashboard/ProjectCard';
 import StatsCard from '@/components/dashboard/StatsCard';
 import RecentActivity from '@/components/dashboard/RecentActivity';
+import SupabaseConnectionTest from '@/components/SupabaseConnectionTest';
+
+// Import at the top
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Dashboard = () => {
   // Mock data for projects
@@ -99,6 +102,10 @@ const Dashboard = () => {
         <p className="text-muted-foreground">Your mission control center for all projects.</p>
       </div>
       
+      <div className="mb-6">
+        <SupabaseConnectionTest />
+      </div>
+      
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard 
           title="Total Projects" 
@@ -188,6 +195,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-// Import at the top
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
