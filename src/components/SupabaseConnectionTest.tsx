@@ -72,7 +72,7 @@ const SupabaseConnectionTest: React.FC = () => {
     // Test 2: Database connection
     try {
       // Try a simple query that should work regardless of data
-      const { error } = await supabase.from('profiles').select('count').limit(1).single();
+      const { error } = await supabase.from('subscribers').select('count').limit(1);
       
       if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned" which means connection works
         updateTest(1, 'error', `Database error: ${error.message}`);
