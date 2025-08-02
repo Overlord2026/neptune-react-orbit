@@ -149,7 +149,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     setSidebarOpen(prev => !prev);
   };
 
-  const SidebarContent = () => (
+const SidebarContent = () => (
     <nav className="px-4 py-6 space-y-6">
       <div>
         <NavItem 
@@ -159,7 +159,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           isActive={location.pathname === '/'} 
         />
         
-        {/* Added Tax Planning section */}
+        {/* Enhanced Tax Planning as Primary Navigation */}
         <NavItem 
           icon={<FileText size={18} />} 
           label="Tax Planning" 
@@ -178,19 +178,65 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               isActive={location.pathname === '/tax-planning'} 
             />
             <NavSubItem 
-              label="Tax Filing" 
+              label="Current Year Filing" 
               href="/tax-filing" 
               isActive={location.pathname === '/tax-filing'} 
             />
             <NavSubItem 
-              label="Tax Tools" 
-              href="/tax-planning/tax-tools" 
-              isActive={location.pathname.includes('/tax-planning/tax-tools')} 
+              label="Multi-Year Planning" 
+              href="/tax-planning/scenarios" 
+              isActive={location.pathname.includes('/tax-planning/scenarios')} 
             />
             <NavSubItem 
-              label="Roth Conversion" 
+              label="Roth Conversions" 
               href="/tax-planning/roth" 
               isActive={location.pathname.includes('/tax-planning/roth')} 
+            />
+            <NavSubItem 
+              label="Tax Document Vault" 
+              href="/tax-planning/documents" 
+              isActive={location.pathname.includes('/tax-planning/documents')} 
+            />
+            <NavSubItem 
+              label="Collaboration Center" 
+              href="/tax-planning/collaboration" 
+              isActive={location.pathname.includes('/tax-planning/collaboration')} 
+            />
+          </div>
+        )}
+
+        {/* Professional Tools (CPA/Advisor specific) */}
+        <NavItem 
+          icon={<Users size={18} />} 
+          label="Professional Tools" 
+          href="#" 
+          isActive={false} 
+          hasSubMenu={true} 
+          isOpen={openMenus.professional}
+          toggleSubmenu={() => toggleSubmenu('professional')}
+        />
+        
+        {openMenus.professional && (
+          <div className="ml-2 mt-1 space-y-1">
+            <NavSubItem 
+              label="Client Management" 
+              href="/professional/clients" 
+              isActive={location.pathname.includes('/professional/clients')} 
+            />
+            <NavSubItem 
+              label="Tax Deadlines" 
+              href="/professional/deadlines" 
+              isActive={location.pathname.includes('/professional/deadlines')} 
+            />
+            <NavSubItem 
+              label="Bulk Communications" 
+              href="/professional/communications" 
+              isActive={location.pathname.includes('/professional/communications')} 
+            />
+            <NavSubItem 
+              label="Network Referrals" 
+              href="/professional/referrals" 
+              isActive={location.pathname.includes('/professional/referrals')} 
             />
           </div>
         )}
